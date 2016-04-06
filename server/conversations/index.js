@@ -18,7 +18,14 @@ response: String
 */
 
 // Starts a conversation
+var Promise = require("bluebird");
 var Measures = require('./measures')
+
+
+// Route to correct conversation or response set
+
 export function measures(req, res) {
-  Measures.mood();
+  return new Promise(function (resolve, reject) {
+    resolve(Measures.mood());
+  });
 }

@@ -61,8 +61,11 @@ function handleError(res, statusCode) {
 
 // Starts a conversation
 export function start(req, res) {
-  Conversations.measures();
-  res.status(200).end();
+  Conversations.measures()
+  .then(function(messages){
+    console.log(messages);
+    res.status(200).json(messages);
+  })
 }
 
 // User replies to the conversation

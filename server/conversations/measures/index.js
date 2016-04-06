@@ -1,6 +1,28 @@
 // Asks for mood
+
+var Messenger = require('../messenger')
+var Promise = require("bluebird");
+
+
+var mood = function(req, res){
+
+}
+
+
 export function mood(req, res) {
-  var messages = [];
+  return new Promise(function(resolve, reject){
+    var messenger = Messenger.init();
+    messenger.say('test');
+    messenger.say('test');
+    resolve(messenger.all());
+  })
+}
+/*
+  this.conversation = function(){
+    messages.push('Just wanted to check in. Is now a good time?')
+    console.log(messages);
+  }
+
   this.responses = {
     input: "choice",
     responses: [
@@ -20,10 +42,4 @@ export function mood(req, res) {
       }
     ]
   }
-
-  this.conversation = function(){
-    messages.push('Just wanted to check in. Is now a good time?')
-    console.log(messages);
-  }
-
-}
+*/
