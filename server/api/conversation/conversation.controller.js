@@ -10,7 +10,7 @@
 'use strict';
 
 import _ from 'lodash';
-var Conversations = require('../../conversations');
+var Messenger = require('../../messenger');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -61,11 +61,12 @@ function handleError(res, statusCode) {
 
 // Starts a conversation
 export function start(req, res) {
-  Conversations.measures()
+  Messenger.response(req)
   .then(function(messages){
     console.log(messages);
     res.status(200).json(messages);
   })
+  .catch(handleError(res))
 }
 
 // User replies to the conversation

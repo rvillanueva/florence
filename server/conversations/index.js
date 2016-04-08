@@ -19,13 +19,15 @@ response: String
 
 // Starts a conversation
 var Promise = require("bluebird");
-var Measures = require('./measures')
-
+var Measures = require('./measures');
 
 // Route to correct conversation or response set
 
-export function measures(req, res) {
+
+export function respond(user, messenger) {
+  console.log('responding!')
+  console.log(messenger)
   return new Promise(function (resolve, reject) {
-    resolve(Measures.mood());
+    resolve(Measures.mood().conversation(messenger));
   });
 }
