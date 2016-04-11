@@ -25,9 +25,8 @@ var Measures = require('./measures');
 
 
 export function respond(user, messenger) {
-  console.log('responding!')
-  console.log(messenger)
+  // route response based on user active prompt
   return new Promise(function (resolve, reject) {
-    resolve(Measures.mood().conversation(messenger));
+    resolve(Measures.mood().conversation(user, messenger));
   });
 }

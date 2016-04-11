@@ -3,23 +3,23 @@
 
 export function mood(req, res) {
   return {
-    conversation: function(messenger){
+    conversation: function(user, messenger){
       messenger.say('Just wanted to check in. Is now a good time?');
       return messenger.all();
     },
-    response: {
+    respond: {
       input: "choice",
       options: [
         {
           value: 'sure',
-          callback: (messenger, response) => {
+          callback: (user, messenger, response) => {
             messenger.reply('yeah, I have some time')
             //this.askForMood();
           }
         },
         {
           value: 'no',
-          callback: (messenger, response) => {
+          callback: (user, messenger, response) => {
             messenger.reply('sorry, not right now')
           }
         }
