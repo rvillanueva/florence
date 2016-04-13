@@ -27,3 +27,15 @@ export function selectBestStep(user, steps) {
   current topic
   */
 }
+
+export function clarify(user, steps) {
+  /*
+  select the best step based on
+  inherent step-type priority
+  user given priority
+  freshness
+  user fatigue
+  user engagement
+  current topic
+  */
+}
