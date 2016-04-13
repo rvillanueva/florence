@@ -10,7 +10,7 @@
 'use strict';
 
 import _ from 'lodash';
-var Messenger = require('../../messenger');
+var Messenger = require('../../components/messages/messenger');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -62,7 +62,7 @@ function handleError(res, statusCode) {
 // Starts a conversation
 export function webhook(req, res) {
   if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
-    console.log(req.body);
+    Messenger.receive(req.body);
     res.send(req.query['hub.challenge']);
   } else {
     res.send('Error, wrong validation token');
