@@ -23,7 +23,14 @@ var UserSchema = new Schema({
   facebook: {},
   google: {},
   github: {},
-  conversation: String
+  tracked: {
+    frequency: String
+    //measures: [{
+      //measure: String, //ref
+      //priority: Number,
+    //}]
+  },
+  //engagementScore: Number
 });
 
 /**

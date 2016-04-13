@@ -60,15 +60,11 @@ function handleError(res, statusCode) {
 }
 
 // Starts a conversation
-export function start(req, res) {
-  Messenger.response(req)
-  .then(function(messages){
-    console.log(messages);
-    res.status(200).json(messages);
-  })
-  .catch(handleError(res))
-}
-
-// User replies to the conversation
-export function reply(req, res) {
+export function webhook(req, res) {
+  if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
+    console.log(req.body);
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.send('Error, wrong validation token');
+  }
 }

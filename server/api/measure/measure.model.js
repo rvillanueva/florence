@@ -3,10 +3,12 @@
 import mongoose from 'mongoose';
 
 var MeasureSchema = new mongoose.Schema({
-  key: String,
   name: String,
-  description: String, 
-  type: String // symptom, behavior, etc
+  behavior: String,
+  description: String,
+  //unit: String,
+  //min: Number,
+  //max: Number
 });
 
 export default mongoose.model('Measure', MeasureSchema);

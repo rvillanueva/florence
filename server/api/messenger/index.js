@@ -5,6 +5,6 @@ var controller = require('./conversation.controller');
 
 var router = express.Router();
 
-router.get('/start', controller.start);
+router.post('/webhook', controller.webhook);
 
 module.exports = router;
