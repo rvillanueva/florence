@@ -24,10 +24,16 @@ message: {
 
 
 export function send(message){
-  console.log('Sending message...')
-  Messenger.send(message);
+  return new Promise(function(resolve, reject){
+    console.log('Sending message...')
+    Messenger.send(message)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
 }
 
+// Receive standardized message from any messaging interface
 export function receive(message){
-  Conversation.test(message)
+  // Add messaging logging here;
+  Conversation.test(message) // Figure out how to respond to the message
 }

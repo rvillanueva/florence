@@ -3,8 +3,7 @@ var request = require("request");
 
 export function intents(message, context){
  return new Promise(function(resolve, reject){
-   //send request;
-   if(typeof message !== 'string'){
+   if(typeof message.text !== 'string'){
      reject('Message must be a string.')
      return false;
    }
@@ -12,7 +11,11 @@ export function intents(message, context){
      url: "https://api.wit.ai/message",
      qs: {
        q: message.text,
-       context: context
+       context: context,
+       v: '2014102'
+     },
+     auth: {
+       bearer: process.env.WIT_SECRET
      }
    }
    request.get(options, success(function(err, response, body){

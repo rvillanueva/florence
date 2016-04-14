@@ -19,9 +19,9 @@ response: String
 
 // Starts a conversation
 var Promise = require("bluebird");
-var Conversation = require('./conversation.service');
+//var Conversation = require('./conversation.service');
 //var Interpret = require('../interpreter');
-//var Skills = require('../skills');
+var Skills = require('../skills');
 var Messages = require ('../messages')
 
 /*export function respond(user, message){
@@ -39,12 +39,35 @@ var Messages = require ('../messages')
  })
 }*/
 
-export function test(message){
-  var reply = {
-    userId: message.userId,
-    text: 'Hello world!'
+
+var Conversation = function(userId, action){
+  this.userId = userId;
+  this.action = action;
+  return {
+     say: (text) => {
+       return new Promise((resolve, reject) => {
+         let message = {
+           userId: this.userId,
+           text: text
+         }
+         Messages.send(message)
+           .then(res => resolve(res))
+           .catch(err => reject(err))
+       })
+     },
+     clarify: (text, entities) => {
+       // ask, and set entities as expected
+     },
+     action: this.action,
+     user: () => {
+       //get user
+     }
   }
-  Messages.send(reply)
-    .then(res => console.log(JSON.stringify(res)))
-    .catch(err => console.log(JSON.stingify(err)))
+}
+
+export function test(message){
+  var conversation = new Conversation(message.userId);
+  conversation.say('Hello to you!');
+  conversation.say('You\'re awesome.');
+
 }

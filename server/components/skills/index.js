@@ -1,21 +1,21 @@
-var Measures = require('./measures');
+'use strict';
 
-var skills = Measures.actions();
-
-var SkillMap = {
-  mood: {
-    startMeasureEntry: Measures.start(user, 'mood', value),
-    enterMeasureValue: Measures.enterValue(user, 'mood', value),
-    enterMeasureTrigger: Measures.enterTrigger(user, 'mood', text)
-  }
-}
-
-export function mapIntent(user, intents) {
-  // Figure out what entities are needed for each
-  // Check that all required entities have been identified
-  // Clarify if required entities are missing for action
+var Promise = require('bluebird');
 
 /*
+
+Intents:
+
+addScore
+addTrigger
+startConversation
+decreaseEngagement
+increaseEngagement
+unsubscribe
+
+
+
+
   Select best intent
   Choose action
   expected intent
@@ -27,5 +27,25 @@ export function mapIntent(user, intents) {
     sent: Date
   }
 }*/
+
+var actionMap = function(action){
+  return {
+    logScore: Measures.addScore(action),
+    logTrigger: Measures.logTrigger(action),
+    unsubscribe: false,
+    engageMore: false,
+    engageLess: false
+  }
+}
+
+export function mapIntent(action){
+  return new Promise(function(resolve, reject){
+    if(actionMap[action.intent]){
+      actionMap[action.intent](action);
+      resolve(true);
+    } else {
+      reject('No matching intent found.')
+    }
+  })
 
 }
