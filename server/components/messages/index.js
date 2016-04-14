@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 var Messenger = require('./messenger');
 var Conversation = require('../conversation');
-
+var Queue = require('./messenger.queue')
 /*
 Standardized message format
 
@@ -22,11 +22,19 @@ message: {
 
 */
 
+export function deliver(message){
+  return new Promise(function(resolve, reject){
+    Messenger.send(message)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  });
+}
 
 export function send(message){
   return new Promise(function(resolve, reject){
-    console.log('Sending message...')
-    Messenger.send(message)
+    console.log('Adding message to queue:')
+    console.log(message);
+    Queue.add(message)
       .then(res => resolve(res))
       .catch(err => reject(err))
   });
