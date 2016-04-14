@@ -44,5 +44,7 @@ export function test(message){
     userId: message.userId,
     text: 'Hello world!'
   }
-  Messages.send(reply);
+  Messages.send(reply)
+    .then(res => console.log(JSON.stringify(res)))
+    .catch(err => console.log(JSON.stingify(err)))
 }

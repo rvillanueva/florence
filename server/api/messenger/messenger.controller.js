@@ -64,7 +64,6 @@ function handleError(res, statusCode) {
 // Facebook Messenger Webhook. Should respond with the challenge
 export function webhook(req, res) {
     if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
-      Messenger.receive(req.body);
       return res.status(200).send(req.query['hub.challenge']);
     } else {
       return res.status(403).send('Error, wrong validation token');
@@ -72,10 +71,7 @@ export function webhook(req, res) {
 }
 
 export function receive(req, res) {
-    if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
+  console.log(JSON.stringify(req.body));
       Messenger.receive(req.body);
-      return res.status(200);
-    } else {
-      return res.status(403).send('Error, wrong validation token');
-    }
+      return res.status(200).end();
 }

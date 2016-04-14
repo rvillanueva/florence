@@ -3,7 +3,6 @@ var request = require("request");
 var Messages = require("../../messages");
 var Format = require('./messenger.formatter');
 var Messenger = require('./messenger.service');
-import User from '../../../api/user/user.model';
 
 function sendToMessenger(){
   return new Promise(function(resolve, reject){
@@ -20,14 +19,21 @@ function sendToMessenger(){
 
 function processEntries(entries){
   entries.forEach(function(entry, i){
-    var messages = entries.messaging;
+    var messages = entry.messaging;
     messages.forEach(function(message, j){
       Format.toStandard(message)
         .then(formatted => {
-          Messages.receive(formatted);
+          Messages.receive(formatted)
+          .then(data => {
+            console.log('received note!')
+            return
+          })
+          .catch(err => {
+            console.log(JSON.stringify(err));
+          })
         })
         .catch(err => {
-          console.log(err);
+          console.log(JSON.stringify(err));
         })
     })
   })
@@ -36,16 +42,17 @@ function processEntries(entries){
 export function send(message) {
   return new Promise(function(resolve, reject){
     Format.toMessenger(message)
-    .then(formatted => sendToMessenger(formatted))
-    .then(res => resolve(res))
-    .catch(err => {
-      console.log(JSON.stringify(err));
-    })
+      .then(formatted => sendToMessenger(formatted))
+      .then(res => resolve(res))
+      .catch(err => {
+        console.log(JSON.stringify(err));
+      })
   })
 }
 
 export function receive(data){
   var entries = data.entry;
-  Messenger.checkNewUsers(entries)
+  return Messenger.checkUsersExist(entries)
     .then(processEntries(entries))
+    .catch(err => console.log(JSON.stringify(err)))
 }

@@ -28,5 +28,5 @@ export function send(message){
 
 export function receive(message){
   // Log here
-  Conversation.respond(message)
+  return Conversation.test(message)
 }

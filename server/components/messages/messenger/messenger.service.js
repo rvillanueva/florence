@@ -1,6 +1,7 @@
 'use strict';
+import User from '../../../api/user/user.model';
 
-export function createNewUsers(entities){
+export function checkUsersExist(entities){
   return new Promise(function(resolve, reject){
     var idIndex = []
     var checkedCounter = 0;
@@ -23,21 +24,22 @@ export function createNewUsers(entities){
       checkUserExists(senderId);
     })
 
-    function checkUserExists(senderId){
-      User.findOne({'messenger.id': messageObj.sender.id}, '_id').exec()
-      .then(user => {
-        if(!user){
-          var newUser = {
-            messenger: {
-              id: senderId
-            },
-            role: 'user'
+    function checkUserExists(messengerId){
+      User.findOne({'messenger.id': messengerId}, '_id').exec()
+        .then(user => {
+          if(!user){
+            createMessengerUser(messengerId)
+            .then(checkIfDone())
+            .catch(err => {
+              console.log(JSON.stringify(err))
+            })
+          } else {
+            checkIfDone();
           }
-          User.create(newUser)
-          .then(checkIfDone())
-          .catch(reject(err));
-        }
-      })
+        })
+        .catch(err => {
+          console.log(JSON.stringify(err));
+        })
     }
     function checkIfDone(){
       checkedCounter++;
@@ -47,5 +49,31 @@ export function createNewUsers(entities){
         reject('Something is wrong with your check user counter...');
       }
     }
+  })
+}
+
+export function createMessengerUser(messengerId){
+  return new Promise(function(resolve, reject){
+    console.log('Saving new user...')
+
+    var userData = {
+      messenger: {
+        id: messengerId
+      },
+    }
+    var newUser = new User(userData);
+    newUser.provider = 'facebook';
+    newUser.role = 'user';
+    newUser.save()
+      .then(user => {
+        console.log('Heres your user');
+        console.log(JSON.stringify(user));
+        resolve(user);
+      })
+      .catch(err => {
+        console.log('Error saving new user...');
+        console.log(JSON.stringify(err));
+        reject(err);
+      })
   })
 }
