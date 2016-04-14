@@ -1,21 +1,12 @@
 // Asks for mood
 
 var Mood = require('./mood')
+var Triggers = require('../triggers')
 
-export function mood(req, res) {
-  return Mood;
-}
-
-export function getSkills(){
-  var actions = [
-    {
-      skill: 'mood',
-      actions: Mood.actions();
-    }
-  ];
-  return actions;
-}
-
-export function log(user, value, measure) {
+export function enterValue(user, value, measure) {
   // save measure score
+}
+
+export function enterTrigger(user, value, text) {
+  Triggers.enter(user, value, text);
 }

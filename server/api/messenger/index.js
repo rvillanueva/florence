@@ -5,6 +5,7 @@ var controller = require('./messenger.controller');
 
 var router = express.Router();
 
-router.post('/webhook', controller.webhook);
+router.get('/', controller.webhook);
+router.post('/', controller.receive);
 
 module.exports = router;

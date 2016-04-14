@@ -23,6 +23,7 @@ var UserSchema = new Schema({
   facebook: {},
   google: {},
   github: {},
+  messenger: {},
   tracked: {
     frequency: String
     //measures: [{
@@ -30,6 +31,10 @@ var UserSchema = new Schema({
       //priority: Number,
     //}]
   },
+  expected: {
+    skill: String,
+    intent: String
+  }
   //engagementScore: Number
 });
 

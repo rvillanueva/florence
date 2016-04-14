@@ -2,7 +2,19 @@ var Measures = require('./measures');
 
 var skills = Measures.actions();
 
-export function interpretIntents(user, intents) {
+var SkillMap = {
+  mood: {
+    startMeasureEntry: Measures.start(user, 'mood', value)
+    enterMeasureValue: Measures.enterValue(user, 'mood', value),
+    enterMeasureTrigger: Measures.enterTrigger(user, 'mood', text)
+  }
+}
+
+export function mapIntent(user, intents) {
+  // Figure out what entities are needed for each
+  // Check that all required entities have been identified
+  // Clarify if required entities are missing for action
+
 /*
   Select best intent
   Choose action
@@ -16,20 +28,4 @@ export function interpretIntents(user, intents) {
   }
 }*/
 
-}
-
-export function getSkills() {
-  // list of skills and associated intents
-  //concatenate arrays
-  return skills;
-}
-
-export function getActions(skillId){
-  var actions = [];
-  skills.forEach(function(el, i){
-    if(el.skill == skillId){
-      actions.push(el);
-    }
-  })
-  return actions;
 }

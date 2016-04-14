@@ -10,6 +10,8 @@
 'use strict';
 
 import _ from 'lodash';
+import Thing from '../thing/thing.model';
+
 var Messenger = require('../../components/messages/messenger');
 
 function respondWithResult(res, statusCode) {
@@ -59,12 +61,21 @@ function handleError(res, statusCode) {
   };
 }
 
-// Starts a conversation
+// Facebook Messenger Webhook. Should respond with the challenge
 export function webhook(req, res) {
-  if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
-    Messenger.receive(req.body);
-    res.send(req.query['hub.challenge']);
-  } else {
-    res.send('Error, wrong validation token');
-  }
+    if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
+      Messenger.receive(req.body);
+      return res.status(200).send(req.query['hub.challenge']);
+    } else {
+      return res.status(403).send('Error, wrong validation token');
+    }
+}
+
+export function receive(req, res) {
+    if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
+      Messenger.receive(req.body);
+      return res.status(200);
+    } else {
+      return res.status(403).send('Error, wrong validation token');
+    }
 }

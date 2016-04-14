@@ -1,12 +1,11 @@
 
-var Wit = require('./wit');
 var Promise = require("bluebird");
 var Interpret = require('./interpreter.service');
 
 export function intents(user, message){
   return new Promise(function(resolve, reject){
     Interpret.getContext(user)
-    .then(context => {Wit.intents(message, context)})
+    .then(context => {Interpret.intents(message, context)})
     .then(intents => {resolve(intents)})
     .catch(err => {reject(err)})
   });
