@@ -9,7 +9,7 @@ export function actions(req, res) {
     },
     {
       intent: 'setMeasureTrigger',
-      action: logMeasureTrigger(user, text);
+      action: logMeasureTrigger(user, text)
     }
   ]
 }

@@ -1,5 +1,6 @@
 var Promise = require('bluebird');
 var Messenger = require('./messenger');
+var Conversation = require('../conversation');
 
 /*
 Standardized message format
@@ -23,10 +24,10 @@ message: {
 
 
 export function send(message){
+  console.log('Sending message...')
   Messenger.send(message);
 }
 
 export function receive(message){
-  // Log here
-  return Conversation.test(message)
+  Conversation.test(message)
 }

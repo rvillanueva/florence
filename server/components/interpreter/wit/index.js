@@ -13,11 +13,12 @@ export function intents(message, context){
      qs: {
        q: message.text,
        context: context
-     },
-     auth:
+     }
    }
-   request.get('https://api.wit.ai/message', options).success(function(intents){
-     resolve(intents);
-   }).error(function)
+   request.get(options, success(function(err, response, body){
+     resolve(body);
+   }).error(function(err){
+     reject(err)
+   })
  })
 }

@@ -20,11 +20,11 @@ response: String
 // Starts a conversation
 var Promise = require("bluebird");
 var Conversation = require('./conversation.service');
-var Interpret = require('../interpreter');
-var Skills = require('../skills');
+//var Interpret = require('../interpreter');
+//var Skills = require('../skills');
 var Messages = require ('../messages')
 
-export function respond(user, message){
+/*export function respond(user, message){
  return new Promise(function(resolve, reject){
    // Interpret message
    Interpret.intents(user, message)
@@ -37,7 +37,7 @@ export function respond(user, message){
    // Respond with next best step
    resolve(true);
  })
-}
+}*/
 
 export function test(message){
   var reply = {

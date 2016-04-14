@@ -71,6 +71,7 @@ export function webhook(req, res) {
 }
 
 export function receive(req, res) {
+  console.log('incoming message...')
   console.log(JSON.stringify(req.body));
       Messenger.receive(req.body);
       return res.status(200).end();

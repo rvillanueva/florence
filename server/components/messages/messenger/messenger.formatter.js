@@ -7,8 +7,9 @@ export function toStandard(messageObj){
 
     function doFormat(user){
       return new Promise(function(resolve, reject){
-        console.log('Formatting with user:')
-        console.log(JSON.stringify(user))
+        if(!user){
+          reject('Need a user.')
+        }
         var formatted = {
           userId: user._id,
           timestamp: messageObj.timestamp,
@@ -22,8 +23,8 @@ export function toStandard(messageObj){
 
         if(messageObj.message){
           formatted.messenger = {};
-          formatted.messenger.mid = formattedMsg.messenger.mid;
-          formatted.messenger.seq = formattedMsg.messenger.seq;
+          formatted.messenger.mid = messageObj.message.mid;
+          formatted.messenger.seq = messageObj.message.seq;
           formatted.text = messageObj.message.text;
           formatted.attachments = messageObj.message.attachments
         }
@@ -45,11 +46,15 @@ export function toStandard(messageObj){
           Messenger.createMessengerUser(messageObj.sender.id)
           .then(user => doFormat(user))
           .then(message => resolve(message))
-          .catch(err => console.log(JSON.stringify(err)))
+          .catch(err => {
+            console.log(err)
+          })
         } else {
           doFormat(user)
           .then(message => resolve(message))
-          .catch(err => console.log(JSON.stringify(err)))
+          .catch(err => {
+            console.log(err)
+          })
         }
 
       })
@@ -61,28 +66,33 @@ export function toStandard(messageObj){
 
 export function toMessenger(message){
   return new Promise(function(resolve, reject){
-    User.findById(message.userId, '-salt -password').exec()
-    .then(user => {
-      if(user.messenger && user.messenger.id){
-        if(message.text && message.text.length > 0){
-          var formatted = {
-            recipient: {
-              id: user.messenger.id
-            },
-            message: {
-              text: message.text
+    console.log('formatting...')
+    console.log(message)
+    User.findById(message.userId, '_id messenger').exec()
+      .then(user => {
+        console.log(user)
+        if(user.messenger && user.messenger.id){
+          if(message.text && message.text.length > 0){
+            var formatted = {
+              recipient: {
+                id: user.messenger.id
+              },
+              message: {
+                text: message.text
+              }
             }
+            console.log('formatted: ')
+            console.log(formatted);
+            resolve(formatted);
+          } else {
+            reject('No message text included.')
           }
-          resolve(formatted);
         } else {
-          reject('No message text included.')
+          reject('No messenger account associated with this user id.')
         }
-      } else {
-        reject('No messenger account associated with this user id.')
-      }
-    })
-    .catch(err => {
-      console.log(JSON.stringify(err))
-    })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   })
 }
