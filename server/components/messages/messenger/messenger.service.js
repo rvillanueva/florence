@@ -6,8 +6,6 @@ var Format = require('./messenger.formatter');
 
 export function sendToApi(message){
   return new Promise(function(resolve, reject){
-    console.log('Sending message:')
-    console.log(message)
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {

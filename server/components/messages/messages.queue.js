@@ -18,10 +18,7 @@ function clearTimer(userId){
 }
 
 var sendNext = function(userId){
-  console.log('sending for ' + userId)
   if(storage[userId].queue.length > 0){
-    console.log('Sending from queue.\nCurrent queue:')
-    console.log(storage[userId].queue);
     var message = storage[userId].queue[0];
     Messages.deliver(message);
     storage[userId].queue.splice(0, 1);

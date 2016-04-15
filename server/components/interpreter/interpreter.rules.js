@@ -10,18 +10,23 @@ export function checkRules(message, context){
  return new Promise(function(resolve, reject){
    var text;
    if(message.text && typeof message.text == 'string'){
-     text = message.text.toLowercase();
+     text = message.text.toLowerCase();
    }
    if(text == 'stop'){
      resolve('unsubscribe');
    }
 
-   if(text == 'hello' || text == 'hi' || text == 'hey'){
+   if(
+     text == 'hello'
+     || text == 'hi'
+     || text == 'hey'
+     || text == 'yo'
+    ){
      resolve('hello');
    }
 
-   if(context.intent == 'logTrigger'){
-     resolve('logTrigger');
+   if(context.intent == 'logTriggers'){
+     resolve('logTriggers');
    }
     resolve(false)
  })

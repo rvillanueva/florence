@@ -11,28 +11,26 @@ export function constructor(userId, message){
   return {
      message: this.message,
      user: () => {
-       return new Promise(function(resolve, reject){
-         User.findById(this.userId, '-salt -password')
-         .then(user => resolve(user))
-         .catch(err => reject(err))
-       })
+         return User.findById(this.userId, '-salt -password')
      },
      say: (text) => {
-       return new Promise((resolve, reject) => {
-         let message = {
+        Messages.send({
+          userId: this.userId,
+          text: text
+        })
+     },
+     sayOne: (phrases) => {
+         let text = phrases[Math.floor(Math.rand() * phrases.length)].text;
+         return Messages.send({
            userId: this.userId,
            text: text
-         }
-         Messages.send(message)
-         .then(res => resolve(res))
-         .catch(err => reject(err))
-       })
+         });
      },
      context: ()=>{
          return Context.get(this.userId)
      },
      expect: (context) => {
-         return Context.set(this.userId)
+         return Context.set(this.userId, context)
      },
      next: () => {
        return new Promise(function(resolve, reject){

@@ -36,13 +36,13 @@ export function logScore(conversation) {
   }
 }
 
-export function logTrigger(entities) {
+export function logTriggers(conversation) {
   return {
     respond: (entities) => {
-      return Mood.logTriggers().respond(entities);
+      return Mood.logTriggers(conversation).respond(entities);
     },
     init: (entities) => {
-      return Mood.logTriggers().init(entities);
+      return Mood.logTriggers(conversation).init(entities);
     },
   }
 }

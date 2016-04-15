@@ -8,26 +8,20 @@ var Context = require('../context');
 export function getResponse(message){
   return new Promise(function(resolve, reject){
     var context;
+    var intent;
     Context.get(message.userId)
     .then(data => {
       context = data;
-      Rules.checkRules(message, context)
+      console.log('context')
+      console.log(context);
+      return Rules.checkRules(message, context)
     })
-    .then(intent => {
-      return new Promise(function(resolve, reject){
-        Interpret.getIntents(message, context, intent)
-          .then(response => resolve(response))
-          .catch(err => reject(err))
-      })
+    .then(override => {
+      intent = override
+        return Interpret.getIntents(message, context, intent)
     })
     .then(intents => {
-      return new Promise(function(resolve, reject){
-        console.log('intents:')
-        console.log(intents);
-        Interpret.chooseResponse(context, intents)
-          .then(response => resolve(response))
-          .catch(err => reject(err))
-      })
+        return Interpret.chooseResponse(context, intents)
     })
     .then(response => resolve(response))
     .catch(err => reject(err))

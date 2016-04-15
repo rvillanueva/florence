@@ -35,7 +35,7 @@ var router = function(conversation){
   return {
     hello: General.hello(conversation),
     logScore: Measures.logScore(conversation),
-    logTrigger: Measures.logTrigger(conversation),
+    logTriggers: Measures.logTriggers(conversation),
     unsubscribe: false,
     engageMore: false,
     engageLess: false
@@ -53,19 +53,6 @@ export function route(conversation, response){
       .catch(err => reject(err))
     } else {
       reject(new Error('No matching intent found for ' + response.intent));
-    }
-  })
-}
-
-export function init(conversation){
-  return new Promise(function(resolve, reject){
-    var route = router[action.intent];
-    if(route && route().respond){
-      route(conversation).init()
-      .then(resolve(true))
-      .catch(err => reject(err))
-    } else {
-      reject(new Error('No matching intent found.'))
     }
   })
 }

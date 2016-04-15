@@ -23,25 +23,17 @@ message: {
 */
 
 export function send(message){
-  return new Promise(function(resolve, reject){
-    console.log('Adding message to queue:')
-    console.log(message);
-    Queue.add(message)
-      .then(res => resolve(res))
-      .catch(err => reject(err))
-  });
+    return Queue.add(message)
 }
 
 // Receive standardized message from any messaging interface
 export function receive(message){
   // Add messaging logging here;
+  console.log(message.userId + ' says: ' + message.text);
   Conversation.respond(message) // Figure out how to respond to the message
 }
 
 export function deliver(message){
-  return new Promise(function(resolve, reject){
-    Messenger.send(message)
-      .then(res => resolve(res))
-      .catch(err => reject(err))
-  });
+    console.log('Reply to ' + message.userId + ': ' + message.text);
+    return Messenger.send(message)
 }
