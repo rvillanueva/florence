@@ -55,25 +55,37 @@ export function toStandard(messageObj, user){
 
 export function toMessenger(message){
   return new Promise(function(resolve, reject){
+    var formatted = {
+      recipient: {},
+      message: {}
+    };
     User.findById(message.userId, '_id messenger').exec()
       .then(user => {
-        if(user.messenger && user.messenger.id){
-          if(message.text && message.text.length > 0){
-            var formatted = {
-              recipient: {
-                id: user.messenger.id
-              },
-              message: {
-                text: message.text
-              }
-            }
-            resolve(formatted);
-          } else {
-            reject('No message text included.')
-          }
-        } else {
-          reject('No messenger account associated with this user id.')
+        if(!user){
+          reject('No user found.')
         }
+        if(user.messenger && user.messenger.id){
+          formatted.recipient.id = user.messenger.id;
+        } else {
+          reject('No user with that messenger id found.')
+        }
+
+        console.log('FORMATTING:')
+        console.log(message);
+
+        if(message.text){
+          formatted.message.text = message.text;
+        }
+
+        if(message.attachment){
+          formatted.message.attachment = message.attachment;
+        }
+        console.log('FORMATTED:')
+        console.log(formatted);
+        if(!formatted.message.text && !formatted.message.attachment){
+          reject('Message contained no content.');
+        }
+        resolve(formatted);
       })
       .catch(err => {
         console.log(err)

@@ -34,6 +34,7 @@ export function receive(message){
 }
 
 export function deliver(message){
-    console.log('Reply to ' + message.userId + ': ' + message.text);
+    var log = message.text || message.attachment;
+    console.log('Reply to ' + message.userId + ': ' + log);
     return Messenger.send(message)
 }

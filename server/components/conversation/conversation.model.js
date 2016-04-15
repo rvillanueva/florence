@@ -32,6 +32,22 @@ export function constructor(userId, message){
      expect: (context) => {
          return Context.set(this.userId, context)
      },
+     buttons: (text, buttons) => {
+       console.log('BUTTONS:')
+       console.log(text)
+       console.log(buttons)
+         return Messages.send({
+           userId: this.userId,
+           attachment:{
+             type: 'template',
+             payload: {
+               template_type: 'button',
+               text: text,
+               buttons: buttons
+             }
+           }
+         })
+     },
      next: () => {
        return new Promise(function(resolve, reject){
          resolve();
