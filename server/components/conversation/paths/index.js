@@ -31,11 +31,11 @@ unsubscribe
   }
 }*/
 
-var router = function(conversation){
+var router = function(conversation, response){
   return {
-    hello: General.hello(conversation),
-    logScore: Measures.logScore(conversation),
-    logTriggers: Measures.logTriggers(conversation),
+    hello: General.hello(conversation, response),
+    logScore: Measures.logScore(conversation, response),
+    logTriggers: Measures.logTriggers(conversation, response),
     unsubscribe: false,
     engageMore: false,
     engageLess: false
@@ -43,12 +43,12 @@ var router = function(conversation){
 }
 
 export function route(conversation, response){
-  return new Promise(function(resolve, reject){
-    var path = function(conversation){
-      return router(conversation)[response.intent];
+  return new Promise((resolve, reject) => {
+    function path(){
+      return router(conversation, response)[response.intent];
     }
     if(path && typeof path().respond == 'function'){
-      path(conversation).respond(response)
+      path(conversation, response).respond()
       .then(res => resolve(res))
       .catch(err => reject(err))
     } else {

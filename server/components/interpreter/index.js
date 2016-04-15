@@ -9,6 +9,7 @@ export function getResponse(message){
   return new Promise(function(resolve, reject){
     var context;
     var intent;
+    var overrideIntent;
     Context.get(message.userId)
     .then(data => {
       context = data;
@@ -16,12 +17,13 @@ export function getResponse(message){
       console.log(context);
       return Rules.checkRules(message, context)
     })
-    .then(override => {
-      intent = override
-        return Interpret.getIntents(message, context, intent)
+    .then(intent => {
+      overrideIntent = intent;
+      var skip = !!overrideIntent;
+      return Interpret.getIntents(message, context, skip)
     })
     .then(intents => {
-        return Interpret.chooseResponse(context, intents)
+      return Interpret.chooseResponse(message, context, intents, overrideIntent)
     })
     .then(response => resolve(response))
     .catch(err => reject(err))

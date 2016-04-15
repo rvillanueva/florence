@@ -13,7 +13,9 @@ export function checkRules(message, context){
      text = message.text.toLowerCase();
    }
    if(text == 'stop'){
-     resolve('unsubscribe');
+     resolve({
+       intent: 'stop'
+     });
    }
 
    if(
@@ -22,11 +24,15 @@ export function checkRules(message, context){
      || text == 'hey'
      || text == 'yo'
     ){
-     resolve('hello');
+     resolve({
+       intent: 'hello'
+     });
    }
 
    if(context.intent == 'logTriggers'){
-     resolve('logTriggers');
+     resolve({
+       intent:'logTriggers'
+     });
    }
     resolve(false)
  })

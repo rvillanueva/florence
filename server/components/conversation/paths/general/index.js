@@ -2,17 +2,17 @@
 var Promise = require('bluebird');
 var Measures = require('../measures');
 
-export function hello(conversation){
+export function hello(conversation, response){
   return {
-    respond: (entities) => {
+    respond: () => {
       conversation.say('Hey there!');
-      return Measures.logScore(conversation).init({
+      return Measures.logScore(conversation, response).init({
         measure: 'mood'
       });
     },
-    init: (entities) => {
+    init: () => {
       conversation.say('Hello! This is a test welcome message.');
-      return Measures.logScore(conversation).init({
+      return Measures.logScore(conversation, response).init({
         measure: 'mood'
       });
     }

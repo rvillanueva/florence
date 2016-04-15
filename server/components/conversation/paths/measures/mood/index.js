@@ -1,11 +1,11 @@
 var Measures = require('../../measures');
 var Triggers = require('../../triggers');
 
-export function logScore(conversation) {
+export function logScore(conversation, response) {
   return {
-    respond: (entities) => {
-        conversation.say('Got it--thank you.')
-        return logTriggers(conversation).init(entities);
+    respond: () => {
+        conversation.say('Great, thanks!')
+        return logTriggers(conversation, response).init();
 
       /*Entry.log({
         measure: 'mood',
@@ -25,35 +25,40 @@ export function logScore(conversation) {
   }
 }
 
-export function logTriggers(conversation) {
+export function logTriggers(conversation, response) {
   return {
-    respond: (entities) => {
-      console.log(entities)
-      if(!entities || !entities.text){
+    respond: () => {
+      console.log('Received response of: ')
+      console.log(response)
+      if(!response || !response.message || !response.message.text){
         conversation.say('Uh oh, I\'m afraid I didn\'t understand that one. Was there message text?');
         return conversation.expect({
           intent:'logTriggers',
           entities: {
             measure: 'mood'
-          }
+          },
+          needed: ['text']
         })
       } else {
         /*Entry.log({
           measure: 'mood',
           triggers: entities.text
         });*/
+        conversation.say('SYSTEM: Echoing: ')
+        conversation.say(response.message.text)
         conversation.say('Great! That\'s all I have for now – stay tuned!');
         return conversation.next();
       }
     },
-    init: (entities) => {
+    init: () => {
       conversation.say('Has there been anything that\'s been making you feel better or worse?');
       conversation.say('If you want, you can use #hashtags to keep track of specific things over time.');
       return conversation.expect({
         intent:'logTriggers',
         entities: {
           measure: 'mood'
-        }
+        },
+        needed: ['text']
       })
     },
   }
