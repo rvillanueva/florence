@@ -31,7 +31,7 @@ export function logScore(conversation) {
       } else {
         // Route to correct question
       }*/
-      return Mood.init(entities);
+      return Mood.logScore(conversation).init(entities);
     },
   }
 }
@@ -39,10 +39,10 @@ export function logScore(conversation) {
 export function logTrigger(entities) {
   return {
     respond: (entities) => {
-      Mood.logTriggers().respond(entities);
+      return Mood.logTriggers().respond(entities);
     },
     init: (entities) => {
-      Mood.logTriggers().init(entities);
+      return Mood.logTriggers().init(entities);
     },
   }
 }

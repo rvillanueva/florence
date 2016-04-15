@@ -56,6 +56,11 @@ export function createUserIfNeeded(messengerId){
         var newUser = new User(userData);
         newUser.provider = 'facebook';
         newUser.role = 'user';
+        newUser.context = {
+          intent: 'hello',
+          entities: {},
+          needed: []
+        }
         newUser.save()
           .then(user => {
             resolve(user);

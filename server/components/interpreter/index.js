@@ -15,8 +15,7 @@ export function getResponse(message){
     })
     .then(intent => {
       return new Promise(function(resolve, reject){
-        var skip = !!intent;
-        Interpret.getIntents(message, context, true)
+        Interpret.getIntents(message, context, intent)
           .then(response => resolve(response))
           .catch(err => reject(err))
       })

@@ -5,7 +5,7 @@ export function logScore(conversation) {
   return {
     respond: (entities) => {
         conversation.say('Got it--thank you.')
-        return conversation.next();
+        return logTrigger(conversation).init(entities);
 
       /*Entry.log({
         measure: 'mood',
@@ -28,7 +28,7 @@ export function logScore(conversation) {
 export function logTrigger(conversation) {
   return {
     respond: (entities) => {
-      if(!entities.text){
+      if(!entities || !entities.text){
         //clarify
       } else {
         Entry.log({

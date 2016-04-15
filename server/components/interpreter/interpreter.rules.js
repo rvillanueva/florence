@@ -8,8 +8,16 @@ export function checkRules(message, context){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  // other commands will override
  return new Promise(function(resolve, reject){
-   if(message.text === 'STOP'){
+   var text;
+   if(message.text && typeof message.text == 'string'){
+     text = message.text.toLowercase();
+   }
+   if(text == 'stop'){
      resolve('unsubscribe');
+   }
+
+   if(text == 'hello' || text == 'hi' || text == 'hey'){
+     resolve('hello');
    }
 
    if(context.intent == 'logTrigger'){

@@ -5,16 +5,16 @@ var Measures = require('../measures');
 export function hello(conversation){
   return {
     respond: (entities) => {
-      return new Promise(function(resolve, reject){
-        if(entities.yesNo){
-
-        }
-      })
+        conversation.say('Hello! This is responding to your hello query.');
+        conversation.say('You are a crazy person my friend.');
+        return Measures.logScore(conversation).init({
+          measure: 'mood'
+        });
     },
     init: (entities) => {
       return new Promise(function(resolve, reject){
         conversation.say('Hello! This is a test welcome message.');
-        Measures.logValue(conversation).init({
+        Measures.logScore(conversation).init({
           measure: 'mood'
         });
       })

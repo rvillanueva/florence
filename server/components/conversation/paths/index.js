@@ -44,17 +44,15 @@ var router = function(conversation){
 
 export function route(conversation, response){
   return new Promise(function(resolve, reject){
-    console.log('response:')
-    console.log(response)
     var path = function(conversation){
-      return router(conversation)['logScore'];
+      return router(conversation)[response.intent];
     }
-    if(path && path().respond){
+    if(path && typeof path().respond == 'function'){
       path(conversation).respond(response)
       .then(res => resolve(res))
       .catch(err => reject(err))
     } else {
-      reject(new Error('No matching intent found.'))
+      reject(new Error('No matching intent found for ' + response.intent));
     }
   })
 }

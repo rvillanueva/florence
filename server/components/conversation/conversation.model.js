@@ -2,6 +2,7 @@
 var Promise = require("bluebird");
 var Paths = require('./paths');
 var Messages = require ('../messages');
+var Context = require ('../context');
 import User from '../../api/user/user.model';
 
 export function constructor(userId, message){
@@ -28,18 +29,10 @@ export function constructor(userId, message){
        })
      },
      context: ()=>{
-       return new Promise(function(resolve, reject){
-         Context.getContext(this.userId)
-         .then(context => resolve(context))
-         .catch(err => reject(err))
-       })
+         return Context.get(this.userId)
      },
      expect: (context) => {
-       return new Promise(function(resolve, reject){
-         Context.setContext(this.userId)
-         .then(context => resolve(context))
-         .catch(err => reject(err))
-       })
+         return Context.set(this.userId)
      },
      next: () => {
        return new Promise(function(resolve, reject){
