@@ -40,3 +40,15 @@ export function set(userId, context){
    })
  })
 }
+
+export function clear(userId){
+ return new Promise(function(resolve, reject){
+   User.findById(userId, '-salt -password').exec()
+   .then(user => {
+     user.context = null;
+     user.save()
+     .then(user => resolve(user.context))
+     .catch(err => reject(err))
+   })
+ })
+}

@@ -55,11 +55,11 @@ export function respond(conversation, action){
   })
 }
 
-export function start(conversation){
+export function init(conversation){
   return new Promise(function(resolve, reject){
     var route = router[action.intent];
     if(route && route().respond){
-      route(conversation).start()
+      route(conversation).init()
       .then(resolve(true))
       .catch(err => reject(err))
     } else {

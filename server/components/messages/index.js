@@ -35,7 +35,7 @@ export function send(message){
 // Receive standardized message from any messaging interface
 export function receive(message){
   // Add messaging logging here;
-  Conversation.test(message) // Figure out how to respond to the message
+  Conversation.respond(message) // Figure out how to respond to the message
 }
 
 export function deliver(message){

@@ -20,7 +20,7 @@ export function getIntents(message, context){
 }
 
 
-export function chooseAction(context, intents){
+export function chooseActionFromIntents(context, intents){
   // hardcode some commands in here
  return new Promise(function(resolve, reject){
    var switchConfidence = 0.7;
@@ -40,6 +40,17 @@ export function chooseAction(context, intents){
    } else {
      // otherwise merge in top intent's entities but don't overwrite existing values -- QUESTIONABLE
      mergeEntitiesIntoAction(action, entities, false)
+   }
+   resolve(action);
+ })
+}
+
+export function chooseActionFromRule(context, intent){
+  // hardcode some commands in here
+ return new Promise(function(resolve, reject){
+   var action = {
+     intent: intent,
+     entities: context.entities
    }
    resolve(action);
  })

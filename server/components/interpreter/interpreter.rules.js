@@ -13,6 +13,7 @@ export function getIntent(message, context){
    }
 
    if(context.intent == 'logTrigger'){
+     context.entities.trigger = message.text;
      resolve('logTrigger');
    }
 

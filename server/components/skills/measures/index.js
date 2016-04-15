@@ -19,7 +19,7 @@ export function logValue(conversation) {
     respond: (action) => {
 
     },
-    start: () => {
+    init: () => {
       conversation.say('Okay, let\'s get started.')
       conversation.say('On a scale of 1 (the worst) to 10 (the best) are you feeling right now?')
     }

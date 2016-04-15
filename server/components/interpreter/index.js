@@ -17,19 +17,21 @@ Action schema:
 export function getAction(message){
   return new Promise(function(resolve, reject){
     Context.get(message.userId)
-    .then(context => Rules.getIntent())
+    .then(context => Rules.getIntent(context, message))
     .then(intent => {
       return new Promise(function(resolve, reject){
-        if(intent){
+        if(!intent){
           Interpret.getIntents(message, context)
-          .then(intents => resolve(intents))
+          .then(intents => Interpret.chooseActionFromIntents(context, intents))
+          .then(action => resolve(action))
           .catch(err => reject(err))
         } else {
-          resolve(intent)
+          Interpret.chooseActionFromRule(context, intent)
+          .then(action => resolve(action))
+          .catch(err => reject(err))
         }
       })
     })
-    .then(intents => Interpret.chooseAction(context, intents))
     .then(action => resolve(action))
     .catch(err => reject(err))
   });
