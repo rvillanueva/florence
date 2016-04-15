@@ -40,10 +40,7 @@ var UserSchema = new Schema({
   context: {
     intent: String,
     entities: Object,
-    needed: {
-      entities: Array,
-      requested: String
-    }
+    needed: Array
   }
 });
 

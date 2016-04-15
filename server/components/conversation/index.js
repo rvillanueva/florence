@@ -1,3 +1,26 @@
+'use strict';
+
+var Promise = require("bluebird");
+var Interpret = require('../interpreter');
+var Paths = require('./paths');
+var Messages = require ('../messages');
+import User from '../../api/user/user.model';
+var Conversation = require('./conversation.model').constructor;
+
+export function respond(message){
+  return new Promise(function(resolve, reject){
+    var conversation;
+    Interpret.getAction(message)
+    .then(action => {
+      conversation = new Conversation(message.userId, message);
+      //Paths.route(conversation, action);
+      resolve(action);
+    })
+    .catch(err => reject(err))
+  })
+}
+
+
 // types of dialog
 /*
 
@@ -19,14 +42,6 @@ response: String
 
 // Starts a conversation
 
-'use strict';
-
-var Promise = require("bluebird");
-//var Conversation = require('./conversation.service');
-var Interpret = require('../interpreter');
-var Skills = require('../skills');
-var Messages = require ('../messages');
-import User from '../../api/user/user.model';
 /*export function respond(user, message){
  return new Promise(function(resolve, reject){
    // Interpret message
@@ -41,60 +56,3 @@ import User from '../../api/user/user.model';
    resolve(true);
  })
 }*/
-
-
-var Conversation = function(userId, action, message){
-  this.userId = userId;
-  this.action = action;
-  this.message = message;
-  return {
-     say: (text) => {
-       return new Promise((resolve, reject) => {
-         let message = {
-           userId: this.userId,
-           text: text
-         }
-         Messages.send(message)
-           .then(res => resolve(res))
-           .catch(err => reject(err))
-       })
-     },
-     action: this.action,
-     message: this.message,
-     user: () => {
-       return new Promise(function(resolve, reject){
-         User.findById(this.userId, '-salt -password')
-         .then(user => resolve(user))
-         .catch(err => reject(err))
-       })
-     },
-     context: ()=>{
-       return new Promise(function(resolve, reject){
-         Context.getContext(this.userId)
-         .then(context => resolve(context))
-         .catch(err => reject(err))
-       })
-     }
-     /*, clarify: (text, entities) => {
-       // ask, and set entities as expected
-     }*/
-  }
-}
-
-export function respond(message){
-  return new Promise(function(resolve, reject){
-    var conversation;
-    Interpret.getAction(message)
-    .then(action => {
-      conversation = new Conversation(message.userId, action, message);
-      Skills.respond(conversation, action)
-    })
-    .then(res => {
-      // route to skill
-      resolve(res)
-      console.log(res)
-    })
-    // when done, resolve
-    .catch(err => reject(err))
-  })
-}

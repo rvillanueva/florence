@@ -13,9 +13,16 @@ function mergeEntitiesIntoAction(action, entities, overwrite){
 export function getIntents(message, context){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  return new Promise(function(resolve, reject){
-   Wit.getIntents(message, context)
-   .then(intents => {resolve(intents)})
-   .catch(err => {reject(err)})
+   //Wit.getIntents(message, context)
+   //.then(intents => {resolve(intents)})
+   //.catch(err => {reject(err)})
+   console.log('getting intent')
+   resolve({
+     intent: 'logValue',
+     entities: {
+       "score": 7
+     }
+   })
  })
 }
 

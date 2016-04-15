@@ -4,7 +4,7 @@
 
 // Custom intepreter to select intent and override wit
 
-export function getIntent(message, context){
+export function checkRules(message, context){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  // other commands will override
  return new Promise(function(resolve, reject){
@@ -13,10 +13,8 @@ export function getIntent(message, context){
    }
 
    if(context.intent == 'logTrigger'){
-     context.entities.trigger = message.text;
      resolve('logTrigger');
    }
-
     resolve(false)
  })
 }
