@@ -1,10 +1,10 @@
 var Promise = require("bluebird");
 var request = require("request");
 
-export function intents(message, context){
+export function getIntents(message, context){
  return new Promise(function(resolve, reject){
    if(typeof message.text !== 'string'){
-     reject('Message must be a string.')
+     reject('Message have text.')
      return false;
    }
    var options = {
@@ -18,10 +18,11 @@ export function intents(message, context){
        bearer: process.env.WIT_SECRET
      }
    }
-   request.get(options, success(function(err, response, body){
+   request.get(options, function(err, response, body){
+     if(err){
+       reject(err);
+     }
      resolve(body);
-   }).error(function(err){
-     reject(err)
    })
  })
 }

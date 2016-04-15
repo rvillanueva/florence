@@ -20,7 +20,7 @@ response: String
 // Starts a conversation
 var Promise = require("bluebird");
 //var Conversation = require('./conversation.service');
-//var Interpret = require('../interpreter');
+var Interpret = require('../interpreter');
 var Skills = require('../skills');
 var Messages = require ('../messages')
 
@@ -69,5 +69,19 @@ export function test(message){
   var conversation = new Conversation(message.userId);
   conversation.say('Hello to you!');
   conversation.say('You\'re awesome.');
+}
 
+export function respond(message){
+  return new Promise(function(resolve, reject){
+    var conversation = new Conversation(message.userId);
+    Interpret.getAction(message)
+    .then(Skills.respond(conversation, action))
+    .then(res => {
+      // route to skill
+      resolve(res)
+      console.log(res)
+    })
+    // when done, resolve
+    .catch(err => reject(err))
+  })
 }

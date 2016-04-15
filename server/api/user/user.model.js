@@ -25,18 +25,26 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   messenger: {},
-  tracked: {
+  timezone: String,
+  settings: {
     frequency: String
     //measures: [{
       //measure: String, //ref
       //priority: Number,
     //}]
   },
-  expected: {
-    skill: String,
-    intent: String
+  engagement: {
+    score: Number,
+    fatigue: Number
+  },
+  context: {
+    intent: String,
+    entities: Object,
+    needed: {
+      entities: Array,
+      requested: String
+    }
   }
-  //engagementScore: Number
 });
 
 /**
