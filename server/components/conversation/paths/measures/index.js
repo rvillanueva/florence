@@ -3,7 +3,7 @@
 var Mood = require('./mood')
 var Triggers = require('../triggers')
 
-export function logValue(conversation) {
+export function logScore(conversation) {
   // save measure score
 
   return {
@@ -18,7 +18,7 @@ export function logValue(conversation) {
       } else {
         // Trigger next conversation
       }*/
-      Mood.respond(entities);
+      return Mood.logScore(conversation).respond(entities);
     },
     init: (entities) => {
       //ask for mood
@@ -31,7 +31,7 @@ export function logValue(conversation) {
       } else {
         // Route to correct question
       }*/
-      Mood.init(entities);
+      return Mood.init(entities);
     },
   }
 }

@@ -4,7 +4,6 @@ var Measures = require('../measures');
 
 export function hello(conversation){
   return {
-    context: context,
     respond: (entities) => {
       return new Promise(function(resolve, reject){
         if(entities.yesNo){

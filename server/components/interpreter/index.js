@@ -5,21 +5,7 @@ var Interpret = require('./interpreter.service');
 var Rules = require('./interpreter.rules');
 var Context = require('../context');
 
-function selectAction(intent, message, context){
-  if(!intent){
-    Interpret.getIntents(message, context)
-    .then(intents => Interpret.chooseActionFromIntents(context, intents))
-    .then(action => resolve(action))
-    .catch(err => reject(err))
-  } else {
-    Interpret.chooseActionFromRule(context, intent)
-    .then(action => resolve(action))
-    .catch(err => reject(err))
-  }
-}
-
-
-export function getAction(message){
+export function getResponse(message){
   return new Promise(function(resolve, reject){
     var context;
     Context.get(message.userId)
@@ -28,12 +14,23 @@ export function getAction(message){
       Rules.checkRules(message, context)
     })
     .then(intent => {
-      selectAction(intent, message, context)
+      return new Promise(function(resolve, reject){
+        var skip = !!intent;
+        Interpret.getIntents(message, context, true)
+          .then(response => resolve(response))
+          .catch(err => reject(err))
+      })
     })
-    .then(action => {
-      console.log(action)
-      resolve(action)
+    .then(intents => {
+      return new Promise(function(resolve, reject){
+        console.log('intents:')
+        console.log(intents);
+        Interpret.chooseResponse(context, intents)
+          .then(response => resolve(response))
+          .catch(err => reject(err))
+      })
     })
+    .then(response => resolve(response))
     .catch(err => reject(err))
   });
 }

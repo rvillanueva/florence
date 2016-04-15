@@ -10,11 +10,12 @@ var Conversation = require('./conversation.model').constructor;
 export function respond(message){
   return new Promise(function(resolve, reject){
     var conversation;
-    Interpret.getAction(message)
-    .then(action => {
+    Interpret.getResponse(message)
+    .then(response => {
       conversation = new Conversation(message.userId, message);
-      //Paths.route(conversation, action);
-      resolve(action);
+      Paths.route(conversation, response)
+        .then(res => resolve(res))
+        .catch(err => reject(err))
     })
     .catch(err => reject(err))
   })

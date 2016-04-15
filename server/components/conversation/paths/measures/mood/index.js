@@ -1,26 +1,27 @@
 var Measures = require('../../measures');
 var Triggers = require('../../triggers');
 
-export function logValue(conversation) {
+export function logScore(conversation) {
   return {
     respond: (entities) => {
+        conversation.say('Got it--thank you.')
+        return conversation.next();
+
       /*Entry.log({
         measure: 'mood',
         value: action.entities.value
       })*/
-      conversation.say('Got it--thank you.')
-      conversation.next();
     },
     init: (entities) => {
       conversation.say('On a scale of 1 (the worst) to 10 (the best), how are you feeling right now?')
-      conversation.expect({
-        intent:'logValue',
+      return conversation.expect({
+        intent:'logScore',
         entities: {
           measure: 'mood'
         },
         expected:['score']
       })
-    },
+    }
   }
 }
 
@@ -38,8 +39,8 @@ export function logTrigger(conversation) {
     },
     init: (entities) => {
       conversation.say('On a scale of 1 (the worst) to 10 (the best), how are you feeling right now?');
-      conversation.expect({
-        intent:'logValue',
+      return conversation.expect({
+        intent:'logTrigger',
         entities: {
           measure: 'mood'
         }

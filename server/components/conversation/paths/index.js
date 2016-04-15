@@ -31,26 +31,30 @@ unsubscribe
   }
 }*/
 
-var router = function(action){
+var router = function(conversation){
   return {
-    hello: General.hello(),
-    logScore: Measures.addScore(),
-    logTrigger: Measures.logTrigger(),
+    hello: General.hello(conversation),
+    logScore: Measures.logScore(conversation),
+    logTrigger: Measures.logTrigger(conversation),
     unsubscribe: false,
     engageMore: false,
     engageLess: false
   }
 }
 
-export function route(conversation, action){
+export function route(conversation, response){
   return new Promise(function(resolve, reject){
-    var path = router[action.intent];
-    if(route && path().respond){
-      path(conversation).respond(action)
-      .then(resolve(true))
+    console.log('response:')
+    console.log(response)
+    var path = function(conversation){
+      return router(conversation)['logScore'];
+    }
+    if(path && path().respond){
+      path(conversation).respond(response)
+      .then(res => resolve(res))
       .catch(err => reject(err))
     } else {
-      reject('No matching intent found.')
+      reject(new Error('No matching intent found.'))
     }
   })
 }
@@ -63,7 +67,7 @@ export function init(conversation){
       .then(resolve(true))
       .catch(err => reject(err))
     } else {
-      reject('No matching intent found.')
+      reject(new Error('No matching intent found.'))
     }
   })
 }

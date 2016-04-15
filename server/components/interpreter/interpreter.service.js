@@ -1,64 +1,62 @@
 var Wit = require('./wit');
 
-function mergeEntitiesIntoAction(action, entities, overwrite){
-  for (var key in entities) {
-    if (entities.hasOwnProperty(key)) {
-      if(overwrite === true || !action.entities[key]){
-        action.entities[key] = entities[key];
-      }
-    }
-  }
-}
-
-export function getIntents(message, context){
+export function getIntents(message, context, skip){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  return new Promise(function(resolve, reject){
-   //Wit.getIntents(message, context)
-   //.then(intents => {resolve(intents)})
-   //.catch(err => {reject(err)})
    console.log('getting intent')
-   resolve({
-     intent: 'logValue',
-     entities: {
-       "score": 7
-     }
-   })
+   if(skip){
+     resolve([{
+       intent: 'logScore',
+       entities: {
+         "score": 7
+       },
+       confidence: 1
+     }])
+   } else {
+     Wit.getIntents(message, context)
+     .then(intents => resolve(intents))
+     .catch(err => reject(err))
+   }
  })
 }
 
 
-export function chooseActionFromIntents(context, intents){
+export function chooseResponse(context, intents){
   // hardcode some commands in here
  return new Promise(function(resolve, reject){
    var switchConfidence = 0.7;
-   var action = {
-     intent: null,
-     entities: {}
-   }
+   var response = context;
+   var best = intents[0];
+   var override = false;
    // if top intent is > 70%, switch intents
    // should really cycle and choose highest intent -- FIX LATER
-   if(intents[0].intent == action.intent){
-     // merge entities and overwrite values
-     mergeEntitiesIntoAction(action, intents[0].entities, true)
-   }
-   if(intents[0].confidence >= switchConfidence){
-     action.intent = intents.intent;
-     action.entities = intents[0].entities;
+   if (best.confidence >= switchConfidence){
+     override = true;
+     response.intent = best.intent;
+     response.entities = best.entities;
    } else {
-     // otherwise merge in top intent's entities but don't overwrite existing values -- QUESTIONABLE
-     mergeEntitiesIntoAction(action, entities, false)
+     if(best.intent == response.intent){
+       // merge entities and overwrite values
+       override = true;
+     }
+     response = mergeEntities(response, best.entities, override)
    }
-   resolve(action);
+
+   // otherwise merge in top intent's entities but don't overwrite existing values -- QUESTIONABLE
+   console.log('response')
+   console.log(response);
+   resolve(response);
  })
 }
 
-export function chooseActionFromRule(context, intent){
-  // hardcode some commands in here
- return new Promise(function(resolve, reject){
-   var action = {
-     intent: intent,
-     entities: context.entities
-   }
-   resolve(action);
- })
+function mergeEntities(response, entities, overwrite){
+  var merged = response;
+  for (var key in entities) {
+    if (res.hasOwnProperty(key)) {
+      if(overwrite === true || !action.entities[key]){
+        res.entities[key] = entities[key];
+      }
+    }
+  }
+  return merged;
 }

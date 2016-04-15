@@ -35,12 +35,17 @@ export function constructor(userId, message){
        })
      },
      expect: (context) => {
-       Context.setContext(this.userId)
-       .then(context => resolve(context))
-       .catch(err => reject(err))
+       return new Promise(function(resolve, reject){
+         Context.setContext(this.userId)
+         .then(context => resolve(context))
+         .catch(err => reject(err))
+       })
      },
-     model: () => {
-
+     next: () => {
+       return new Promise(function(resolve, reject){
+         resolve();
+       })
+       // choose next best option
      }
   }
 }
