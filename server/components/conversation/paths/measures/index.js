@@ -31,7 +31,7 @@ export function addScore(conversation, response) {
     },
     init: (params) => {
       return new Promise(function(resolve, reject){
-        console.log('Initiating score function')
+        console.log('Initiating score function');
         Aspect.getById(params.aspectId)
         .then(aspect => {
           conversation.sayOne(aspect.questions.score); // handle better
@@ -40,7 +40,7 @@ export function addScore(conversation, response) {
             params: {
               aspectId: aspect._id
             },
-            needed: ['score']
+            needed: ['number']
           })
           .then(res => resolve(res))
           .catch(err => reject(err))

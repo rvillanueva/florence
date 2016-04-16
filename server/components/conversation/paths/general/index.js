@@ -5,10 +5,10 @@ var Aspects = require('../../../aspects');
 
 export function hello(conversation, response){
   return {
-    respond: () => {
+    respond: (params) => {
       return startOnboard(conversation, response).init();
     },
-    init: () => {
+    init: (params) => {
       // Generally won't fire
       return new Promise((resolve, reject) => {
         conversation.say('Hello! This is a test welcome message.');
@@ -37,14 +37,14 @@ export function unsubscribe(conversation, response){
 
 export function startOnboard(conversation, response){
   return {
-    respond: () => {
+    respond: (params) => {
 
     },
-    init: () => {
-      conversation.say('Hey there! Looks like it\'s your first time talking to me.');
+    init: (params) => {
+      conversation.say('Hey there!');
       conversation.say('My name\'s River, and I\'m designed to help you accomplish your wellness goals.');
-      conversation.say('You can message me at any time and I can log your progress.');
-      conversation.buttons('Interested?', [
+      conversation.say('What do you think?');
+      conversation.buttons('', [
         {
           type: 'postback',
           title: 'Sounds awesome.',
@@ -52,7 +52,7 @@ export function startOnboard(conversation, response){
         },
         {
           type: 'postback',
-          title:'Not really...',
+          title:'Eh...',
           payload: 1
         }
       ])

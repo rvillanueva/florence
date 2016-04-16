@@ -4,33 +4,6 @@ var Promise = require('bluebird');
 var Measures = require('./measures');
 var General = require('./general')
 
-/*
-
-Intents:
-
-addScore
-  measure
-addTrigger
-  measure
-startEntry
-  measure (optional)
-
-decreaseEngagement
-increaseEngagement
-unsubscribe
-
-  Select best intent
-  Choose action
-  expected intent
-
-  Skill + intent = action
-  expected: {
-    skill: name,
-    intent: name,
-    sent: Date
-  }
-}*/
-
 var router = function(conversation, response){
   return {
     hello: General.hello(conversation, response),

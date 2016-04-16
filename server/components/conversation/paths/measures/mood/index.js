@@ -19,7 +19,7 @@ export function logScore(conversation, response) {
         entities: {
           measure: 'mood'
         },
-        expected:['score']
+        expected:['number']
       })
     }
   }
