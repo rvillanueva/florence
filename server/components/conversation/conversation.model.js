@@ -30,10 +30,12 @@ export function constructor(userId, message){
          return Context.get(this.userId)
      },
      expect: (context) => {
+       console.log('EXPECTING:');
+       console.log(context);
          return Context.set(this.userId, context)
      },
      buttons: (text, buttons) => {
-       console.log('BUTTONS:')
+       console.log('SENDING BUTTONS:')
        console.log(text)
        console.log(buttons)
          return Messages.send({

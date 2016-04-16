@@ -10,7 +10,7 @@ export function hello(conversation, response){
     init: () => {
       // Generally won't fire
       conversation.say('Hello! This is a test welcome message.');
-      return Measures.logScore(conversation, response).init({
+      return Measures.addScore(conversation, response).init({
         measure: 'mood'
       });
     }
@@ -62,7 +62,7 @@ export function onboardStep2(conversation, response){
       conversation.say('Good to hear!');
       conversation.say('So, one thing I\'ve learned to track is your mood.');
 
-      return Measures.logScore(conversation, response).init({
+      return Measures.addScore(conversation, response).init({
         measure: 'mood'
       });
     },

@@ -35,8 +35,8 @@ var router = function(conversation, response){
   return {
     hello: General.hello(conversation, response),
     onboardStep2: General.onboardStep2(conversation, response),
-    logScore: Measures.logScore(conversation, response),
-    logTriggers: Measures.logTriggers(conversation, response),
+    addScore: Measures.addScore(conversation, response),
+    addTriggers: Measures.addTriggers(conversation, response),
     unsubscribe: false,
     engageMore: false,
     engageLess: false

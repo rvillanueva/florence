@@ -69,10 +69,6 @@ export function toMessenger(message){
         } else {
           reject('No user with that messenger id found.')
         }
-
-        console.log('FORMATTING:')
-        console.log(message);
-
         if(message.text){
           formatted.message.text = message.text;
         }
@@ -80,8 +76,6 @@ export function toMessenger(message){
         if(message.attachment){
           formatted.message.attachment = message.attachment;
         }
-        console.log('FORMATTED:')
-        console.log(formatted);
         if(!formatted.message.text && !formatted.message.attachment){
           reject('Message contained no content.');
         }

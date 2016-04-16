@@ -4,9 +4,11 @@ import mongoose from 'mongoose';
 
 var EntrySchema = new mongoose.Schema({
   //userId: Ref
-  user: String, //ref
-  measure: String, //ref
+  userId: String, //ref
+  aspectId: String, //ref
   score: Number,
+  priority: Number,
+  confidence: Number,
   triggers: String,
   tags: Array,
   created: Date

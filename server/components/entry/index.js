@@ -1,7 +1,7 @@
 'use strict';
 import Entry from '../../api/entry/entry.model';
 
-function createEntry(entry){
+export function addNew(entry){
   return new Promise((resolve, reject) => {
     var newEntry = new Entry(entry);
     newEntry.created = new Date();
@@ -39,8 +39,8 @@ export function add(entry, userId){
     console.log(entry);
     Entry.find({added:{"$gt": expiration}, measure: entry.measure, userId: userId}).sort('added').exec()
     .then(entries => {
-      if (!entries) {
-        createEntry(entry)
+      if (!entries || entries.length == 0) {
+        addNew(entry)
         .then(res => resolve(res))
         .catch(err => reject(err))
       } else {

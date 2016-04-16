@@ -26,12 +26,16 @@ var UserSchema = new Schema({
   github: {},
   messenger: {},
   timezone: String,
-  settings: {
+  tracked: [
+    {
+      type: String,
+      priority: Number,
+      frequency: Number,
+      aspectId: String // refid
+    }
+  ],
+  preferences: {
     frequency: String
-    //measures: [{
-      //measure: String, //ref
-      //priority: Number,
-    //}]
   },
   engagement: {
     score: Number,
