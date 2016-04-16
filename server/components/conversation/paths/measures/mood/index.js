@@ -52,7 +52,7 @@ export function logTriggers(conversation, response) {
     },
     init: () => {
       conversation.say('Has there been anything that\'s been making you feel better or worse?');
-      conversation.say('If you want, you can use #hashtags to keep track of specific things over time.');
+      conversation.say('(If you want, you can use #hashtags to keep track of specific things over time.)');
       return conversation.expect({
         intent:'logTriggers',
         entities: {

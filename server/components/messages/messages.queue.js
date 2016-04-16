@@ -3,7 +3,7 @@ var Messages = require('../messages');
 
 // Should really be doing this with a db item
 
-var delay = 1500;
+var delay = 2500;
 
 var storage = {
   userId: {
@@ -19,6 +19,7 @@ function clearTimer(userId){
 
 var sendNext = function(userId){
   if(storage[userId].queue.length > 0){
+    console.log('DELIVERING AT ' + new Date());
     var message = storage[userId].queue[0];
     Messages.deliver(message);
     storage[userId].queue.splice(0, 1);
