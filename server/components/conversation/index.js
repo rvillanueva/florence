@@ -12,6 +12,8 @@ export function respond(message){
     var conversation;
     Interpret.getResponse(message)
     .then(response => {
+      console.log('RESPONSE')
+      console.log(response)
       conversation = new Conversation(message.userId, message);
       Paths.route(conversation, response)
         .then(res => resolve(res))

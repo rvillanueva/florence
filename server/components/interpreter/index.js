@@ -18,12 +18,20 @@ export function getResponse(message){
       return Rules.checkRules(message, context)
     })
     .then(intent => {
-      overrideIntent = intent;
-      var skip = !!overrideIntent;
-      return Interpret.getIntents(message, context, skip)
+      return new Promise((resolve, reject)=>{
+        overrideIntent = intent;
+        var skip = !!intent;
+        Interpret.getIntents(message, context, skip)
+        .then(intents => resolve(intents))
+        .catch(err => resolve(err))
+      })
     })
     .then(intents => {
-      return Interpret.chooseResponse(message, context, intents, overrideIntent)
+      return new Promise((resolve, reject) => {
+        Interpret.chooseResponse(message, context, intents, overrideIntent)
+        .then(response => resolve(response))
+        .catch(err => reject(err))
+      })
     })
     .then(response => resolve(response))
     .catch(err => reject(err))

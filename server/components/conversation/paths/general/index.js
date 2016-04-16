@@ -43,8 +43,7 @@ export function startOnboard(conversation, response){
     init: (params) => {
       conversation.say('Hey there!');
       conversation.say('My name\'s River, and I\'m designed to help you accomplish your wellness goals.');
-      conversation.say('What do you think?');
-      conversation.buttons('', [
+      conversation.buttons('What do you think?', [
         {
           type: 'postback',
           title: 'Sounds awesome.',
@@ -52,7 +51,7 @@ export function startOnboard(conversation, response){
         },
         {
           type: 'postback',
-          title:'Eh...',
+          title: 'Eh...',
           payload: 1
         }
       ])

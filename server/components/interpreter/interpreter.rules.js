@@ -29,9 +29,9 @@ export function checkRules(message, context){
      });
    }
 
-   if(context.intent == 'logTriggers'){
+   if(context.intent == 'addTriggers'){
      resolve({
-       intent:'logTriggers'
+       intent:'addTriggers'
      });
    }
     resolve(false)

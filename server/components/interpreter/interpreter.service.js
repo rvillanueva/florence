@@ -4,30 +4,30 @@ export function getIntents(message, context, skip) {
   // if intent = trigger, skip Wit. otherwise, interpret intent & actions
   return new Promise(function(resolve, reject) {
     console.log('Parsing intent and entities...')
-      /*(if(intentOverride){
-     resolve([{
-       intent: intentOverride
-     }])
-   } else {
-     Wit.getIntents(message, context)
-     .then(intents => resolve(intents))
-     .catch(err => reject(err))
-   }
- */
     if (skip) {
       resolve(skip)
-    } else if (context.intent) {
-      resolve([{
-        intent: context.intent
-      }])
     } else {
-      resolve(
-        [{
-          intent: 'logScore'
-        }]
-      )
+      Wit.getIntents(message, context)
+      .then(intents => {
+        resolve(intents)
+      })
+      .catch(err => {
+        console.log('Wit response error: ')
+        console.log(err)
+        if (context.intent) {
+          resolve([{
+            intent: context.intent
+          }])
+        } else {
+          reject(err)
+        }
+      })
     }
   })
+
+  /*Wit.getIntents(message, context)
+  .then(intents => resolve(intents))
+  .catch(err => reject(err))*/
 
 }
 
@@ -35,16 +35,22 @@ export function getIntents(message, context, skip) {
 export function chooseResponse(message, context, intents, overrideIntent) {
   // hardcode some commands in here
   return new Promise(function(resolve, reject) {
-
     var switchConfidence = 0.7;
     var response = context;
-    var best = intents[0]; // should really cycle and choose highest intent -- FIX LATER
+    var best = false; // should really cycle and choose highest intent -- FIX LATER
     var overwrite = false;
+
+    if(intents && intents.outcomes){
+      best = intents.outcomes[0];
+    }
+
+    console.log('CHOOSING FROM INTENTS')
+    console.log(intents)
 
     if(overrideIntent){
       // override intent
       response = overrideIntent;
-    } else if (!response.intent || best.confidence >= switchConfidence) {
+    } else if (!response.intent || (switchConfidence && best.confidence >= switchConfidence)) {
       // if there's no intent or there's a high confidence in guessed intent, switch
         response.intent = best.intent;
         response.entities = best.entities;
@@ -57,16 +63,21 @@ export function chooseResponse(message, context, intents, overrideIntent) {
       response = mergeEntities(response, best.entities, false)
     }
     response.message = message;
+    console.log('MERGED RESPONSE:');
+    console.log(response);
     resolve(response);
   })
 }
 
 function mergeEntities(response, entities, overwrite) {
   var merged = response;
+  if(!merged.entities){
+    merged.entities = {};
+  }
   for (var key in entities) {
-    if (res.hasOwnProperty(key)) {
-      if (overwrite === true || !action.entities[key]) {
-        res.entities[key] = entities[key];
+    if (entities.hasOwnProperty(key)) {
+      if (overwrite === true || !merged.entities[key]) {
+        merged.entities[key] = entities[key];
       }
     }
   }
