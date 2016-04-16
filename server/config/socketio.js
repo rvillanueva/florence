@@ -17,10 +17,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/outcome/outcome.socket').register(socket);
-  require('../api/behavior/behavior.socket').register(socket);
-  require('../api/belief/belief.socket').register(socket);
-  require('../api/value/value.socket').register(socket);
+  require('../api/aspect/aspect.socket').register(socket);
   require('../api/message/message.socket').register(socket);
   require('../api/measure/measure.socket').register(socket);
   require('../api/entry/entry.socket').register(socket);

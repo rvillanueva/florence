@@ -1,6 +1,7 @@
 'use strict';
 var Promise = require('bluebird');
 var Measures = require('../measures');
+var Aspects = require('../../../aspects');
 
 export function hello(conversation, response){
   return {
@@ -9,10 +10,16 @@ export function hello(conversation, response){
     },
     init: () => {
       // Generally won't fire
-      conversation.say('Hello! This is a test welcome message.');
-      return Measures.addScore(conversation, response).init({
-        measure: 'mood'
-      });
+      return new Promise((resolve, reject) => {
+        conversation.say('Hello! This is a test welcome message.');
+        Aspects.getOutcomes()
+        .then(aspects => {
+          Measures.addScore(conversation, response).init({
+            aspectId: aspects[0]._id
+          });
+        })
+        .catch(err => reject(err))
+      })
     }
   }
 }
@@ -59,12 +66,17 @@ export function startOnboard(conversation, response){
 export function onboardStep2(conversation, response){
   return {
     respond: () => {
-      conversation.say('Good to hear!');
-      conversation.say('So, one thing I\'ve learned to track is your mood.');
-
-      return Measures.addScore(conversation, response).init({
-        measure: 'mood'
-      });
+      return new Promise((resolve, reject) => {
+        conversation.say('Good to hear!');
+        conversation.say('So, one thing I\'ve learned to track is your mood.');
+        Aspects.getOutcomes()
+        .then(aspects => {
+          Measures.addScore(conversation, response).init({
+            aspectId: aspects[0]._id
+          });
+        })
+        .catch(err => reject(err))
+      })
     },
     init: () => {
     }

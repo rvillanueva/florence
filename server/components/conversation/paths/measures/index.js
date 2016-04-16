@@ -1,12 +1,8 @@
-// Asks for mood
+var Aspect = require('../../../aspects');
 
-var Mood = require('./mood')
-var Triggers = require('../triggers')
-
-export function addAspect(conversation, response) {
+export function trackAspect(conversation, response) {
   // Need: aspectType
   // Optional: link
-
   return {
     respond: (params) => {
     },
@@ -19,7 +15,7 @@ export function addScore(conversation, response) {
   // Need: aspectId
   return {
     respond: (params) => {
-        if(!response.entities || !response.entities.score){
+        if(!params || !params.score){
           conversation.say('Hey, sorry, don\'t think I understood that.');
           conversation.say('Do you mind rephrasing and trying again?');
           return conversation.expect({
@@ -27,21 +23,34 @@ export function addScore(conversation, response) {
             needed: ['score']
           })
         }
-        
         conversation.say('Got it, thanks.');
         return Entry.add({
           aspectId: params.aspectId,
-          score: response.entities.score
+          score: params.score
         })
-
     },
     init: (params) => {
-      conversation.say('Let\'s log your mood.');
-      conversation.say('On a scale of one to ten, how would you rate your mood right now?');
-      return conversation.expect({
-        intent: 'addScore',
-        needed: ['score']
+      return new Promise(function(resolve, reject){
+        console.log('Initiating score function')
+        Aspect.getById(params.aspectId)
+        .then(aspect => {
+          conversation.sayOne(aspect.questions.score); // handle better
+          conversation.expect({
+            intent: 'addScore',
+            params: {
+              aspectId: aspect._id
+            },
+            needed: ['score']
+          })
+          .then(res => resolve(res))
+          .catch(err => reject(err))
+        })
+        .catch(err => reject(err))
       })
+      /*if(!params.aspectId){
+        conversation.say('What would you like to track?');
+        // requires aspectId for a measure
+      }*/
     },
   }
 }

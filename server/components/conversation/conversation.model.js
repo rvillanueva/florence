@@ -20,11 +20,14 @@ export function constructor(userId, message){
         })
      },
      sayOne: (phrases) => {
-         let text = phrases[Math.floor(Math.rand() * phrases.length)].text;
-         return Messages.send({
+        console.log('Saying one of:');
+        console.log(phrases);
+        var index = Math.floor(Math.random() * phrases.length);
+        var text = phrases[index];
+        Messages.send({
            userId: this.userId,
            text: text
-         });
+        });
      },
      context: ()=>{
          return Context.get(this.userId)

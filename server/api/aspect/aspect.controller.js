@@ -1,16 +1,16 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/values              ->  index
- * POST    /api/values              ->  create
- * GET     /api/values/:id          ->  show
- * PUT     /api/values/:id          ->  update
- * DELETE  /api/values/:id          ->  destroy
+ * GET     /api/aspects              ->  index
+ * POST    /api/aspects              ->  create
+ * GET     /api/aspects/:id          ->  show
+ * PUT     /api/aspects/:id          ->  update
+ * DELETE  /api/aspects/:id          ->  destroy
  */
 
 'use strict';
 
 import _ from 'lodash';
-import Value from './value.model';
+import Aspect from './aspect.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -59,43 +59,43 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Values
+// Gets a list of Aspects
 export function index(req, res) {
-  return Value.find().exec()
+  return Aspect.find().exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Gets a single Value from the DB
+// Gets a single Aspect from the DB
 export function show(req, res) {
-  return Value.findById(req.params.id).exec()
+  return Aspect.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Creates a new Value in the DB
+// Creates a new Aspect in the DB
 export function create(req, res) {
-  return Value.create(req.body)
+  return Aspect.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Updates an existing Value in the DB
+// Updates an existing Aspect in the DB
 export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return Value.findById(req.params.id).exec()
+  return Aspect.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Deletes a Value from the DB
+// Deletes a Aspect from the DB
 export function destroy(req, res) {
-  return Value.findById(req.params.id).exec()
+  return Aspect.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));

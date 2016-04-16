@@ -3,40 +3,40 @@
 var app = require('../..');
 import request from 'supertest';
 
-var newValue;
+var newAspect;
 
-describe('Value API:', function() {
+describe('Aspect API:', function() {
 
-  describe('GET /api/values', function() {
-    var values;
+  describe('GET /api/aspects', function() {
+    var aspects;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/values')
+        .get('/api/aspects')
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) {
             return done(err);
           }
-          values = res.body;
+          aspects = res.body;
           done();
         });
     });
 
     it('should respond with JSON array', function() {
-      values.should.be.instanceOf(Array);
+      aspects.should.be.instanceOf(Array);
     });
 
   });
 
-  describe('POST /api/values', function() {
+  describe('POST /api/aspects', function() {
     beforeEach(function(done) {
       request(app)
-        .post('/api/values')
+        .post('/api/aspects')
         .send({
-          name: 'New Value',
-          info: 'This is the brand new value!!!'
+          name: 'New Aspect',
+          info: 'This is the brand new aspect!!!'
         })
         .expect(201)
         .expect('Content-Type', /json/)
@@ -44,55 +44,55 @@ describe('Value API:', function() {
           if (err) {
             return done(err);
           }
-          newValue = res.body;
+          newAspect = res.body;
           done();
         });
     });
 
-    it('should respond with the newly created value', function() {
-      newValue.name.should.equal('New Value');
-      newValue.info.should.equal('This is the brand new value!!!');
+    it('should respond with the newly created aspect', function() {
+      newAspect.name.should.equal('New Aspect');
+      newAspect.info.should.equal('This is the brand new aspect!!!');
     });
 
   });
 
-  describe('GET /api/values/:id', function() {
-    var value;
+  describe('GET /api/aspects/:id', function() {
+    var aspect;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/values/' + newValue._id)
+        .get('/api/aspects/' + newAspect._id)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) {
             return done(err);
           }
-          value = res.body;
+          aspect = res.body;
           done();
         });
     });
 
     afterEach(function() {
-      value = {};
+      aspect = {};
     });
 
-    it('should respond with the requested value', function() {
-      value.name.should.equal('New Value');
-      value.info.should.equal('This is the brand new value!!!');
+    it('should respond with the requested aspect', function() {
+      aspect.name.should.equal('New Aspect');
+      aspect.info.should.equal('This is the brand new aspect!!!');
     });
 
   });
 
-  describe('PUT /api/values/:id', function() {
-    var updatedValue;
+  describe('PUT /api/aspects/:id', function() {
+    var updatedAspect;
 
     beforeEach(function(done) {
       request(app)
-        .put('/api/values/' + newValue._id)
+        .put('/api/aspects/' + newAspect._id)
         .send({
-          name: 'Updated Value',
-          info: 'This is the updated value!!!'
+          name: 'Updated Aspect',
+          info: 'This is the updated aspect!!!'
         })
         .expect(200)
         .expect('Content-Type', /json/)
@@ -100,27 +100,27 @@ describe('Value API:', function() {
           if (err) {
             return done(err);
           }
-          updatedValue = res.body;
+          updatedAspect = res.body;
           done();
         });
     });
 
     afterEach(function() {
-      updatedValue = {};
+      updatedAspect = {};
     });
 
-    it('should respond with the updated value', function() {
-      updatedValue.name.should.equal('Updated Value');
-      updatedValue.info.should.equal('This is the updated value!!!');
+    it('should respond with the updated aspect', function() {
+      updatedAspect.name.should.equal('Updated Aspect');
+      updatedAspect.info.should.equal('This is the updated aspect!!!');
     });
 
   });
 
-  describe('DELETE /api/values/:id', function() {
+  describe('DELETE /api/aspects/:id', function() {
 
     it('should respond with 204 on successful removal', function(done) {
       request(app)
-        .delete('/api/values/' + newValue._id)
+        .delete('/api/aspects/' + newAspect._id)
         .expect(204)
         .end((err, res) => {
           if (err) {
@@ -130,9 +130,9 @@ describe('Value API:', function() {
         });
     });
 
-    it('should respond with 404 when value does not exist', function(done) {
+    it('should respond with 404 when aspect does not exist', function(done) {
       request(app)
-        .delete('/api/values/' + newValue._id)
+        .delete('/api/aspects/' + newAspect._id)
         .expect(404)
         .end((err, res) => {
           if (err) {

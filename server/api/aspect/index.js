@@ -1,7 +1,7 @@
 'use strict';
 
 var express = require('express');
-var controller = require('./value.controller');
+var controller = require('./aspect.controller');
 
 var router = express.Router();
 

@@ -1,15 +1,15 @@
 /**
- * Value model events
+ * Aspect model events
  */
 
 'use strict';
 
 import {EventEmitter} from 'events';
-import Value from './value.model';
-var ValueEvents = new EventEmitter();
+import Aspect from './aspect.model';
+var AspectEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)
-ValueEvents.setMaxListeners(0);
+AspectEvents.setMaxListeners(0);
 
 // Model events
 var events = {
@@ -20,14 +20,14 @@ var events = {
 // Register the event emitter to the model events
 for (var e in events) {
   var event = events[e];
-  Value.schema.post(e, emitEvent(event));
+  Aspect.schema.post(e, emitEvent(event));
 }
 
 function emitEvent(event) {
   return function(doc) {
-    ValueEvents.emit(event + ':' + doc._id, doc);
-    ValueEvents.emit(event, doc);
+    AspectEvents.emit(event + ':' + doc._id, doc);
+    AspectEvents.emit(event, doc);
   }
 }
 
-export default ValueEvents;
+export default AspectEvents;
