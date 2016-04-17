@@ -1,5 +1,6 @@
 'use strict';
 import Entry from '../../api/entry/entry.model';
+var moment = require('moment');
 
 export function addNew(entry){
   return new Promise((resolve, reject) => {
@@ -28,16 +29,18 @@ function resolveEntries(lastEntry, newEntry){
   })
 }
 
-export function add(entry, userId){
+export function add(entry){
   return new Promise((resolve, reject) => {
     var expiration = moment().subtract(1, 'hours').toDate();
-    entry.userId = userId;
-    if(!entry.measure){
-      reject('Need measure with entry.')
+    if(!entry.aspectId){
+      reject('AspectId required for entry.')
+    }
+    if(!entry.userId){
+      reject('UserId required for entry.')
     }
     console.log('Creating entry:');
     console.log(entry);
-    Entry.find({added:{"$gt": expiration}, measure: entry.measure, userId: userId}).sort('added').exec()
+    Entry.find({added:{"$gt": expiration}, measure: entry.measure, userId: entry.userId}).sort('added').exec()
     .then(entries => {
       if (!entries || entries.length == 0) {
         addNew(entry)
@@ -45,7 +48,7 @@ export function add(entry, userId){
         .catch(err => reject(err))
       } else {
         resolveEntries(entries[0], entry)
-        .then(res = resolve(res));
+        .then(res = resolve(res))
         .catch(err => reject(err))
       }
     })

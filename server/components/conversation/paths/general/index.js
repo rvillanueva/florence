@@ -42,11 +42,11 @@ export function startOnboard(conversation, response){
     },
     init: (params) => {
       conversation.say('Hey there!');
-      conversation.say('My name\'s River, and I\'m designed to help you accomplish your wellness goals.');
+      conversation.say('My name\'s River, and I can help you track your wellness goals.');
       conversation.buttons('What do you think?', [
         {
           type: 'postback',
-          title: 'Sounds awesome.',
+          title: 'Sounds awesome!',
           payload: 0
         },
         {
@@ -56,13 +56,13 @@ export function startOnboard(conversation, response){
         }
       ])
       return conversation.expect({
-        intent: 'onboardStep2'
+        intent: 'chooseOutcome'
       });
     }
   }
 }
 
-export function onboardStep2(conversation, response){
+export function chooseOutcome(conversation, response){
   return {
     respond: () => {
       return new Promise((resolve, reject) => {

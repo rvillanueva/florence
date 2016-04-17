@@ -4,6 +4,7 @@ var Paths = require('./paths');
 var Messages = require ('../messages');
 var Context = require ('../context');
 import User from '../../api/user/user.model';
+var Entry = require('../entry');
 
 export function constructor(userId, message){
   this.userId = userId;
@@ -52,6 +53,10 @@ export function constructor(userId, message){
              }
            }
          })
+     },
+     addEntry: (entry) => {
+       entry.userId = this.userId;
+       return Entry.add(entry)
      },
      next: () => {
        return new Promise(function(resolve, reject){

@@ -7,7 +7,7 @@ var General = require('./general')
 var router = function(conversation, response){
   return {
     hello: General.hello(conversation, response),
-    onboardStep2: General.onboardStep2(conversation, response),
+    chooseOutcome: General.chooseOutcome(conversation, response),
     addScore: Measures.addScore(conversation, response),
     addTriggers: Measures.addTriggers(conversation, response),
     unsubscribe: false,
