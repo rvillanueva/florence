@@ -8,7 +8,9 @@ import {Schema} from 'mongoose';
 const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
 
 var UserSchema = new Schema({
-  name: String,
+  firstName: String, // Need to fix name virtual return
+  lastName: String,
+  profilePhoto: String,
   email: {
     type: String,
     lowercase: true
@@ -57,7 +59,7 @@ UserSchema
   .virtual('profile')
   .get(function() {
     return {
-      'name': this.name,
+      'name': this.firstName + ' ' + this.lastName,
       'role': this.role
     };
   });
@@ -70,6 +72,13 @@ UserSchema
       '_id': this._id,
       'role': this.role
     };
+  });
+
+
+UserSchema
+  .virtual('name')
+  .get(function () {
+    return this.firstName + ' ' + this.lastName;
   });
 
 /**

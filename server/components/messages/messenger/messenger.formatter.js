@@ -1,11 +1,12 @@
 'use strict';
 import User from '../../../api/user/user.model';
 var Messenger = require('./messenger.service');
+var UserService = require('../../user');
 
 export function toStandard(messageObj, user){
   return new Promise(function(resolve, reject){
 
-    Messenger.createUserIfNeeded(messageObj.sender.id)
+    UserService.getUserByMessengerId(messageObj.sender.id)
       .then(user => format(messageObj, user))
       .then(message => resolve(message))
       .catch(err => {

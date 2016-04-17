@@ -67,8 +67,6 @@ export function chooseResponse(message, context, intents, overrideIntent) {
       response = mergeEntities(response, best.entities, false)
     }
     response.message = message;
-    console.log('MERGED RESPONSE:');
-    console.log(response);
     resolve(response);
   })
 }

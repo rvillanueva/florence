@@ -3,6 +3,7 @@ import User from '../../../api/user/user.model';
 var request = require("request");
 var Messages = require("../../messages");
 var Format = require('./messenger.formatter');
+var Promise = require('bluebird');
 
 export function sendToApi(message){
   return new Promise(function(resolve, reject){
@@ -36,38 +37,6 @@ export function compileMessages(obj){
       })
     })
     resolve(concatenated);
-  })
-}
-
-export function createUserIfNeeded(messengerId){
-  return new Promise(function(resolve, reject){
-    User.findOne({'messenger.id': messengerId}, '_id').exec()
-    .then(user => {
-      if(user){
-        resolve(user);
-      } else {
-        var userData = {
-          messenger: {
-            id: messengerId
-          },
-        }
-        var newUser = new User(userData);
-        newUser.provider = 'facebook';
-        newUser.role = 'user';
-        newUser.context = {
-          intent: 'hello',
-          entities: {},
-          needed: []
-        }
-        newUser.save()
-          .then(user => {
-            resolve(user);
-          })
-          .catch(err => {
-            reject(err);
-          })
-      }
-    })
   })
 }
 
