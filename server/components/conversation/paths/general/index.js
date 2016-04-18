@@ -37,9 +37,6 @@ export function unsubscribe(conversation, response){
 
 export function startOnboard(conversation, response){
   return {
-    respond: (params) => {
-
-    },
     init: (params) => {
       conversation.say('Hey there!');
       conversation.say('My name\'s River, and I can help you track your wellness goals.');
@@ -47,27 +44,34 @@ export function startOnboard(conversation, response){
         {
           type: 'postback',
           title: 'Sounds awesome!',
-          payload: 0
+          payload: {
+            intent: 'startOnboard',
+            buttonValue: 0
+          }
         },
         {
           type: 'postback',
           title: 'Eh...',
-          payload: 1
+          payload: {
+            intent: 'startOnboard',
+            entities: null,
+            buttonValue: 1
+          }
         }
       ])
       return conversation.expect({
-        intent: 'chooseOutcome'
+        intent: 'startOnboard'
       });
-    }
-  }
-}
-
-export function chooseOutcome(conversation, response){
-  return {
-    respond: () => {
+    },
+    respond: (params) => {
       return new Promise((resolve, reject) => {
-        conversation.say('Good to hear!');
-        conversation.say('So, one thing I\'ve learned to track is your mood.');
+        if(response.entities.buttonValue == 0){
+          conversation.say('Good to hear!');
+        }
+        if(response.entities.buttonValue == 1){
+          conversation.say('Come on, you can do it!');
+        }
+        conversation.say('One thing I\'ve learned to track is your mood.');
         Aspects.getOutcomes()
         .then(aspects => {
           Measures.addScore(conversation, response).init({
@@ -77,7 +81,15 @@ export function chooseOutcome(conversation, response){
         .catch(err => reject(err))
       })
     },
+  }
+}
+
+export function chooseOutcome(conversation, response){
+  return {
     init: () => {
+    },
+    respond: () => {
+
     }
   }
 }

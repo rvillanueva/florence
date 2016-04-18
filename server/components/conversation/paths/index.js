@@ -4,9 +4,10 @@ var Promise = require('bluebird');
 var Measures = require('./measures');
 var General = require('./general')
 
-var router = function(conversation, response){
+var intents = function(conversation, response){
   return {
     hello: General.hello(conversation, response),
+    startOnboard: General.startOnboard(conversation, response),
     chooseOutcome: General.chooseOutcome(conversation, response),
     addScore: Measures.addScore(conversation, response),
     addTriggers: Measures.addTriggers(conversation, response),
@@ -19,7 +20,7 @@ var router = function(conversation, response){
 export function route(conversation, response){
   return new Promise((resolve, reject) => {
     function path(){
-      return router(conversation, response)[response.intent];
+      return intents(conversation, response)[response.intent];
     }
     if(path && typeof path().respond == 'function'){
       path(conversation, response).respond()

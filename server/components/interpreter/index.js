@@ -34,6 +34,7 @@ export function getResponse(message){
       })
     })
     .then(response => Interpret.convertAspectKey(response))
+    .then(response => Interpret.convertButtonPayload(response))
     .then(response => resolve(response))
     .catch(err => reject(err))
   });

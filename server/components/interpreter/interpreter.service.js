@@ -11,21 +11,29 @@ export function getIntents(message, context, skip) {
     if (skip) {
       resolve(skip)
     } else {
-      Wit.getIntents(message, context)
-      .then(intents => {
-        resolve(intents)
-      })
-      .catch(err => {
-        console.log('Wit response error: ')
-        console.log(err)
-        if (context.intent) {
-          resolve([{
-            intent: context.intent
-          }])
-        } else {
-          reject(err)
-        }
-      })
+      if(message.text){
+        Wit.getIntents(message, context)
+        .then(intents => {
+          resolve(intents)
+        })
+        .catch(err => {
+          console.log('Wit response error: ')
+          console.log(err)
+          if (context.intent) {
+            resolve([{
+              intent: context.intent
+            }])
+          } else {
+            reject(err)
+          }
+        })
+      } else {
+        // This is a stupid way to handle intent resolution without message text FIX ME
+        resolve([
+        {
+          intent: context.intent
+        }])
+      }
     }
   })
 
@@ -67,6 +75,7 @@ export function chooseResponse(message, context, intents, overrideIntent) {
       response = mergeEntities(response, best.entities, false)
     }
     response.message = message;
+    response.postback = message.postback;
     resolve(response);
   })
 }
@@ -101,6 +110,61 @@ export function convertAspectKey(response){
       .catch(err => reject(err))
     } else {
       resolve(response);
+    }
+  })
+}
+
+export function convertButtonPayload(response){
+  return new Promise(function(resolve, reject){
+    console.log('CONVERTING BUTTON PAYLOAD');
+    //EXPECTED FORMAT
+    // BTN_intent_{entities}_buttonCode
+    // INIT_intent_{entities}_buttonCode
+    if(!response.entities){
+      response.entities = {};
+    }
+    console.log(response);
+    if(response.message.postback){
+      var payload = response.message.postback;
+      var intentEndLoc;
+      var buttonValueStartLoc;
+      var newEntities;
+      if(typeof payload == 'string'){
+        if(payload.slice(0,4) == 'BTN_'){
+          response.input = 'messengerBtn';
+          payload = payload.slice(4)
+        }
+        if(payload.slice(0,5) == 'INIT_'){
+          response.input = 'sendToMessengerBtn';
+          payload = payload.slice(5);
+        } else {
+          resolve(response)
+        }
+        intentEndLoc = payload.indexOf('_');
+        if(intentEndLoc > -1){
+          response.intent = payload.slice(0, intentEndLoc);
+          payload = payload.slice(intentEndLoc + 1);
+        } else {
+          resolve(response);
+        }
+        buttonValueStartLoc = payload.indexOf('_');
+        if(buttonValueStartLoc || buttonValueStartLoc === 0){
+          response.entities.buttonValue = payload.slice(buttonValueStartLoc + 1, payload.length);
+          payload = payload.slice(0,buttonValueStartLoc);
+        } else {
+          resolve(response)
+        }
+        if(payload.length > 0){
+          newEntities = JSON.parse(newEntities);
+          // need to check if valid JSON
+          if(typeof newEntities == 'object'){
+            mergeEntities(response, newEntities, true)
+          }
+        }
+        resolve(response)
+      }
+    } else {
+      resolve(response)
     }
   })
 }

@@ -8,8 +8,6 @@ function extractContext(user){
      if(user.timezone){
        context.timezone = user.timezone;
      }
-     console.log('Context returned from user: ');
-     console.log(context);
      resolve(context);
    })
 }
@@ -29,9 +27,6 @@ export function set(userId, context){
    User.findById(userId, '-salt -password').exec()
    .then(user => {
      user.context = context;
-     console.log('Context set to: ');
-     console.log(context);
-
      user.save()
      .then(user => resolve(user.context))
      .catch(err => reject(err))
