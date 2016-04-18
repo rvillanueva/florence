@@ -63,7 +63,7 @@ export function updateFbProfile(user) {
         user.firstName = fbProfile.first_name;
       }
       if(fbProfile.last_name){
-        user.lastName = fbProfile.first_name;
+        user.lastName = fbProfile.last_name;
       }
       if(fbProfile.profile_pic){
         user.profilePhoto = fbProfile.profile_pic;

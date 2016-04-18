@@ -42,6 +42,7 @@ export default function(socketio) {
   // }));
 
   socketio.on('connection', function(socket) {
+    // socket.setMaxListeners(0);  // Set the client's socket.io EE to max listeners: unlimited
     socket.address = socket.request.connection.remoteAddress +
       ':' + socket.request.connection.remotePort;
 

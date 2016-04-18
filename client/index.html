@@ -13,6 +13,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/cropperjs/dist/cropper.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -20,6 +21,24 @@
       <!-- injector:css -->
       <!-- endinjector -->
     <!-- endbuild -->
+    <!--FB Plugins-->
+    <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1720113811599459',
+      xfbml      : true,
+      version    : 'v2.6'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
   </head>
   <body ng-app="riverApp">
     <!--[if lt IE 7]>
@@ -58,6 +77,8 @@
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
       <script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+      <script src="bower_components/moment/moment.js"></script>
+      <script src="bower_components/cropperjs/dist/cropper.js"></script>
       <!-- endbower -->
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -67,16 +88,18 @@
       <script src="app/admin/admin.module.js"></script>
       <script src="components/auth/auth.module.js"></script>
       <script src="components/util/util.module.js"></script>
-      <script src="components/auth/router.decorator.js"></script>
+      <script src="components/auth/interceptor.service.js"></script>
       <script src="app/admin/admin.controller.js"></script>
       <script src="app/account/account.js"></script>
       <script src="app/admin/admin.router.js"></script>
       <script src="app/main/main.controller.js"></script>
       <script src="app/main/main.js"></script>
+      <script src="app/routes/profile/profile.controller.js"></script>
+      <script src="app/routes/profile/profile.js"></script>
       <script src="app/account/settings/settings.controller.js"></script>
       <script src="components/auth/auth.service.js"></script>
-      <script src="components/auth/interceptor.service.js"></script>
       <script src="app/account/login/login.controller.js"></script>
+      <script src="components/auth/router.decorator.js"></script>
       <script src="components/auth/user.service.js"></script>
       <script src="components/footer/footer.directive.js"></script>
       <script src="components/modal/modal.service.js"></script>

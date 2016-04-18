@@ -58,8 +58,13 @@ var UserSchema = new Schema({
 UserSchema
   .virtual('profile')
   .get(function() {
+    var user = this;
     return {
+      '_id': this._id,
       'name': this.firstName + ' ' + this.lastName,
+      'firstName': this.firstName,
+      'lastName': this.lastName,
+      'profilePhoto': this.profilePhoto,
       'role': this.role
     };
   });

@@ -15,10 +15,52 @@ $fa-font-path: "../bower_components/font-awesome/fonts";
   padding: 0.2em 0;
 }
 
+img {
+  max-width: 100%;
+}
+
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+.navbar-styled {
+  background-color: rgb(34, 181, 115);
+  border: none;
+  height: 70px;
+  & .navbar-nav li a {
+    color: white;
+    padding: 25px 25px 25px 25px;
+    font-weight: 200;
+    &:hover,  &:focus {
+      background-color: transparent;
+      color: rgb(16, 84, 53)
+    }
+    &:active {
+      background-color: transparent;
+    }
+  }
+  & .navbar-text {
+    color: white;
+    margin: 25px 25px 25px 25px;
+  }
+  & .navbar-brand {
+    color: white;
+    padding: 0 0 0 0;
+    height: 70px;
+  }
+}
+
+.navbar-brand-image {
+  height: 70px;
+  padding: 14px;
+}
+
+
 // Component styles are injected through grunt
 /* inject:scss */
 @import 'admin/admin.scss';
 @import 'main/main.scss';
+@import 'routes/profile/profile.scss';
 @import '../components/footer/footer.scss';
 @import '../components/modal/modal.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';

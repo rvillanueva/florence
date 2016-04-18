@@ -5,7 +5,7 @@ var moment = require('moment');
 export function addNew(entry){
   return new Promise((resolve, reject) => {
     var newEntry = new Entry(entry);
-    newEntry.created = new Date();
+    newEntry.date = new Date();
     newEntry.save()
     .then(res => resolve(entry))
     .catch(err => resolve(err))
@@ -40,7 +40,7 @@ export function add(entry){
     }
     console.log('Creating entry:');
     console.log(entry);
-    Entry.find({added:{"$gt": expiration}, measure: entry.measure, userId: entry.userId}).sort('added').exec()
+    Entry.find({date:{"$gt": expiration}, aspectId: entry.aspectId, userId: entry.userId}).sort('added').exec()
     .then(entries => {
       if (!entries || entries.length == 0) {
         addNew(entry)

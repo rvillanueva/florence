@@ -100,3 +100,11 @@ export function destroy(req, res) {
     .then(removeEntity(res))
     .catch(handleError(res));
 }
+
+// Gets a single Entry from the DB
+export function showUserEntries(req, res) {
+  return Entry.find({'userId': req.params.userId}).exec()
+    .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}

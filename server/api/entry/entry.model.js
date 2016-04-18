@@ -11,7 +11,7 @@ var EntrySchema = new mongoose.Schema({
   confidence: Number,
   triggers: String,
   tags: Array,
-  created: Date
+  date: Date
 });
 
 export default mongoose.model('Entry', EntrySchema);

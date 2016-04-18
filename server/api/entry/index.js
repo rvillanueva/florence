@@ -5,6 +5,8 @@ var controller = require('./entry.controller');
 
 var router = express.Router();
 
+router.get('/user/:userId', controller.showUserEntries);
+
 /*router.get('/', controller.index);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
