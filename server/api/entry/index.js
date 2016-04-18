@@ -2,9 +2,10 @@
 
 var express = require('express');
 var controller = require('./entry.controller');
-
+import * as auth from '../../auth/auth.service';
 var router = express.Router();
 
+router.get('/user/me', auth.isAuthenticated(), controller.showMyEntries);
 router.get('/user/:userId', controller.showUserEntries);
 
 /*router.get('/', controller.index);

@@ -3,13 +3,13 @@
 
 class ProfileComponent {
   constructor($stateParams, $http) {
-    this.message = 'Hello';
     this.$http = $http;
     this.userId = $stateParams.id;
-    if(this.userId){
-      this.getProfile(this.userId);
-      this.getEntries(this.userId);
+    if(!this.userId){
+      this.userId = 'me';
     }
+    this.getProfile(this.userId);
+    this.getEntries(this.userId);
   }
   getProfile(userId){
     console.log(userId);

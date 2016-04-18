@@ -108,3 +108,12 @@ export function showUserEntries(req, res) {
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
+
+// Gets a single Entry from the DB
+export function showMyEntries(req, res) {
+  var userId = req.user._id;
+  return Entry.find({'userId': userId}).exec()
+    .then(handleEntityNotFound(res))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}

@@ -4,7 +4,7 @@
       <img src="{{user.profilePhoto}}" ng-if="user.profilePhoto" height="60px" />
 
 	    <div class="user-info">
-	        <strong><a href="/profile?id={{user._id}}">{{user.firstName}} {{user.firstName}}</strong></a><br>
+	        <strong><a href="/profile?id={{user._id}}">{{user.firstName}} {{user.lastName}}</strong></a><br>
 	        <span class="text-muted">{{user.email}}  |  {{user.messenger.id}}</span>
 	    </div>
         <a ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
