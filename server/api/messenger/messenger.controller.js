@@ -10,7 +10,6 @@
 'use strict';
 
 import _ from 'lodash';
-import Thing from '../thing/thing.model';
 
 var Messenger = require('../../components/messages/messenger');
 

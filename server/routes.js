@@ -12,9 +12,7 @@ export default function(app) {
   app.use('/api/aspects', require('./api/aspect'));
   app.use('/api/messages', require('./api/message'));
   app.use('/api/messenger', require('./api/messenger'));
-  app.use('/api/measures', require('./api/measure'));
   app.use('/api/entries', require('./api/entry'));
-  app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 
   app.use('/auth', require('./auth').default);

@@ -60,6 +60,8 @@ export function constructor(userId, message){
      },
      next: () => {
        return new Promise(function(resolve, reject){
+         Context.clear();
+         // get next best action;
          resolve();
        })
        // choose next best option

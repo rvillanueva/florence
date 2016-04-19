@@ -1,0 +1,17 @@
+<div class="aspects-page">
+  <div class="container">
+    <h2>Aspects</h2>
+    <table>
+      <thead>
+        <td>Aspect</td>
+        <td>Type</td>
+        <td>_id</td>
+      </thead>
+      <tr ng-repeat="aspect in $ctrl.aspects">
+        <td>{{aspect.name}}</td>
+        <td>{{aspect.type}}</td>
+        <td>{{aspect._id}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

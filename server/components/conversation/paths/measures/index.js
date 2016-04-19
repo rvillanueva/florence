@@ -34,6 +34,10 @@ export function addScore(conversation, response) {
         var aspectId = response.entities.aspectId || params.aspectId;
         if(!aspectId){
           conversation.say('What would you like to track?')
+          conversation.expect({
+            intent: 'selectAspect',
+            needed: ['aspect']
+          })
         } else {
           Aspect.getById(aspectId)
           .then(aspect => {
@@ -52,10 +56,6 @@ export function addScore(conversation, response) {
         }
 
       })
-      /*if(!params.aspectId){
-        conversation.say('What would you like to track?');
-        // requires aspectId for a measure
-      }*/
     },
     respond: (params) => {
       if(!params){
@@ -65,9 +65,6 @@ export function addScore(conversation, response) {
       if(response.entities && response.entities.number && response.entities.number[0].value){
         score = response.entities.number[0].value;
       }
-
-      console.log(response);
-      console.log(params)
         var aspectId = response.entities.aspectId || params.aspectId;
         if(!aspectId){
           conversation.say('What would you like to track?');
@@ -84,11 +81,12 @@ export function addScore(conversation, response) {
             needed: ['number']
           })
         }
-        conversation.say('Got it, thanks.');
-        return conversation.addEntry({
+        conversation.say('Got it, thanks!');
+        conversation.addEntry({
           aspectId: response.entities.aspectId,
           score: score
         })
+        return conversation.next();
     }
   }
 }
