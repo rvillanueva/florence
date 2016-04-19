@@ -8,7 +8,7 @@ var intents = function(conversation, response){
   return {
     hello: General.hello(conversation, response),
     startOnboard: General.startOnboard(conversation, response),
-    chooseOutcome: General.chooseOutcome(conversation, response),
+    explainSkills: General.explainSkills(conversation, response),
     addScore: Measures.addScore(conversation, response),
     addTriggers: Measures.addTriggers(conversation, response),
     unsubscribe: false,

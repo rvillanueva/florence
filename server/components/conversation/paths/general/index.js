@@ -38,12 +38,12 @@ export function unsubscribe(conversation, response){
 export function startOnboard(conversation, response){
   return {
     init: (params) => {
-      conversation.say('Hey there!');
-      conversation.say('My name\'s River, and I can help you track your wellness goals.');
-      conversation.buttons('What do you think?', [
+      conversation.say('Oh, hey there!');
+      conversation.say('I\'m River, and I\'m learning to be a personal care companion.');
+      conversation.buttons(' ', [
         {
           type: 'postback',
-          title: 'Sounds awesome!',
+          title: 'Still learning?',
           payload: {
             intent: 'startOnboard',
             buttonValue: 0
@@ -51,9 +51,9 @@ export function startOnboard(conversation, response){
         },
         {
           type: 'postback',
-          title: 'Eh...',
+          title: 'What can you do?',
           payload: {
-            intent: 'startOnboard',
+            intent: 'explainSkills',
             entities: null,
             buttonValue: 1
           }
@@ -66,30 +66,60 @@ export function startOnboard(conversation, response){
     respond: (params) => {
       return new Promise((resolve, reject) => {
         if(response.entities.buttonValue == 0){
-          conversation.say('Good to hear!');
+          conversation.say('Yup! I\'m still in school, so I haven\'t been certified to do everything quite yet.');
+          conversation.say('But hopefully interacting with you will teach me some new things about how to talk to people.');
+          explainSkills(conversation, response).init();
+          resolve();
         }
-        if(response.entities.buttonValue == 1){
-          conversation.say('Come on, you can do it!');
-        }
-        conversation.say('One thing I\'ve learned to track is your mood.');
-        Aspects.getOutcomes()
-        .then(aspects => {
-          Measures.addScore(conversation, response).init({
-            aspectId: aspects[0]._id
-          });
-        })
-        .catch(err => reject(err))
       })
     },
   }
 }
 
-export function chooseOutcome(conversation, response){
+export function explainSkills(conversation, response){
   return {
     init: () => {
+      conversation.say('There are a few things I can help you out with now. Want to hear them?');
+      conversation.buttons(' ', [
+        {
+          type: 'postback',
+          title: 'Sure',
+          payload: {
+            intent: 'explainSkills',
+            buttonValue: 1
+          }
+        },
+        {
+          type: 'postback',
+          title: 'Nope.',
+          payload: {
+            intent: 'explainSkills',
+            buttonValue: 0
+          }
+        }
+      ])
+      return conversation.expect({
+        intent: 'explainSkills'
+      });
     },
     respond: () => {
-
+      return new Promise((resolve, reject) => {
+        if(response.entities.buttonValue == 1){
+          conversation.say('Great!');
+        }
+        if(!response.entities || response.entities.buttonValue !== 0){
+          conversation.say('Here are some of the things I can help you with. Let me know if you\'re interested in any of them!');
+          Aspects.getOutcomes()
+          .then(aspects => {
+            Measures.addScore(conversation, response).init({
+              aspectId: aspects[0]._id
+            });
+          })
+        } else if (response.entities.buttonValue == 0){
+          conversation.say('Okay, no problem! If there\'s anything you want me to help you track, feel free to type it in below!')
+        }
+        resolve();
+      })
     }
   }
 }
