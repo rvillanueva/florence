@@ -1,5 +1,4 @@
 var Measures = require('../../measures');
-var Triggers = require('../../triggers');
 
 export function logScore(conversation, response) {
   return {

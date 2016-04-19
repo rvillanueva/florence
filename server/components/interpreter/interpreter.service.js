@@ -1,7 +1,7 @@
 'use strict';
 
 var Wit = require('./wit');
-var Aspect = require('../aspects');
+var Aspects = require('../aspects');
 var Promise = require('bluebird');
 
 export function getIntents(message, context, skip) {
@@ -98,7 +98,7 @@ function mergeEntities(response, entities, overwrite) {
 export function convertAspectKey(response){
   return new Promise(function(resolve, reject){
     if(response.entities && response.entities.aspectKey){
-      Aspect.getByKey(response.entities.aspectKey).exec()
+      Aspects.getByKey(response.entities.aspectKey)
       .then(aspect => {
         if(!aspect){
           console.log('Error: No matching aspect exists for \'' + response.entities.aspectKey + '\'')
@@ -154,8 +154,10 @@ export function convertButtonPayload(response){
         } else {
           resolve(response)
         }
+        console.log('ENTITIES FROM BTN')
+        console.log(payload)
         if(payload.length > 0){
-          newEntities = JSON.parse(newEntities);
+          newEntities = JSON.parse(payload);
           // need to check if valid JSON
           if(typeof newEntities == 'object'){
             mergeEntities(response, newEntities, true)

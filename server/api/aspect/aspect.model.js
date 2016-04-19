@@ -10,6 +10,10 @@ var AspectSchema = new mongoose.Schema({
   type: String, // Value, belief, behavior, or outcome
   name: String,
   imageUrl: String,
+  callToAction: {
+    title: String,
+    subtitle: String
+  },
   scale: {
     min: Number,
     max: Number,

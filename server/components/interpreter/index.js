@@ -33,8 +33,8 @@ export function getResponse(message){
         .catch(err => reject(err))
       })
     })
-    .then(response => Interpret.convertAspectKey(response))
     .then(response => Interpret.convertButtonPayload(response))
+    .then(response => Interpret.convertAspectKey(response))
     .then(response => resolve(response))
     .catch(err => reject(err))
   });

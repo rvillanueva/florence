@@ -10,7 +10,7 @@ class MainController {
 
 angular.module('riverApp')
   .component('main', {
-    templateUrl: 'app/main/main.html',
+    templateUrl: 'app/routes/main/main.html',
     controller: MainController
   });
 

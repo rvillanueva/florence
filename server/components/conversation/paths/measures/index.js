@@ -1,4 +1,4 @@
-var Aspect = require('../../../aspects');
+var Aspects = require('../../../aspects');
 var Entry = require('../../../entry');
 
 export function trackAspect(conversation, response) {
@@ -6,8 +6,56 @@ export function trackAspect(conversation, response) {
   // Optional: link
   return {
     init: (params) => {
+      return new Promise((resolve, rejct)=>{
+        conversation.say('Here are some of the things I can help you with. Let me know if you\'re interested in any of them!');
+        var aspectCards = [];
+        Aspects.getOutcomes()
+        .then(aspects => {
+          console.log('ASPECTS')
+          console.log(aspects)
+          aspects.forEach((aspect, i)=>{
+            var card = {
+              title: aspect.callToAction.title,
+              //image_url: aspect.imageUrl,
+              subtitle: aspect.callToAction.subtitle,
+              buttons: [{
+                type: 'postback',
+                title: 'Start',
+                payload: {
+                  intent: 'trackAspect',
+                  entities: {
+                    aspectId: aspect._id
+                  }
+                }
+              }]
+            }
+            aspectCards.push(card);
+          })
+          conversation.cards(aspectCards);
+          conversation.expect({
+            intent: 'trackAspect'
+          })
+          .then(res => resolve(res))
+          .catch(err => reject(err))
+        })
+        .catch(err => reject(err))
+      })
     },
     respond: (params) => {
+      return new Promise((resolve, reject) => {
+        if(response.entities.aspectId){
+          addScore(conversation, response).init({
+            aspectId: response.entities.aspectId
+          });
+          resolve();
+        } else {
+          conversation.say('Oh shoot! Don\'t think I caught that – can you try again?');
+          conversation.expect({
+            intent: 'trackAspect'
+          })
+          resolve();
+        }
+      })
     }
   }
 }
@@ -32,15 +80,19 @@ export function addScore(conversation, response) {
       return new Promise(function(resolve, reject){
         console.log('Initiating score function');
         var aspectId = response.entities.aspectId || params.aspectId;
+        console.log(aspectId)
         if(!aspectId){
           conversation.say('What would you like to track?')
           conversation.expect({
             intent: 'selectAspect',
             needed: ['aspect']
           })
+          resolve();
         } else {
-          Aspect.getById(aspectId)
+          Aspects.getById(aspectId)
           .then(aspect => {
+            console.log('returned aspect from ' + aspectId)
+            console.log(aspect);
             conversation.sayOne(aspect.questions.score); // handle better
             conversation.expect({
               intent: 'addScore',

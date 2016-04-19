@@ -54,13 +54,25 @@ export function constructor(userId, message){
            }
          })
      },
+     cards: (cards) => {
+       return Messages.send({
+         userId: this.userId,
+         attachment:{
+           type: 'template',
+           payload: {
+             template_type: 'generic',
+             elements: cards
+           }
+         }
+       })
+     },
      addEntry: (entry) => {
        entry.userId = this.userId;
        return Entry.add(entry)
      },
      next: () => {
-       return new Promise(function(resolve, reject){
-         Context.clear();
+       return new Promise((resolve, reject)=>{
+         Context.clear(this.userId);
          // get next best action;
          resolve();
        })

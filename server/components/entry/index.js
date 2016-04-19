@@ -14,11 +14,11 @@ export function addNew(entry){
 
 function resolveEntries(lastEntry, newEntry){
   return new Promise((resolve, reject) => {
-    if(lastEntry.value && newEntry.value || lastEntry.triggers && newEntry.triggers){
+    if(lastEntry.score && newEntry.score || lastEntry.triggers && newEntry.triggers){ // FIX ME - handle for all properties
       createEntry(newEntry)
     } else {
-      if(!lastEntry.value && newEntry.value){
-        lastEntry.value = newEntry.value
+      if(!lastEntry.score && newEntry.score){
+        lastEntry.score = newEntry.score
       }
       if(!lastEntry.triggers && newEntry.triggers){
         lastEntry.triggers = newEntry.triggers
@@ -42,13 +42,13 @@ export function add(entry){
     console.log(entry);
     Entry.find({date:{"$gt": expiration}, aspectId: entry.aspectId, userId: entry.userId}).sort('added').exec()
     .then(entries => {
-      if (!entries || entries.length == 0) {
+      if (!entries || entries.length == 0 ) {
         addNew(entry)
         .then(res => resolve(res))
         .catch(err => reject(err))
       } else {
         resolveEntries(entries[0], entry)
-        .then(res = resolve(res))
+        .then(res => resolve(res))
         .catch(err => reject(err))
       }
     })

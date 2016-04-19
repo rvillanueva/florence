@@ -91,23 +91,38 @@ export function toMessenger(message) {
 
 function convertButtonsToMessenger(message){
   return new Promise((resolve, reject) => {
-    if(message.attachment && message.attachment.payload && message.attachment.payload.buttons){
-      var buttons = message.attachment.payload.buttons;
-      buttons.forEach((button, i) => {
-        var entities = '';
-        var intent = button.payload.intent || '';
-        var buttonValue = '';
-        if(button.payload.buttonValue || button.payload.buttonValue === 0){
-          buttonValue = button.payload.buttonValue;
-        }
-        if(button.entities){
-          entities = JSON.stringify(button.payload.entities);
-        }
-        var newPayload = 'BTN_' + intent + '_' + entities + '_' + buttonValue;
-        console.log('Button payload: ' + newPayload);
-        button.payload = newPayload;
-      })
+    if(message.attachment && message.attachment.payload){
+      if(message.attachment.payload.buttons){
+        message.attachment.payload.buttons = convertButtons(message.attachment.payload.buttons);
+      } else if (message.attachment.payload.elements) {
+        var cards = message.attachment.payload.elements;
+        cards.forEach((card, i) => {
+          card.buttons = convertButtons(card.buttons);
+        })
+      } else {
+        resolve(message)
+      }
     }
     resolve(message)
   })
+}
+
+function convertButtons(buttons) {
+  buttons.forEach((button, i) => {
+    var entities = '';
+    var intent = button.payload.intent || '';
+    var buttonValue = '';
+    if (button.payload.buttonValue || button.payload.buttonValue === 0) {
+      buttonValue = button.payload.buttonValue;
+    }
+    if (button.payload.entities) {
+      console.log('BUTTON ENTITIES')
+      console.log(button.payload.entities)
+      entities = JSON.stringify(button.payload.entities);
+    }
+    var newPayload = 'BTN_' + intent + '_' + entities + '_' + buttonValue;
+    button.payload = newPayload;
+    console.log('BUTTON PAYLOAD: ' + newPayload)
+  })
+  return buttons;
 }

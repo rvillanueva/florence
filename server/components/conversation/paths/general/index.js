@@ -43,19 +43,18 @@ export function startOnboard(conversation, response){
       conversation.buttons(' ', [
         {
           type: 'postback',
-          title: 'Still learning?',
+          title: 'What can you do?',
           payload: {
-            intent: 'startOnboard',
-            buttonValue: 0
+            intent: 'explainSkills',
+            buttonValue: 1
           }
         },
         {
           type: 'postback',
-          title: 'What can you do?',
+          title: 'Learning?',
           payload: {
-            intent: 'explainSkills',
-            entities: null,
-            buttonValue: 1
+            intent: 'startOnboard',
+            buttonValue: 0
           }
         }
       ])
@@ -66,8 +65,11 @@ export function startOnboard(conversation, response){
     respond: (params) => {
       return new Promise((resolve, reject) => {
         if(response.entities.buttonValue == 0){
-          conversation.say('Yup! I\'m still in school, so I haven\'t been certified to do everything quite yet.');
-          conversation.say('But hopefully interacting with you will teach me some new things about how to talk to people.');
+          conversation.say('Yup! I\'m still in the Bot Academy, so I haven\'t been certified to do everything quite yet. :)');
+          conversation.say('But interacting with you will teach me some new things about how to talk to people.');
+          explainSkills(conversation, response).init();
+          resolve();
+        } else {
           explainSkills(conversation, response).init();
           resolve();
         }
@@ -79,7 +81,7 @@ export function startOnboard(conversation, response){
 export function explainSkills(conversation, response){
   return {
     init: () => {
-      conversation.say('There are a few things I can help you out with now. Want to hear them?');
+      conversation.say('Even though I\'m still training, there are a few things I can do. Want to hear them?');
       conversation.buttons(' ', [
         {
           type: 'postback',
@@ -105,19 +107,14 @@ export function explainSkills(conversation, response){
     respond: () => {
       return new Promise((resolve, reject) => {
         if(response.entities.buttonValue == 1){
-          conversation.say('Great!');
+          conversation.say('Awesome!');
+          return Measures.trackAspect(conversation, response).init();
         }
         if(!response.entities || response.entities.buttonValue !== 0){
-          conversation.say('Here are some of the things I can help you with. Let me know if you\'re interested in any of them!');
-          Aspects.getOutcomes()
-          .then(aspects => {
-            Measures.addScore(conversation, response).init({
-              aspectId: aspects[0]._id
-            });
-          })
         } else if (response.entities.buttonValue == 0){
           conversation.say('Okay, no problem! If there\'s anything you want me to help you track, feel free to type it in below!')
         }
+        conversation.next();
         resolve();
       })
     }

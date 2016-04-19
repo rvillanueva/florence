@@ -4,7 +4,9 @@ var Promise = require('bluebird');
 export function getById(id) {
   return new Promise(function(resolve, reject){
     Aspect.findById(id).exec()
-    .then(aspect => resolve(aspect))
+    .then(aspect => {
+      resolve(aspect)
+    })
     .catch(err => reject(err))
   })
 }
