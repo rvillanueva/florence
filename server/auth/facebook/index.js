@@ -3,6 +3,7 @@
 import express from 'express';
 import passport from 'passport';
 import {setTokenCookie} from '../auth.service';
+import * as Verify from '../../verify';
 var Promise = require('bluebird');
 var router = express.Router();
 
@@ -29,6 +30,13 @@ router
       failureRedirect: '/login',
       session: false
     })(req, res, next)
-  }, setTokenCookie);
+  }, setTokenCookie)
+  .get('/verify', function(req, res, next) {
+    Verify.verify(req.query.userId, req.query.token)
+    .then(res => {
+      res.status(200).send('Verified!');
+    })
+    .catch(err => res.status(err.statusCode).end())
+  });
 
 export default router;
