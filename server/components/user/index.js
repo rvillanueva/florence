@@ -66,7 +66,7 @@ export function updateFbProfile(user) {
         user.lastName = fbProfile.last_name;
       }
       if(fbProfile.profile_pic){
-        user.profilePhoto = fbProfile.profile_pic;
+        user.picture = fbProfile.profile_pic;
       }
       console.log('USER')
       console.log(user);

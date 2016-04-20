@@ -10,7 +10,7 @@ const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
 var UserSchema = new Schema({
   firstName: String, // Need to fix name virtual return
   lastName: String,
-  profilePhoto: String,
+  picture: String,
   email: {
     type: String,
     lowercase: true
@@ -27,6 +27,11 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   messenger: {},
+  verify: {
+    token: String,
+    expires: Date,
+    facebook: {}
+  },
   timezone: String,
   tracked: [
     {
@@ -64,7 +69,7 @@ UserSchema
       'name': this.firstName + ' ' + this.lastName,
       'firstName': this.firstName,
       'lastName': this.lastName,
-      'profilePhoto': this.profilePhoto,
+      'picture': this.picture,
       'role': this.role
     };
   });

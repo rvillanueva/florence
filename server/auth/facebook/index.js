@@ -7,14 +7,28 @@ var Promise = require('bluebird');
 var router = express.Router();
 
 router
-  .get('/', passport.authenticate('facebook', {
+  .get('/', function(req, res) {
+    var options = {
       scope: ['email', 'user_about_me'],
       failureRedirect: '/login',
       session: false
-  }))
-  .get('/callback', passport.authenticate('facebook', {
-    failureRedirect: '/login',
-    session: false
-  }), setTokenCookie);
+    }
+    if (req.query) {
+      var state = {
+        userId: req.query.userId,
+        verifyToken: req.query.verifyToken
+      }
+      options.state = JSON.stringify(state);
+    } else {
+      options.state = JSON.stringify({})
+    }
+    passport.authenticate('facebook', options)(req, res);
+  })
+  .get('/callback', function(req, res, next) {
+    passport.authenticate('facebook', {
+      failureRedirect: '/login',
+      session: false
+    })(req, res, next)
+  }, setTokenCookie);
 
 export default router;

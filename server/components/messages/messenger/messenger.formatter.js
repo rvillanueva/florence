@@ -63,7 +63,7 @@ export function toMessenger(message) {
       .then(message => User.findById(message.userId, '_id messenger').exec())
       .then(user => {
         if (!user) {
-          reject('No user found.')
+          reject('No user found with id: ' + message.userId)
         }
         if (user.messenger && user.messenger.id) {
           formatted.recipient.id = user.messenger.id;
@@ -109,20 +109,24 @@ function convertButtonsToMessenger(message){
 
 function convertButtons(buttons) {
   buttons.forEach((button, i) => {
-    var entities = '';
-    var intent = button.payload.intent || '';
-    var buttonValue = '';
-    if (button.payload.buttonValue || button.payload.buttonValue === 0) {
-      buttonValue = button.payload.buttonValue;
+    if(button.payload){
+      button.payload = button.payload || {};
+      var entities = '';
+      var intent = button.payload.intent || '';
+      var buttonValue = '';
+      if (button.payload.buttonValue || button.payload.buttonValue === 0) {
+        buttonValue = button.payload.buttonValue;
+      }
+      if (button.payload.entities) {
+        console.log('BUTTON ENTITIES')
+        console.log(button.payload.entities)
+        entities = JSON.stringify(button.payload.entities);
+      }
+      var newPayload = 'BTN_' + intent + '_' + entities + '_' + buttonValue;
+      button.payload = newPayload;
+      console.log('BUTTON PAYLOAD: ' + newPayload)
     }
-    if (button.payload.entities) {
-      console.log('BUTTON ENTITIES')
-      console.log(button.payload.entities)
-      entities = JSON.stringify(button.payload.entities);
-    }
-    var newPayload = 'BTN_' + intent + '_' + entities + '_' + buttonValue;
-    button.payload = newPayload;
-    console.log('BUTTON PAYLOAD: ' + newPayload)
+    console.log(button)
   })
   return buttons;
 }
