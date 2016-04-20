@@ -5,13 +5,14 @@ export function setup(User, config) {
   passport.use(new FacebookStrategy({
     clientID: config.facebook.clientID,
     clientSecret: config.facebook.clientSecret,
-    callbackURL: config.facebook.callbackURL,
+    callbackURL: config.facebook.callbackURL + '?&state=testing',
     profileFields: [
       'displayName',
       'emails'
     ]
   },
-  function(accessToken, refreshToken, profile, done) {
+  function(accessToken, refreshToken, profile, done){
+    console.log(this.state)
     User.findOne({'facebook.id': profile.id}).exec()
       .then(user => {
         if (user) {

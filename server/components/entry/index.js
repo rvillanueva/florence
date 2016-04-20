@@ -14,8 +14,11 @@ export function addNew(entry){
 
 function resolveEntries(lastEntry, newEntry){
   return new Promise((resolve, reject) => {
-    if(lastEntry.score && newEntry.score || lastEntry.triggers && newEntry.triggers){ // FIX ME - handle for all properties
-      createEntry(newEntry)
+    if(
+      lastEntry.score && newEntry.score ||
+      lastEntry.triggers && newEntry.triggers
+    ){ // FIX ME - handle for all properties
+      addNew(newEntry)
     } else {
       if(!lastEntry.score && newEntry.score){
         lastEntry.score = newEntry.score
