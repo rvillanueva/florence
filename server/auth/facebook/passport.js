@@ -14,25 +14,37 @@ export function setup(User, config) {
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done){
-    console.log('Calling back...');
-    console.log(profile);
-    req.query = req.query || {}
-    var state = JSON.parse(req.query.state) || {};
-    var userId = state.userId;
+    req.query = req.query || {};
+    var state = {};
+    if(req.query.state){
+      try {
+          state = JSON.parse(req.query.state);
+      } catch (e) {
+          console.log('Invalid state JSON.')
+      }
+    }
+
     User.findOne({'facebook.id': profile.id}, '-salt -password').exec()
       .then(user => {
-        if (!user) {
-          console.log('No user found, creating verification...');
-          Verify.createVerification('facebook', profile, userId)
-          .then(sent => {
-            return done(null, sent);
-          })
-          .catch(err => {
-            return done(null, false, err);
-          })
-        } else {
+        if (user) {
           return done(null, user);
         }
+
+        if(!state.userId){
+          return done(null, false, {
+            message: 'To complete authentication, you need to connect with Messenger...',
+            redirect: '/login/start'
+          });
+        }
+         Verify.checkVerification(state.userId, state.token)
+          .then(user => {
+            if(!user){
+              return Verify.createVerification('facebook', profile, state.userId);
+            }
+            return done(null, user);
+          })
+          .then(verification => { return done(null, false, { redirect: '/login/sent' }); })
+          .catch(err => { return done(null, false, err) })
       })
       .catch(err => {
         return done(null, false, err)

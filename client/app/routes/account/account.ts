@@ -5,7 +5,7 @@ angular.module('riverApp')
     $stateProvider
       .state('login', {
         url: '/login',
-        templateUrl: 'app/account/login/login.html',
+        templateUrl: 'app/routes/account/login/login.html',
         controller: 'LoginController',
         controllerAs: 'vm'
       })

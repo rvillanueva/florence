@@ -20,9 +20,18 @@ router
     }
     passport.authenticate('facebook', options)(req, res);
   })
-  .get('/callback', passport.authenticate('facebook', {
-      failureRedirect: '/login',
-      session: false
-    }), setTokenCookie);
+  .get('/callback', function(req, res){
+    passport.authenticate('facebook', function(err, user, info) {
+      console.log('Handling callback');
+      var url = '/login';
+      if(user){
+        return setTokenCookie(user);
+      }
+      if(info.redirect){
+        url = info.redirect;
+      }
+      return res.redirect(url);
+    })(req, res)
+  });
 
 export default router;

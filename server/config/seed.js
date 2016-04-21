@@ -6,7 +6,9 @@
 'use strict';
 import User from '../api/user/user.model';
 import Aspect from '../api/aspect/aspect.model';
+import Verification from '../api/verification/verification.model';
 
+Verification.find({}).remove();
 User.find({}).remove()
   .then(() => {
     User.create({

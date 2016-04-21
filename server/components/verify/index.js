@@ -8,23 +8,40 @@ import Verification from '../../api/verification/verification.model';
 export function createVerification(provider, profile, userId){
   return new Promise(function(resolve, reject){
     if(provider === 'facebook' && profile){
-      var verification = {
-        provider: provider,
-        facebook: profile
-      }
-      if(userId){
-        verification.userId = userId;
-      }
-      Verification.create(verification)
-      .then(verification => generateVerifyToken(verification))
+      getVerification(provider, profile, userId)
+      .then(verification, refreshed => generateVerifyToken(verification))
       .then(verification => sendVerification(verification))
-      .then(sent => resolve(sent))
+      .then(refreshed => resolve(refreshed))
       .catch(err => reject(err))
     } else {
       console.log('No provider or profile.')
       reject('No provider or profile.')
     }
   })
+
+  function getVerification(provider, profile, userId) {
+    return new Promise(function(resolve, reject) {
+      if (!userId) {
+        reject('Need user id to create verification.')
+      }
+      Verification.findOne({userId: userId})
+        .then(verification => {
+          if (verification) {
+            resolve(verification, refreshed);
+          } else {
+            var newVerification = {
+              provider: provider,
+              facebook: profile
+            }
+            if (userId) {
+              newVerification.userId = userId;
+            }
+            Verification.create(newVerification)
+              .then(verification => resolve(verification))
+          }
+        })
+    })
+  }
 }
 
 export function generateVerifyToken(verification){
@@ -95,6 +112,12 @@ export function sendVerification(verification) {
 
 export function checkVerification(userId, token){
   return new Promise((resolve, reject) => {
+    if(!userId){
+      reject('No user id included in request.')
+    }
+    if(!token){
+      resolve(false);
+    }
     var verification;
     Verification.findOne({userId: userId, token: token}).exec()
     .then(data => {
@@ -152,5 +175,9 @@ export function checkVerification(userId, token){
       .catch(err => reject(err))
     });
   }
+
+}
+
+export function getVerificationLink(){
 
 }
