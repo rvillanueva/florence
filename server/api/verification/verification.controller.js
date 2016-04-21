@@ -11,6 +11,8 @@
 
 import _ from 'lodash';
 import Verification from './verification.model';
+import * as Verify from '../../components/verify';
+import * as Auth from '../../auth/auth.service';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -60,43 +62,18 @@ function handleError(res, statusCode) {
 }
 
 // Gets a list of Verifications
-export function index(req, res) {
-  return Verification.find().exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Gets a single Verification from the DB
-export function show(req, res) {
-  return Verification.findById(req.params.id).exec()
-    .then(handleEntityNotFound(res))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Creates a new Verification in the DB
-export function create(req, res) {
-  return Verification.create(req.body)
-    .then(respondWithResult(res, 201))
-    .catch(handleError(res));
-}
-
-// Updates an existing Verification in the DB
-export function update(req, res) {
-  if (req.body._id) {
-    delete req.body._id;
-  }
-  return Verification.findById(req.params.id).exec()
-    .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
-    .then(respondWithResult(res))
-    .catch(handleError(res));
-}
-
-// Deletes a Verification from the DB
-export function destroy(req, res) {
-  return Verification.findById(req.params.id).exec()
-    .then(handleEntityNotFound(res))
-    .then(removeEntity(res))
+export function verify(req, res) {
+    req.query = req.query || {};
+    var userId = req.query.userId;
+    var token = req.query.token;
+    return Verify.checkVerification(userId, token)
+    .then(user => {
+        if(!user){
+          console.log('Token does not match userId.')
+          return res.status(403).send('Token does not match userId.')
+        }
+        req.user = user;
+        Auth.setTokenCookie(req, res);
+    })
     .catch(handleError(res));
 }

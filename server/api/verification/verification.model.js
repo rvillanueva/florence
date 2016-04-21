@@ -6,7 +6,8 @@ var VerificationSchema = new mongoose.Schema({
   userId: String,
   provider: String,
   facebook: {},
-  token: String
+  token: String,
+  expires: Date
 });
 
 export default mongoose.model('Verification', VerificationSchema);

@@ -52,7 +52,6 @@ export function clearVerification(verification){
 
 export function sendVerification(verification) {
   return new Promise(function(resolve, reject) {
-    console.log('Sending verification...');
     var sent = false;
     var verifyUrl;
     if(!verification.userId){
@@ -60,9 +59,9 @@ export function sendVerification(verification) {
       resolve(sent)
     } else {
       if(process.env.NODE_ENV == 'production'){
-        verifyUrl = process.env.DOMAIN + '/auth/facebook?' + 'userId=' + verification.userId + '&token=' + verification.token;
+        verifyUrl = process.env.DOMAIN + '/api/verify?' + 'userId=' + verification.userId + '&token=' + verification.token;
       } else {
-        verifyUrl = 'https://beta.river.ai' + '/auth/facebook?' + 'userId=' + verification.userId + '&token=' + verification.token;
+        verifyUrl = 'https://beta.river.ai' + '/api/verify?' + 'userId=' + verification.userId + '&token=' + verification.token;
       }
       var message = {
         userId: verification.userId,
@@ -85,7 +84,7 @@ export function sendVerification(verification) {
       };
       Messages.send(message)
       .then(res => {
-        console.log('Sent verification to ' + verification.userId)
+        console.log('Sent verification to ' + verification.userId);
         sent = true;
         resolve(sent);
       })
@@ -95,23 +94,31 @@ export function sendVerification(verification) {
 }
 
 export function checkVerification(userId, token){
-  return new Promise(function(resolve, reject){
+  return new Promise((resolve, reject) => {
+    var verification;
     Verification.findOne({userId: userId, token: token}).exec()
-    .then(verification => User.findById(userId, '-salt -password').exec())
+    .then(data => {
+      verification = data;
+      return User.findById(userId, '-salt -password').exec()
+    })
     .then(user => checkVerifyToken(user, verification))
     .then(user => resolve(user))
     .catch(err => reject(err))
   })
 
   function checkVerifyToken(user, verification){
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) => {
+      var now = new Date();
       if(!user){
+        console.log('No user found with id: ' + userId);
         reject('No user found with id: ' + userId)
       }
       if(!verification){
+        console.log('No matching verification found for user ' + userId + ' with token ' + token)
         reject('No matching verification found for user ' + userId + ' with token ' + token);
       }
-      if(token == verification.token && new Date() < verification.expires){
+      if(token == verification.token && now < verification.expires){
+        console.log('Verification token matches...')
         if(verification.provider == 'facebook'){
           verifyFacebook(user, verification)
           .then(user => resolve(user))
@@ -119,8 +126,10 @@ export function checkVerification(userId, token){
         } else {
           reject('Unknown provider: ' + verification.provider)
         }
+      } else {
+        console.log('Verification token or expiration doesn\'t match...')
+        reject('Verification token or expiration doesn\'t match...')
       }
-      reject('No verification item found.')
     });
   }
 
@@ -134,8 +143,12 @@ export function checkVerification(userId, token){
         user.email = profile.emails[0].value;
       }
       user.facebook = profile;
-      verification.remove()
-      .then(res => resolve(user))
+      user.save()
+      .then(user => {
+        verification.remove()
+        .then(res => resolve(user))
+        .catch(err => reject(err))
+      })
       .catch(err => reject(err))
     });
   }
