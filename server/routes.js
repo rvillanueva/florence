@@ -9,6 +9,7 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/verify', require('./api/verification'));
   app.use('/api/aspects', require('./api/aspect'));
   app.use('/api/messages', require('./api/message'));
   app.use('/api/messenger', require('./api/messenger'));
