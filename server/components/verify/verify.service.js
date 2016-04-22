@@ -7,8 +7,6 @@ import * as Messages from '../messages';
 import Verification from '../../api/verification/verification.model';
 
 export function findVerification(userId, provider) {
-  console.log(userId)
-  console.log(provider)
   return new Promise(function(resolve, reject) {
     if (!userId) {
       resolve(null)
@@ -48,8 +46,6 @@ export function generateToken(verification){
 export function checkToken(verification, token) {
   // needs user, provider, token, and expires
   return new Promise(function(resolve, reject) {
-    console.log(verification)
-    console.log(token)
     if (verification.token && verification.expires && verification.token == token && new Date() < verification.expires) {
       resolve(verification);
     } else {
@@ -60,7 +56,6 @@ export function checkToken(verification, token) {
 
 export function completeVerification(verification, profile, userId){
   return new Promise(function(resolve, reject){
-    console.log('resolving user')
     User.findById(verification.userId).exec()
     .then(user => {
       if (!user) {
@@ -75,8 +70,6 @@ export function completeVerification(verification, profile, userId){
           user.email = profile.emails[0].value;
         }
         user.facebook = profile;
-        console.log('USER')
-        console.log(user)
         user.save()
           .then(user => {
             verification.remove()

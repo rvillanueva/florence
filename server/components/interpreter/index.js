@@ -2,7 +2,7 @@
 
 var Promise = require("bluebird");
 var Interpret = require('./interpreter.service');
-var Rules = require('./interpreter.rules');
+var Patterns = require('./interpreter.patterns');
 var Context = require('../context');
 
 export function getResponse(message){
@@ -15,7 +15,7 @@ export function getResponse(message){
       context = data;
       console.log('context')
       console.log(context);
-      return Rules.checkRules(message, context)
+      return Patterns.check(message, context)
     })
     .then(intent => {
       return new Promise((resolve, reject)=>{

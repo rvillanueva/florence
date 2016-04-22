@@ -1,10 +1,8 @@
 'use strict';
 
-
-
 // Custom intepreter to select intent and override wit
 
-export function checkRules(message, context){
+export function check(message, context){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  // other commands will override
  return new Promise(function(resolve, reject){
@@ -29,9 +27,7 @@ export function checkRules(message, context){
      });
    }
 
-   if(
-     text == 'login'
-    ){
+   if(text == 'login'){
      resolve({
        intent: 'login'
      });

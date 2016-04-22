@@ -8,7 +8,6 @@ export function verify(provider, profile, userId, token) {
   return new Promise(function(resolve, reject) {
     VerifyService.findVerification(userId, provider)
       .then(verification => {
-        console.log(verification);
         if (!verification) {
           VerifyService.createVerification(provider, profile, null)
             .then(verification => {
@@ -24,11 +23,9 @@ export function verify(provider, profile, userId, token) {
         } else {
           VerifyService.checkToken(verification, token)
           .then(verification => {
-            console.log(verification)
             if(!verification){
               resolve(null);
             } else {
-              console.log('Completing verification')
               return VerifyService.completeVerification(verification, profile, userId);
             }
           })
@@ -51,7 +48,6 @@ export function verify(provider, profile, userId, token) {
 export function verifyByButton(vId, token, userId){
   return new Promise(function(resolve, reject){
     VerifyService.findVerificationById(vId)
-      .then(verification => {})
       .then(verification => checkToken(verification, token))
       .then(verification => {
         if(verification){
