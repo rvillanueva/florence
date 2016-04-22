@@ -9,17 +9,7 @@ export function hello(conversation, response){
       return startOnboard(conversation, response).init();
     },
     init: (params) => {
-      // Generally won't fire
-      return new Promise((resolve, reject) => {
-        conversation.say('Hello! This is a test welcome message.');
-        Aspects.getOutcomes()
-        .then(aspects => {
-          Measures.addScore(conversation, response).init({
-            aspectId: aspects[0]._id
-          });
-        })
-        .catch(err => reject(err))
-      })
+
     }
   }
 }

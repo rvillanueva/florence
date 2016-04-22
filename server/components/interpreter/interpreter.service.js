@@ -28,7 +28,7 @@ export function getIntents(message, context, skip) {
           }
         })
       } else {
-        // This is a stupid way to handle intent resolution without message text FIX ME
+        // This is a stupid way to handle intent resolution without message text FIXME
         resolve([
         {
           intent: context.intent
@@ -136,6 +136,7 @@ export function convertButtonPayload(response){
         }
         if(payload.slice(0,5) == 'INIT_'){
           response.input = 'sendToMessengerBtn';
+          response.init = true;
           payload = payload.slice(5);
         } else {
           resolve(response)

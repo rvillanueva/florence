@@ -15,6 +15,7 @@ export function setup(User, config) {
   },
   function(req, accessToken, refreshToken, profile, done){
     var state = parseState(req);
+    console.log(state)
     User.findOne({'facebook.id': profile.id}, '-salt -password').exec()
       .then(user => {
         if (user) {
@@ -23,18 +24,19 @@ export function setup(User, config) {
          Verify.verify('facebook', profile, state.userId, state.token)
           .then(data => {
             if(data.user){
-              return done(null, data.user);
+              return done(null, data.user, {});
+            } else {
+              var url = '/login/verify';
+              if(data.vId && data.token){
+                url += '?vId=' + data.vId + '&token=' + data.token;
+              }
+              return done(null, false, { redirect: url})
             }
-            var url = '/login/verify';
-            if(data.vId && data.token){
-              url += '?vId=' + data.vId + '&token=' + data.token;
-            }
-            return done(null, false, { redirect: url})
           })
-          .catch(err => { return done(null, false, err) })
+          .catch(err => { console.log(err) })
       })
       .catch(err => {
-        return done(null, false, err)
+        console.log(err)
       });
   }));
 }
@@ -50,6 +52,7 @@ function parseState(req){
         return false
     }
     return state;
+  } else {
+    return false;
   }
-  return false;
 }

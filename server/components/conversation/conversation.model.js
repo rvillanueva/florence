@@ -14,6 +14,7 @@ export function constructor(userId, message){
      user: () => {
          return User.findById(this.userId, '-salt -password')
      },
+     userId: this.userId,
      say: (text) => {
         Messages.send({
           userId: this.userId,

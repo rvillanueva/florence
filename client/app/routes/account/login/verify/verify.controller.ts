@@ -1,8 +1,15 @@
 'use strict';
 (function(){
 
-class StartComponent {
-  constructor() {
+class VerifyComponent {
+  constructor($stateParams) {
+    this.vId = $stateParams.vId;
+    this.token = $stateParams.token;
+    this.entities = JSON.stringify({
+      vId: this.vId,
+      token: this.token
+    })
+    console.log(this.entities)
   }
 }
 

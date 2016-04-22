@@ -1,21 +1,16 @@
 'use strict';
 var Promise = require('bluebird');
 import * as VerifyService from './verify.service';
+import Verification from '../../api/verification/verification.model';
 
 
 export function verify(provider, profile, userId, token) {
-  // should return user, reason, vData
-
-  // Get verification
-  // If there isn't one, create one. Resolve no user with reason 'noUser'
-  // If there is one, continue
-  // Do the userId and token match verification? If so, merge verification and user and return user
-  // If they don't match, send a new verification and resolve no user with reason 'expired token'
   return new Promise(function(resolve, reject) {
     VerifyService.findVerification(userId, provider)
       .then(verification => {
+        console.log(verification);
         if (!verification) {
-          VerifyService.createVerification(provider, profile)
+          VerifyService.createVerification(provider, profile, null)
             .then(verification => {
               var data = {
                 user: null,
@@ -28,14 +23,54 @@ export function verify(provider, profile, userId, token) {
             .catch(err => reject(err))
         } else {
           VerifyService.checkToken(verification, token)
+          .then(verification => {
+            console.log(verification)
+            if(!verification){
+              resolve(null);
+            } else {
+              console.log('Completing verification')
+              return VerifyService.completeVerification(verification, profile, userId);
+            }
+          })
           .then(user => {
             if (!user) {
-              resolve(null, 'expiredToken');
+              resolve(null);
+            } else {
+              resolve({
+              user:user
+            });
             }
           })
           .catch(err => reject(err))
         }
       })
       .catch(err => reject(err))
+  })
+}
+
+export function verifyByButton(vId, token, userId){
+  return new Promise(function(resolve, reject){
+    VerifyService.findVerificationById(vId)
+      .then(verification => {})
+      .then(verification => checkToken(verification, token))
+      .then(verification => {
+        if(verification){
+          verification.userId = userId;
+          return verification.save();
+        } else {
+          return resolve(null)
+        }
+      })
+      .then(completeVerification(verification, token))
+      .then(user => resolve(true))
+      .catch(err => reject(err))
+  })
+}
+
+export function getToken(userId){
+  return new Promise(function(resolve, reject){
+    VerifyService.createVerification('facebook', null, userId)
+    .then(verification => resolve(verification))
+    .catch(err => reject(err))
   })
 }

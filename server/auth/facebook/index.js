@@ -13,9 +13,10 @@ router
       session: false,
       state: {}
     }
-    if (req.query && req.query.userId) {
+    if (req.query) {
       options.state = JSON.stringify({
-        userId: req.query.userId
+        userId: req.query.userId,
+        token: req.query.token
       });
     }
     passport.authenticate('facebook', options)(req, res);
@@ -23,12 +24,16 @@ router
   .get('/callback', function(req, res){
     passport.authenticate('facebook', function(err, user, info) {
       var url = '/login';
+      info = info || {};
       if(user){
-        return setTokenCookie(user);
-      } else if(info.redirect){
-        url = info.redirect;
+        req.user = user;
+        return setTokenCookie(req, res);
+      } else {
+        if(info.redirect){
+          url = info.redirect;
+        }
+        return res.redirect(url);
       }
-      return res.redirect(url);
     })(req, res)
   });
 

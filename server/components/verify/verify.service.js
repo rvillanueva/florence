@@ -7,6 +7,8 @@ import * as Messages from '../messages';
 import Verification from '../../api/verification/verification.model';
 
 export function findVerification(userId, provider) {
+  console.log(userId)
+  console.log(provider)
   return new Promise(function(resolve, reject) {
     if (!userId) {
       resolve(null)
@@ -20,10 +22,10 @@ export function findVerification(userId, provider) {
   })
 }
 
-
-export function createVerification(provider, profile) {
+export function createVerification(provider, profile, userId) {
   return new Promise(function(resolve, reject) {
       Verification.create({
+          'userId': userId,
           'provider': provider,
           'profile': profile
         })
@@ -46,35 +48,56 @@ export function generateToken(verification){
 export function checkToken(verification, token) {
   // needs user, provider, token, and expires
   return new Promise(function(resolve, reject) {
+    console.log(verification)
+    console.log(token)
     if (verification.token && verification.expires && verification.token == token && new Date() < verification.expires) {
-      User.findById(verification.userId).exec()
-      .then(user => {
-        if (!user) {
-          reject('No user found')
-        }
-        if (verification.provider == 'facebook') {
-          user.facebook = verification.profile;
-          if (profile.picture) {
-            user.picture = profile.picture;
-          }
-          if (!user.email) {
-            user.email = profile.emails[0].value;
-          }
-          user.facebook = profile;
-          user.save()
-            .then(user => {
-              verification.remove()
-                .then(res => resolve(user))
-                .catch(err => reject(err))
-            })
-            .catch(err => reject(err))
-        } else {
-          reject('Unknown provider')
-        }
-      })
-
+      resolve(verification);
     } else {
-      reject('Verification missing key properties')
+      resolve(false);
     }
+  })
+}
+
+export function completeVerification(verification, profile, userId){
+  return new Promise(function(resolve, reject){
+    console.log('resolving user')
+    User.findById(verification.userId).exec()
+    .then(user => {
+      if (!user) {
+        reject('No user found')
+      }
+      if (verification.provider == 'facebook') {
+        user.facebook = profile;
+        if (profile.picture) {
+          user.picture = profile.picture;
+        }
+        if (!user.email) {
+          user.email = profile.emails[0].value;
+        }
+        user.facebook = profile;
+        console.log('USER')
+        console.log(user)
+        user.save()
+          .then(user => {
+            verification.remove()
+              .then(res => {
+                console.log(user)
+                resolve(user)
+              })
+              .catch(err => reject(err))
+          })
+          .catch(err => reject(err))
+      } else {
+        reject('Unknown provider')
+      }
+    })
+  })
+}
+
+export function checkVerificationById(vId) {
+  return new Promise(function(resolve, reject) {
+    Verification.findById(vId).exec()
+    .then(verification => resolve(verification))
+    .catch(err => reject(err))
   })
 }

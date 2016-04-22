@@ -3,6 +3,7 @@
 var Promise = require('bluebird');
 var Measures = require('./measures');
 var General = require('./general')
+var Verify = require('./verify')
 
 var intents = function(conversation, response){
   return {
@@ -14,7 +15,10 @@ var intents = function(conversation, response){
     addTriggers: Measures.addTriggers(conversation, response),
     unsubscribe: false,
     engageMore: false,
-    engageLess: false
+    engageLess: false,
+    verify: Verify.verifyByButton(conversation, response),
+    login: Verify.login(conversation, response)
+
   }
 }
 
@@ -24,9 +28,15 @@ export function route(conversation, response){
       return intents(conversation, response)[response.intent];
     }
     if(path && typeof path().respond == 'function'){
-      path(conversation, response).respond()
-      .then(res => resolve(res))
-      .catch(err => reject(err))
+      if(response.init){
+        path(conversation, response).init()
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+      } else {
+        path(conversation, response).respond()
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+      }
     } else {
       reject(new Error('No matching intent found for ' + response.intent));
     }

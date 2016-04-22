@@ -29,6 +29,14 @@ export function checkRules(message, context){
      });
    }
 
+   if(
+     text == 'login'
+    ){
+     resolve({
+       intent: 'login'
+     });
+   }
+
    if(context.intent == 'addTriggers'){
      resolve({
        intent:'addTriggers'
