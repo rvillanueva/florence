@@ -3,8 +3,8 @@
 angular.module('riverApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('start', {
-        url: '/login/start',
-        template: '<start></start>'
+      .state('verify', {
+        url: '/login/verify',
+        template: '<verify></verify>'
       });
   });

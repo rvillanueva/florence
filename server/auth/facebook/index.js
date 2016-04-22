@@ -22,12 +22,10 @@ router
   })
   .get('/callback', function(req, res){
     passport.authenticate('facebook', function(err, user, info) {
-      console.log('Handling callback');
       var url = '/login';
       if(user){
         return setTokenCookie(user);
-      }
-      if(info.redirect){
+      } else if(info.redirect){
         url = info.redirect;
       }
       return res.redirect(url);

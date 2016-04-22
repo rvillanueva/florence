@@ -14,40 +14,42 @@ export function setup(User, config) {
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done){
-    req.query = req.query || {};
-    var state = {};
-    if(req.query.state){
-      try {
-          state = JSON.parse(req.query.state);
-      } catch (e) {
-          console.log('Invalid state JSON.')
-      }
-    }
-
+    var state = parseState(req);
     User.findOne({'facebook.id': profile.id}, '-salt -password').exec()
       .then(user => {
         if (user) {
           return done(null, user);
         }
-
-        if(!state.userId){
-          return done(null, false, {
-            message: 'To complete authentication, you need to connect with Messenger...',
-            redirect: '/login/start'
-          });
-        }
-         Verify.checkVerification(state.userId, state.token)
-          .then(user => {
-            if(!user){
-              return Verify.createVerification('facebook', profile, state.userId);
+         Verify.verify('facebook', profile, state.userId, state.token)
+          .then(data => {
+            if(data.user){
+              return done(null, data.user);
             }
-            return done(null, user);
+            var url = '/login/verify';
+            if(data.vId && data.token){
+              url += '?vId=' + data.vId + '&token=' + data.token;
+            }
+            return done(null, false, { redirect: url})
           })
-          .then(verification => { return done(null, false, { redirect: '/login/sent' }); })
           .catch(err => { return done(null, false, err) })
       })
       .catch(err => {
         return done(null, false, err)
       });
   }));
+}
+
+function parseState(req){
+  req.query = req.query || {};
+  var state = {}
+  if(req.query.state){
+    try {
+        state = JSON.parse(req.query.state);
+    } catch (e) {
+        console.log('Invalid state JSON.')
+        return false
+    }
+    return state;
+  }
+  return false;
 }

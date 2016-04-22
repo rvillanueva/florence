@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 var VerificationSchema = new mongoose.Schema({
   userId: String,
   provider: String,
-  facebook: {},
+  profile: {},
   token: String,
   expires: Date
 });

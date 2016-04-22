@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Component: SentComponent', function () {
+describe('Component: VerifyComponent', function () {
 
   // load the controller's module
   beforeEach(module('riverApp'));
 
-  var SentComponent, scope;
+  var VerifyComponent, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($componentController, $rootScope) {
     scope = $rootScope.$new();
-    SentComponent = $componentController('SentComponent', {
+    VerifyComponent = $componentController('VerifyComponent', {
       $scope: scope
     });
   }));
