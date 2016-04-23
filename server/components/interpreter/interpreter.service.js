@@ -66,33 +66,30 @@ export function chooseResponse(message, context, intents, overrideIntent) {
       // if there's no intent or there's a high confidence in guessed intent, switch
         response.intent = best.intent;
         response.entities = best.entities;
-        response = mergeEntities(response, best.entities, false)
     } else if (best.intent == response.intent) {
       // if the intents match, merge them but adopt new entities --< MAY WANT TO NOT ADOPT NEW ENTITIES
-      response = mergeEntities(response, best.entities, true)
+      response.entities = mergeEntities(response.entities, best.entities, true)
     } else {
       // otherwise, just adopt previously unknown entities and hope they fill in gaps
-      response = mergeEntities(response, best.entities, false)
+      response.entities = mergeEntities(response.entities, best.entities, false)
     }
     response.message = message;
     response.postback = message.postback;
+    response.userId = message.userId;
     resolve(response);
   })
 }
 
-function mergeEntities(response, entities, overwrite) {
-  var merged = response;
-  if(!merged.entities){
-    merged.entities = {};
-  }
+function mergeEntities(entities, Newentities, overwrite) {
+  entities = entities || {};
   for (var key in entities) {
     if (entities.hasOwnProperty(key)) {
-      if (overwrite === true || !merged.entities[key]) {
-        merged.entities[key] = entities[key];
+      if (overwrite === true || !entities[key]) {
+        entities[key] = newEntities[key];
       }
     }
   }
-  return merged;
+  return entities;
 }
 
 export function convertAspectKey(response){
@@ -136,7 +133,6 @@ export function convertButtonPayload(response){
         }
         if(payload.slice(0,5) == 'INIT_'){
           response.input = 'sendToMessengerBtn';
-          response.init = true;
           payload = payload.slice(5);
         } else {
           resolve(response)
@@ -161,7 +157,7 @@ export function convertButtonPayload(response){
           newEntities = JSON.parse(payload);
           // need to check if valid JSON
           if(typeof newEntities == 'object'){
-            mergeEntities(response, newEntities, true)
+            response.entities = mergeEntities(response.entities, newEntities, true)
           }
         }
         resolve(response)

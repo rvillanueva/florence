@@ -1,44 +1,35 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Measures = require('./measures');
-var General = require('./general')
-var Verify = require('./verify')
+import * as Loader from './paths.loader';
 
-var intents = function(conversation, response){
-  return {
-    hello: General.hello(conversation, response),
-    startOnboard: General.startOnboard(conversation, response),
-    explainSkills: General.explainSkills(conversation, response),
-    trackAspect: Measures.trackAspect(conversation, response),
-    addScore: Measures.addScore(conversation, response),
-    addTriggers: Measures.addTriggers(conversation, response),
-    unsubscribe: false,
-    engageMore: false,
-    engageLess: false,
-    verify: Verify.verifyByButton(conversation, response),
-    login: Verify.login(conversation, response)
+var paths = {};
 
+export function add(intent, path){
+  if(paths[intent]){
+    console.log('Error: Function for ' + intent + ' already exists.');
+  } else {
+    paths[intent] = path;
   }
 }
 
-export function route(conversation, response){
+
+export function start(intent, conversation){
   return new Promise((resolve, reject) => {
-    function path(){
-      return intents(conversation, response)[response.intent];
-    }
-    if(path && typeof path().respond == 'function'){
-      if(response.init){
-        path(conversation, response).init()
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-      } else {
-        path(conversation, response).respond()
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-      }
+    if(!paths[intent] && !paths[intent].start){
+      reject('No matching intent found.')
     } else {
-      reject(new Error('No matching intent found for ' + response.intent));
+      paths[intent](conversation, response).start()
+    }
+  })
+}
+
+export function respond(intent, conversation){
+  return new Promise((resolve, reject) => {
+    if(!paths[intent] && !paths[intent].respond){
+      reject('No matching intent found.')
+    } else {
+      paths[intent](conversation, response).respond()
     }
   })
 }

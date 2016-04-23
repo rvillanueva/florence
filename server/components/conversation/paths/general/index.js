@@ -1,112 +1,84 @@
 'use strict';
 var Promise = require('bluebird');
 var Measures = require('../measures');
-var Aspects = require('../../../aspects');
+var Paths = require('../../paths');
 
-export function hello(conversation, response){
-  return {
-    respond: (params) => {
-      return startOnboard(conversation, response).init();
+Paths.add('hello', function(conversation, response) {
+  this.respond = function() {
+    conversation.start('startOnboard')
+  }
+  this.start = function() {
+
+  }
+  return this;
+})
+
+Paths.add('subscribe', function(conversation, response) {
+  this.start = function() {
+
+  }
+  this.respond = function() {
+
+  }
+  return this;
+})
+
+Paths.add('startOnboard', function(conversation) {
+  this.start = function() {
+    conversation.say('Oh, hey there!');
+    conversation.say('I\'m River, and I\'m learning to be a personal care companion.');
+    conversation.choices(' ', [{
+      title: 'What can you do?',
+      choice: 'skills'
+    }, {
+      title: 'Learning?',
+      choice: 'learning'
+    }])
+    return conversation.wait();
+  }
+
+
+  this.branches = {
+    skills: () => {
+      conversation.start('trackAspect');
     },
-    init: (params) => {
-
+    learning: () => {
+      conversation.say('Yup! I\'m still in the Bot Academy, so I haven\'t been certified to do everything quite yet. :)');
+      conversation.say('But interacting with you will teach me some new things about how to talk to people.');
+      conversation.start('explainSkills');
     }
   }
-}
+  this.respond = conversation.choose(this.branches);
 
-export function unsubscribe(conversation, response){
-  return {
-    respond: () => {
+})
 
+Paths.add('explainSkills', function(conversation) {
+  this.start = function() {
+    conversation.say('Even though I\'m still training, there are a few things I can do. Want to hear them?');
+    conversation.choices(' ', [
+      {
+        title: 'Sure',
+        choice: 'yes'
+      },
+      {
+        title: 'Nope.',
+        choice: 'no'
+      }
+    ])
+    return conversation.wait();
+  }
+
+  this.branches = {
+    yes: () => {
+      conversation.say('Great!');
+      conversation.start('trackAspect');
     },
-    init: () => {
-
+    no: () => {
+      conversation.say('Okay, no problem! If there\'s anything you want me to help you track, feel free to type it in below!')
     }
   }
-}
 
-export function startOnboard(conversation, response){
-  return {
-    init: (params) => {
-      conversation.say('Oh, hey there!');
-      conversation.say('I\'m River, and I\'m learning to be a personal care companion.');
-      conversation.buttons(' ', [
-        {
-          type: 'postback',
-          title: 'What can you do?',
-          payload: {
-            intent: 'explainSkills',
-            buttonValue: 1
-          }
-        },
-        {
-          type: 'postback',
-          title: 'Learning?',
-          payload: {
-            intent: 'startOnboard',
-            buttonValue: 0
-          }
-        }
-      ])
-      return conversation.expect({
-        intent: 'startOnboard'
-      });
-    },
-    respond: (params) => {
-      return new Promise((resolve, reject) => {
-        if(response.entities.buttonValue == 0){
-          conversation.say('Yup! I\'m still in the Bot Academy, so I haven\'t been certified to do everything quite yet. :)');
-          conversation.say('But interacting with you will teach me some new things about how to talk to people.');
-          explainSkills(conversation, response).init();
-          resolve();
-        } else {
-          explainSkills(conversation, response).init();
-          resolve();
-        }
-      })
-    },
-  }
-}
+  this.respond = conversation.choose(this.branches);
 
-export function explainSkills(conversation, response){
-  return {
-    init: () => {
-      conversation.say('Even though I\'m still training, there are a few things I can do. Want to hear them?');
-      conversation.buttons(' ', [
-        {
-          type: 'postback',
-          title: 'Sure',
-          payload: {
-            intent: 'explainSkills',
-            buttonValue: 1
-          }
-        },
-        {
-          type: 'postback',
-          title: 'Nope.',
-          payload: {
-            intent: 'explainSkills',
-            buttonValue: 0
-          }
-        }
-      ])
-      return conversation.expect({
-        intent: 'explainSkills'
-      });
-    },
-    respond: () => {
-      return new Promise((resolve, reject) => {
-        if(response.entities.buttonValue == 1){
-          conversation.say('Awesome!');
-          return Measures.trackAspect(conversation, response).init();
-        }
-        if(!response.entities || response.entities.buttonValue !== 0){
-        } else if (response.entities.buttonValue == 0){
-          conversation.say('Okay, no problem! If there\'s anything you want me to help you track, feel free to type it in below!')
-        }
-        conversation.next();
-        resolve();
-      })
-    }
-  }
-}
+  return this;
+})

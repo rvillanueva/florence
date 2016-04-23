@@ -1,5 +1,2 @@
 'use strict';
-
-export function setFrequency(){
-
-}
+var Paths = require('../../paths');

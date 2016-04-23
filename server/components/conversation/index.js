@@ -3,8 +3,8 @@
 var Promise = require("bluebird");
 var Interpret = require('../interpreter');
 var Paths = require('./paths');
+import * as Loader from './paths/paths.loader';
 var Messages = require ('../messages');
-import User from '../../api/user/user.model';
 var Conversation = require('./conversation.model').constructor;
 
 export function respond(message){

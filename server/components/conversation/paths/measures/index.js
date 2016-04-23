@@ -1,19 +1,19 @@
 var Aspects = require('../../../aspects');
 var Entry = require('../../../entry');
+var Paths = require('../../paths');
 
-export function trackAspect(conversation, response) {
+Paths.add('trackAspect', function(conversation, response) {
   // Need: aspectType
   // Optional: link
-  return {
-    init: (params) => {
-      return new Promise((resolve, rejct)=>{
-        conversation.say('Here are some of the things I can help you with. Let me know if you\'re interested in any of them!');
-        var aspectCards = [];
-        Aspects.getOutcomes()
+  this.init = function(params) {
+    return new Promise((resolve, rejct) => {
+      conversation.say('Here are some of the things I can help you with. Let me know if you\'re interested in any of them!');
+      var aspectCards = [];
+      Aspects.getOutcomes()
         .then(aspects => {
           console.log('ASPECTS')
           console.log(aspects)
-          aspects.forEach((aspect, i)=>{
+          aspects.forEach((aspect, i) => {
             var card = {
               title: aspect.callToAction.title,
               //image_url: aspect.imageUrl,
@@ -33,34 +33,31 @@ export function trackAspect(conversation, response) {
           })
           conversation.cards(aspectCards);
           conversation.expect({
-            intent: 'trackAspect'
-          })
-          .then(res => resolve(res))
-          .catch(err => reject(err))
+              intent: 'trackAspect'
+            })
+            .then(res => resolve(res))
+            .catch(err => reject(err))
         })
         .catch(err => reject(err))
-      })
-    },
-    respond: (params) => {
-      return new Promise((resolve, reject) => {
-        if(response.entities.aspectId){
-          addScore(conversation, response).init({
-            aspectId: response.entities.aspectId
-          });
-          resolve();
-        } else {
-          conversation.say('Oh shoot! Don\'t think I caught that – can you try again?');
-          conversation.expect({
-            intent: 'trackAspect'
-          })
-          resolve();
-        }
-      })
-    }
+    })
   }
-}
+  this.respond = function(params) {
+    return new Promise((resolve, reject) => {
+      if (response.entities.aspectId) {
+        addScore(conversation, response).init({
+          aspectId: response.entities.aspectId
+        });
+        resolve();
+      } else {
+        conversation.say('Oh shoot! Don\'t think I caught that – can you try again?');
+        conversation.expect('trackAspect');
+        resolve();
+      }
+    })
+  }
+})
 
-export function startEntry(conversation, response) {
+Paths.add('startEntry', function(conversation, response) {
   // Need: aspectType
   // Optional: link
   return {
@@ -71,104 +68,70 @@ export function startEntry(conversation, response) {
       // route to correct function
     }
   }
-}
+})
 
-export function addScore(conversation, response) {
+Paths.add('addScore', function(conversation, response) {
   // Need: aspectId
-  return {
-    init: (params) => {
-      return new Promise(function(resolve, reject){
-        console.log('Initiating score function');
-        var aspectId = response.entities.aspectId || params.aspectId;
-        console.log(aspectId)
-        if(!aspectId){
-          conversation.say('What would you like to track?')
-          conversation.expect({
-            intent: 'selectAspect',
-            needed: ['aspect']
-          })
-          resolve();
-        } else {
-          Aspects.getById(aspectId)
+  this.start = function() {
+    return new Promise(function(resolve, reject) {
+      console.log('Initiating score function');
+      var aspectId = response.entities.aspectId;
+      console.log(aspectId)
+      if (!aspectId) {
+        conversation.say('What would you like to track?')
+        conversation.wait();
+        resolve();
+      } else {
+        Aspects.getById(aspectId)
           .then(aspect => {
-            console.log('returned aspect from ' + aspectId)
-            console.log(aspect);
             conversation.sayOne(aspect.questions.score); // handle better
-            conversation.expect({
-              intent: 'addScore',
-              entities: {
-                aspectId: aspectId
-              },
-              needed: ['number']
-            })
-            .then(res => resolve(res))
-            .catch(err => reject(err))
+            return conversation.wait({ aspectId: aspectId})
+              .then(res => resolve(res))
+              .catch(err => reject(err))
           })
           .catch(err => reject(err))
-        }
-
-      })
-    },
-    respond: (params) => {
-      if(!params){
-        params = {}
       }
-      var score;
-      if(response.entities && response.entities.number && response.entities.number[0].value){
-        score = response.entities.number[0].value;
-      }
-        var aspectId = response.entities.aspectId || params.aspectId;
-        if(!aspectId){
-          conversation.say('What would you like to track?');
-          return conversation.expect({
-            intent: 'addScore',
-            needed: ['number']
-          })
-        }
-        if(!score){
-          conversation.say('Hey, sorry, don\'t think I understood that.');
-          conversation.say('Do you mind rephrasing and trying again?');
-          return conversation.expect({
-            intent: 'addScore',
-            needed: ['number']
-          })
-        }
-        conversation.say('Got it, thanks!');
-        conversation.addEntry({
-          aspectId: response.entities.aspectId,
-          score: score
-        })
-        return conversation.next();
-    }
-  }
-}
 
-export function addTriggers(conversation, response) {
-  // Need aspectId
-  return {
-    init: (params) => {
-    },
-    respond: (params) => {
-    }
+    })
   }
-}
+  this.needed = ['number','aspectId'];
+  this.respond = function() {
+    var score;
+    if (response.entities && response.entities.number && response.entities.number[0].value) {
+      score = response.entities.number[0].value;
+    }
+    var aspectId = response.entities.aspectId;
+    if (!aspectId) {
+      conversation.say('What would you like to track?');
+      return conversation.wait()
+    }
+    if (!score) {
+      conversation.say('Hey, sorry, don\'t think I understood that.');
+      conversation.say('Do you mind rephrasing and trying again?');
+      return conversation.wait();
+    }
+    conversation.say('Got it, thanks!');
+    conversation.entry({
+      aspectId: response.entities.aspectId,
+      score: score
+    })
+    return conversation.next();
+  }
+  return this;
+})
 
-export function addConfidence(conversation, response, params) {
+Paths.add('addTriggers', function(conversation, response) {
   // Need aspectId
-  return {
-    init: (params) => {
-    },
-    respond: (params) => {
-    }
-  }
-}
 
-export function addPriority(conversation, response, params) {
+  return this;
+})
+
+Paths.add('addConfidence', function(conversation, response) {
   // Need aspectId
-  return {
-    init: (params) => {
-    },
-    respond: (params) => {
-    }
-  }
-}
+  return this;
+})
+
+Paths.add('addPriority', function(conversation, response) {
+  // Need aspectId
+  return this;
+})

@@ -1,9 +1,8 @@
 'use strict;'
 import * as VerifyComponent from '../../../verify';
 var Promise = require('bluebird');
-var Paths = require('../../paths');
 
-Paths.add('verifyByButton', function(conversation, response){
+export function verifyByButton(conversation, response){
   // Need: aspectType
   // Optional: link
   return {
@@ -31,9 +30,9 @@ Paths.add('verifyByButton', function(conversation, response){
       VerifyComponent.verifyByButton(response.vId, response.token);
     })
   }
-})
+}
 
-Paths.add('login', function(conversation, response){
+export function login(conversation, response){
   // Need: aspectType
   // Optional: link
   return {
@@ -49,7 +48,7 @@ Paths.add('login', function(conversation, response){
             {
               type: 'web_url',
               title: 'View Progress',
-              url: 'http://beta.river.ai/auth/facebook?userId' + verification.userId + '&token=' + verification.token
+              url: process.env.DOMAIN + '/auth/facebook?userId' + verification.userId + '&token=' + verification.token
             },
           ])
           resolve();
@@ -58,4 +57,4 @@ Paths.add('login', function(conversation, response){
       })
     }
   }
-})
+}
