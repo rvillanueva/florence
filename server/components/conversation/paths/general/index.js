@@ -5,7 +5,7 @@ var Paths = require('../../paths');
 
 Paths.add('hello', function(conversation, response) {
   this.respond = function() {
-    conversation.start('startOnboard')
+    conversation.start('startOnboard') // if user is uninitiated
   }
   this.start = function() {
 
@@ -78,7 +78,30 @@ Paths.add('explainSkills', function(conversation) {
     }
   }
 
-  this.respond = conversation.choose(this.branches);
+  this.map = [
+    {
+      branch: 'yes',
+      entity: 'yesOrNo',
+      value: 'yes'
+    },
+    {
+      branch: 'no',
+      entity: 'yesOrNo',
+      value: 'no'
+    },
+    {
+      branch: 'no',
+      entity: 'button',
+      value: 'no'
+    },
+    {
+      branch: 'yes',
+      entity: 'button',
+      value: 'yes'
+    }
+  ]
+
+  this.respond = conversation.choose(this.branches, this.map);
 
   return this;
 })

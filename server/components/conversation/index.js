@@ -3,9 +3,9 @@
 var Promise = require("bluebird");
 var Interpret = require('../interpreter');
 var Paths = require('./paths');
-import * as Loader from './paths/paths.loader';
 var Messages = require ('../messages');
 var Conversation = require('./conversation.model').constructor;
+import * as Loader from './paths/paths.loader';
 
 export function respond(message){
   return new Promise(function(resolve, reject){
@@ -14,10 +14,8 @@ export function respond(message){
     .then(response => {
       console.log('RESPONSE')
       console.log(response)
-      conversation = new Conversation(message.userId, message);
-      Paths.route(conversation, response)
-        .then(res => resolve(res))
-        .catch(err => reject(err))
+      conversation = new Conversation(response);
+      conversation.respond();
     })
     .catch(err => reject(err))
   })

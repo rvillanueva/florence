@@ -42,10 +42,9 @@ Paths.add('login', function(conversation, response){
     },
     respond: (params) => {
       return new Promise(function(resolve, reject){
-        conversation.say('Okay great! Here\'s your info:')
         VerifyComponent.getToken(conversation.userId)
         .then(verification => {
-          conversation.buttons(' ', [
+          conversation.buttons('Okay great! Here\'s your info:', [
             {
               type: 'web_url',
               title: 'View Progress',

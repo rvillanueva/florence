@@ -27,11 +27,6 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   messenger: {},
-  verify: {
-    token: String,
-    expires: Date,
-    facebook: {}
-  },
   timezone: String,
   tracked: [
     {
@@ -47,6 +42,10 @@ var UserSchema = new Schema({
   engagement: {
     score: Number,
     fatigue: Number
+  },
+  story: {
+    track: String,
+    step: String
   },
   context: {
     intent: String,

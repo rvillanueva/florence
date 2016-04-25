@@ -57,19 +57,6 @@ Paths.add('trackAspect', function(conversation, response) {
   }
 })
 
-Paths.add('startEntry', function(conversation, response) {
-  // Need: aspectType
-  // Optional: link
-  return {
-    init: (params) => {
-      // ask what aspect you'd like to track
-    },
-    respond: (params) => {
-      // route to correct function
-    }
-  }
-})
-
 Paths.add('addScore', function(conversation, response) {
   // Need: aspectId
   this.start = function() {
@@ -117,21 +104,5 @@ Paths.add('addScore', function(conversation, response) {
     })
     return conversation.next();
   }
-  return this;
-})
-
-Paths.add('addTriggers', function(conversation, response) {
-  // Need aspectId
-
-  return this;
-})
-
-Paths.add('addConfidence', function(conversation, response) {
-  // Need aspectId
-  return this;
-})
-
-Paths.add('addPriority', function(conversation, response) {
-  // Need aspectId
   return this;
 })

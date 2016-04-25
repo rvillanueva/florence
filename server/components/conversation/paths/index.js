@@ -1,8 +1,6 @@
 'use strict';
 
 var Promise = require('bluebird');
-import * as Loader from './paths.loader';
-
 var paths = {};
 
 export function add(intent, path){
@@ -16,20 +14,20 @@ export function add(intent, path){
 
 export function start(intent, conversation){
   return new Promise((resolve, reject) => {
-    if(!paths[intent] && !paths[intent].start){
+    if(!paths[intent] || !paths[intent].start){
       reject('No matching intent found.')
     } else {
-      paths[intent](conversation, response).start()
+      paths[intent](conversation).start()
     }
   })
 }
 
 export function respond(intent, conversation){
   return new Promise((resolve, reject) => {
-    if(!paths[intent] && !paths[intent].respond){
+    if(!paths[intent] || !paths[intent].respond){
       reject('No matching intent found.')
     } else {
-      paths[intent](conversation, response).respond()
+      paths[intent](conversation).respond()
     }
   })
 }

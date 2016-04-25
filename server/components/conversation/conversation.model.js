@@ -11,15 +11,17 @@ export function constructor(response) {
   this.response = {
     intent: response.intent,
     message: response.message,
+    entities: response.entities,
     choice: response.choice
   }
   this.intent = response.intent;
+  this.entities = response.entities || {};
   this.user = function(){
     return User.findById(this.userId, '-salt -password')
   }
 
   this.say = function(text){
-    Messages.send({
+    return Messages.send({
       userId: this.userId,
       text: text
     })
@@ -30,24 +32,30 @@ export function constructor(response) {
     console.log(phrases);
     var index = Math.floor(Math.random() * phrases.length);
     var text = phrases[index];
-    Messages.send({
+    return Messages.send({
       userId: this.userId,
       text: text
     });
   }
 
   this.start = function(intent){
-    Paths.start(intent, this)
+    if(!intent){
+      console.log('No intent to start...')  // FIXME should this be handled with default intent?
+    }
+    this.intent = intent;
+    this.entities = {};
+    Paths.start(this.intent, this);
   }
 
   this.respond = function(intent){
-    Paths.respond(intent, this)
+    this.intent = intent || this.intent;
+    Paths.respond(this.intent, this);
   }
 
-  this.wait = function(entities){
-    intent = intent || this.intent;
+  this.wait = function(intent, needed, entities){
+    this.intent = intent || this.intent;
     return Context.set(this.userId, {
-      intent: intent,
+      intent: this.intent,
       needed: needed,
       entities: entities
     })
@@ -101,12 +109,19 @@ export function constructor(response) {
     return Entry.add(entry)
   }
 
-  this.choose = function(branches){
-    if(!branches[response.choice]){
+  this.choose = function(branches, map){
+    if(!this.response.choice && map){
+      map.forEach(function(option, o){
+        if(this.entities[option.entity] == option.value){
+          return choices[option.choice];
+        }
+      })
+      return false;
+    } else if (!branches[this.response.choice]){
       console.log('No branch found for ' + response.choice)
       return false;
     }
-    return choices[response.choice];
+    return choices[this.response.choice];
   }
 
   this.next = function(){
