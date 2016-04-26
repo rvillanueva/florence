@@ -7,10 +7,12 @@ var EntrySchema = new mongoose.Schema({
   userId: String, //ref
   aspectId: String, //ref
   score: Number,
-  priority: Number,
-  confidence: Number,
-  triggers: String,
-  tags: Array,
+  context: [
+    {
+      type: String,
+      value: String
+    }
+  ],
   date: Date
 });
 

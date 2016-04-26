@@ -1,0 +1,10 @@
+.message-container {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  &.message-app{
+    text-align: left;
+  }
+  &.message-user{
+    text-align: right;
+  }
+}

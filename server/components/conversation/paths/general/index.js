@@ -38,16 +38,15 @@ Paths.add('startOnboard', function(conversation) {
   }
 
 
-  this.branches = {
-    skills: () => {
-      conversation.start('trackAspect');
-    },
-    learning: () => {
-      conversation.say('Yup! I\'m still in the Bot Academy, so I haven\'t been certified to do everything quite yet. :)');
-      conversation.say('But interacting with you will teach me some new things about how to talk to people.');
-      conversation.start('explainSkills');
+  this.replies = [
+    {
+      response: {
+          entity: 'yesNo',
+          value: 'yes'
+      },
+
     }
-  }
+  ]
   this.respond = conversation.choose(this.branches);
 
 })
