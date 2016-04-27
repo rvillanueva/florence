@@ -3,45 +3,43 @@
   <div class="row">
     <div class="col-md-4">
       <ul class="list-group">
-        <li ng-repeat="block in $ctrl.script.before" ng-include="'conversationBlock'" class="list-group-item selectable-message" ng-click="$ctrl.setActive(block.step._id)">
-        </li>
-        <li class="list-group-item selectable-message">
-          <div class="message-container message-app" ng-repeat="message in $ctrl.script.active.step.messages">
-            {{ message }}
+        <li ng-repeat="block in $ctrl.script.before" ng-include="'conversationBlock'" class="list-group-item selectable-message" ng-click="$ctrl.setActive(block.step._id)"></li>
+        <span ng-if="$ctrl.script.before.length > 0"><br><br></span>
+        <div class="selected-box">
+          <li class="list-group-item selectable-message">
+            <div class="message-container message-app" ng-repeat="message in $ctrl.script.active.step.messages">
+              {{ message }}
+            </div>
+          </li>
+          <div class="step-path-connector">
+            <div class="connector-line">
+            </div>
+            <div class="pattern-counter">
+              {{$ctrl.script.active.step.paths[$ctrl.script.active.pathIndex].patterns.length}}
+            </div>
           </div>
-        </li>
-        <li class="list-group-item selectable-message">
-          <div class="message-container message-user">
-            {{ $ctrl.script.active.step.paths[0].patterns[0].phrases[0] }}
-          </div>
-          <div class="message-container message-app" ng-repeat="message in $$ctrl.script.active.step.paths[0].patterns[0].messages">
-            {{ message }}
-          </div>
-        </li>
+          <li class="list-group-item selectable-message">
+            <div class="message-container message-user">
+              {{ $ctrl.script.active.step.paths[$ctrl.script.active.pathIndex].patterns[0].phrases[0] }}
+            </div>
+            <div class="message-container message-app" ng-repeat="message in $$ctrl.script.active.step.paths[0].patterns[0].messages">
+              {{ message }}
+            </div>
+          </li>
+        </div>
+        <br><br>
         <li ng-repeat="block in $ctrl.script.after" ng-include="'conversationBlock'" class="list-group-item selectable-message" ng-click="$ctrl.setActive(block.step._id)">
         </li>
       </ul>
     </div>
     <div class="col-md-8">
-      <h3>{{$ctrl.script.steps[$ctrl.activeStep].messages[0]}}</h3>
-      Max retries: <input><br>
-      Retry messages:
-      <ul><li>Didn't understand...</li></ul>
-      Confirm: <input type="checkbox"/><br>
-      Confirm messages:
-      <ul><li>You're sure it's ____...</li></ul>
-      <h3>Responses</h3>
-      <input />
-      <ul class="list-group">
-        <li ng-repeat="response in $ctrl.script.steps[$ctrl.activeStep].responses" class="list-group-item selectable-message" ng-click="$ctrl.activeSubstep = $index">
-          <!--check if accepted, cycle sumbol if retry, hand stop if end, down arrow if passthrough-->{{response | responseShortname}}
-        </li>
-      </ul>
-      Response data:<br>
-      min/max for number<br>
-      matching phrases for phrases<br>
-      entity for entity matching<br>
+      <div ng-if="true">
+        Pattern Type: Phrase<br>
+        Next Step: step001<br>
+        <br><br>
+        Reaction Messages:
 
+      </div>
     </div>
   </div>
 </div>
@@ -57,3 +55,23 @@
     {{ message }}
   </div>
 </script>
+
+<!--
+<h3>{{$ctrl.script.steps[$ctrl.activeStep].messages[0]}}</h3>
+Max retries: <input><br>
+Retry messages:
+<ul><li>Didn't understand...</li></ul>
+Confirm: <input type="checkbox"/><br>
+Confirm messages:
+<ul><li>You're sure it's ____...</li></ul>
+<h3>Responses</h3>
+<input />
+<ul class="list-group">
+  <li ng-repeat="response in $ctrl.script.steps[$ctrl.activeStep].responses" class="list-group-item selectable-message" ng-click="$ctrl.activeSubstep = $index">
+    check if accepted, cycle sumbol if retry, hand stop if end, down arrow if passthrough {{response | responseShortname}}
+  </li>
+</ul>
+Response data:<br>
+min/max for number<br>
+matching phrases for phrases<br>
+entity for entity matching<br>-->
