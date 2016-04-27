@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Component: ScriptsComponent', function () {
+describe('Component: ConversationsComponent', function () {
 
   // load the controller's module
   beforeEach(module('riverApp'));

@@ -1,15 +1,20 @@
 'use strict';
 (function(){
 
-class ViewComponent {
-  constructor($scope) {
-    this.counter = 0;
+class ConversationViewComponent {
+  constructor() {
+    this.activeStep = 0;
+    this.activeSubstep = 0;
     this.script = {
       metadata: 'test',
       steps: [
         {
           id: '001',
-          message: 'Hi there!',
+          messages: [
+            'Hi there!',
+            'Hey!',
+            'Oh hello'
+          ],
           next: 'wait',
           responses: [
             {
@@ -19,27 +24,13 @@ class ViewComponent {
               steps: [
                 {
                   id: '002',
-                  message: 'Oh no!',
+                  messages: ['Oh no!'],
                   next: 'continue'
                 },
                 {
                   id: '003',
-                  message: 'That\'s too bad. Can I help you?',
+                  messages: ['That\'s too bad. Can I help you?'],
                   next: 'wait',
-                  responses: [
-                    {
-                      type: 'entity',
-                      entity: 'yesNo',
-                      steps: [
-                        {
-                          id: '004',
-                          message: 'Got it!',
-                          next: 'goTo',
-                          stepId: '005'
-                        }
-                      ]
-                    }
-                  ]
                 }
               ]
             },
@@ -63,25 +54,30 @@ class ViewComponent {
               type: 'unknown'
             }
           ]
+        },
+        {
+          id: '007',
+          messages: ['Got it.'],
+          next: 'next'
+        },
+        {
+          id: '008',
+          messages: ['Goodbye!'],
+          next: 'end'
         }
       ]
     };
-    $scope.steps = this.script.steps;
   }
 
-  refreshBranches(response){
-    console.log(response)
-  }
-  test(input){
-    console.log(input);
-    console.log('fired');
+  edit(step){
+    this.editedStep = step;
   }
 }
 
 angular.module('riverApp')
   .component('view', {
-    templateUrl: 'app/routes/scripts/view/view.html',
-    controller: ViewComponent
+    templateUrl: 'app/routes/conversations/view/view.html',
+    controller: ConversationViewComponent
   });
 
 })();

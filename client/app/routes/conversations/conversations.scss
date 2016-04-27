@@ -8,3 +8,10 @@
     text-align: right;
   }
 }
+
+.selectable-message {
+  &:hover{
+    background-color: rgb(202, 223, 119);
+    cursor: pointer;
+  }
+}

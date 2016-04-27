@@ -1,20 +1,20 @@
 'use strict';
 
 angular.module('riverApp')
-  .filter('responseShortname', function () {
+  .filter('responseExample', function () {
     return function (response) {
       if(response.type == 'entity'){
-        return 'Entity: ' + response.value;
+        return response.value;
       }
       if(response.type == 'number'){
-        return 'Number: ' + response.min + ' - ' + response.max;
+        return Math.floor((response.max - response.min)/2) + response.min;
       }
       if(response.type == 'phrase' && response.phrases){
-        return 'Match: ' + response.phrases[0];
+        return response.phrases[0];
       }
       if(response.type == 'unknown'){
-        return 'Unknown';
+        return '[unintelligible]';
       }
-      return 'Error'
+      return 'Error';
     };
   });

@@ -3,8 +3,8 @@
 angular.module('riverApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('scripts', {
-        url: '/scripts',
-        template: '<scripts></scripts>'
+      .state('view', {
+        url: '/conversations/view?:id',
+        template: '<view></view>'
       });
   });

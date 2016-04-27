@@ -1,0 +1,46 @@
+<br><br>
+<div class="container page-conversation-view">
+  <div class="row">
+    <div class="col-md-4">
+      <ul class="list-group">
+        <li ng-repeat="step in $ctrl.script.steps" class="list-group-item selectable-message" ng-click="$ctrl.activeStep = $index">
+          <div class="message-container message-app">
+            {{ step.messages[0] }}
+          </div>
+          <div class="message-container message-user" ng-if="step.responses">
+            {{ step.responses[$ctrl.activeSubstep] | responseExample }}
+          </div>
+          <div class="message-container message-app" ng-if="step.responses[$ctrl.activeStep].steps" ng-repeat="substep in step.responses[$ctrl.activeSubstep].steps">
+            {{substep.messages[0]}}
+          </div>
+        </li>
+      </ul>
+      <div class="btn-group" style="width: 100%" role="group" aria-label="Toggle">
+        <button type="button" style="width: 50%" class="btn btn-secondary">App</button>
+        <button type="button" style="width: 50%" class="btn btn-secondary">User</button>
+      </div>
+      <input class="form-control">
+    </div>
+    <div class="col-md-8">
+      <h3>{{$ctrl.script.steps[$ctrl.activeStep].messages[0]}}</h3>
+      Max retries: <input><br>
+      Retry messages:
+      <ul><li>Didn't understand...</li></ul>
+      Confirm: <input type="checkbox"/><br>
+      Confirm messages:
+      <ul><li>You're sure it's ____...</li></ul>
+      <h3>Responses</h3>
+      <input />
+      <ul class="list-group">
+        <li ng-repeat="response in $ctrl.script.steps[$ctrl.activeStep].responses" class="list-group-item selectable-message" ng-click="$ctrl.activeSubstep = $index">
+          <!--check if accepted, cycle sumbol if retry, hand stop if end, down arrow if passthrough-->{{response | responseShortname}}
+        </li>
+      </ul>
+      Response data:<br>
+      min/max for number<br>
+      matching phrases for phrases<br>
+      entity for entity matching<br>
+
+    </div>
+  </div>
+</div>
