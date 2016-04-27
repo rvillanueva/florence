@@ -3,23 +3,24 @@
   <div class="row">
     <div class="col-md-4">
       <ul class="list-group">
-        <li ng-repeat="step in $ctrl.script.steps" class="list-group-item selectable-message" ng-click="$ctrl.activeStep = $index">
-          <div class="message-container message-app">
-            {{ step.messages[0] }}
-          </div>
-          <div class="message-container message-user" ng-if="step.responses">
-            {{ step.responses[$ctrl.activeSubstep] | responseExample }}
-          </div>
-          <div class="message-container message-app" ng-if="step.responses[$ctrl.activeStep].steps" ng-repeat="substep in step.responses[$ctrl.activeSubstep].steps">
-            {{substep.messages[0]}}
+        <li ng-repeat="block in $ctrl.script.before" ng-include="'conversationBlock'" class="list-group-item selectable-message" ng-click="$ctrl.setActive(block.step._id)">
+        </li>
+        <li class="list-group-item selectable-message">
+          <div class="message-container message-app" ng-repeat="message in $ctrl.script.active.step.messages">
+            {{ message }}
           </div>
         </li>
+        <li class="list-group-item selectable-message">
+          <div class="message-container message-user">
+            {{ $ctrl.script.active.step.paths[0].patterns[0].phrases[0] }}
+          </div>
+          <div class="message-container message-app" ng-repeat="message in $$ctrl.script.active.step.paths[0].patterns[0].messages">
+            {{ message }}
+          </div>
+        </li>
+        <li ng-repeat="block in $ctrl.script.after" ng-include="'conversationBlock'" class="list-group-item selectable-message" ng-click="$ctrl.setActive(block.step._id)">
+        </li>
       </ul>
-      <div class="btn-group" style="width: 100%" role="group" aria-label="Toggle">
-        <button type="button" style="width: 50%" class="btn btn-secondary">App</button>
-        <button type="button" style="width: 50%" class="btn btn-secondary">User</button>
-      </div>
-      <input class="form-control">
     </div>
     <div class="col-md-8">
       <h3>{{$ctrl.script.steps[$ctrl.activeStep].messages[0]}}</h3>
@@ -44,3 +45,15 @@
     </div>
   </div>
 </div>
+
+<script type="text/ng-template" id="conversationBlock">
+  <div class="message-container message-app" ng-repeat="message in block.step.messages">
+    {{ message }}
+  </div>
+  <div class="message-container message-user">
+    {{ block.step.paths[block.pathIndex].patterns[0].phrases[0] }}
+  </div>
+  <div class="message-container message-app" ng-repeat="message in block.step.paths[block.pathIndex].patterns.messages">
+    {{ message }}
+  </div>
+</script>
