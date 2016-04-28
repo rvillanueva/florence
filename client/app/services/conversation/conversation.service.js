@@ -8,11 +8,12 @@ angular.module('riverApp')
       steps: [
         {
           _id: '001',
+          name: 'Welcome',
           messages: ['Hi there!', 'I\'m River the Robot.', 'My purpose...'],
           paths: [
             {
               _id: '003',
-              description: 'User says hello',
+              name: 'User says hello',
               patterns: [
                 {
                   type: 'exact',
@@ -25,7 +26,7 @@ angular.module('riverApp')
             },
             {
               _id: '005',
-              description: 'Can\'t understand user',
+              name: 'Can\'t understand user',
               patterns: [
                 {
                   type: 'unknown',
@@ -38,6 +39,7 @@ angular.module('riverApp')
         },
         {
           _id: '002',
+          name: 'Finish conversation',
           messages: ['great, glad to see you too']
         }
       ]
