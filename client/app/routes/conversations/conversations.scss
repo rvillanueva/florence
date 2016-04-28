@@ -10,6 +10,10 @@ $bubble-radius: 20px;
   }
 }
 
+.message-block {
+  padding: 0;
+}
+
 .message-bubble {
   padding: 10px 14px 10px 14px;
   display: inline-block;
@@ -23,7 +27,7 @@ $bubble-radius: 20px;
   }
   &.message-user{
     text-align: right;
-    background-color: rgb(30, 32, 222);
+    background-color: rgb(39, 128, 203);
     color: #ffffff;
     border-radius: $bubble-radius $bubble-radius 2px $bubble-radius;
 
@@ -31,9 +35,10 @@ $bubble-radius: 20px;
 }
 
 .selectable-message {
+  padding: 14px;
   &:hover{
     border-left: 4px solid rgb(39, 128, 203);
-    padding-left: 11px;
+    padding-left: 10px;
     cursor: pointer;
   }
 }

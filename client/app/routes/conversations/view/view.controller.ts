@@ -2,35 +2,8 @@
 (function() {
 
   class ConversationViewComponent {
-    constructor() {
-      this.conversation = {
-        metadata: 'test',
-        steps: [
-          {
-            _id: '001',
-            messages: ['Hi there!', 'I\'m River the Robot.', 'My purpose...'],
-            paths: [
-              {
-                _id: '003',
-                patterns: [
-                  {
-                    type: 'phrase',
-                    phrases: ['yo', 'hi', 'hey'],
-                    messages: ['Well hey there, you!']
-                  }
-                ],
-                next: 'goToStep',
-                stepId: '002'
-              }
-            ]
-          },
-          {
-            _id: '002',
-            messages: ['great, glad to see you too']
-          }
-        ]
-      }
-
+    constructor(Conversation) {
+      this.convoService = Conversation;
       this.step; // Step index
       this.stepLinks;
 
@@ -38,86 +11,38 @@
         before: [],
         after: []
       }
-      this.s;
-      this.p;
+      this.a = {
+        s: null,
+        p: null,
+        active: true
+      };
       this.editing = {};
 
-      this.compileIndex(this.conversation.steps)
-
-      this.setActive('001');
-    }
-
-    compileIndex(steps){
-      if(this.step){
-        console.log('Already compiled.')
-        return;
-      }
-      this.step = {};
-      this.stepLinks = {}
-      steps.forEach((step, s) => {
-        if(step._id && !this.step[step._id]){
-          this.step[step._id] = step;
-          this.step[step._id].path = {};
-          if(step.paths && step.paths.length > 0){
-            step.paths.forEach((path, p) => {
-              if(path._id && !this.step[step._id].path[path._id]){
-                this.step[step._id].path[path._id] = path;
-                // index linked paths
-                if(path.stepId){
-                  var coords = {
-                    s: step._id,
-                    p: path._id
-                  }
-                  this.stepLinks[path.stepId] = this.stepLinks[path.s] || [];
-                  this.stepLinks[path.stepId].push(coords);
-                }
-              } else {
-                console.log('Error: No path id')
-              }
-            })
-          }
-        } else {
-          console.log('Error: No step id')
-        }
+      this.convoService.getById().then(map => {
+        this.conversation = map.conversation;
+        this.step = map.index;
+        this.stepLinks = map.links;
+        this.setActive('001');
       })
-      console.log('Done building step index:')
-      console.log(this.step);
-      console.log(this.stepLinks)
-    }
-
-    getStep(s) {
-      if(!this.step[s]){
-        console.log('Error: No step indexed with id ' + stepId);
-        return false;
-      }
-      return this.step[s];
-    }
-
-    getPath(s, p) {
-      if(!this.step[s].path[p]){
-        console.log('Error: No path indexed with coordinates ' + stepId + ', ' + pathId);
-        return false;
-      }
-      return this.step[s].path[p];
 
     }
 
     setActive(s, p) {
-      console.log('Setting to (' + s + ', ' + p + ')')
-      this.s = s;
-      this.p = null;
+      console.log('Setting active to coords (' + s + ', ' + p + ')')
+      this.a.s = s;
+      this.a.p = null;
       this.editing.s = s;
       this.editing.p = null;
       if(p){
-        this.p = p;
+        this.a.p = p;
         this.editing.p = p;
       }
       if(this.step[s] && this.step[s].paths && this.step[s].paths.length > 0){
-        this.p = this.step[s].paths[0]._id;
+        this.a.p = this.step[s].paths[0]._id;
       }
       this.buildViewer({
-        s: this.s,
-        p: this.p
+        s: s,
+        p: p
       });
       // If not already the active step, get step by Id
       // Take step, set default path based on most frequent path,
@@ -125,7 +50,7 @@
     }
 
     buildViewer(block) {
-      console.log(block)
+      block = block || this.a;
       this.viewer.before = [];
       this.viewer.after = [];
       var current = {
@@ -152,7 +77,8 @@
           this.step[current.after.s] &&
           this.step[current.after.s].paths &&
           this.step[current.after.s].paths.length > 0 &&
-          this.step[current.after.s].paths[0].stepId
+          this.step[current.after.s].paths[0].stepId &&
+          this.step[current.after.s].paths[0].next
         ){
           var afterStepId = this.step[current.after.s].paths[0].stepId;
           current.after = {

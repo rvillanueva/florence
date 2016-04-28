@@ -10,6 +10,7 @@
     ],
     "files": [
         "client/app/app.ts",
+        "client/app/directives/ngAlias/ngAlias.directive.ts",
         "client/app/filters/responseExample/responseExample.filter.ts",
         "client/app/filters/responseShortname/responseShortname.filter.ts",
         "client/app/routes/account/account.ts",
