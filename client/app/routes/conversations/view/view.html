@@ -22,7 +22,7 @@
 
       </div>
       <div ng-if="$ctrl.editing.s && $ctrl.editing.p">
-        {{$ctrl.step[$ctrl.a.s].path[$ctrl.a.p].description}}
+        {{$ctrl.step[$ctrl.a.s].path[$ctrl.a.p].name}}
         <br><br>
         Confirm?<br>
         Confirm phrases:<br>
@@ -93,11 +93,11 @@
         <!--
           check if accepted, cycle sumbol if retry, hand stop if end, down arrow if passthrough {{response | responseShortname}}
         -->
-        <select ng-model="$ctrl.a.p" ng-change="$ctrl.buildViewer()">
+        <select ng-model="$ctrl.pathSelection" ng-change="$ctrl.selectPath($ctrl.pathSelection)">
           <option ng-repeat="path in $ctrl.step[block.s].paths" value="{{path._id}}">
-            {{path.description}}
+            {{path.name}}
           </option>
-          <option>[Add Path]</option>
+          <option value="new">[Add Path]</option>
         </select>
         <br>
 

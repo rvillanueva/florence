@@ -33,16 +33,19 @@
       this.a.p = null;
       this.editing.s = s;
       this.editing.p = null;
+      this.pathSelection = null;
       if(p){
         this.a.p = p;
         this.editing.p = p;
-      }
-      if(this.step[s] && this.step[s].paths && this.step[s].paths.length > 0){
+        this.pathSelection = p;
+      } else if(this.step[s] && this.step[s].paths && this.step[s].paths.length > 0){
         this.a.p = this.step[s].paths[0]._id;
+        this.editing.p = this.step[s].paths[0]._id;
+        this.pathSelection = this.step[s].paths[0]._id;
       }
       this.buildViewer({
-        s: s,
-        p: p
+        s: this.a.s,
+        p: this.a.p
       });
       // If not already the active step, get step by Id
       // Take step, set default path based on most frequent path,
@@ -111,6 +114,16 @@
       };
       console.log(this.editing);
 
+    }
+
+    selectPath(selection){
+      if(selection == 'new'){
+        // push path
+        console.log('Creating new path')
+      } else {
+        this.a.p = selection;
+        this.buildViewer();
+      }
     }
 }
 
