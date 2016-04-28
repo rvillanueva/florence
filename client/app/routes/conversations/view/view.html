@@ -1,37 +1,45 @@
 <br><br>
 <div class="container page-conversation-view">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-5">
       <ul class="list-group">
         <span ng-if="$ctrl.viewer.before.length > 0">
-          <li ng-repeat="block in $ctrl.viewer.before" ng-include="'conversationBlock'" class="list-group-item selectable-message"></li>
+          <li ng-repeat="block in $ctrl.viewer.before" ng-include="'conversationBlock'" class="list-group-item"></li>
           <br><br>
         </span>
-        <div class="selected-box">
-          <li class="list-group-item selectable-message" ng-click="$ctrl.setActive($ctrl.viewer.active.stepId); $ctrl.edit($ctrl.viewer.active.stepId)">
-            <div class="message-container message-app" ng-repeat="message in $ctrl.step[$ctrl.viewer.active.stepId].messages" >
-              {{ message }}
+          <li class="list-group-item selectable-message" ng-class="{'selected-block': $ctrl.editing.s && !$ctrl.editing.p}" ng-click="$ctrl.setActive($ctrl.s); $ctrl.edit($ctrl.s)">
+            <div class="message-container" ng-repeat="message in $ctrl.step[$ctrl.s].messages" >
+              <div class="message-bubble message-app">{{ message }}</div>
             </div>
+            <form ng-if="!$ctrl.editing.p">
+              <input  /> <button>Add</button>
+            </form>
           </li>
-          <li class="list-group-item selectable-message" ng-if="$ctrl.viewer.active.pathId" ng-click="$ctrl.setActive($ctrl.viewer.active.stepId, $ctrl.viewer.active.pathId); $ctrl.edit($ctrl.viewer.active.stepId, $ctrl.viewer.active.pathId)">
-            <div class="message-container message-user">
-              <span class="label label-default">
-                {{$ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].patterns.length}}
-              </span>
-              &nbsp;&nbsp;&nbsp;
-                {{ $ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].patterns[0].phrases[0] }}
+          <li class="list-group-item selectable-message" ng-class="{'selected-block': $ctrl.editing.s && $ctrl.editing.p}" ng-click="$ctrl.setActive($ctrl.s, $ctrl.p); $ctrl.edit($ctrl.s, $ctrl.p)">
+            <div style="text-align:center">{{$ctrl.step[$ctrl.s].paths.length}}/{{$ctrl.step[$ctrl.s].paths.length}}</div>
+            <div class="message-container message-container-user">
+              <div class="message-bubble message-user">
+                <span class="label label-default">
+                  {{$ctrl.step[$ctrl.s].path[$ctrl.p].patterns.length}}
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                  {{ $ctrl.step[$ctrl.s].path[$ctrl.p].patterns[0].phrases[0] }}
+              </div>
+
             </div>
-            <div class="message-container message-app" ng-repeat="message in $ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].patterns[0].messages">
-              {{ message }}
+            <div class="message-container message-app" ng-repeat="message in $ctrl.step[$ctrl.s].path[$ctrl.p].patterns[0].messages">
+              <div class="message-bubble message-app">{{ message }}</div>
             </div>
+            <form ng-if="$ctrl.editing.p">
+              <input  /> <button>Add</button>
+            </form>
           </li>
-        </div>
         <br><br>
         <li ng-if="$ctrl.viewer.after.length > 0" ng-repeat="block in $ctrl.viewer.after" ng-include="'conversationBlock'" class="list-group-item">
         </li>
       </ul>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div ng-if="$ctrl.editing.s && !$ctrl.editing.p">
         Messages:
         Retries: 3<br>
@@ -39,8 +47,8 @@
 
       </div>
       <div ng-if="$ctrl.editing.s && $ctrl.editing.p">
-        Pattern Type: {{$ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].patterns[0].type}}<br>
-        Next: {{$ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].next}}: {{$ctrl.step[$ctrl.viewer.active.stepId].path[$ctrl.viewer.active.pathId].stepId}}<br>
+        Pattern Type: {{$ctrl.step[$ctrl.s].path[$ctrl.p].patterns[0].type}}<br>
+        Next: {{$ctrl.step[$ctrl.s].path[$ctrl.p].next}}: {{$ctrl.step[$ctrl.s].path[$ctrl.p].stepId}}<br>
         <br><br>
         Reaction Messages:
       </div>
@@ -49,15 +57,17 @@
 </div>
 
 <script type="text/ng-template" id="conversationBlock">
-  <div class="message-container message-app selectable-message" ng-repeat="message in $ctrl.step[block.stepId].messages" ng-click="$ctrl.setActive(block.stepId)">
-    {{ message }}
-  </div>
-  <div class="selectable-message" ng-if="$ctrl.step[block.stepId].path[block.pathId]" ng-click="$ctrl.setActive(block.stepId, block.pathId)">
-    <div class="message-container message-user">
-      {{ $ctrl.step[block.stepId].path[block.pathId].patterns[0].phrases[0] }}
+  <div class="selectable-message" ng-click="$ctrl.setActive(block.s);$ctrl.edit()">
+    <div class="message-container message-app" ng-repeat="message in $ctrl.step[block.s].messages" >
+      <div class="message-bubble message-app">{{ message }}</div>
     </div>
-    <div class="message-container message-app" ng-repeat="message in $ctrl.step[block.stepId].path[block.pathId].patterns[0].messages">
-      {{ message }}
+  </div>
+  <div class="selectable-message" ng-if="$ctrl.step[block.s].path[block.p]" ng-click="$ctrl.setActive(block.s, block.p)">
+    <div class="message-container message-container-user">
+      <div class="message-bubble message-user">{{ $ctrl.step[block.s].path[block.p].patterns[0].phrases[0] }}</div>
+    </div>
+    <div class="message-container message-app" ng-repeat="message in $ctrl.step[block.s].path[block.p].patterns[0].messages">
+      <div class="message-bubble message-app">{{ message }}</div>
     </div>
   </div>
 </script>

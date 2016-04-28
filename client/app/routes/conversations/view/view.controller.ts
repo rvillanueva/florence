@@ -8,14 +8,14 @@
         steps: [
           {
             _id: '001',
-            messages: ['hi 1', 'hi 2', 'hi 3'],
+            messages: ['Hi there!', 'I\'m River the Robot.', 'My purpose...'],
             paths: [
               {
                 _id: '003',
                 patterns: [
                   {
                     type: 'phrase',
-                    phrases: ['yo,', 'hi', 'hey'],
+                    phrases: ['yo', 'hi', 'hey'],
                     messages: ['Well hey there, you!']
                   }
                 ],
@@ -36,12 +36,12 @@
 
       this.viewer = {
         before: [],
-        active: {},
         after: []
       }
       this.s;
       this.p;
-      
+      this.editing = {};
+
       this.compileIndex(this.conversation.steps)
 
       this.setActive('001');
@@ -65,10 +65,10 @@
                 // index linked paths
                 if(path.stepId){
                   var coords = {
-                    stepId: step._id,
-                    pathId: path._id
+                    s: step._id,
+                    p: path._id
                   }
-                  this.stepLinks[path.stepId] = this.stepLinks[path.stepId] || [];
+                  this.stepLinks[path.stepId] = this.stepLinks[path.s] || [];
                   this.stepLinks[path.stepId].push(coords);
                 }
               } else {
@@ -85,37 +85,40 @@
       console.log(this.stepLinks)
     }
 
-    getStep(stepId) {
-      if(!this.step[stepId]){
+    getStep(s) {
+      if(!this.step[s]){
         console.log('Error: No step indexed with id ' + stepId);
         return false;
       }
-      return this.step[stepId];
+      return this.step[s];
     }
 
-    getPath(stepId, pathId) {
-      if(!this.step[stepId].path[pathId]){
+    getPath(s, p) {
+      if(!this.step[s].path[p]){
         console.log('Error: No path indexed with coordinates ' + stepId + ', ' + pathId);
         return false;
       }
-      return this.step[stepId].path[pathId];
+      return this.step[s].path[p];
 
     }
 
-    setActive(stepId, pathId) {
-      console.log('Setting to (' + stepId + ', ' + pathId + ')')
-      this.viewer.active = {
-        stepId: null,
-        pathId: null
+    setActive(s, p) {
+      console.log('Setting to (' + s + ', ' + p + ')')
+      this.s = s;
+      this.p = null;
+      this.editing.s = s;
+      this.editing.p = null;
+      if(p){
+        this.p = p;
+        this.editing.p = p;
       }
-      this.viewer.active.stepId = stepId;
-      if(pathId){
-        this.viewer.active.pathId = pathId;
+      if(this.step[s] && this.step[s].paths && this.step[s].paths.length > 0){
+        this.p = this.step[s].paths[0]._id;
       }
-      if(this.step[stepId] && this.step[stepId].paths && this.step[stepId].paths.length > 0){
-        this.viewer.active.pathId = this.step[stepId].paths[0]._id;
-      }
-      this.buildViewer(this.viewer.active);
+      this.buildViewer({
+        s: this.s,
+        p: this.p
+      });
       // If not already the active step, get step by Id
       // Take step, set default path based on most frequent path,
       // cycle for 4 more steps
@@ -138,21 +141,29 @@
           return;
         }
         // Add before item
-        if(this.stepLinks[current.before.stepId] && this.stepLinks[current.before.stepId].length > 0){
-          current.before = this.stepLinks[current.after.stepId][0];
+        if(this.stepLinks[current.before.s] && this.stepLinks[current.before.s].length > 0){
+          current.before = this.stepLinks[current.after.s][0];
           this.viewer.before.push(current.before);
         } else {
           done.before = true;
         }
         // Add after item
-        if(current.after.stepId &&
-          this.step[current.after.stepId] &&
-          this.step[current.after.stepId].paths &&
-          this.step[current.after.stepId].paths.length > 0 &&
-          this.step[current.after.stepId].paths[0].stepId
+        if(current.after.s &&
+          this.step[current.after.s] &&
+          this.step[current.after.s].paths &&
+          this.step[current.after.s].paths.length > 0 &&
+          this.step[current.after.s].paths[0].stepId
         ){
-          current.after = this.step[current.after.stepId].paths[0];
-          this.viewer.after.push(current.after);
+          var afterStepId = this.step[current.after.s].paths[0].stepId;
+          current.after = {
+            s: afterStepId,
+          }
+          if(this.step[afterStepId].paths && this.step[afterStepId].paths.length > 0){
+            current.after.p = this.step[afterStepId].paths[0]._id
+          }
+          if(current.after.s){
+            this.viewer.after.push(current.after);
+          }
         } else {
           done.after = true;
         }
