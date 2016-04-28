@@ -3,10 +3,6 @@
 
   class ConversationViewComponent {
     constructor() {
-      this.newMessage = {
-        source: 'app',
-        text: ''
-      }
       this.conversation = {
         metadata: 'test',
         steps: [
@@ -30,158 +26,137 @@
           },
           {
             _id: '002',
-            messages: ['great, glad to see you too'],
-            paths: [
-              {
-                patterns: [
-                  {
-                    type: 'phrase',
-                    phrases: ['yo', 'hi', 'hey'],
-                    messages: ['Well hey there, you!']
-                  }
-                ],
-                next: 'end',
-              }
-            ]
+            messages: ['great, glad to see you too']
           }
         ]
       }
 
-      this.script = {
+      this.step; // Step index
+      this.stepLinks;
+
+      this.viewer = {
         before: [],
         active: {},
         after: []
       }
+      this.s;
+      this.p;
+      
+      this.compileIndex(this.conversation.steps)
 
       this.setActive('001');
-
     }
 
+    compileIndex(steps){
+      if(this.step){
+        console.log('Already compiled.')
+        return;
+      }
+      this.step = {};
+      this.stepLinks = {}
+      steps.forEach((step, s) => {
+        if(step._id && !this.step[step._id]){
+          this.step[step._id] = step;
+          this.step[step._id].path = {};
+          if(step.paths && step.paths.length > 0){
+            step.paths.forEach((path, p) => {
+              if(path._id && !this.step[step._id].path[path._id]){
+                this.step[step._id].path[path._id] = path;
+                // index linked paths
+                if(path.stepId){
+                  var coords = {
+                    stepId: step._id,
+                    pathId: path._id
+                  }
+                  this.stepLinks[path.stepId] = this.stepLinks[path.stepId] || [];
+                  this.stepLinks[path.stepId].push(coords);
+                }
+              } else {
+                console.log('Error: No path id')
+              }
+            })
+          }
+        } else {
+          console.log('Error: No step id')
+        }
+      })
+      console.log('Done building step index:')
+      console.log(this.step);
+      console.log(this.stepLinks)
+    }
 
     getStep(stepId) {
-      for (var i = 0; i < this.conversation.steps.length; i++) {
-        var step = this.conversation.steps[i];
-        if (stepId == step._id) {
-          return step;
-        }
+      if(!this.step[stepId]){
+        console.log('Error: No step indexed with id ' + stepId);
+        return false;
       }
+      return this.step[stepId];
     }
 
-    getPath(step, pathId) {
-      step.paths = step.paths || [];
-      for (var i = 0; i < step.paths.length; i++) {
-        var path = step.paths[i];
-        if (pathId == path._id) {
-          return path;
-        }
+    getPath(stepId, pathId) {
+      if(!this.step[stepId].path[pathId]){
+        console.log('Error: No path indexed with coordinates ' + stepId + ', ' + pathId);
+        return false;
       }
+      return this.step[stepId].path[pathId];
+
     }
 
-    setActive(stepId) {
-      var step = this.getStep(stepId);
-      this.script.active = {
-        step: step,
-        pathIndex: 0
+    setActive(stepId, pathId) {
+      console.log('Setting to (' + stepId + ', ' + pathId + ')')
+      this.viewer.active = {
+        stepId: null,
+        pathId: null
       }
-      this.buildScript(this.script.active);
-      console.log(this.script);
+      this.viewer.active.stepId = stepId;
+      if(pathId){
+        this.viewer.active.pathId = pathId;
+      }
+      if(this.step[stepId] && this.step[stepId].paths && this.step[stepId].paths.length > 0){
+        this.viewer.active.pathId = this.step[stepId].paths[0]._id;
+      }
+      this.buildViewer(this.viewer.active);
       // If not already the active step, get step by Id
       // Take step, set default path based on most frequent path,
       // cycle for 4 more steps
     }
 
-    buildScript(block) {
-      this.buildAfter(this.script.active);
-      this.buildBefore(this.script.active);
-    }
-
-    buildAfter(block) {
-      this.script.after = [];
-      var lastBlock = block;
-      var nextBlock;
-      for (var i = 0; i < 100; i++) {
-        nextBlock = this.selectNextAfterBlock(lastBlock);
-        if (i == 99) {
-          console.log('Timed out after 100 iterations.')
-          return;
-        }
-        if (!nextBlock) {
-          return;
-        }
-        this.script.after.push(nextBlock);
-        lastBlock = nextBlock;
-        nextBlock = null;
-      }
-    }
-
-    buildBefore(block) {
-      this.script.before = [];
-      var lastBlock = block;
-      var nextBlock;
-      for (var i = 0; i < 100; i++) {
-        nextBlock = this.selectNextBeforeBlock(lastBlock);
-        if (i == 99) {
-          console.log('Timed out after 100 iterations.')
-          return;
-        }
-        if (!nextBlock) {
-          console.log('No more blocks.')
-          return;
-        }
-        this.script.before.splice(0, 0, nextBlock);
-        lastBlock = nextBlock;
-        nextBlock = null;
-      }
-    }
-
-    selectNextAfterBlock(block) {
-      var nextBlock = {
-        step: null,
-        pathIndex: null
-      }
-      var nextStepId;
+    buildViewer(block) {
       console.log(block)
-      if (
-        block.step &&
-        typeof block.pathIndex == 'number' &&
-        block.step.paths &&
-        block.step.paths[block.pathIndex] &&
-        block.step.paths[block.pathIndex].next == 'goToStep'
-      ){
-        nextStepId = block.step.paths[block.pathIndex].stepId
-        if (!nextStepId) {
-          console.log('Error: No stepId associated with goToStep for ' + step._id);
-          return false;
+      this.viewer.before = [];
+      this.viewer.after = [];
+      var current = {
+        before: block,
+        after: block
+      }
+      var done = {
+        before: false,
+        after: false
+      };
+      for (var i = 0; i < 100; i++) {
+        if (i == 99 || (done.before && done.after)) {
+          return;
         }
-        nextBlock.step = this.getStep(nextStepId);
-        if (nextBlock.step.paths) {
-          nextBlock.pathIndex = 0;
+        // Add before item
+        if(this.stepLinks[current.before.stepId] && this.stepLinks[current.before.stepId].length > 0){
+          current.before = this.stepLinks[current.after.stepId][0];
+          this.viewer.before.push(current.before);
         } else {
-          nextBlock.pathIndex = false;
+          done.before = true;
         }
-        return nextBlock;
-      }
-      return false;
-    }
-
-    selectNextBeforeBlock(block) {
-      var nextBlock = {
-        step: null,
-        pathIndex: null
-      }
-      var nextStepId;
-      for (var i = 0; i < this.conversation.steps.length; i++) {
-        var step = this.conversation.steps[i];
-        for (var j = 0; j < step.paths.length; j++) {
-          var path = step.paths[j];
-          if (path && path.stepId == block.step._id) {
-            nextBlock.step = step;
-            nextBlock.pathIndex = j;
-            return nextBlock;
-          }
+        // Add after item
+        if(current.after.stepId &&
+          this.step[current.after.stepId] &&
+          this.step[current.after.stepId].paths &&
+          this.step[current.after.stepId].paths.length > 0 &&
+          this.step[current.after.stepId].paths[0].stepId
+        ){
+          current.after = this.step[current.after.stepId].paths[0];
+          this.viewer.after.push(current.after);
+        } else {
+          done.after = true;
         }
       }
-      return false;
     }
 
     getBestPath(stepMap) {
@@ -192,9 +167,13 @@
       }
     }
 
+    edit(s, p) {
+      this.editing = {
+        s: s,
+        p: p
+      };
+      console.log(this.editing);
 
-    edit(step) {
-      this.editedStep = step;
     }
 }
 
