@@ -45,10 +45,12 @@ var UserSchema = new Schema({
   },
   story: {
     track: String,
-    step: String
+    state: String
   },
   context: {
-    intent: String,
+    state: String, // Conversation, digression, component
+    stepId: String, // main active step
+    mainStepId: String, // return to this step when done with digression or component
     entities: Object,
     needed: Array
   }
