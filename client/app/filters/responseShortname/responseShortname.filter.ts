@@ -9,7 +9,7 @@ angular.module('riverApp')
       if(response.type == 'number'){
         return 'Number: ' + response.min + ' - ' + response.max;
       }
-      if(response.type == 'phrase' && response.phrases){
+      if(response.type == 'exact' && response.phrases){
         return 'Match: ' + response.phrases[0];
       }
       if(response.type == 'unknown'){

@@ -3,9 +3,8 @@
 
   class ConversationViewComponent {
     constructor(Conversation) {
-      this.convoService = Conversation;
-      this.step; // Step index
-      this.stepLinks;
+      this.conversation = Conversation;
+      this.m; // Step index
 
       this.viewer = {
         before: [],
@@ -18,13 +17,17 @@
       };
       this.editing = {};
 
-      this.convoService.getById().then(map => {
-        this.conversation = map.conversation;
-        this.step = map.index;
-        this.stepLinks = map.links;
+      this.conversation.getById().then(map => {
+        this.m = map;
         this.setActive('001');
       })
 
+    }
+
+    rebuild(map){
+      this.conversation.rebuild(map).then(newMap => {
+        this.m = newMap;
+      })
     }
 
     setActive(s, p) {
@@ -38,10 +41,9 @@
         this.a.p = p;
         this.editing.p = p;
         this.pathSelection = p;
-      } else if(this.step[s] && this.step[s].paths && this.step[s].paths.length > 0){
-        this.a.p = this.step[s].paths[0]._id;
-        this.editing.p = this.step[s].paths[0]._id;
-        this.pathSelection = this.step[s].paths[0]._id;
+      } else if(this.m.step[s] && this.m.step[s].paths && this.m.step[s].paths.length > 0){
+        this.a.p = this.m.step[s].paths[0]._id;
+        this.pathSelection = this.m.step[s].paths[0]._id;
       }
       this.buildViewer({
         s: this.a.s,
@@ -64,46 +66,46 @@
         before: false,
         after: false
       };
-      for (var i = 0; i < 100; i++) {
-        if (i == 99 || (done.before && done.after)) {
+      for (var i = 0; i < 50; i++) {
+        if (i == 49 || (done.before && done.after)) {
           return;
         }
         // Add before item
-        if(this.stepLinks[current.before.s] && this.stepLinks[current.before.s].length > 0){
-          current.before = this.stepLinks[current.after.s][0];
+        if(this.m.links[current.before.s] && this.m.links[current.before.s].length > 0){
+          current.before = this.m.links[current.after.s][0];
           this.viewer.before.push(current.before);
         } else {
           done.before = true;
         }
         // Add after item
         if(current.after.s &&
-          this.step[current.after.s] &&
-          this.step[current.after.s].paths &&
-          this.step[current.after.s].paths.length > 0 &&
-          this.step[current.after.s].paths[0].stepId &&
-          this.step[current.after.s].paths[0].next
+          this.m.step[current.after.s] &&
+          this.m.step[current.after.s].path &&
+          this.m.step[current.after.s].path[current.after.p] &&
+          this.m.step[current.after.s].path[current.after.p].stepId &&
+          this.m.step[current.after.s].path[current.after.p].next == 'goTo'
         ){
-          var afterStepId = this.step[current.after.s].paths[0].stepId;
+          var afterStepId = this.m.step[current.after.s].path[current.after.p].stepId;
           current.after = {
             s: afterStepId,
           }
-          if(this.step[afterStepId].paths && this.step[afterStepId].paths.length > 0){
-            current.after.p = this.step[afterStepId].paths[0]._id
+          if(this.m.step[afterStepId].paths && this.m.step[afterStepId].paths.length > 0){
+            current.after.p = this.m.step[afterStepId].paths[0]._id
           }
-          if(current.after.s){
-            this.viewer.after.push(current.after);
+          this.viewer.after.push(current.after);
+        } else if (this.m.step[current.after.s].next == 'goTo' && this.m.step[current.after.s].stepId){
+          var afterStepId = this.m.step[current.after.s].stepId;
+          current.after = {
+            s: afterStepId,
           }
+          if(this.m.step[afterStepId].paths && this.m.step[afterStepId].paths.length > 0){
+            current.after.p = this.m.step[afterStepId].paths[0]._id
+          }
+          this.viewer.after.push(current.after);
+
         } else {
           done.after = true;
         }
-      }
-    }
-
-    getBestPath(stepMap) {
-      if (stepMap.paths) {
-        return stepMap.paths[0]._id;
-      } else {
-        return false;
       }
     }
 
@@ -118,6 +120,16 @@
 
     selectPath(selection){
       if(selection == 'new'){
+        // push path
+        console.log('Creating new path')
+      } else {
+        this.a.p = selection;
+        this.buildViewer();
+      }
+    }
+
+    setNext(s, p, action){
+      if(action == 'goTo'){
         // push path
         console.log('Creating new path')
       } else {

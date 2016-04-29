@@ -34,7 +34,7 @@ $bubble-radius: 20px;
   }
 }
 
-.selectable-message {
+.selectable-block {
   padding: 14px;
   &:hover{
     border-left: 4px solid rgb(39, 128, 203);
@@ -45,7 +45,7 @@ $bubble-radius: 20px;
 
 .selected-block {
   border-left: 4px solid rgb(39, 128, 203);
-  padding-left: 11px;
+  padding-left: 10px;
 }
 
 .step-path-connector {

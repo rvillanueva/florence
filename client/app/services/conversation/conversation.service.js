@@ -4,12 +4,16 @@ angular.module('riverApp')
   .factory('Conversation', function ($q) {
 
     var example = {
-      metadata: 'test',
+      _id: 'test',
+      info: {
+        name: 'Intro'
+      },
       steps: [
         {
           _id: '001',
           name: 'Welcome',
           messages: ['Hi there!', 'I\'m River the Robot.', 'My purpose...'],
+          next: null,
           paths: [
             {
               _id: '003',
@@ -21,7 +25,7 @@ angular.module('riverApp')
                   messages: ['Well hey there, you!','Glad you\'re doing well today.']
                 }
               ],
-              next: 'goToStep',
+              next: 'goTo',
               stepId: '002'
             },
             {
@@ -40,15 +44,16 @@ angular.module('riverApp')
         {
           _id: '002',
           name: 'Finish conversation',
-          messages: ['great, glad to see you too']
+          messages: ['great, glad to see you too'],
+          next: 'end'
         }
       ]
     };
 
-    var stepIndexer = function(steps){
+    var buildMap = function(conversation){
       var index = {};
       var links = {}
-      steps.forEach((step, s) => {
+      conversation.steps.forEach((step, s) => {
         if(step._id && !index[step._id]){
           index[step._id] = step;
           index[step._id].path = {};
@@ -75,23 +80,57 @@ angular.module('riverApp')
         }
       })
       var map = {
-        index: index,
+        _id: conversation._id,
+        info: conversation.info,
+        step: index,
         links: links
       }
       return map;
     }
 
+    var buildConvo = function(map){
+      var conversation = {
+        _id: map._id,
+        info: map.info,
+        steps: []
+      }
+      for (var stepId in map.step) {
+        if (map.step.hasOwnProperty(property)) {
+          var newStep = map.step[stepId];
+          delete newStep.path;
+          conversation.steps.push(newStep);
+        }
+      }
+      console.log('Built conversation:');
+      console.log(conversation);
+      return conversation;
+    }
+
 
     // Public API here
     return {
-      getById: function () {
+      getById: function (id) {
         var deferred = $q.defer();
-        var returned = stepIndexer(example.steps);
-        returned.conversation = example;
+        var map = buildMap(example);
         console.log('Returning conversation map:')
-        console.log(returned);
-        deferred.resolve(returned);
+        console.log(map);
+        deferred.resolve(map);
         return deferred.promise;
+      },
+      rebuild: function(map){
+        var convo = buildConversation(map);
+        return buildMap(convo);
+      },
+      addPath: function(map, stepId, path){
+
+      },
+      addStep: function(map, pathId, step){
+
+      },
+      removePath: function(map, pathId){
+
+      },
+      removeStep: function(map, removeStep){
       }
     };
   });
