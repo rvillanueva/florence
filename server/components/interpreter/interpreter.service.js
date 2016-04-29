@@ -4,166 +4,104 @@ var Wit = require('./wit');
 var Aspects = require('../aspects');
 var Promise = require('bluebird');
 
-export function getIntents(message, context, skip) {
+export function setupResponse(message){
+  return new Promise(function(resolve, reject) {
+    if(!message || !message.userId){
+      reject('Invalid message data.')
+    }
+    var response = {
+      userId: message.userId,
+      message: message
+    }
+    resolve(response);
+  })
+}
+
+export function getEntities(res) {
   // if intent = trigger, skip Wit. otherwise, interpret intent & actions
   return new Promise(function(resolve, reject) {
     console.log('Parsing intent and entities...')
     if (skip) {
       resolve(skip)
     } else {
-      if(message.text){
-        Wit.getIntents(message, context)
-        .then(intents => {
-          resolve(intents)
+      if(res.message.text && !res.intent){
+        Wit.getEntities(res.message, res.context)
+        .then(entities => {
+          res.entities = entities;
+          resolve(res)
         })
         .catch(err => {
           console.log('Wit response error: ')
           console.log(err)
-          if (context.intent) {
-            resolve([{
-              intent: context.intent
-            }])
-          } else {
-            reject(err)
-          }
+          resolve(res);
         })
       } else {
-        // This is a stupid way to handle intent resolution without message text FIXME
-        resolve([
-        {
-          intent: context.intent
-        }])
+        resolve(res)
       }
     }
   })
 
-  /*Wit.getIntents(message, context)
-  .then(intents => resolve(intents))
-  .catch(err => reject(err))*/
-
 }
 
 
-export function chooseResponse(message, context, intents, overrideIntent) {
+export function redirectByIntent(res) {
   // hardcode some commands in here
   return new Promise(function(resolve, reject) {
-    var switchConfidence = 0.7;
-    var response = context;
-    var best = false; // should really cycle and choose highest intent -- FIX LATER
-    var overwrite = false;
-
-    if(intents && intents.outcomes){
-      best = intents.outcomes[0];
-    }
-
-    console.log('CHOOSING FROM INTENTS')
-    console.log(intents)
-
-    if(overrideIntent){
-      // override intent
-      response = overrideIntent;
-    } else if (!response.intent || (switchConfidence && best.confidence >= switchConfidence)) {
-      // if there's no intent or there's a high confidence in guessed intent, switch
-        response.intent = best.intent;
-        response.entities = best.entities;
-    } else if (best.intent == response.intent) {
-      // if the intents match, merge them but adopt new entities --< MAY WANT TO NOT ADOPT NEW ENTITIES
-      response.entities = mergeEntities(response.entities, best.entities, true)
-    } else {
-      // otherwise, just adopt previously unknown entities and hope they fill in gaps
-      response.entities = mergeEntities(response.entities, best.entities, false)
-    }
-    response.message = message;
-    response.postback = message.postback;
-    response.userId = message.userId;
-    resolve(response);
+    // Build in some logic to redirect if there's an intent
+    resolve(res);
   })
 }
 
-function mergeEntities(entities, Newentities, overwrite) {
-  entities = entities || {};
-  for (var key in entities) {
-    if (entities.hasOwnProperty(key)) {
-      if (overwrite === true || !entities[key]) {
-        entities[key] = newEntities[key];
+export function mergeEntities(res) {
+  res.context = res.context || {};
+  res.context.entities = res.context.entities || {};
+  for (var key in res.context.entities) {
+    if (res.context.entities.hasOwnProperty(key)) {
+      if (!res.entities[key]) {
+        res.entities[key] = res.context.entities[key];
       }
     }
   }
-  return entities;
+  return res;
 }
 
-export function convertAspectKey(response){
-  return new Promise(function(resolve, reject){
-    if(response.entities && response.entities.aspectKey){
-      Aspects.getByKey(response.entities.aspectKey)
-      .then(aspect => {
-        if(!aspect){
-          console.log('Error: No matching aspect exists for \'' + response.entities.aspectKey + '\'')
-        } else {
-          entities.aspectId = aspect._id;
-        }
-        resolve(response);
-      })
-      .catch(err => reject(err))
-    } else {
-      resolve(response);
-    }
-  })
-}
-
-export function convertButtonPayload(response){
+export function convertButtonPayload(res){
   return new Promise(function(resolve, reject){
     console.log('CONVERTING BUTTON PAYLOAD');
     //EXPECTED FORMAT
-    // BTN_intent_{entities}_buttonCode
-    // INIT_intent_{entities}_buttonCode
-    if(!response.entities){
-      response.entities = {};
-    }
-    console.log(response);
-    if(response.message.postback){
-      var payload = response.message.postback;
+    // RES_stepId_buttonValue
+    // CODE_protocol_data
+    res.entities = res.entities || {};
+    if(res.message.postback && typeof res.message.postback == 'string'){
+      var payload = res.message.postback;
       var intentEndLoc;
-      var buttonValueStartLoc;
       var newEntities;
-      if(typeof payload == 'string'){
-        if(payload.slice(0,4) == 'BTN_'){
-          response.input = 'messengerBtn';
-          payload = payload.slice(4)
-        }
-        if(payload.slice(0,5) == 'INIT_'){
-          response.input = 'sendToMessengerBtn';
-          payload = payload.slice(5);
-        } else {
-          resolve(response)
-        }
-        intentEndLoc = payload.indexOf('_');
-        if(intentEndLoc > -1){
-          response.intent = payload.slice(0, intentEndLoc);
-          payload = payload.slice(intentEndLoc + 1);
-        } else {
-          resolve(response);
-        }
-        buttonValueStartLoc = payload.indexOf('_');
-        if(buttonValueStartLoc || buttonValueStartLoc === 0){
-          response.entities.buttonValue = payload.slice(buttonValueStartLoc + 1, payload.length);
-          payload = payload.slice(0,buttonValueStartLoc);
-        } else {
-          resolve(response)
-        }
-        console.log('ENTITIES FROM BTN')
-        console.log(payload)
-        if(payload.length > 0){
-          newEntities = JSON.parse(payload);
-          // need to check if valid JSON
-          if(typeof newEntities == 'object'){
-            response.entities = mergeEntities(response.entities, newEntities, true)
-          }
-        }
-        resolve(response)
+      if(payload.slice(0,4) == 'RES_'){
+        res.type = 'responseBtn';
+        payload = payload.slice(4)
       }
+      if(payload.slice(0,5) == 'CODE_'){
+        res.type = 'conversionCode';
+        payload = payload.slice(5);
+      } else {
+        resolve(res)
+      }
+      stepEndLoc = payload.indexOf('_');
+      if(stepEndLoc > -1){
+        var stepId = payload.slice(0, stepEndLoc);
+        if(stepId !== res.context.stepId){
+          res.expired = true;
+        }
+        payload = payload.slice(stepEndLoc + 1);
+      } else {
+        resolve(res);
+      }
+      if(payload.length > 0){
+        res.entities.button = payload;
+      }
+      resolve(res);
     } else {
-      resolve(response)
+      resolve(res)
     }
   })
 }

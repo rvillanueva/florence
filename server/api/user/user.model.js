@@ -47,8 +47,7 @@ var UserSchema = new Schema({
     track: String,
     state: String
   },
-  context: {
-    state: String, // Conversation, digression, component
+  state: {
     stepId: String, // main active step
     mainStepId: String, // return to this step when done with digression or component
     entities: Object,

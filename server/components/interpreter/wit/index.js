@@ -1,7 +1,7 @@
 var Promise = require("bluebird");
 var request = require("request");
 
-export function getIntents(message, context){
+export function getEntities(message, context){
  return new Promise(function(resolve, reject){
    console.log('SENDING TO WIT:')
    console.log(message)
@@ -22,8 +22,8 @@ export function getIntents(message, context){
    }
 
    request.get(options, function(err, response, body){
-     console.log('WIT ANALYSIS:')
-     console.log(body)
+     console.log('WIT ANALYSIS:');
+     console.log(body);
      var returned = JSON.parse(body);
      if(err){
        reject(err);

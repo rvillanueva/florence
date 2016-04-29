@@ -8,17 +8,39 @@ var Paths = require('./paths');
 
 export function constructor(response) {
   this.userId = response.userId;
-  this.response = {
+  this.message = response.message;
+  this.active = {
     intent: response.intent,
-    message: response.message,
+    stepId: response.stepId,
     entities: response.entities,
-    choice: response.choice
   }
-  this.intent = response.intent;
-  this.entities = response.entities || {};
-  this.user = function(){
-    return User.findById(this.userId, '-salt -password')
+  this.context = response.context;
+
+  this.setContext = function(context){
+    return new Promise(function(resolve, reject){
+      Context.set(context)
+      .then(data => {
+        this.context(data);
+        resolve(context);
+      })
+      .catch(err => reject(err))
+    })
   }
+
+  this.say = function(stepId){
+    return Messages.send({
+      userId: this.userId,
+      text: text
+    })
+  }
+
+
+  return this;
+}
+
+
+/*
+
 
   this.say = function(text){
     return Messages.send({
@@ -133,5 +155,4 @@ export function constructor(response) {
       // choose next best option
   }
 
-  return this;
-}
+*/

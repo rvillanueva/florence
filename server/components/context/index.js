@@ -12,16 +12,19 @@ function extractContext(user){
    })
 }
 
-export function get(userId){
+export function get(res){
  // figure out the last query to user and expected intent
  return new Promise(function(resolve, reject){
-   User.findById(userId, '-salt -password').exec()
+   User.findById(res.userId, '-salt -password').exec()
      .then(user => {
        if(!user){
          reject('No user found.')
        } else {
          extractContext(user)
-         .then(context => resolve(context))
+         .then(context => {
+           res.context = context;
+           resolve(res);
+         })
          .catch(err => reject(err))
        }
      })
