@@ -7,7 +7,7 @@ export function checkPaths(bot, paths) {
         var pattern = checkPattern(bot, path.data.patterns[i])
         if(pattern){
           var data = {
-            p: p,
+            p: path,
             pattern: pattern
           }
           resolve(data);
