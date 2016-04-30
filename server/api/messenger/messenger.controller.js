@@ -11,7 +11,7 @@
 
 import _ from 'lodash';
 
-var Messenger = require('../../components/messages/messenger');
+var Messenger = require('../../services/messages/messenger');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

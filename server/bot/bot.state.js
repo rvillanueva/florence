@@ -2,28 +2,16 @@
 var Promise = require('bluebird');
 import User from '../../api/user/user.model';
 
-function extractContext(user){
-  return new Promise(function(resolve, reject){
-    var context = user.context;
-     if(user.timezone){
-       context.timezone = user.timezone;
-     }
-     resolve(context);
-   })
-}
-
-export function get(res){
+export function get(userId){
  // figure out the last query to user and expected intent
  return new Promise(function(resolve, reject){
-   User.findById(res.userId, '-salt -password').exec()
+   User.findById(userId, '-salt -password').exec()
      .then(user => {
        if(!user){
          reject('No user found.')
        } else {
-         extractContext(user)
-         .then(context => {
-           res.context = context;
-           resolve(res);
+         .then(user => {
+           resolve(user.state);
          })
          .catch(err => reject(err))
        }
@@ -32,16 +20,16 @@ export function get(res){
  })
 }
 
-export function set(userId, context){
+export function set(userId, state){
  return new Promise(function(resolve, reject){
    User.findById(userId, '-salt -password').exec()
    .then(user => {
      if(!user){
        reject('No user found.')
      } else {
-       user.context = context;
+       user.state = state;
        user.save()
-       .then(user => resolve(user.context))
+       .then(user => resolve(user.state))
        .catch(err => reject(err))
      }
    })

@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 var moment = require('moment');
 import User from '../../api/user/user.model';
-import * as Messages from '../messages';
+import * as Messages from '../../services/messages';
 import Verification from '../../api/verification/verification.model';
 
 export function findVerification(userId, provider) {

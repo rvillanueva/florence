@@ -11,7 +11,7 @@
 
 import _ from 'lodash';
 import Verification from './verification.model';
-import * as Verify from '../../components/verify';
+import * as Verify from '../../auth/verify';
 import * as Auth from '../../auth/auth.service';
 
 function respondWithResult(res, statusCode) {

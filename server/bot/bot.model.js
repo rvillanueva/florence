@@ -1,39 +1,59 @@
 'use strict';
 var Promise = require("bluebird");
-var Messages = require ('../messages');
-var Context = require ('../context');
+var Messages = require ('../services/messages');
 import User from '../../api/user/user.model';
-var Entry = require('../entry');
-var Paths = require('./paths');
+var Entry = require('../services/entry');
+var State = require ('./bot.state');
 
-export function constructor(response) {
-  this.userId = response.userId;
-  this.message = response.message;
-  this.active = {
-    intent: response.intent,
-    stepId: response.stepId,
-    entities: response.entities,
+export function constructor(message) {
+  this.userId = message.userId;
+  this.message = message;
+  this.state = {
+    intent: null,
+    stepId: null,
+    mainStepId: null,
+    entities: null,
+    needed: []
   }
-  this.context = response.context;
 
-  this.setContext = function(context){
+  this.getState = function(){
     return new Promise(function(resolve, reject){
-      Context.set(context)
-      .then(data => {
-        this.context(data);
-        resolve(context);
+      State.get(this.userId)
+      .then(state => {
+        this.state = state;
+        resolve(this)
       })
       .catch(err => reject(err))
     })
   }
 
-  this.say = function(stepId){
+  this.setState = function(){
+    return new Promise(function(resolve, reject){
+      State.set(userId, this.state)
+      .then(state => {
+        this.state = state;
+        resolve(this);
+      })
+      .catch(err => reject(err))
+    })
+  }
+
+  this.say = function(text){
     return Messages.send({
       userId: this.userId,
       text: text
     })
   }
 
+  this.sayMany = function(messages){
+    return new Promise((reject, resolve) => {
+      messages.forEach(message, m => {
+        message.userId = this.userId;
+        Messages.send(message);
+      })
+      resolve(true);
+    })
+  }
 
   return this;
 }

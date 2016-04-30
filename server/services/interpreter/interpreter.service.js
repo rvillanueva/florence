@@ -4,19 +4,6 @@ var Wit = require('./wit');
 var Aspects = require('../aspects');
 var Promise = require('bluebird');
 
-export function setupResponse(message){
-  return new Promise(function(resolve, reject) {
-    if(!message || !message.userId){
-      reject('Invalid message data.')
-    }
-    var response = {
-      userId: message.userId,
-      message: message
-    }
-    resolve(response);
-  })
-}
-
 export function getEntities(res) {
   // if intent = trigger, skip Wit. otherwise, interpret intent & actions
   return new Promise(function(resolve, reject) {

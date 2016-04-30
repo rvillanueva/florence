@@ -1,6 +1,6 @@
 import passport from 'passport';
 import {Strategy as FacebookStrategy} from 'passport-facebook';
-import * as Verify from '../../components/verify';
+import * as Verify from '../verify';
 
 export function setup(User, config) {
   passport.use(new FacebookStrategy({
