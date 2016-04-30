@@ -26,9 +26,6 @@ export function toStandard(messageObj, user){
               from: 'user',
               interface: 'messenger'
             }
-            if(obj.postback){
-              formatted.postback = obj.postback.payload;
-            }
 
             if(obj.message){
               formatted.messenger = {};
@@ -41,17 +38,42 @@ export function toStandard(messageObj, user){
             if(formatted.text){
               formatted.input = 'text';
             }
-
-            if(formatted.data){
+            if(obj.postback && obj.postback.payload){
               formatted.input = 'button';
+              convertPayloadToStandard(formatted, obj.postback.payload)
+              .then(formatted => resolve(formatted))
+            } else {
+              resolve(formatted);
             }
-
-            resolve(formatted);
           }
         })
       }
   })
 }
+
+export function convertPayloadToStandard(message, payload){
+  return new Promise(function(resolve, reject){
+    if(typeof payload == 'string'){
+      if(payload.slice(0,4) == 'RES_'){
+        message.input = 'button';
+        payload = payload.slice(4);
+      } else if (payload.slice(0,5) == 'SCAN_'){
+        message.input = 'scan';
+        payload = payload.slice(5);
+      } else {
+        resolve(message)
+      }
+      var valueStartLoc = payload.indexOf('_');
+      if(valueStartLoc > -1){
+        message.button = payload.slice(valueStartLoc + 1, payload.length);
+      }
+      resolve(message);
+    } else {
+      resolve(message)
+    }
+  })
+}
+
 
 export function toMessenger(message) {
   return new Promise(function(resolve, reject) {
@@ -59,8 +81,11 @@ export function toMessenger(message) {
       recipient: {},
       message: {}
     };
-    convertButtonsToMessenger(message)
-      .then(message => User.findById(message.userId, '_id messenger').exec())
+    convertAttachmentsToMessenger(message)
+      .then(messageData => {
+        message = messageData;
+        return User.findById(message.userId, '_id messenger').exec()
+      })
       .then(user => {
         if (!user) {
           reject('No user found with id: ' + message.userId)
@@ -89,18 +114,20 @@ export function toMessenger(message) {
   })
 }
 
-function convertButtonsToMessenger(message){
+function convertAttachmentsToMessenger(message){
   return new Promise((resolve, reject) => {
-    if(message.attachment && message.attachment.payload){
-      if(message.attachment.payload.buttons){
-        message.attachment.payload.buttons = convertButtons(message.attachment.payload.buttons);
-      } else if (message.attachment.payload.elements) {
-        var cards = message.attachment.payload.elements;
-        cards.forEach((card, i) => {
-          card.buttons = convertButtons(card.buttons);
-        })
-      } else {
-        resolve(message)
+    if(message.type == 'button'){
+      var buttons = convertButtons(message.buttons);
+      message = {
+        userId: message.userId,
+        attachment: {
+          type: 'template',
+          payload: {
+            template_type: 'button',
+            text: message.text || ' ',
+            buttons: buttons
+          }
+        }
       }
     }
     resolve(message)
@@ -108,25 +135,23 @@ function convertButtonsToMessenger(message){
 }
 
 function convertButtons(buttons) {
+  // TODO Add logic around button length and turning it into a card
+  var output = [];
   buttons.forEach((button, i) => {
-    if(button.payload){
-      button.payload = button.payload || {};
-      var entities = '';
-      var intent = button.payload.intent || '';
-      var buttonValue = '';
-      if (button.payload.buttonValue || button.payload.buttonValue === 0) {
-        buttonValue = button.payload.buttonValue;
-      }
-      if (button.payload.entities) {
-        console.log('BUTTON ENTITIES')
-        console.log(button.payload.entities)
-        entities = JSON.stringify(button.payload.entities);
-      }
-      var newPayload = 'BTN_' + intent + '_' + entities + '_' + buttonValue;
-      button.payload = newPayload;
-      console.log('BUTTON PAYLOAD: ' + newPayload)
+    var converted = {
+      title: button.title
+    };
+    if(button.value){
+      converted.type = 'postback';
+      converted.payload = 'RES_' + 'null' + '_' + button.value;
+      console.log('NEWBUTTON:');
+      console.log(converted);
+      output.push(converted);
+    } else if (button.url){
+      converted.type = 'web_url';
+      converted.url = button.url;
+      output.push(converted);
     }
-    console.log(button)
   })
-  return buttons;
+  return output;
 }

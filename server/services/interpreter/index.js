@@ -9,7 +9,6 @@ export function getEntities(bot){
     Patterns.check(bot)
     .then(bot => Interpret.getEntities(bot))
     .then(bot => Interpret.mergeEntities(bot))
-    .then(bot => Interpret.convertButtonPayload(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   });

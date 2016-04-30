@@ -45,7 +45,7 @@ export function constructor(message) {
     })
   }
 
-  this.sayMany = function(messages){
+  this.send = function(messages){
     return new Promise((resolve, reject) => {
       messages.forEach((message, m) => {
         message.userId = this.userId;

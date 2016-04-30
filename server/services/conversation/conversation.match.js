@@ -2,15 +2,18 @@
 
 export function checkPaths(bot, paths) {
   return new Promise(function(resolve, reject){
+    var map;
     paths.forEach(function(path, p){
       for (var i = 0; i < path.data.patterns.length; i++) {
         var pattern = checkPattern(bot, path.data.patterns[i])
         if(pattern){
-          var data = {
-            p: path,
+          map = {
+            path: path,
             pattern: pattern
           }
-          resolve(data);
+          console.log('Matched pattern: ')
+          console.log(pattern);
+          resolve(map)
         }
       }
     })
@@ -40,7 +43,7 @@ export function checkPattern(bot, pattern) {
     return pattern;
   } else if (
     pattern.type == 'button' &&
-    pattern.button.value == pattern.value
+    bot.state.entities.button == pattern.value
   ){
     return pattern;
   } else {

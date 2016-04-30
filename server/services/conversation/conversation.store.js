@@ -34,6 +34,19 @@ var example = {
       }, {
         type: 'text',
         text: 'Even though I\'m still training, there are a few things I can do. Want to hear them?'
+      },
+      {
+        type: 'button',
+        buttons: [{
+          title: 'Um, of course',
+          subtitle: null,
+          value: 'yes'
+        },
+        {
+          title: 'No way!',
+          subtitle: null,
+          value: 'no'
+        }]
       }],
       paths: [{
         _id: 'p001',
@@ -45,6 +58,17 @@ var example = {
           patterns: [{
             type: 'exact',
             phrases: ['yes', 'yea', 'sure'],
+            messages: [{
+              type: 'text',
+              text: 'Great!'
+            }, {
+              type: 'text',
+              text: 'Here\'s my magic...'
+            }]
+          },
+          {
+            type: 'button',
+            value: ['yes'],
             messages: [{
               type: 'text',
               text: 'Great!'
@@ -71,6 +95,14 @@ var example = {
             }, {
               type: 'text',
               text: 'Fare thee well.'
+            }]
+          },
+          {
+            type: 'button',
+            value: ['no'],
+            messages: [{
+              type: 'text',
+              text: 'Oh... okay :('
             }]
           }]
         }
@@ -102,7 +134,7 @@ var example = {
       name: 'Pre-ending',
       messages: [{
         type: 'text',
-        text: 'And this is almost the end of the conversation!'
+        text: 'And this is the end of the conversation!'
       }],
     },
   },

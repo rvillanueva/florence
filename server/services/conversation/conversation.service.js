@@ -7,7 +7,7 @@ export function startStep(bot, step) {
   return new Promise(function(resolve, reject) {
     bot.state.stepId = step._id;
     bot.updateState()
-      .then(res => bot.sayMany(step.data.messages))
+      .then(res => bot.send(step.data.messages))
       .then(res => waitForResponse(bot, step))
       .then(res => resolve(res))
   })
@@ -48,6 +48,15 @@ export function run(bot) {
   })
 }
 
+export function getStep(bot){
+  Store.getStepByIntent(bot)
+  .then(step => {
+    if(step){
+      resolve(step)
+    }
+    else(bot.state)
+  })
+}
 
 function runNext(bot, next) {
   return new Promise(function(resolve, reject) {
@@ -85,8 +94,6 @@ function runNext(bot, next) {
 
 function waitForResponse(bot, step){
   return new Promise(function(resolve, reject){
-    console.log('step')
-    console.log(step)
     if(!step.data.paths || step.data.paths.length == 0){
       runNext(bot, step.next)
       .then(res => resolve(res))
@@ -101,7 +108,10 @@ function sendReply(bot, map){ //Handle this better TODO
   return new Promise(function(resolve, reject){
     var next;
     // catch unknown
+    console.log('MAP IS')
+    console.log(map)
     if(!map.path || !map.pattern){
+      console.log()
       retryStep(bot, map.step)
       .then(next => resolve(next))
       .catch(err => reject(err))
@@ -111,7 +121,7 @@ function sendReply(bot, map){ //Handle this better TODO
       } else {
         next = map.path.next;
       }
-      bot.sayMany(pattern.messages)
+      bot.send(map.pattern.messages)
       .then(res => resolve(next))
       .catch(err => reject(err))
     }
