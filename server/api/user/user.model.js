@@ -49,9 +49,10 @@ var UserSchema = new Schema({
   },
   state: {
     stepId: String, // main active step
-    mainStepId: String, // return to this step when done with digression or component
+    returnStepId: String, // return to this step when done with digression or component
     entities: Object,
-    needed: Array
+    needed: Array,
+    retries: Number
   }
 });
 

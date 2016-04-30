@@ -2,15 +2,16 @@
 
 // Custom intepreter to select intent and override wit
 
-export function check(response){
+export function check(bot){
  // if intent = trigger, skip Wit. otherwise, interpret intent & actions
  // other commands will override
  return new Promise(function(resolve, reject){
-   if(response.message && response.message.text && typeof response.message.text == 'string'){
-     text = message.text.toLowerCase();
+   var text;
+   if(bot.message && bot.message.text && typeof bot.message.text == 'string'){
+     text = bot.message.text.toLowerCase();
    }
    if(text == 'stop'){
-     response.intent = 'stop';
+     bot.state.intent = 'stop';
    }
 
    if(
@@ -19,12 +20,15 @@ export function check(response){
      || text == 'hey'
      || text == 'yo'
     ){
-     response.intent = 'hello';
+      console.log('intent set')
+     bot.state.intent = 'hello';
    }
 
    if(text == 'login'){
-     response.intent = 'login';
+     bot.state.intent = 'login';
    }
-    resolve(response);
+   console.log('botting')
+   console.log(bot.state.intent)
+    resolve(bot);
  })
 }

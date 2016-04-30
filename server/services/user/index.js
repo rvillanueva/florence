@@ -20,7 +20,7 @@ export function getUserByMessengerId(messengerId) {
           var newUser = new User(userData);
           newUser.provider = 'facebook';
           newUser.role = 'user';
-          newUser.context = {
+          newUser.state = {
             intent: 'hello',
             entities: {},
             needed: []

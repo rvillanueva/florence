@@ -1,7 +1,7 @@
 'use strict';
 var Promise = require("bluebird");
 var Messages = require ('../services/messages');
-import User from '../../api/user/user.model';
+import User from '../api/user/user.model';
 var Entry = require('../services/entry');
 var State = require ('./bot.state');
 
@@ -9,15 +9,15 @@ export function constructor(message) {
   this.userId = message.userId;
   this.message = message;
   this.state = {
-    intent: null,
-    stepId: null,
-    mainStepId: null,
-    entities: null,
+    intent: false,
+    stepId: false,
+    mainStepId: false,
+    entities: {},
     needed: []
   }
 
   this.getState = function(){
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) =>{
       State.get(this.userId)
       .then(state => {
         this.state = state;
@@ -27,9 +27,9 @@ export function constructor(message) {
     })
   }
 
-  this.setState = function(){
-    return new Promise(function(resolve, reject){
-      State.set(userId, this.state)
+  this.updateState = function(){
+    return new Promise((resolve, reject) =>{
+      State.set(this.userId, this.state)
       .then(state => {
         this.state = state;
         resolve(this);
@@ -46,8 +46,8 @@ export function constructor(message) {
   }
 
   this.sayMany = function(messages){
-    return new Promise((reject, resolve) => {
-      messages.forEach(message, m => {
+    return new Promise((resolve, reject) => {
+      messages.forEach((message, m) => {
         message.userId = this.userId;
         Messages.send(message);
       })

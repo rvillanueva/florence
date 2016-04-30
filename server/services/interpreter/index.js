@@ -3,7 +3,6 @@
 var Promise = require("bluebird");
 var Interpret = require('./interpreter.service');
 var Patterns = require('./interpreter.patterns');
-var Context = require('../context');
 
 export function getEntities(bot){
   return new Promise(function(resolve, reject){

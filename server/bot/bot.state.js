@@ -1,6 +1,6 @@
 'use strict';
 var Promise = require('bluebird');
-import User from '../../api/user/user.model';
+import User from '../api/user/user.model';
 
 export function get(userId){
  // figure out the last query to user and expected intent
@@ -10,10 +10,7 @@ export function get(userId){
        if(!user){
          reject('No user found.')
        } else {
-         .then(user => {
-           resolve(user.state);
-         })
-         .catch(err => reject(err))
+          resolve(user.state);
        }
      })
      .catch(err => reject(err))
@@ -30,22 +27,6 @@ export function set(userId, state){
        user.state = state;
        user.save()
        .then(user => resolve(user.state))
-       .catch(err => reject(err))
-     }
-   })
- })
-}
-
-export function clear(userId){
- return new Promise(function(resolve, reject){
-   User.findById(userId, '-salt -password').exec()
-   .then(user => {
-     if(!user){
-       reject('No user found.')
-     } else {
-       user.context = null;
-       user.save()
-       .then(user => resolve(user.context))
        .catch(err => reject(err))
      }
    })

@@ -1,55 +1,41 @@
 'use strict';
 
 var Wit = require('./wit');
-var Aspects = require('../aspects');
 var Promise = require('bluebird');
 
-export function getEntities(res) {
+export function getEntities(bot) {
   // if intent = trigger, skip Wit. otherwise, interpret intent & actions
   return new Promise(function(resolve, reject) {
     console.log('Parsing intent and entities...')
-    if (skip) {
-      resolve(skip)
-    } else {
-      if(res.message.text && !res.intent){
-        Wit.getEntities(res.message, res.context)
+    if (bot.message.text && !bot.state.intent) {
+      Wit.getEntities(bot.message, bot.context)
         .then(entities => {
-          res.entities = entities;
-          resolve(res)
+          bot.entities = entities;
+          resolve(bot)
         })
         .catch(err => {
           console.log('Wit response error: ')
           console.log(err)
-          resolve(res);
+          resolve(bot);
         })
-      } else {
-        resolve(res)
-      }
+    } else {
+      resolve(bot)
     }
   })
 
 }
 
-
-export function redirectByIntent(res) {
-  // hardcode some commands in here
-  return new Promise(function(resolve, reject) {
-    // Build in some logic to redirect if there's an intent
-    resolve(res);
-  })
-}
-
-export function mergeEntities(res) {
-  res.context = res.context || {};
-  res.context.entities = res.context.entities || {};
-  for (var key in res.context.entities) {
-    if (res.context.entities.hasOwnProperty(key)) {
-      if (!res.entities[key]) {
-        res.entities[key] = res.context.entities[key];
+export function mergeEntities(bot) {
+  bot.state = bot.state || {};
+  bot.state.entities = bot.state.entities || {};
+  for (var key in bot.state.entities) {
+    if (bot.state.entities.hasOwnProperty(key)) {
+      if (!bot.entities[key]) {
+        bot.entities[key] = bot.state.entities[key];
       }
     }
   }
-  return res;
+  return bot;
 }
 
 export function convertButtonPayload(res){

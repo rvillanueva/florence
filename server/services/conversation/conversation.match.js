@@ -1,17 +1,20 @@
 'use strict';
 
 export function checkPaths(bot, paths) {
-  paths.forEach(function(path, p){
-    for (var i = 0; i < path.data.patterns.length; i++) {
-      var pattern = checkPattern(path.patterns[i])
-      if(pattern){
-        var data = {
-          p: p,
-          pattern: pattern
+  return new Promise(function(resolve, reject){
+    paths.forEach(function(path, p){
+      for (var i = 0; i < path.data.patterns.length; i++) {
+        var pattern = checkPattern(bot, path.data.patterns[i])
+        if(pattern){
+          var data = {
+            p: p,
+            pattern: pattern
+          }
+          resolve(data);
         }
-        return data;
       }
-    }
+    })
+    resolve(false);
   })
 }
 

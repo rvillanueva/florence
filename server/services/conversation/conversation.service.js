@@ -38,7 +38,7 @@ var example = {
           name: 'User says hello',
           patterns: [{
             type: 'exact',
-            phrases: ['yo', 'hi', 'hey'],
+            phrases: ['blah', 'hi', 'hey'],
             messages: [{
               type: 'text',
               text: 'Well hey there, you!'
@@ -82,88 +82,112 @@ var example = {
 };
 
 
-export function getStep(state) {
+export function run(bot) {
   return new Promise(function(resolve, reject) {
-    if (state.intent) {
-      getStepByIntent(state.intent)
-        .then(step => resolve(step))
+    if (bot.state.intent) {
+      getStepByIntent(bot.state.intent)
+        .then(step => startStep(bot, step))
+        .then(res => resolve(res))
         .catch(err => reject(err))
-    } else if (state.context.stepId) {
-      getStepById(state.context.stepId)
-        .then(step => resolve(step))
+    } else if (bot.state.stepId) {
+      getStepById(bot.state.stepId)
+        .then(step => respondStep(bot, step))
+        .then(res => resolve(res))
         .catch(err => reject(err))
     } else {
       getStepByIntent('hello')
-        .then(step => resolve(step))
+        .then(step => startStep(bot, step))
+        .then(res => resolve(res))
         .catch(err => reject(err))
     }
   })
 }
 
 export function getStepByIntent(intent) {
+  return new Promise(function(resolve, reject) {
+    if (intent == 'hello') {
+      resolve(example.steps[0]);
+    } else {
+      console.log('error: why are we getting random intents?')
+    }
+  })
 
 }
 
 export function getStepById(stepId) {
   return new Promise(function(resolve, reject) {
+    console.log(stepId)
     example.steps.forEach(function(step, s) {
+      console.log(step._id)
       if (step._id == stepId) {
         resolve(step);
       }
     })
+    resolve(false);
   })
 }
 
-export function respondStep(bot) {
-  return new Promise(function(resolve, reject){
-    var step;
+export function respondStep(bot, step) {
+  return new Promise(function(resolve, reject) {
     var path;
     var pattern;
-    getStep(bot.state)
-      .then(stepData => {
-        return new Promise(function(resolve, reject){
-          step = stepData;
-          resolve()
-        })
-      })
-      .then(Matcher.checkPaths(step.paths))
+    Matcher.checkPaths(bot, step.data.paths)
       .then(res => {
         pattern = res.pattern;
-        path = step.paths[res.p];
-        return bot.sendMany(pattern.messages);
+        path = step.data.paths[res.p];
+        return bot.sayMany(pattern.messages);
       })
-      .then(()=> {
-        if(path.next.action == 'default'){
-          return runNext(step.next);
+      .then(() => {
+        if (path.next.action == 'default') {
+          return runNext(bot, step.next);
         } else {
-          return runNext(path.next);
+          return runNext(bot, path.next);
         }
       })
       .then(res => resolve(res))
       .catch(err => reject(err))
-        // match pattern
-        // send messages from pattern
-        // update state for next step
-        // return bot
+      // match pattern
+      // send messages from pattern
+      // update state for next step
+      // return bot
   })
 
 }
 
-function runNext(next){
-  return new Promise(function(resolve, reject){
-    if(next.action == 'goTo'){
+function runNext(bot, next) {
+  return new Promise(function(resolve, reject) {
+    bot.state.intent = null;
+    bot.state.entities = {};
+    bot.state.needed = [];
+    if (next.action == 'goTo') {
       bot.state.stepId = next.stepId;
-      bot.updateState()
-      .then(bot => startStep(bot))
+      bot.state.retries = 0;
+    }
+    if (next.action == 'end') {
+      if (bot.state.mainStepId) {
+        bot.state.stepId = bot.state.returnStepId;
+      } else {
+        bot.state.stepId = null;
+      }
+      bot.state.retries = 0;
+    }
+    if (next.action == 'retry') {
+      bot.state.retries = bot.state.retries | 0;
+      bot.state.retries++;
+    }
+    bot.updateState()
+      .then(bot => getStepById(bot.state.stepId))
+      .then(step => startStep(bot, step))
       .then(res => resolve(res))
       .catch(err => reject(err))
-    }
   })
 }
 
 export function startStep(bot, step) {
-  return new Promise(function(resolve, reject){
-    getStep(bot.state)
-      .then(step => {})
+  return new Promise(function(resolve, reject) {
+    bot.state.stepId = step._id;
+    bot.updateState()
+      .then(res => bot.sayMany(step.data.messages))
+      .then(res => resolve(res))
   })
 }
