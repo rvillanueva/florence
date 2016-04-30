@@ -1,7 +1,8 @@
 var Promise = require('bluebird');
 var Messenger = require('./messenger');
 var Bot = require('../../bot');
-var Queue = require('./messages.queue')
+var Queue = require('./messages.queue');
+
 /*
 Standardized message format
 
@@ -29,7 +30,7 @@ export function send(message){
 // Receive standardized message from any messaging interface
 export function receive(message){
   // Add messaging logging here;
-  console.log(message.userId + ' says: ' + message.text);
+  console.log(message.userId + ' says: ' + (message.text || '[button: ' + message.button + ']'));
   Bot.respond(message) // Figure out how to respond to the message
 }
 

@@ -38,14 +38,19 @@ var example = {
       {
         type: 'button',
         buttons: [{
-          title: 'Um, of course',
+          title: 'Sure, sounds good',
           subtitle: null,
           value: 'yes'
         },
         {
-          title: 'No way!',
+          title: 'Uh, no way',
           subtitle: null,
           value: 'no'
+        },
+        {
+          title: 'Learning?',
+          subtitle: null,
+          value: 'learning'
         }]
       }],
       paths: [{
@@ -75,6 +80,17 @@ var example = {
             }, {
               type: 'text',
               text: 'Here\'s my magic...'
+            }]
+          },{
+            type: 'button',
+            value: ['learning'],
+            messages: [{
+              type: 'text',
+              text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
+            },
+            {
+              type: 'text',
+              text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
             }]
           }]
         }
@@ -128,13 +144,26 @@ var example = {
     _id: '002',
     aliasOfId: null,
     next: {
-      action: 'end'
+      action: 'goTo',
+      stepId: '005'
     },
     data: {
       name: 'Pre-ending',
       messages: [{
         type: 'text',
-        text: 'And this is the end of the conversation!'
+        text: 'So, I might just seem talkative, but I can also help with a few things'
+      },
+      {
+        type: 'text',
+        text: 'For instance, I can check in occasionally to help you track your mood or medications'
+      },
+      {
+        type: 'text',
+        text: 'If it looks like you\'re running into problems, I\'m happy to problem solve with you.'
+      },
+      {
+        type: 'text',
+        text: 'Just so you know, I\'m not perfect yet... but I do my best to be useful :)'
       }],
     },
   },
@@ -165,6 +194,51 @@ var example = {
         type: 'text',
         text: 'Hah jk lol!'
       }],
+    },
+  },
+  {
+    _id: '005',
+    aliasOfId: null,
+    next: {
+      action: 'goTo',
+      stepId: '007'
+    },
+    data: {
+      name: 'Ask about options',
+      messages: [{
+        type: 'text',
+        text: 'So, are any of those interesting to you?'
+      }],
+      paths: [{
+        _id: 'p006',
+        next: {
+          action: 'default'
+        },
+        data: {
+          name: 'User accepts',
+          patterns: [{
+            type: 'exact',
+            phrases: ['mood', 'tracking'],
+            messages: [{
+              type: 'text',
+              text: 'Sure, let\'s try tracking your mood.'
+            }]
+          }]
+        }
+      }]
+    },
+  },{
+    _id: '007',
+    aliasOfId: null,
+    next: {
+      action: 'end'
+    },
+    data: {
+      name: 'End',
+      messages: [{
+        type: 'text',
+        text: 'That\'s it for now, sadly!'
+      }]
     },
   }]
 };

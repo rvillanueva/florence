@@ -40,6 +40,7 @@ export function run(bot) {
         .then(res => resolve(res))
         .catch(err => reject(err))
     } else {
+      // TODO Turn this into next generated step -- sometimes nothing, sometimes hello
       Store.getStepByIntent('hello')
         .then(step => startStep(bot, step))
         .then(res => resolve(res))

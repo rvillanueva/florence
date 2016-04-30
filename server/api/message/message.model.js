@@ -9,7 +9,7 @@ var MessageSchema = new mongoose.Schema({
   text: String,
   input: String,
   attachments: Array,
-  data: Object,
+  button: String,
   interface: String,
   messenger: {
     mid: String,
