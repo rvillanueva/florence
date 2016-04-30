@@ -41,9 +41,9 @@
         this.a.p = p;
         this.editing.p = p;
         this.pathSelection = p;
-      } else if(this.m.step[s] && this.m.step[s].paths && this.m.step[s].paths.length > 0){
-        this.a.p = this.m.step[s].paths[0]._id;
-        this.pathSelection = this.m.step[s].paths[0]._id;
+      } else if(this.m.step[s] && this.m.step[s].data.paths && this.m.step[s].data.paths.length > 0){
+        this.a.p = this.m.step[s].data.paths[0]._id;
+        this.pathSelection = this.m.step[s].data.paths[0]._id;
       }
       this.buildViewer({
         s: this.a.s,
@@ -72,7 +72,16 @@
         }
         // Add before item
         if(this.m.links[current.before.s] && this.m.links[current.before.s].length > 0){
-          current.before = this.m.links[current.after.s][0];
+          var beforeCoords = this.m.links[current.after.s][0];
+          if(!beforeCoords.p && this.m.step[beforeCoords.s].data.paths){
+            var allPaths = this.m.step[beforeCoords.s].data.paths;
+            allPaths.forEach((path, p)=>{
+              if(path.next && path.next.action == 'default'){
+                beforeCoords.p = path._id;
+              }
+            })
+          }
+          current.before = beforeCoords;
           this.viewer.before.push(current.before);
         } else {
           done.before = true;
@@ -82,24 +91,24 @@
           this.m.step[current.after.s] &&
           this.m.step[current.after.s].path &&
           this.m.step[current.after.s].path[current.after.p] &&
-          this.m.step[current.after.s].path[current.after.p].stepId &&
-          this.m.step[current.after.s].path[current.after.p].next == 'goTo'
+          this.m.step[current.after.s].path[current.after.p].next.stepId &&
+          this.m.step[current.after.s].path[current.after.p].next.action == 'goTo'
         ){
-          var afterStepId = this.m.step[current.after.s].path[current.after.p].stepId;
+          var afterStepId = this.m.step[current.after.s].path[current.after.p].next.stepId;
           current.after = {
             s: afterStepId,
           }
-          if(this.m.step[afterStepId].paths && this.m.step[afterStepId].paths.length > 0){
-            current.after.p = this.m.step[afterStepId].paths[0]._id
+          if(this.m.step[afterStepId].data.paths && this.m.step[afterStepId].data.paths.length > 0){
+            current.after.p = this.m.step[afterStepId].data.paths[0]._id
           }
           this.viewer.after.push(current.after);
-        } else if (this.m.step[current.after.s].next == 'goTo' && this.m.step[current.after.s].stepId){
-          var afterStepId = this.m.step[current.after.s].stepId;
+        } else if (this.m.step[current.after.s].next.action == 'goTo' && this.m.step[current.after.s].next.stepId){
+          var afterStepId = this.m.step[current.after.s].next.stepId;
           current.after = {
             s: afterStepId,
           }
-          if(this.m.step[afterStepId].paths && this.m.step[afterStepId].paths.length > 0){
-            current.after.p = this.m.step[afterStepId].paths[0]._id
+          if(this.m.step[afterStepId].data.paths && this.m.step[afterStepId].data.paths.length > 0){
+            current.after.p = this.m.step[afterStepId].data.paths[0]._id
           }
           this.viewer.after.push(current.after);
 
@@ -118,14 +127,8 @@
 
     }
 
-    selectPath(selection){
-      if(selection == 'new'){
-        // push path
-        console.log('Creating new path')
-      } else {
-        this.a.p = selection;
-        this.buildViewer();
-      }
+    addPath(stepId){
+      // add path here
     }
 
     setNext(s, p, action){

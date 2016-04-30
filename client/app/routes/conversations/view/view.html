@@ -17,7 +17,7 @@
     </div>
     <div class="col-md-7">
       <div ng-if="$ctrl.editing.s && !$ctrl.editing.p">
-        <h3>Step: {{$ctrl.m.step[$ctrl.a.s].name}}</h3>
+        <h3>Step: {{$ctrl.m.step[$ctrl.a.s].data.name}}</h3>
         <br><br>
 
       </div>
@@ -27,7 +27,7 @@
         Confirm?<br>
         Confirm phrases:<br>
         <br>
-        <div ng-if="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next == 'retry'">
+        <div ng-if="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next.action == 'retry'">
           Retries: 3<br>
           Retry default phrases:
         </div>
@@ -36,7 +36,7 @@
 
         <div class="panel panel-default">
           <div class="panel-heading">
-            Patterns ({{$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].patterns.length}})
+            Patterns ({{$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].data.patterns.length}})
           </div>
           <div class="panel-body">
             <input class="form-control" />
@@ -53,7 +53,7 @@
                   Response
                 </th>
               </thead>
-              <tr ng-repeat="pattern in $ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].patterns | limitTo: 5">
+              <tr ng-repeat="pattern in $ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].data.patterns | limitTo: 5">
                 <td>
                   {{pattern.type}}
                 </td>
@@ -78,8 +78,8 @@
 <script type="text/ng-template" id="conversationBlock">
   <div style="font-size: .8em;color:rgb(84, 84, 84); text-align: center; padding-top: 10px;">Step {{$ctrl.m.step[block.s]._id}}</div>
   <div class="selectable-block" ng-class="{'selected-block': block.active && !$ctrl.editing.p}" ng-click="$ctrl.setActive(block.s);">
-    <div class="message-container message-app" ng-repeat="message in $ctrl.m.step[block.s].messages" >
-      <div class="message-bubble message-app">{{ message }}</div>
+    <div class="message-container message-app" ng-repeat="message in $ctrl.m.step[block.s].data.messages" >
+      <div class="message-bubble message-app">{{ message.text }}</div>
     </div>
     <div ng-if="block.active && !$ctrl.editing.p">
       <a href="#"  ng-if="$ctrl.editing.focus !== 'appMessage'" style="font-size = .8em;" ng-click="$ctrl.editing.focus = 'appMessage'">Say something...</a>
@@ -98,21 +98,21 @@
     <div class="message-container message-container-user">
       <div ng-if="block.active && $ctrl.editing.p" style="text-align:left">
         If...<br>
-        <select ng-model="$ctrl.pathSelection" ng-change="$ctrl.selectPath($ctrl.pathSelection)">
-          <option ng-repeat="path in $ctrl.m.step[block.s].paths" value="{{path._id}}">
-            {{path.name}}
+        <select ng-model="$ctrl.a.p" ng-change="$ctrl.viewBuilder()">
+          <option ng-repeat="path in $ctrl.m.step[block.s].data.paths" value="{{path._id}}">
+            {{path.data.name}}
           </option>
-          <option value="new">[Add Path]</option>
         </select>
+        <button class="btn btn-xs btn-default"><i class="fa fa-plus"></i></button>
         <br>
 
       </div>
       <div class="message-bubble message-user">
-        {{ $ctrl.m.step[block.s].path[block.p].patterns[0] | responseExample }}
+        {{ $ctrl.m.step[block.s].path[block.p].data.patterns[0] | responseExample }}
       </div>
     </div>
-    <div class="message-container message-app" ng-repeat="message in $ctrl.m.step[block.s].path[block.p].patterns[0].messages">
-      <div class="message-bubble message-app">{{ message }}</div>
+    <div class="message-container message-app" ng-repeat="message in $ctrl.m.step[block.s].path[block.p].data.patterns[0].messages">
+      <div class="message-bubble message-app">{{ message.text }}</div>
     </div>
     <div ng-if="block.active && $ctrl.editing.p">
       <a href="#" style="font-size = 0.8em;" ng-click="$ctrl.editing.focus = 'appMessage'">Say something...</a>
@@ -122,29 +122,30 @@
       <br><br>
       Then...&nbsp;
       <br>
-      <select ng-model="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next" ng-change="$ctrl.buildViewer()">
+      <select ng-model="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next.action" ng-change="$ctrl.buildViewer()">
+        <option value="default">[step default]</option>
         <option value="goTo">Go To</option>
         <option value="end">End Conversation</option>
         <option value="retry">Retry Step</option>
       </select>
-      <div ng-if="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next == 'goTo'">
-        <select ng-model="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].stepId" ng-change="$ctrl.buildViewer()">
-          <option ng-repeat="step in $ctrl.m.step" value="{{step._id}}" ng-hide="step._id == $ctrl.a.s">{{step._id}}: {{step.messages[0]}}</option>
+      <div ng-if="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next.action == 'goTo'">
+        <select ng-model="$ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].data.stepId" ng-change="$ctrl.buildViewer()">
+          <option ng-repeat="step in $ctrl.m.step" value="{{step._id}}" ng-hide="step._id == $ctrl.a.s">{{step._id}}: {{step.data.messages[0]}}</option>
           <option value="">[Select Step]</option>
         </select>
       </div>
     </div>
   </div>
-  <div ng-if="block.active && !$ctrl.m.step[$ctrl.a.s].paths" style="padding: 12px">
+  <div ng-if="block.active && !$ctrl.m.step[$ctrl.a.s].data.paths || $ctrl.m.step[$ctrl.a.s].path[$ctrl.a.p].next.action == 'default'" style="padding: 12px">
     Then automatically...&nbsp;
     <br>
-    <select ng-model="$ctrl.m.step[$ctrl.a.s].next" ng-change="$ctrl.buildViewer()">
+    <select ng-model="$ctrl.m.step[$ctrl.a.s].next.action" ng-change="$ctrl.buildViewer()">
       <option value="goTo">Go To</option>
       <option value="end">End Conversation</option>
     </select>
-    <div ng-if="$ctrl.m.step[$ctrl.a.s].next == 'goTo'">
-      <select ng-model="$ctrl.m.step[$ctrl.a.s].stepId" ng-change="$ctrl.buildViewer()">
-        <option ng-repeat="step in $ctrl.m.step" value="{{step._id}}" ng-hide="step._id == $ctrl.a.s">{{step._id}}: {{step.messages[0]}}</option>
+    <div ng-if="$ctrl.m.step[$ctrl.a.s].next.action == 'goTo'">
+      <select ng-model="$ctrl.m.step[$ctrl.a.s].next.stepId" ng-change="$ctrl.buildViewer()">
+        <option ng-repeat="step in $ctrl.m.step" value="{{step._id}}" ng-hide="step._id == $ctrl.a.s">{{step._id}}: {{step.data.messages[0].text || step.data.messages[0].buttons[0].value}}</option>
         <option value="">[Select Step]</option>
       </select>
     </div>

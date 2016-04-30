@@ -2,17 +2,17 @@
 
 angular.module('riverApp')
   .filter('responseExample', function () {
-    return function (response) {
-      if(response.type == 'entity'){
-        return response.value;
+    return function (pattern) {
+      if(pattern.type == 'entity'){
+        return pattern.value;
       }
-      if(response.type == 'number'){
-        return Math.floor((response.max - response.min)/2) + response.min;
+      if(pattern.type == 'number'){
+        return Math.floor((pattern.max - pattern.min)/2) + pattern.min;
       }
-      if(response.type == 'exact' && response.phrases){
-        return response.phrases[0];
+      if(pattern.type == 'exact' && pattern.phrases){
+        return pattern.phrases[0];
       }
-      if(response.type == 'unknown'){
+      if(pattern.type == 'unknown'){
         return '[unintelligible]';
       }
       return 'Error';
