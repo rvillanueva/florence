@@ -2,150 +2,72 @@
 (function() {
 
   class ConversationViewComponent {
-    constructor(Conversation) {
+    constructor(Conversation, Graph) {
       this.conversation = Conversation;
-      this.m; // Step index
+      this.convo;
+      this.cellIndex;
+      this.clickEvent = {};
 
-      this.viewer = {
-        before: [],
-        after: []
-      }
-      this.a = {
-        s: null,
-        p: null,
-        active: true
-      };
-      this.editing = {};
-
-      this.conversation.getById().then(map => {
-        this.m = map;
-        this.setActive('001');
+      this.conversation.getById().then(convo => {
+        this.convo = convo;
+        Graph.conversation(this.convo)
+        .then(data => {
+          graph.addCells(data.cells);
+          this.cellIndex = data.index;
+          var res = joint.layout.DirectedGraph.layout(graph, {
+              nodeSep: 50,
+              edgeSep: 80,
+              rankDir: "TB"
+          });
       })
 
-    }
+      var graph = new joint.dia.Graph;
 
-    rebuild(map){
-      this.conversation.rebuild(map).then(newMap => {
-        this.m = newMap;
-      })
-    }
-
-    setActive(s, p) {
-      console.log('Setting active to coords (' + s + ', ' + p + ')')
-      this.a.s = s;
-      this.a.p = null;
-      this.editing.s = s;
-      this.editing.p = null;
-      this.pathSelection = null;
-      if(p){
-        this.a.p = p;
-        this.editing.p = p;
-        this.pathSelection = p;
-      } else if(this.m.step[s] && this.m.step[s].data.paths && this.m.step[s].data.paths.length > 0){
-        this.a.p = this.m.step[s].data.paths[0]._id;
-        this.pathSelection = this.m.step[s].data.paths[0]._id;
-      }
-      this.buildViewer({
-        s: this.a.s,
-        p: this.a.p
+      var ClickableView = joint.dia.ElementView.extend({
+        pointerdown: function () {
+          this._click = true;
+          joint.dia.ElementView.prototype.pointerdown.apply(this, arguments);
+        },
+        pointermove: function () {
+          this._click = false;
+          joint.dia.ElementView.prototype.pointermove.apply(this, arguments);
+        },
+        pointerup: function (evt, x, y) {
+          if (this._click) {
+            // triggers an event on the paper and the element itself
+            this.notify('cell:click', evt, x, y);
+          } else {
+            joint.dia.ElementView.prototype.pointerup.apply(this, arguments);
+          }
+        }
       });
-      // If not already the active step, get step by Id
-      // Take step, set default path based on most frequent path,
-      // cycle for 4 more steps
-    }
 
-    buildViewer(block) {
-      block = block || this.a;
-      this.viewer.before = [];
-      this.viewer.after = [];
-      var current = {
-        before: block,
-        after: block
-      }
-      var done = {
-        before: false,
-        after: false
-      };
-      for (var i = 0; i < 50; i++) {
-        if (i == 49 || (done.before && done.after)) {
-          return;
-        }
-        // Add before item
-        if(this.m.links[current.before.s] && this.m.links[current.before.s].length > 0){
-          var beforeCoords = this.m.links[current.after.s][0];
-          if(!beforeCoords.p && this.m.step[beforeCoords.s].data.paths){
-            var allPaths = this.m.step[beforeCoords.s].data.paths;
-            allPaths.forEach((path, p)=>{
-              if(path.next && path.next.action == 'default'){
-                beforeCoords.p = path._id;
-              }
-            })
-          }
-          current.before = beforeCoords;
-          this.viewer.before.push(current.before);
-        } else {
-          done.before = true;
-        }
-        // Add after item
-        if(current.after.s &&
-          this.m.step[current.after.s] &&
-          this.m.step[current.after.s].path &&
-          this.m.step[current.after.s].path[current.after.p] &&
-          this.m.step[current.after.s].path[current.after.p].next.stepId &&
-          this.m.step[current.after.s].path[current.after.p].next.action == 'goTo'
-        ){
-          var afterStepId = this.m.step[current.after.s].path[current.after.p].next.stepId;
-          current.after = {
-            s: afterStepId,
-          }
-          if(this.m.step[afterStepId].data.paths && this.m.step[afterStepId].data.paths.length > 0){
-            current.after.p = this.m.step[afterStepId].data.paths[0]._id
-          }
-          this.viewer.after.push(current.after);
-        } else if (this.m.step[current.after.s].next.action == 'goTo' && this.m.step[current.after.s].next.stepId){
-          var afterStepId = this.m.step[current.after.s].next.stepId;
-          current.after = {
-            s: afterStepId,
-          }
-          if(this.m.step[afterStepId].data.paths && this.m.step[afterStepId].data.paths.length > 0){
-            current.after.p = this.m.step[afterStepId].data.paths[0]._id
-          }
-          this.viewer.after.push(current.after);
+      var paper = new joint.dia.Paper({
+          el: $('#graph-paper'),
+          width: '100%',
+          height: 600,
+          model: graph,
+          gridSize: 1,
+          elementView: ClickableView
+      });
 
-        } else {
-          done.after = true;
-        }
-      }
-    }
+      paper.on('cell:click',
+        (cellView, evt, x, y) => {
+          this.openStep(cellView.model.id)
+        })
 
-    edit(s, p) {
-      this.editing = {
-        s: s,
-        p: p
-      };
-      console.log(this.editing);
+      })
 
     }
 
-    addPath(stepId){
-      // add path here
+    openStep(cellId){
+      console.log(this.cellIndex[cellId])
     }
-
-    setNext(s, p, action){
-      if(action == 'goTo'){
-        // push path
-        console.log('Creating new path')
-      } else {
-        this.a.p = selection;
-        this.buildViewer();
-      }
-    }
-}
+  }
 
   angular.module('riverApp')
     .component('view', {
       templateUrl: 'app/routes/conversations/view/view.html',
       controller: ConversationViewComponent
     });
-
 })();

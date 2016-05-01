@@ -3,8 +3,8 @@
 export function checkPaths(bot, paths) {
   return new Promise(function(resolve, reject){
     paths.forEach(function(path, p){
-      for (var i = 0; i < path.data.patterns.length; i++) {
-        var pattern = checkPattern(bot, path.data.patterns[i])
+      for (var i = 0; i < path.patterns.length; i++) {
+        var pattern = checkPattern(bot, path.patterns[i])
         if(pattern){
           var map = {
             path: path,

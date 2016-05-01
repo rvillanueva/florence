@@ -7,7 +7,7 @@ export function startStep(bot, step) {
   return new Promise(function(resolve, reject) {
     bot.state.stepId = step._id;
     bot.updateState()
-      .then(res => bot.send(step.data.messages))
+      .then(res => bot.send(step.messages))
       .then(res => waitForResponse(bot, step))
       .then(res => resolve(res))
   })
@@ -15,7 +15,7 @@ export function startStep(bot, step) {
 
 export function respondStep(bot, step) {
   return new Promise(function(resolve, reject) {
-    Matcher.checkPaths(bot, step.data.paths)
+    Matcher.checkPaths(bot, step.paths)
       .then(map => {
         map = map || {};
         map.step = step;
@@ -95,7 +95,7 @@ function runNext(bot, next) {
 
 function waitForResponse(bot, step){
   return new Promise(function(resolve, reject){
-    if(!step.data.paths || step.data.paths.length == 0){
+    if(!step.paths || step.paths.length == 0){
       runNext(bot, step.next)
       .then(res => resolve(res))
       .catch(err => reject(err))

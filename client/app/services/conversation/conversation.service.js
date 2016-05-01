@@ -5,12 +5,9 @@ angular.module('riverApp')
 
     var example = {
       _id: 'test',
-      info: {
-        name: 'Intro'
-      },
+      name: 'Intro',
       steps: [{
         _id: '001',
-        aliasOfId: 'abc',
         next: {
           action: 'goTo',
           stepId: '002'
@@ -23,120 +20,110 @@ angular.module('riverApp')
             stepId: '002'
           }
         },
-        data: {
-          _id: 'abc',
-          name: 'Welcome',
-          measure: null,
-          public: false,
-          messages: [{
-            type: 'text',
-            text: 'Oh hey there!'
+        name: 'Welcome',
+        measure: null,
+        messages: [{
+          type: 'text',
+          text: 'Oh hey there!'
+        }, {
+          type: 'text',
+          text: 'I\'m River, and I\'m learning to be a personal care companion.'
+        }, {
+          type: 'text',
+          text: 'Even though I\'m still training, there are a few things I can do. Want to hear them?'
+        }, {
+          type: 'button',
+          buttons: [{
+            title: 'Sure, sounds good',
+            subtitle: null,
+            value: 'yes'
           }, {
-            type: 'text',
-            text: 'I\'m River, and I\'m learning to be a personal care companion.'
+            title: 'Uh, no way',
+            subtitle: null,
+            value: 'no'
           }, {
-            type: 'text',
-            text: 'Even though I\'m still training, there are a few things I can do. Want to hear them?'
+            title: 'Learning?',
+            subtitle: null,
+            value: 'learning'
+          }]
+        }],
+        paths: [{
+          _id: 'p001',
+          next: {
+            action: 'default'
+          },
+          name: 'User accepts',
+          patterns: [{
+            type: 'exact',
+            phrases: ['yes', 'yea', 'sure'],
+            messages: [{
+              type: 'text',
+              text: 'Great!'
+            }, {
+              type: 'text',
+              text: 'Here\'s my magic...'
+            }]
           }, {
             type: 'button',
-            buttons: [{
-              title: 'Sure, sounds good',
-              subtitle: null,
-              value: 'yes'
+            value: ['yes'],
+            messages: [{
+              type: 'text',
+              text: 'Great!'
             }, {
-              title: 'Uh, no way',
-              subtitle: null,
-              value: 'no'
-            }, {
-              title: 'Learning?',
-              subtitle: null,
-              value: 'learning'
+              type: 'text',
+              text: 'Here\'s my magic...'
             }]
-          }],
-          paths: [{
-            _id: 'p001',
-            next: {
-              action: 'default'
-            },
-            data: {
-              name: 'User accepts',
-              patterns: [{
-                type: 'exact',
-                phrases: ['yes', 'yea', 'sure'],
-                messages: [{
-                  type: 'text',
-                  text: 'Great!'
-                }, {
-                  type: 'text',
-                  text: 'Here\'s my magic...'
-                }]
-              }, {
-                type: 'button',
-                value: ['yes'],
-                messages: [{
-                  type: 'text',
-                  text: 'Great!'
-                }, {
-                  type: 'text',
-                  text: 'Here\'s my magic...'
-                }]
-              }, {
-                type: 'button',
-                value: ['learning'],
-                messages: [{
-                  type: 'text',
-                  text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
-                }, {
-                  type: 'text',
-                  text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
-                }]
-              }]
-            }
           }, {
-            _id: 'p002',
-            next: {
-              action: 'goTo',
-              stepId: '003'
-            },
-            data: {
-              name: 'User declines',
-              patterns: [{
-                type: 'exact',
-                phrases: ['no', 'no way', 'nah'],
-                messages: [{
-                  type: 'text',
-                  text: 'You make me sad :('
-                }, {
-                  type: 'text',
-                  text: 'Fare thee well.'
-                }]
-              }, {
-                type: 'button',
-                value: ['no'],
-                messages: [{
-                  type: 'text',
-                  text: 'Oh... okay :('
-                }]
-              }]
-            }
-          }, {
-            _id: 'p003',
-            next: {
-              action: 'retry'
-            },
-            data: {
-              name: 'Can\'t understand user',
-              patterns: [{
-                type: 'exact',
-                phrases: ['you\'re stupid'],
-                messages: [{
-                  type: 'text',
-                  text: 'So are you, but that doesn\'t answer my question....'
-                }]
-              }]
-            }
+            type: 'button',
+            value: ['learning'],
+            messages: [{
+              type: 'text',
+              text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
+            }, {
+              type: 'text',
+              text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
+            }]
           }]
-        }
+        }, {
+          _id: 'p002',
+          next: {
+            action: 'goTo',
+            stepId: '003'
+          },
+          name: 'User declines',
+          patterns: [{
+            type: 'exact',
+            phrases: ['no', 'no way', 'nah'],
+            messages: [{
+              type: 'text',
+              text: 'You make me sad :('
+            }, {
+              type: 'text',
+              text: 'Fare thee well.'
+            }]
+          }, {
+            type: 'button',
+            value: ['no'],
+            messages: [{
+              type: 'text',
+              text: 'Oh... okay :('
+            }]
+          }]
+        }, {
+          _id: 'p003',
+          next: {
+            action: 'retry'
+          },
+          name: 'Can\'t understand user',
+          patterns: [{
+            type: 'exact',
+            phrases: ['you\'re stupid'],
+            messages: [{
+              type: 'text',
+              text: 'So are you, but that doesn\'t answer my question....'
+            }]
+          }]
+        }]
       }, {
         _id: '002',
         aliasOfId: null,
@@ -144,49 +131,42 @@ angular.module('riverApp')
           action: 'goTo',
           stepId: '005'
         },
-        data: {
-          name: 'Pre-ending',
-          messages: [{
-            type: 'text',
-            text: 'So, I might just seem talkative, but I can also help with a few things'
-          }, {
-            type: 'text',
-            text: 'For instance, I can check in occasionally to help you track your mood or medications'
-          }, {
-            type: 'text',
-            text: 'If it looks like you\'re running into problems, I\'m happy to problem solve with you.'
-          }, {
-            type: 'text',
-            text: 'Just so you know, I\'m not perfect yet... but I do my best to be useful :)'
-          }],
-        },
+        name: 'Pre-ending',
+        messages: [{
+          type: 'text',
+          text: 'So, I might just seem talkative, but I can also help with a few things'
+        }, {
+          type: 'text',
+          text: 'For instance, I can check in occasionally to help you track your mood or medications'
+        }, {
+          type: 'text',
+          text: 'If it looks like you\'re running into problems, I\'m happy to problem solve with you.'
+        }, {
+          type: 'text',
+          text: 'Just so you know, I\'m not perfect yet... but I do my best to be useful :)'
+        }],
       }, {
         _id: '003',
-        aliasOfId: null,
         next: {
           action: 'goTo',
           stepId: '004'
         },
-        data: {
-          name: 'Fake finish',
-          messages: [{
-            type: 'text',
-            text: 'Goodbye!'
-          }],
-        },
+        name: 'Fake finish',
+        messages: [{
+          type: 'text',
+          text: 'Goodbye!'
+        }],
       }, {
         _id: '004',
         aliasOfId: null,
         next: {
           action: 'end'
         },
-        data: {
-          name: 'Finish conversation',
-          messages: [{
-            type: 'text',
-            text: 'Hah jk lol!'
-          }],
-        },
+        name: 'Finish conversation',
+        messages: [{
+          type: 'text',
+          text: 'Hah jk lol!'
+        }]
       }, {
         _id: '005',
         aliasOfId: null,
@@ -194,118 +174,52 @@ angular.module('riverApp')
           action: 'goTo',
           stepId: '007'
         },
-        data: {
-          name: 'Ask about options',
-          messages: [{
-            type: 'text',
-            text: 'So, are any of those interesting to you?'
-          }],
-          paths: [{
-            _id: 'p006',
-            next: {
-              action: 'default'
-            },
-            data: {
-              name: 'User accepts',
-              patterns: [{
-                type: 'exact',
-                phrases: ['mood', 'tracking'],
-                messages: [{
-                  type: 'text',
-                  text: 'Sure, let\'s try tracking your mood.'
-                }]
-              }]
-            }
+        name: 'Ask about options',
+        messages: [{
+          type: 'text',
+          text: 'So, are any of those interesting to you?'
+        }],
+        paths: [{
+          _id: 'p006',
+          next: {
+            action: 'default'
+          },
+          name: 'User accepts',
+          patterns: [{
+            type: 'exact',
+            phrases: ['mood', 'tracking'],
+            messages: [{
+              type: 'text',
+              text: 'Sure, let\'s try tracking your mood.'
+            }]
           }]
-        },
+        }]
       }, {
         _id: '007',
-        aliasOfId: null,
         next: {
           action: 'end'
         },
-        data: {
-          name: 'End',
-          messages: [{
-            type: 'text',
-            text: 'That\'s it for now, sadly!'
-          }]
-        },
+        name: 'End',
+        messages: [{
+          type: 'text',
+          text: 'That\'s it for now, sadly!'
+        }]
       }]
     };
 
-    var buildMap = function(conversation) {
-      var index = {};
-      var links = {}
-      conversation.steps.forEach((step, s) => {
-        index[step._id] = step;
-        index[step._id].path = {};
-        if (step.data.paths && step.data.paths.length > 0) {
-          step.data.paths.forEach((path, p) => {
-            index[step._id].path[path._id] = path;
-            // index linked paths
-            if (path.next.action && 'goTo' && path.next.stepId) {
-              var coords = {
-                s: step._id,
-                p: path._id
-              }
-              links[path.next.stepId] = links[path.next.stepId] || [];
-              links[path.next.stepId].push(coords);
-            }
-          })
-        }
-        if (step.next && step.next.action == 'goTo' && step.next.stepId) {
-          var coords = {
-            s: step._id
-          }
-          console.log('Adding ' + step._id + ' as link to ' + step.next.stepId);
-          links[step.next.stepId] = links[step.next.stepId] || [];
-          links[step.next.stepId].push(coords);
-        }
-      })
-      var map = {
-        _id: conversation._id,
-        info: conversation.info,
-        step: index,
-        links: links
-      }
-      console.log('Conversation map:')
-      console.log(map);
-      return map;
-    }
 
-    var buildConvo = function(map) {
-      var conversation = {
-        _id: map._id,
-        info: map.info,
-        steps: []
-      }
-      for (var stepId in map.step) {
-        if (map.step.hasOwnProperty(property)) {
-          var newStep = map.step[stepId];
-          delete newStep.path;
-          conversation.steps.push(newStep);
-        }
-      }
-      console.log('Built conversation:');
-      console.log(conversation);
-      return conversation;
-    }
-
-
-    // Public API here
+      // Public API here
     return {
       getById: function(id) {
         var deferred = $q.defer();
-        var map = buildMap(example);
-        console.log('Returning conversation map:')
-        console.log(map);
-        deferred.resolve(map);
+        deferred.resolve(example);
         return deferred.promise;
       },
-      rebuild: function(map) {
-        var convo = buildConversation(map);
-        return buildMap(convo);
+      map: function(conversation) {
+        var deferred = $q.defer();
+        var mapped = buildMap(conversation);
+        deferred.resolve(mapped);
+        return deferred.promise;
       },
       addPath: function(map, stepId, path) {
 
