@@ -48,11 +48,14 @@ var UserSchema = new Schema({
     state: String
   },
   state: {
+    intent: String,
     stepId: String, // main active step
     returnStepId: String, // return to this step when done with digression or component
     entities: Object,
     needed: Array,
-    retries: Number
+    retries: Number,
+    status: String,
+    updated: Date
   }
 });
 

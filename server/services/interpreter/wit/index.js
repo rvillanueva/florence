@@ -3,8 +3,6 @@ var request = require("request");
 
 export function getEntities(message, context){
  return new Promise(function(resolve, reject){
-   console.log('SENDING TO WIT:')
-   console.log(message)
   if(typeof message.text !== 'string'){
      reject('Message must have text.')
      return false;
@@ -22,12 +20,11 @@ export function getEntities(message, context){
    }
 
    request.get(options, function(err, response, body){
-     console.log('WIT ANALYSIS:');
-     console.log(body);
      var returned = JSON.parse(body);
      if(err){
        reject(err);
      }
+     // Need to process into entities
      resolve(returned);
    })
  })

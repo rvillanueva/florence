@@ -1,158 +1,112 @@
 'use strict';
 
-var Matcher = require('./conversation.match');
 var Store = require('./conversation.store');
+var Response = require('./conversation.response');
+var State = require('./conversation.state');
 
-export function startStep(bot, step) {
+export function run(bot) {
   return new Promise(function(resolve, reject) {
-    bot.state.stepId = step._id;
-    bot.updateState()
-      .then(res => bot.send(step.messages))
-      .then(res => waitForResponse(bot, step))
+    // if there's no stepId and there's a main stepId, replace it.
+    // handle intent
+    console.log('Bot state:')
+    console.log(bot.state)
+    if (bot.state.intent) {
+      State.setIntentState(bot)
+        .then(bot => playStep(bot))
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+    } else {
+      if (bot.state.status == 'retrying') {
+        retryStep(bot)
+          .then(res => resolve(res))
+          .catch(err => reject(err))
+      } else if (bot.state.status == 'waiting') {
+        respondStep(bot)
+          .then(res => resolve(res))
+          .catch(err => reject(err))
+      } else if(bot.state || bot.state.stepId) {
+        playStep(bot)
+          .then(res => resolve(res))
+          .catch(err => reject(err))
+      } else if (bot.state.status !== 'paused'){
+        Store.getStepIdByIntent('hello')
+        .then(stepId => {
+          bot.state.stepId = stepId;
+          return playStep(bot);
+        })
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+      }
+    }
+  })
+}
+
+export function playStep(bot) {
+  return new Promise(function(resolve, reject) {
+    // handle no stepid, needs fallback FIXME
+    Store.getStepById(bot.state.stepId)
+      .then(step => {
+        bot.send(step.messages);
+        if (step.type == 'choice') {
+          bot.state.status = 'waiting';
+        } else {
+          bot.state.status = 'running';
+        }
+        console.log(step);
+        return State.setNextState(bot, step.next)
+      })
+      .then(bot => {
+        if(bot.state.status == 'running'){
+          return run(bot)
+        } else {
+          resolve(res);
+        }
+      })
+      .then(res => resolve(res))
       .then(res => resolve(res))
   })
 }
 
 export function respondStep(bot, step) {
   return new Promise(function(resolve, reject) {
-    Matcher.checkPaths(bot, step.paths)
-      .then(map => {
-        map = map || {};
-        map.step = step;
-        return sendReply(bot, map);
-      })
-      .then(next => runNext(bot, next))
-      .then(res => resolve(res))
+    Store.getStepById(bot.state.stepId)
+      .then(step => Response.handle(bot, step))
+      .then(bot => run(bot))
+      .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
 }
 
-export function run(bot) {
+function retryStep(bot, step) {
   return new Promise(function(resolve, reject) {
-    if (bot.state.intent) {
-      Store.getStepByIntent(bot.state.intent)
-        .then(step => startStep(bot, step))
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-    } else if (bot.state.stepId) {
-      Store.getStepById(bot.state.stepId)
-        .then(step => respondStep(bot, step))
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-    } else {
-      // TODO Turn this into next generated step -- sometimes nothing, sometimes hello
-      Store.getStepByIntent('hello')
-        .then(step => startStep(bot, step))
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-    }
-  })
-}
-
-export function getStep(bot){
-  Store.getStepByIntent(bot)
-  .then(step => {
-    if(step){
-      resolve(step)
-    }
-    else(bot.state)
-  })
-}
-
-function runNext(bot, next) {
-  return new Promise(function(resolve, reject) {
-    bot.state.intent = null;
-    bot.state.entities = {};
-    bot.state.needed = [];
-    if (next && next.action == 'goTo') {
-      bot.state.stepId = next.stepId;
-      bot.state.retries = 0;
-    } else if (next && next.action == 'retry') {
-      bot.state.retries = bot.state.retries | 0;
-      bot.state.retries++;
-    } else {
-      if (bot.state.mainStepId) {
-        bot.state.stepId = bot.state.returnStepId;
-      } else {
-        // Needs to set next step for finished conversation TODO
-        bot.state.stepId = null;
-      }
-      bot.state.retries = 0;
-    }
-    bot.updateState()
-      .then(bot => {
-        if(bot.state.stepId){
-          Store.getStepById(bot.state.stepId)
-          .then(step => startStep(bot, step))
-          .then(res => resolve(res))
-          .catch(err => reject(err))
+    Store.getStepById(bot.state.stepId)
+      .then(step => {
+        if (
+          bot.state.status == 'retrying' && !step.retries ||
+          !step.retries.max ||
+          bot.state.retries >= step.retries.max
+        ) {
+          next = step.next;
+          bot.state.status = 'running';
+          State.setNextState(bot, next)
+            .then(bot => run(bot))
+            .then(res => resolve(res))
+            .catch(err => reject(err))
         } else {
-          resolve(false);
+          console.log('Retrying...')
+          bot.state.retries = bot.state.retries || 0;
+          console.log('didn\'t max out retries yet, trying')
+          if (step.retries && step.retries.replies && step.retries.replies[bot.state.retries]) {
+            bot.say(step.retries.replies[bot.state.retries])
+          } else {
+            bot.say('Uh oh, not quite sure I understood that....') // should get prebuild replies set, randomized TODO
+          }
+          bot.state.retries++;
+          bot.state.status = 'waiting';
+          bot.updateState()
+            .then(bot => resolve(bot))
+            .catch(err => reject(err))
         }
       })
-  })
-}
-
-function waitForResponse(bot, step){
-  return new Promise(function(resolve, reject){
-    if(!step.paths || step.paths.length == 0){
-      runNext(bot, step.next)
-      .then(res => resolve(res))
-      .catch(err => reject(err))
-    } else {
-      resolve(step)
-    }
-  })
-}
-
-function sendReply(bot, map){ //Handle this better TODO
-  return new Promise(function(resolve, reject){
-    var next;
-    // catch unknown
-    console.log('MAP IS')
-    console.log(map)
-    if(!map.path || !map.pattern){
-      console.log()
-      retryStep(bot, map.step)
-      .then(next => resolve(next))
-      .catch(err => reject(err))
-    } else {
-      if (!map.path.next || !map.path.next.action || map.path.next.action == 'default') {
-        next = map.step.next;
-      } else {
-        next = map.path.next;
-      }
-      bot.send(map.pattern.messages)
-      .then(res => resolve(next))
-      .catch(err => reject(err))
-    }
-  })
-}
-
-function retryStep(bot, step){
-  return new Promise(function(resolve, reject){
-    console.log('Retrying...')
-    var next = false;
-    bot.state.intent = null;
-    bot.state.retries = bot.state.retries || 0;
-    if(!step.retries ||
-      !step.retries.max ||
-      bot.state.retries >= step.retries.max
-    ){
-      console.log('maxed out retries, doing next...')
-      bot.state.retries = 0;
-      next = step.retries.next;
-    } else {
-      console.log('didn\'t max out retries yet, trying')
-      if(step.retries && step.retries.replies && step.retries.replies[bot.state.retries]){
-        bot.say(step.retries.replies[bot.state.retries])
-      } else {
-        bot.say('Uh oh, not quite sure I understood that....') // should get prebuild replies set, randomized TODO
-      }
-      bot.state.retries ++;
-    }
-    bot.updateState()
-    .then(res => resolve(next))
-    .catch(err =>reject(err))
   })
 }

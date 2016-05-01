@@ -71,27 +71,7 @@ angular.module('riverApp')
               type: 'text',
               text: 'Here\'s my magic...'
             }]
-          }/*, {
-            type: 'button',
-            messages: [{
-              type: 'text',
-              text: 'Great!'
-            }, {
-              type: 'text',
-              text: 'Here\'s my magic...'
-            }]
-          }, {
-            type: 'button',
-            value: 'learning',
-            messages: [{
-              type: 'text',
-              text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
-            }, {
-              type: 'text',
-              text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
-            }]
-          }*/
-        ]
+          }]
         }, {
           _id: 'p002',
           next: {
@@ -150,7 +130,6 @@ angular.module('riverApp')
               text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
             }]
           }
-          patterns: []
         }]
       }, {
         _id: '002',

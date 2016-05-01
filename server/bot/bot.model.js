@@ -11,7 +11,7 @@ export function constructor(message) {
   this.state = {
     intent: false,
     stepId: false,
-    mainStepId: false,
+    returnStepId: false,
     entities: {},
     needed: []
   }

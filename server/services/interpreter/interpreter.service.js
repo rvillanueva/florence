@@ -12,9 +12,9 @@ export function getEntities(bot) {
       bot.state.entities.button = bot.message.button;
     }
     if (bot.message.text && !bot.state.intent) {
-      Wit.getEntities(bot.message, bot.context)
+      Wit.getEntities(bot.message, null) // should add context
         .then(newEntities => {
-          bot.state.entities = mergeEntities(bot.state.entities, newEntities);
+          //bot.state.entities = mergeEntities(bot.state.entities, newEntities); FIXME need to pull outcomes from Wit response
           resolve(bot)
         })
         .catch(err => {

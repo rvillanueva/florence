@@ -56,9 +56,7 @@ export function updateFbProfile(user) {
       if(err){
         reject(err);
       }
-      console.log(body)
       var fbProfile = JSON.parse(body);
-      console.log(fbProfile.profile_pic)
       if(fbProfile.first_name){
         user.firstName = fbProfile.first_name;
       }
@@ -68,8 +66,6 @@ export function updateFbProfile(user) {
       if(fbProfile.profile_pic){
         user.picture = fbProfile.profile_pic;
       }
-      console.log('USER')
-      console.log(user);
       user.save()
       .then(user => resolve(user))
       .catch(err => reject(err))
