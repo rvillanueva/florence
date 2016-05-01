@@ -62,7 +62,7 @@ var example = {
         }]
       }, {
         type: 'button',
-        value: ['yes'],
+        value: 'yes',
         messages: [{
           type: 'text',
           text: 'Great!'
@@ -72,7 +72,7 @@ var example = {
         }]
       }, {
         type: 'button',
-        value: ['learning'],
+        value: 'learning',
         messages: [{
           type: 'text',
           text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'

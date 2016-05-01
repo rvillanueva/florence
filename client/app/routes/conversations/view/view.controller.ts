@@ -2,11 +2,12 @@
 (function() {
 
   class ConversationViewComponent {
-    constructor(Conversation, Graph) {
+    constructor(Conversation, Graph, $uibModal) {
       this.conversation = Conversation;
       this.convo;
       this.cellIndex;
       this.clickEvent = {};
+      this.editor = $uibModal;
 
       this.conversation.getById().then(convo => {
         this.convo = convo;
@@ -60,9 +61,32 @@
 
     }
 
-    openStep(cellId){
-      console.log(this.cellIndex[cellId])
-    }
+    openStep(cellId) {
+
+    var modalInstance = this.editor.open({
+      aniomation: true,
+      templateUrl: 'components/modals/step-editor/step-editor.html',
+      controller: 'StepEditorModalController',
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false,
+      resolve: {
+        conversation: () => {
+          return this.convo;
+        },
+        stepId: () => {
+          return this.cellIndex[cellId];
+        }
+      }
+    });
+
+    modalInstance.result.then((selectedItem) => {
+      this.conversation = conversation;
+    }, function () {
+      console.log('Modal dismissed at: ' + new Date());
+    });
+  };
+
   }
 
   angular.module('riverApp')

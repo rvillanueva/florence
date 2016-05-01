@@ -8,20 +8,16 @@ angular.module('riverApp')
       name: 'Intro',
       steps: [{
         _id: '001',
+        type: 'messages',
         next: {
           action: 'goTo',
           stepId: '002'
         },
         retries: {
           max: 3,
-          replies: ['So really, should I tell you?', 'Do you want to hear the answer or not?'],
-          next: {
-            action: 'goTo',
-            stepId: '002'
-          }
+          replies: ['So really, should I tell you?', 'Do you want to hear the answer or not?']
         },
         name: 'Welcome',
-        measure: null,
         messages: [{
           type: 'text',
           text: 'Oh hey there!'
@@ -53,6 +49,18 @@ angular.module('riverApp')
             action: 'default'
           },
           name: 'User accepts',
+          button: {
+            title: 'Sure, sounds good',
+            subtitle: null,
+            imgUrl: null,
+            messages: [{
+              type: 'text',
+              text: 'Great!'
+            }, {
+              type: 'text',
+              text: 'Here\'s my magic...'
+            }]
+          },
           patterns: [{
             type: 'exact',
             phrases: ['yes', 'yea', 'sure'],
@@ -63,9 +71,8 @@ angular.module('riverApp')
               type: 'text',
               text: 'Here\'s my magic...'
             }]
-          }, {
+          }/*, {
             type: 'button',
-            value: ['yes'],
             messages: [{
               type: 'text',
               text: 'Great!'
@@ -75,7 +82,7 @@ angular.module('riverApp')
             }]
           }, {
             type: 'button',
-            value: ['learning'],
+            value: 'learning',
             messages: [{
               type: 'text',
               text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
@@ -83,7 +90,8 @@ angular.module('riverApp')
               type: 'text',
               text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
             }]
-          }]
+          }*/
+        ]
         }, {
           _id: 'p002',
           next: {
@@ -91,6 +99,15 @@ angular.module('riverApp')
             stepId: '003'
           },
           name: 'User declines',
+          button: {
+            title: 'I don\'t think so',
+            subtitle: null,
+            imgUrl: null,
+            messages: [{
+              type: 'text',
+              text: 'Oh... okay :('
+            }]
+          },
           patterns: [{
             type: 'exact',
             phrases: ['no', 'no way', 'nah'],
@@ -100,13 +117,6 @@ angular.module('riverApp')
             }, {
               type: 'text',
               text: 'Fare thee well.'
-            }]
-          }, {
-            type: 'button',
-            value: ['no'],
-            messages: [{
-              type: 'text',
-              text: 'Oh... okay :('
             }]
           }]
         }, {
@@ -123,10 +133,27 @@ angular.module('riverApp')
               text: 'So are you, but that doesn\'t answer my question....'
             }]
           }]
+        },
+        {
+          _id: 'p004',
+          next: {
+            action: 'retry'
+          },
+          name: 'Asks tangential question',
+          button: {
+            title: 'Learning?',
+            messages: [{
+              type: 'text',
+              text: 'Haha yeah, I\'m still in Robot School :) None of are perfect yet, sadly'
+            }, {
+              type: 'text',
+              text: 'But as I talk to you, hopefully I\'ll get better at interacting with humans!'
+            }]
+          }
+          patterns: []
         }]
       }, {
         _id: '002',
-        aliasOfId: null,
         next: {
           action: 'goTo',
           stepId: '005'

@@ -1,11 +1,88 @@
 <div class="modal-header">
-  <button ng-if="modal.dismissable" type="button" ng-click="$dismiss()" class="close">&times;</button>
-  <h4 ng-if="modal.title" ng-bind="modal.title" class="modal-title"></h4>
+  <button type="button" ng-click="$dismiss()" class="close">&times;</button>
+  <h4 class="modal-title">{{conversation.steps[stepIndex].name || stepId}}</h4>
 </div>
 <div class="modal-body">
-  <p ng-if="modal.text" ng-bind="modal.text"></p>
-  <div ng-if="modal.html" ng-bind-html="modal.html"></div>
+  <div class="row">
+    <div class="col-md-6">
+      Retries: 3
+      <div ng-if="conversation.steps[stepIndex].retries.times > 0">
+        <br> Retry default phrases:
+      </div>
+      <br> Confirm?
+      <br> Confirm phrases:
+      <br>
+      <br>
+    </div>
+    <div class="col-md-6">
+      <div>
+        <strong>Path</strong>
+        <select ng-model="pathIndex" convert-to-number ng-show="conversation.steps[stepIndex].paths">
+          <option ng-repeat="(p, path) in conversation.steps[stepIndex].paths" value="{{p}}">{{path.name || path._id}}</option>
+        </select>
+        <button class="btn btn-default" ng-click="addPath()"><i class="fa fa-plus"></i></button>
+      </div>
+      <div ng-show="conversation.steps[stepIndex].paths">
+        <strong>Then: </strong>
+        <select ng-model="conversation.steps[stepIndex].paths[pathIndex].next.action">
+          <option value="default">[Default] ({{conversation.steps[stepIndex].next.action}}&nbsp;{{conversation.steps[stepIndex].next.stepId}})</option>
+          <option value="goTo">Go To</option>
+          <option value="end">End Conversation</option>
+          <option value="retry">Retry Step</option>
+        </select>
+        &nbsp;
+        <span ng-if="conversation.steps[stepIndex].paths[pathIndex].next.action == 'goTo'">
+    <select ng-model="conversation.steps[stepIndex].paths[pathIndex].next.stepId">
+      <option ng-repeat="step in conversation.steps" value="{{step._id}}" ng-hide="step._id == conversation.steps[stepIndex]._id">{{step._id}}: {{step.name}}</option>
+      <option value="">[Select Step]</option>
+    </select>
+    </span>
+      </div>
+      <div ng-show="conversation.steps[stepIndex].paths">
+        <br>
+        <div class="panel panel-default">
+          <div class="panel-heading" ng-click="expanded.pattern = !expanded.pattern" style="cursor: pointer;">
+            Patterns ({{conversation.steps[stepIndex].paths[pathIndex].patterns.length}})
+            <i class="fa pull-right" ng-class="{'fa-caret-down': expanded.pattern, 'fa-caret-right': !expanded.pattern}"></i>
+          </div>
+          <div class="panel-body" ng-show="expanded.pattern">
+            <input class="form-control" placeholder="Add new or search" />
+            <br>
+            <table class="table table-hover">
+              <thead>
+                <th>
+                  Type
+                </th>
+                <th>
+                  Matches
+                </th>
+                <th>
+                  Response
+                </th>
+              </thead>
+              <tr ng-repeat="pattern in conversation.steps[stepIndex].paths[pathIndex].patterns | limitTo: 5">
+                <td>
+                  {{pattern.type}}
+                </td>
+                <td>
+                  <span ng-if="pattern.type == 'exact'" ng-repeat="phrase in pattern.phrases | limitTo: 5">{{phrase}}<br></span><span ng-if="pattern.phrases.length > 5">+{{pattern.phrases.length - 5}}</span>
+                  <span ng-if="pattern.type == 'entity'">{{pattern.entity}} ({{pattern.value || 'all'}})</span>
+                  <span ng-if="pattern.type == 'number'">Min: {{pattern.min}}<br>Max: ({{pattern.max}}</span>
+                  <span ng-if="pattern.type == 'button'">{{pattern.value}}</span>
+
+                </td>
+                <td>
+                  <p ng-repeat="message in pattern.messages | limitTo: 3">{{message.text}}</p>
+                  <p ng-if="pattern.messages.length > 3">(+{{pattern.messages.length -1}})</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
-  <button ng-repeat="button in modal.buttons" ng-class="button.classes" ng-click="button.click($event)" ng-bind="button.text" class="btn"></button>
+  <button class="btn btn-primary btn-md" ng-click="button.click($event)">Save</button>
 </div>
