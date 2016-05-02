@@ -47,6 +47,7 @@ export function playStep(bot) {
     Store.getStepById(bot.state.stepId)
       .then(step => {
         bot.send(step.messages);
+        sendButtons(bot, step);
         if (step.type == 'choice') {
           bot.state.status = 'waiting';
         } else {
@@ -109,4 +110,32 @@ function retryStep(bot, step) {
         }
       })
   })
+}
+
+
+
+function sendButtons(bot, step){
+  var array = [];
+  var message = {
+    type: 'button',
+    text: ' ',
+    buttons: []
+  }
+  console.log('Sending buttons')
+  if(step.paths){
+    step.paths.forEach(function(path, p){
+      if(path.button){
+        var button = {
+          title: path.button.title,
+          subtitle: path.button.subtitle,
+          value: path._id
+        }
+        message.buttons.push(button)
+      }
+    })
+    array.push(message);
+    console.log('BUTTON ARRAY')
+    console.log(array)
+    bot.send(array);
+  }
 }

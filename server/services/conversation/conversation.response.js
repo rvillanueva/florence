@@ -3,25 +3,15 @@ var State = require('./conversation.state');
 
 export function handle(bot, step){
   return new Promise(function(resolve, reject){
+    console.log('Handling response...');
     var next = false;
     var foundPattern;
-    console.log('Handling response...')
-    step.paths.forEach(function(path, p){
-      if(path.patterns){
-        for (var i = 0; i < path.patterns.length; i++) {
-          // check if button matches pathId
-          var pattern = checkPattern(bot, path.patterns[i])
-          if(pattern){
-            foundPattern = pattern;
-            next = path.next;
-          }
-        }
-      }
-    })
-    console.log('FOUND PATTERN')
-    console.log(foundPattern)
-    if(foundPattern){
-      bot.send(foundPattern.messages)
+    var data = checkEachPattern(bot, step);
+    next = data.next;
+    if(data.messages){
+      console.log('FOUND PATTERN')
+      console.log(data.pattern)
+      bot.send(data.messages)
       bot.state.status = 'running';
     } else {
       bot.state.status = 'retrying';
@@ -30,6 +20,33 @@ export function handle(bot, step){
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+function checkEachPattern(bot, step){
+  var data = {};
+  step.paths.forEach(function(path, p){
+    var buttonMatches;
+    bot.state.entities = bot.state.entities || {};
+    // Handle button logic
+    if(path._id == bot.state.entities.button){
+      buttonMatches = true;
+      data.messages = path.button.messages;
+      data.next = path.next;
+    } else if(path.patterns){
+
+      // Check patterns
+      for (var i = 0; i < path.patterns.length; i++) {
+        // check if button matches pathId
+        var patternMatches = checkPattern(bot, path.patterns[i])
+        if(patternMatches){
+          data.messages = patternMatches.messages;
+          data.next = path.next;
+        }
+      }
+    }
+  })
+  return data;
+
 }
 
 export function checkPattern(bot, pattern) {
@@ -52,7 +69,7 @@ export function checkPattern(bot, pattern) {
     pattern.max <= bot.state.entities.number[0].value
   ){
     return pattern;
-  } else {
+  }  else {
     return false;
   }
 }

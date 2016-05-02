@@ -24,21 +24,6 @@ var example = {
     }, {
       type: 'text',
       text: 'Even though I\'m still training, there are a few things I can do. Want to hear them?'
-    }, {
-      type: 'button',
-      buttons: [{
-        title: 'Sure, sounds good',
-        subtitle: null,
-        value: 'yes'
-      }, {
-        title: 'Uh, no way',
-        subtitle: null,
-        value: 'no'
-      }, {
-        title: 'Learning?',
-        subtitle: null,
-        value: 'learning'
-      }]
     }],
     paths: [{
       _id: 'p001',
