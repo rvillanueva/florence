@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('riverApp')
-  .factory('Graph', function($q) {
+  .factory('Graph', function($q, $uibModal) {
     // Service logic
     // ...
     var buildLinks = function(conversation) {
@@ -79,7 +79,12 @@ angular.module('riverApp')
           },
           target: {
             id: index[link.target.stepId].id
-          }
+          },
+          arrowheadMarkup: [
+            '<g class="marker-arrowhead-group marker-arrowhead-group-<%= end %>">',
+            '<path class="marker-arrowhead" end="<%= end %>" d="M 26 0 L 0 13 L 26 26 z" />',
+            '</g>'
+          ]
         });
         cells.push(link);
       })
@@ -91,6 +96,53 @@ angular.module('riverApp')
       return deferred.promise;
     }
 
+    var ClickableView = joint.dia.ElementView.extend({
+      pointerdown: function () {
+        this._click = true;
+        joint.dia.ElementView.prototype.pointerdown.apply(this, arguments);
+      },
+      pointermove: function () {
+        this._click = false;
+        joint.dia.ElementView.prototype.pointermove.apply(this, arguments);
+      },
+      pointerup: function (evt, x, y) {
+        if (this._click) {
+          // triggers an event on the paper and the element itself
+          this.notify('cell:click', evt, x, y);
+        } else {
+          joint.dia.ElementView.prototype.pointerup.apply(this, arguments);
+        }
+      }
+    });
+
+    var openStepModal = function(conversation, stepId){
+      var deferred = $q.defer();
+      var stepModal = $uibModal.open({
+        animation: true,
+        templateUrl: 'components/modals/step-editor/step-editor.html',
+        controller: 'StepEditorModalController',
+        size: 'lg',
+        backdrop: 'static',
+        keyboard: false,
+        resolve: {
+          conversation: () => {
+            return conversation;
+          },
+          stepId: () => {
+            return stepId;
+          }
+        }
+      });
+
+      stepModal.result.then(data => {
+        deferred.resolve(data)
+      }, function () {
+        console.log('Modal dismissed at: ' + new Date());
+      });
+
+      return deferred.promise;
+    }
+
     // Public API here
     return {
       conversation: function(convo) {
@@ -99,6 +151,16 @@ angular.module('riverApp')
           .then(data => deferred.resolve(data))
           .catch(err => deferred.reject(err))
         return deferred.promise;
+      },
+      editStep: function(conversation, stepId){
+        var deferred = $q.defer();
+        openStepModal(conversation, stepId)
+        .then(data => deferred.resolve(data))
+        .catch(err => deferred.reject(err))
+        return deferred.promise;
+      },
+      clickableView: function(){
+        return ClickableView;
       }
     };
   });

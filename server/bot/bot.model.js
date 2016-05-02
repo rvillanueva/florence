@@ -15,6 +15,7 @@ export function constructor(message) {
     entities: {},
     needed: []
   }
+  this.conversation;
 
   this.getState = function(){
     return new Promise((resolve, reject) =>{

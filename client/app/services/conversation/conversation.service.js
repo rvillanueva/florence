@@ -238,15 +238,19 @@ angular.module('riverApp')
         deferred.resolve(mapped);
         return deferred.promise;
       },
-      addPath: function(map, stepId, path) {
+      save: function(conversation) {
+        var deferred = $q.defer();
+        if(conversation._id){
+          $http.put('/api/conversations/' + conversation._id, conversation).success(function(saved){
+            deferred.resolve(saved);
+          })
+        } else {
+          $http.post('/api/conversations', conversation).success(function(saved){
+            deferred.resolve(saved);
+          })
+        }
+        return deferred.promise;
 
-      },
-      addStep: function(map, pathId, step) {
-
-      },
-      removePath: function(map, pathId) {
-
-      },
-      removeStep: function(map, removeStep) {}
+      }
     };
   });

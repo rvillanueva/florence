@@ -18,7 +18,7 @@ export function getUserByMessengerId(messengerId) {
             },
           }
           var newUser = new User(userData);
-          newUser.provider = 'facebook';
+          newUser.provider = 'messenger';
           newUser.role = 'user';
           newUser.state = {
             intent: 'intro',

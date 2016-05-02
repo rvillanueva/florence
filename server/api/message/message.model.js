@@ -7,6 +7,7 @@ var MessageSchema = new mongoose.Schema({
   timestamp: Date,
   from: String,
   text: String,
+  type: String,
   input: String,
   attachments: Array,
   button: String,

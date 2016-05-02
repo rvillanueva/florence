@@ -3,95 +3,63 @@
 
   class ConversationViewComponent {
     constructor(Conversation, Graph, $uibModal) {
-      this.conversation = Conversation;
-      this.convo;
+      this.conversationService = Conversation;
+      this.graphService = Graph;
+      this.conversation;
       this.cellIndex;
       this.clickEvent = {};
       this.editor = $uibModal;
 
-      this.conversation.getById().then(convo => {
-        this.convo = convo;
-        Graph.conversation(this.convo)
-        .then(data => {
-          graph.addCells(data.cells);
-          this.cellIndex = data.index;
-          var res = joint.layout.DirectedGraph.layout(graph, {
-              nodeSep: 50,
-              edgeSep: 80,
-              rankDir: "TB"
-          });
+      this.conversationService.getById().then(convo => {
+        this.conversation = convo;
+        this.buildGraph(this.conversation);
       })
 
-      var graph = new joint.dia.Graph;
+      this.graph = new joint.dia.Graph;
 
-      var ClickableView = joint.dia.ElementView.extend({
-        pointerdown: function () {
-          this._click = true;
-          joint.dia.ElementView.prototype.pointerdown.apply(this, arguments);
-        },
-        pointermove: function () {
-          this._click = false;
-          joint.dia.ElementView.prototype.pointermove.apply(this, arguments);
-        },
-        pointerup: function (evt, x, y) {
-          if (this._click) {
-            // triggers an event on the paper and the element itself
-            this.notify('cell:click', evt, x, y);
-          } else {
-            joint.dia.ElementView.prototype.pointerup.apply(this, arguments);
-          }
-        }
+      this.paper = new joint.dia.Paper({
+        el: $('#graph-paper'),
+        width: '100%',
+        height: 600,
+        model: this.graph,
+        gridSize: 1,
+        elementView: this.graphService.clickableView
       });
 
-      var paper = new joint.dia.Paper({
-          el: $('#graph-paper'),
-          width: '100%',
-          height: 600,
-          model: graph,
-          gridSize: 1,
-          elementView: ClickableView
-      });
-
-      paper.on('cell:click',
+      this.paper.on('cell:click',
         (cellView, evt, x, y) => {
-          this.openStep(cellView.model.id)
+          this.editStep(this.cellIndex[cellView.model.id])
         })
 
-      })
-
     }
-
-    openStep(cellId) {
-
-    var modalInstance = this.editor.open({
-      aniomation: true,
-      templateUrl: 'components/modals/step-editor/step-editor.html',
-      controller: 'StepEditorModalController',
-      size: 'lg',
-      backdrop: 'static',
-      keyboard: false,
-      resolve: {
-        conversation: () => {
-          return this.convo;
-        },
-        stepId: () => {
-          return this.cellIndex[cellId];
-        }
-      }
-    });
-
-    modalInstance.result.then((selectedItem) => {
-      this.conversation = conversation;
-    }, function () {
-      console.log('Modal dismissed at: ' + new Date());
-    });
-  };
-
+    buildGraph(convo) {
+      console.log('Updated:')
+      console.log(convo)
+      this.conversation = convo;
+      this.graph.clear();
+      this.graphService.conversation(convo)
+        .then(data => {
+        this.graph.addCells(data.cells);
+        this.cellIndex = data.index;
+        var res = joint.layout.DirectedGraph.layout(this.graph, {
+          nodeSep: 50,
+          edgeSep: 80,
+          rankDir: "TB"
+        });
+      })
+    }
+    editStep(stepId) {
+      console.log(stepId);
+      this.graphService.editStep(this.conversation, stepId)
+        .then(conversation => this.conversationService.save(conversation))
+        .then(saved => this.buildGraph(saved))
+        .catch(err => console.log(err))
+    };
   }
 
   angular.module('riverApp')
     .component('view', {
-      templateUrl: 'app/routes/conversations/view/view.html',
-      controller: ConversationViewComponent
-    });
+    templateUrl: 'app/routes/conversations/view/view.html',
+    controller: ConversationViewComponent
+  });
 })();

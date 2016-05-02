@@ -11,6 +11,7 @@
 
 import _ from 'lodash';
 import Conversation from './conversation.model';
+var Promise = require('bluebird');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -24,6 +25,12 @@ function respondWithResult(res, statusCode) {
 function saveUpdates(updates) {
   return function(entity) {
     var updated = _.merge(entity, updates);
+    entity.steps = entity.steps || [];
+    entity.steps.forEach((step, s) => {
+      if(step.constructor.name !== 'model'){
+        step.toObject();
+      }
+    })
     return updated.save()
       .then(updated => {
         return updated;

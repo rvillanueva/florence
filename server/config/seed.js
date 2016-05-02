@@ -105,8 +105,11 @@ Conversation.find({}).remove()
           stepId: '5726c7b47721d48e5c52f882'
         },
         retries: {
-          max: 3,
-          replies: ['So really, should I tell you?', 'Do you want to hear the answer or not?']
+          max: 1,
+          messages: [{
+            type: 'text',
+            text: 'So, want to hear what I\'m all about??'
+          }]
         },
         name: 'Welcome',
         messages: [{

@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose';
 
-var MessageSchema = new mongoose.Schema({
+var MessageResponseSchema = new mongoose.Schema({
   type: String,
   text: String,
   button: Object
@@ -11,7 +11,7 @@ var MessageSchema = new mongoose.Schema({
 var PatternSchema = new mongoose.Schema({
   type: String,
   phrases: Array,
-  messages: [MessageSchema]
+  messages: [MessageResponseSchema]
 })
 
 var PathSchema = new mongoose.Schema({
@@ -24,7 +24,7 @@ var PathSchema = new mongoose.Schema({
     title: String,
     subtitle: String,
     imgUrl: String,
-    messages: [MessageSchema]
+    messages: [MessageResponseSchema]
   },
   patterns: [PatternSchema]
 })
@@ -40,7 +40,7 @@ var StepSchema = new mongoose.Schema({
     max: Number,
     replies: Array // Array string
   },
-  messages:[MessageSchema],
+  messages:[MessageResponseSchema],
   paths:[PathSchema]
 })
 
