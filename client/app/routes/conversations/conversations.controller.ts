@@ -2,8 +2,12 @@
 (function(){
 
 class ConversationsComponent {
-  constructor() {
+  constructor($http) {
     this.message = 'Hello';
+    this.$http = $http;
+    this.$http.get('/api/conversations').success(function(body){
+      console.log(body)
+    })
   }
 }
 

@@ -47,12 +47,15 @@ export function setIntentState(bot) {
               bot.state.needed = [];
               bot.state.retries = 0;
               console.log('INTENTING...')
-          if (!bot.state.returnStepId) {
+              console.log(stepId)
+              console.log(bot.state)
+          if (bot.state.returnStepId) {
             bot.state.returnStepId = bot.state.stepId;
             bot.state.stepId = stepId;
             bot.updateState()
               .then(bot => resolve(bot))
           } else {
+            console.log('Updating bot state...')
             bot.state.stepId = stepId;
             bot.updateState()
               .then(bot => resolve(bot))

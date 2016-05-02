@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('riverApp')
-  .factory('Conversation', function($q) {
+  .factory('Conversation', function($q, $http) {
 
     var example = {
       _id: 'test',
@@ -213,12 +213,23 @@ angular.module('riverApp')
       }]
     };
 
+    var getConversations = function(){
+      var deferred = $q.defer();
+      $http.get('/api/conversations').success(function(body){
+        console.log(body)
+        deferred.resolve(body);
+      })
+      return deferred.promise;
+    }
+
 
       // Public API here
     return {
       getById: function(id) {
         var deferred = $q.defer();
-        deferred.resolve(example);
+        getConversations().then(convos => {
+          deferred.resolve(convos[0]);
+        })
         return deferred.promise;
       },
       map: function(conversation) {

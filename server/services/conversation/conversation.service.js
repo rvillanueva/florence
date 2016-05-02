@@ -31,6 +31,7 @@ export function run(bot) {
       } else if (bot.state.status !== 'paused'){
         Store.getStepIdByIntent('hello')
         .then(stepId => {
+          console.log(stepId)
           bot.state.stepId = stepId;
           return playStep(bot);
         })
@@ -44,8 +45,13 @@ export function run(bot) {
 export function playStep(bot) {
   return new Promise(function(resolve, reject) {
     // handle no stepid, needs fallback FIXME
+    console.log('botting things')
     Store.getStepById(bot.state.stepId)
       .then(step => {
+        console.log(step)
+        if(!step){
+          reject('No step found with id ' + bot.state.stepId)
+        }
         bot.send(step.messages);
         sendButtons(bot, step);
         if (step.type == 'choice') {
@@ -87,7 +93,7 @@ function retryStep(bot, step) {
           !step.retries.max ||
           bot.state.retries >= step.retries.max
         ) {
-          next = step.next;
+          var next = step.next;
           bot.state.status = 'running';
           State.setNextState(bot, next)
             .then(bot => run(bot))
@@ -124,7 +130,7 @@ function sendButtons(bot, step){
   console.log('Sending buttons')
   if(step.paths){
     step.paths.forEach(function(path, p){
-      if(path.button){
+      if(path.button && path.button.title){
         var button = {
           title: path.button.title,
           subtitle: path.button.subtitle,
