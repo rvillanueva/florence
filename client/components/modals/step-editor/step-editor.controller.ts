@@ -38,6 +38,19 @@ angular.module('riverApp')
       }
     }
 
+    $scope.addPath = function(){
+      $scope.conversation.steps.paths = $scope.conversation.steps.paths || [];
+      $scope.conversation.steps[$scope.stepIndex].paths.push({
+        name: 'New path'
+      })
+      $scope.pathIndex = $scope.conversation.steps[$scope.stepIndex].paths.length - 1;
+    }
+
+    $scope.addPattern = function(pattern){
+      $scope.conversation.steps[$scope.stepIndex]paths[$scope.pathIndex].patterns = $scope.conversation.steps[$scope.stepIndex]paths[$scope.pathIndex].patterns || [];
+      $scope.conversation.steps[$scope.stepIndex]paths[$scope.pathIndex].patterns.push(pattern);
+    }
+
     $scope.save = function(){
       pristine()
       $uibModalInstance.close($scope.conversation);

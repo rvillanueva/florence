@@ -11,7 +11,10 @@ export function respond(message){
     var bot = new Bot(message);
     bot.getState()
     .then(bot => Interpret.getEntities(bot))
-    .then(bot => Conversation.run(bot))
+    .then(bot => {
+      bot.state.status = 'receiving';
+      Conversation.run(bot)
+    })
     .catch(err => reject(err))
   })
 }

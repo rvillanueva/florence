@@ -3,7 +3,7 @@
 angular.module('riverApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('view', {
+      .state('conversations-view', {
         url: '/conversations/view?:id',
         template: '<view></view>'
       });

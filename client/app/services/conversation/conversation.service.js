@@ -215,9 +215,19 @@ angular.module('riverApp')
 
     var getConversations = function(){
       var deferred = $q.defer();
-      $http.get('/api/conversations').success(function(body){
-        console.log(body)
-        deferred.resolve(body);
+      $http.get('/api/conversations').success(function(convos){
+        deferred.resolve(convos);
+      })
+      return deferred.promise;
+    }
+
+    var getById = function(id){
+      var deferred = $q.defer();
+      if(!id){
+        deferred.reject('Need id to get conversation.')
+      }
+      $http.get('/api/conversations/' + id).success(function(convo){
+        deferred.resolve(convo);
       })
       return deferred.promise;
     }
@@ -225,10 +235,17 @@ angular.module('riverApp')
 
       // Public API here
     return {
-      getById: function(id) {
+      getAll: function(id) {
         var deferred = $q.defer();
         getConversations().then(convos => {
-          deferred.resolve(convos[0]);
+          deferred.resolve(convos);
+        })
+        return deferred.promise;
+      },
+      getById: function(id) {
+        var deferred = $q.defer();
+        getById(id).then(convo => {
+          deferred.resolve(convo);
         })
         return deferred.promise;
       },
@@ -240,17 +257,21 @@ angular.module('riverApp')
       },
       save: function(conversation) {
         var deferred = $q.defer();
-        if(conversation._id){
+        if(!conversation._id){
+          deferred.reject()
+        }
           $http.put('/api/conversations/' + conversation._id, conversation).success(function(saved){
             deferred.resolve(saved);
           })
-        } else {
-          $http.post('/api/conversations', conversation).success(function(saved){
-            deferred.resolve(saved);
-          })
-        }
         return deferred.promise;
 
+      },
+      create: function(conversation) {
+        var deferred = $q.defer();
+        $http.post('/api/conversations', conversation).success(function(saved){
+          deferred.resolve(saved);
+        })
+        return deferred.promise;
       }
     };
   });

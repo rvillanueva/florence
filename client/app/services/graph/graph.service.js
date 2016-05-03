@@ -48,15 +48,23 @@ angular.module('riverApp')
       var index = {};
       var cellIndex = {};
       convo.steps.forEach(function(step, s) {
-        var stepText = step.name || step._id;
+        var stepText =  step.name || step._id;
+        if(step.messages && step.messages[0] && step.messages[0].text){
+          var string = step.messages[0].text;
+          if(string.length > 30){
+            stepText = '\"' + string.slice(0,30) + '...' + '\"';
+          } else {
+            stepText = '\"' + string + '\"';
+          }
+        }
         var rect = new joint.shapes.basic.Rect({
           position: {
             x: 100,
             y: 30
           },
           size: {
-            width: 170,
-            height: 60
+            width: 200,
+            height: 40
           },
           attrs: {
             rect: {
@@ -64,6 +72,7 @@ angular.module('riverApp')
             },
             text: {
               text: stepText,
+              'font-size': 11,
               fill: 'white'
             }
           }

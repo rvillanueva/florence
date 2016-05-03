@@ -123,7 +123,7 @@ Conversation.find({}).remove()
           text: 'Even though I\'m still training, there are a few things I can do. Want to hear them?'
         }],
         paths: [{
-          _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f893'),
+          _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f890'),
           next: {
             action: 'goTo',
             stepId: '5726c7b47721d48e5c52f882'

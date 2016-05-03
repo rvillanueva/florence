@@ -4,8 +4,6 @@ var Store = require('./conversation.store');
 
 export function setNextState(bot, next){
   return new Promise(function(resolve, reject){
-    console.log('MY BOT STATE IS')
-    console.log(bot.state)
     bot.state.intent = null;
     if(bot.state.status == 'running'){
       if (next && next.action == 'retry') {
@@ -25,8 +23,7 @@ export function setNextState(bot, next){
         }
       }
     }
-    console.log('SETTING BOT STATE')
-    console.log(bot.state)
+    console.log('BOT STATUS: ' + bot.state.status)
     bot.updateState()
       .then(bot => resolve(bot))
       .catch(err => reject(err))
@@ -47,7 +44,6 @@ export function setIntentState(bot) {
               bot.state.needed = [];
               bot.state.retries = 0;
               console.log('INTENTING...')
-              console.log(stepId)
               console.log(bot.state)
           if (bot.state.returnStepId) {
             bot.state.returnStepId = bot.state.stepId;
@@ -55,7 +51,6 @@ export function setIntentState(bot) {
             bot.updateState()
               .then(bot => resolve(bot))
           } else {
-            console.log('Updating bot state...')
             bot.state.stepId = stepId;
             bot.updateState()
               .then(bot => resolve(bot))

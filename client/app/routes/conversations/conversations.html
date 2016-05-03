@@ -1,1 +1,28 @@
-<div>This is the scripts view.</div>
+<br>
+<div class="pull-right">
+  <button class="btn btn-default btn-md" ng-click="$ctrl.addConversation()">Add Conversation</button>
+</div>
+<div class="container">
+  <table class="table table-hover">
+    <thead>
+      <th>
+        Name
+      </th>
+      <th>
+        Type
+      </th>
+      <th>
+        
+      </th>
+    </thead>
+    <tr ng-repeat="conversation in $ctrl.conversations | limitTo: 5">
+      <td>
+        <a href="/conversations/view?id={{conversation._id}}">{{conversation.name || conversation._id}}</a>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -2,18 +2,21 @@
 (function() {
 
   class ConversationViewComponent {
-    constructor(Conversation, Graph, $uibModal) {
+    constructor(Conversation, Graph, $uibModal, $stateParams, $state) {
       this.conversationService = Conversation;
       this.graphService = Graph;
       this.conversation;
       this.cellIndex;
       this.clickEvent = {};
       this.editor = $uibModal;
-
-      this.conversationService.getById().then(convo => {
-        this.conversation = convo;
-        this.buildGraph(this.conversation);
-      })
+      if(!$stateParams.id){
+        $state.go('conversations');
+      } else {
+        this.conversationService.getById($stateParams.id).then(convo => {
+          this.conversation = convo;
+          this.buildGraph(this.conversation);
+        })
+      }
 
       this.graph = new joint.dia.Graph;
 

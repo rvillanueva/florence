@@ -3,14 +3,14 @@ var State = require('./conversation.state');
 
 export function handle(bot, step){
   return new Promise(function(resolve, reject){
-    console.log('Handling response...');
     var next = false;
     var foundPattern;
+    console.log('Checking pattern for step ' + step._id);
     var data = checkEachPattern(bot, step);
-    next = data.next;
-    if(data.messages){
+    if(data.found){
       console.log('FOUND PATTERN')
-      console.log(data.pattern)
+      console.log(data.messages)
+      next = data.next;
       bot.send(data.messages)
       bot.state.status = 'running';
     } else {
@@ -23,27 +23,40 @@ export function handle(bot, step){
 }
 
 function checkEachPattern(bot, step){
-  var data = {};
+  var data = false;
+  step.paths = step.paths || [];
   step.paths.forEach(function(path, p){
-    var buttonMatches;
     bot.state.entities = bot.state.entities || {};
     // Handle button logic
     if(path._id == bot.state.entities.button){
-      buttonMatches = true;
-      data.messages = path.button.messages;
-      data.next = path.next;
-    } else if(path.patterns){
+      data = {
+        found: true,
+        messages: path.button.messages,
+        next: path.next
+      }
+      console.log('found it')
+      console.log(data)
 
+      return data;
+    }
+
+    if(path.patterns){
       // Check patterns
       for (var i = 0; i < path.patterns.length; i++) {
         // check if button matches pathId
         var patternMatches = checkPattern(bot, path.patterns[i])
         if(patternMatches){
-          data.messages = patternMatches.messages;
-          data.next = path.next;
+          console.log(patternMatches)
+          data = {
+            found: true,
+            messages: patternMatches.messages,
+            next: path.next
+          }
+          return data;
         }
       }
     }
+
   })
   return data;
 
@@ -52,7 +65,7 @@ function checkEachPattern(bot, step){
 export function checkPattern(bot, pattern) {
   if (pattern.type == 'exact' && pattern.phrases) {
     for (var i = 0; i < pattern.phrases.length; i++) {
-      if (pattern.phrases[i] == bot.message.text) {
+      if (pattern.phrases[i].toLowerCase() === bot.message.text.toLowerCase()) {
         return pattern;
       }
     }
