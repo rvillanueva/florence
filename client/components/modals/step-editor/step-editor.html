@@ -1,113 +1,128 @@
 <div class="modal-header">
   <button type="button" ng-click="cancel()" class="close">&times;</button>
-  <h4 class="modal-title">{{conversation.steps[stepIndex].name || stepId}}</h4>
+  <h4 class="modal-title">{{conversation.steps[index.s].name || stepId}}</h4>
 </div>
 <div class="modal-body">
   <div class="row">
-    <div class="col-md-6">
-      Type:
-      <select ng-model="conversation.steps[stepIndex].type">
-        <option value="message">Messages</option>
-        <option value="choice">Choices</option>
-      </select>
-      <br> Max Retries:
-      <input ng-model="conversation.steps[stepIndex].retries.max" />
-      <div ng-if="conversation.steps[stepIndex].retries.times > 0">
-        <br> Retry default phrases:
-        <p ng-repeat="message in conversation.steps[stepindex].retries.messages">{{message.text}}</p>
-      </div>
-      <br>
-      <strong>Next<span ng-show="conversation.steps[stepIndex].type == 'choice'">&nbsp;(retry fallback)</span>: </strong>
-      <select ng-model="conversation.steps[stepIndex].next.action">
-        <option value="goTo">Go To</option>
-        <option value="end">End Conversation</option>
-      </select>
-      <span ng-if="conversation.steps[stepIndex].next.action == 'goTo'">
-      <select ng-model="conversation.steps[stepIndex].next.stepId">
-        <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[stepIndex]._id">{{step._id}}: {{step.name}}</option>
-        <option value="">[Select Step]</option>
-      </select>
-    </span>
-      <br>
-      <div ng-show="conversation.steps[stepIndex].type == 'choice'">
-        <div>
-          <strong>Path</strong>
-          <select ng-model="pathIndex" convert-to-number ng-show="conversation.steps[stepIndex].paths">
-            <option ng-repeat="(p, path) in conversation.steps[stepIndex].paths" value="{{p}}">{{path.name || path._id}}</option>
-          </select>
-          <button class="btn btn-default" ng-click="addPath()"><i class="fa fa-plus"></i></button>
+    <uib-tabset active="active">
+      <uib-tab index="0" heading="Step">
+        <div class="col-md-6">
+          <div>
+            <div class="message-container" ng-repeat="message in conversation.steps[index.s].messages track by $index">
+              <div class="message-bubble message-app">{{message.text}}</div> <a href="#" ng-click="deleteMessage($index)">&times;</a>
+            </div>
+            <form ng-submit="addMessage()">
+              <input ng-model="newMessage.text" />
+              <button class="btn btn-default btn-sm" type="submit">Add</button>
+            </form>
+            <br>
+          </div>
         </div>
-        <div>
+        <div class="col-md-6">
+          Type:
+          <select ng-model="conversation.steps[index.s].type">
+            <option value="message">Message</option>
+            <option value="choice">Choice</option>
+          </select>
+          <br>
+          <br>
+          <strong>Next<span ng-show="conversation.steps[index.s].type == 'choice'">&nbsp;(retry fallback)</span>: </strong>
+          <select ng-model="conversation.steps[index.s].next.action">
+            <option value="goTo">Go To</option>
+            <option value="end">End Conversation</option>
+          </select>
+          <span ng-if="conversation.steps[index.s].next.action == 'goTo'">
+              <select ng-model="conversation.steps[index.s].next.stepId">
+                <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[index.s]._id">{{step._id}}: {{step.name}}</option>
+                <option value="">[Select Step]</option>
+              </select>
+          </span>
+          <br>
+          <br>
+          <a href="#" ng-click="deleteStep(index.s)">Delete Step</a>
+        </div>
+      </uib-tab>
+      <uib-tab index="1" heading="Responses" ng-show="conversation.steps[index.s].type == 'choice'">
+        <br>
+        <div class="col-md-6">
+          <div>
+            <strong>Path</strong>
+            <button class="btn btn-default" ng-click="addPath()"><i class="fa fa-plus"></i></button>
+            <br>
+            <select class="form-control" ng-model="index.p" convert-to-number ng-show="conversation.steps[index.s].paths">
+              <option ng-repeat="(p, path) in conversation.steps[index.s].paths" value="{{p}}">{{path.name || path._id}}</option>
+            </select>
+          </div>
+          <br>
+          <br> Patterns ({{conversation.steps[index.s].paths[index.p].patterns.length}})
+          <input class="form-control" placeholder="Add new or search" />
+          <br>
+          <table class="table table-hover">
+            <thead>
+              <th>
+                Type
+              </th>
+              <th>
+                Matches
+              </th>
+              <th>
+                Response
+              </th>
+            </thead>
+            <tr ng-repeat="pattern in conversation.steps[index.s].paths[index.p].patterns | limitTo: 5">
+              <td>
+                {{pattern.type}}
+              </td>
+              <td>
+                <span ng-if="pattern.type == 'exact'" ng-repeat="phrase in pattern.phrases | limitTo: 5">{{phrase}}<br></span><span ng-if="pattern.phrases.length > 5">+{{pattern.phrases.length - 5}}</span>
+                <span ng-if="pattern.type == 'entity'">{{pattern.entity}} ({{pattern.value || 'all'}})</span>
+                <span ng-if="pattern.type == 'number'">Min: {{pattern.min}}<br>Max: ({{pattern.max}}</span>
+                <span ng-if="pattern.type == 'button'">{{pattern.value}}</span>
+
+              </td>
+              <td>
+                <p ng-repeat="message in pattern.messages | limitTo: 3">{{message.text}}</p>
+                <p ng-if="pattern.messages.length > 3">(+{{pattern.messages.length -1}})</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-6">
           <strong>Then: </strong>
-          <select ng-model="conversation.steps[stepIndex].paths[pathIndex].next.action">
+          <select ng-model="conversation.steps[index.s].paths[index.p].next.action">
             <option value="goTo">Go To</option>
             <option value="end">End Conversation</option>
             <option value="retry">Retry Step</option>
           </select>
           &nbsp;
-          <span ng-if="conversation.steps[stepIndex].paths[pathIndex].next.action == 'goTo'">
-          <select ng-model="conversation.steps[stepIndex].paths[pathIndex].next.stepId">
-            <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[stepIndex]._id">{{step._id}}: {{step.name}}</option>
-            <option value="">[Select Step]</option>
-          </select>
-        </span>
-        </div>
-        <div>
+          <span ng-if="conversation.steps[index.s].paths[index.p].next.action == 'goTo'">
+              <select ng-model="conversation.steps[index.s].paths[index.p].next.stepId">
+                <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[index.s]._id">{{step._id}}: {{step.name}}</option>
+                <option value="">[Select Step]</option>
+              </select>
+            </span>
           <br>
-          <div class="panel panel-default">
-            <div class="panel-heading" ng-click="expanded.pattern = !expanded.pattern" style="cursor: pointer;">
-              Patterns ({{conversation.steps[stepIndex].paths[pathIndex].patterns.length}})
-              <i class="fa pull-right" ng-class="{'fa-caret-down': expanded.pattern, 'fa-caret-right': !expanded.pattern}"></i>
-            </div>
-            <div class="panel-body" ng-show="expanded.pattern">
-              <input class="form-control" placeholder="Add new or search" />
-              <br>
-              <table class="table table-hover">
-                <thead>
-                  <th>
-                    Type
-                  </th>
-                  <th>
-                    Matches
-                  </th>
-                  <th>
-                    Response
-                  </th>
-                </thead>
-                <tr ng-repeat="pattern in conversation.steps[stepIndex].paths[pathIndex].patterns | limitTo: 5">
-                  <td>
-                    {{pattern.type}}
-                  </td>
-                  <td>
-                    <span ng-if="pattern.type == 'exact'" ng-repeat="phrase in pattern.phrases | limitTo: 5">{{phrase}}<br></span><span ng-if="pattern.phrases.length > 5">+{{pattern.phrases.length - 5}}</span>
-                    <span ng-if="pattern.type == 'entity'">{{pattern.entity}} ({{pattern.value || 'all'}})</span>
-                    <span ng-if="pattern.type == 'number'">Min: {{pattern.min}}<br>Max: ({{pattern.max}}</span>
-                    <span ng-if="pattern.type == 'button'">{{pattern.value}}</span>
-
-                  </td>
-                  <td>
-                    <p ng-repeat="message in pattern.messages | limitTo: 3">{{message.text}}</p>
-                    <p ng-if="pattern.messages.length > 3">(+{{pattern.messages.length -1}})</p>
-                  </td>
-                </tr>
-              </table>
-            </div>
+          <br>
+          Button:
+          <input ng-model="conversation.steps[index.s].paths[index.p].button.title" />
+          <p ng-repeat="message in conversation.steps[index.s].paths[index.p].button.messages">{{message.text}}</p>
+          <br><br>
+          <a href="#" ng-click="deletePath(index.p)">Delete Path</a>
+        </div>
+      </uib-tab>
+      <uib-tab index="2" heading="Retries">
+        <div class="col-md-12">
+          <br> Max Retries:
+          <input ng-model="conversation.steps[index.s].retries.max" />
+          <div ng-if="conversation.steps[index.s].retries.times > 0">
+            <br> Retry default phrases:
+            <p ng-repeat="message in conversation.steps[index.s].retries.messages">{{message.text}}</p>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div>
-        <div class="message-container" ng-repeat="message in conversation.steps[stepIndex].messages">
-          <div class="message-bubble message-app">{{message.text}}</div> <a href="#" ng-click="deleteMessage($index)">&times;</a>
-        </div>
-        <form ng-submit="addMessage()">
-          <input ng-model="newMessage" />
-          <button class="btn btn-default btn-sm" type="submit">Add</button>
-        </form>
-        <br>
-      </div>
-    </div>
+      </uib-tab>
+      <!--<uib-tab index="3" heading="Analytics">
+      </uib-tab>-->
+    </uib-tabset>
   </div>
 </div>
 <div class="modal-footer">

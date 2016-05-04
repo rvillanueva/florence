@@ -68,7 +68,8 @@ angular.module('riverApp')
           },
           attrs: {
             rect: {
-              fill: '#2e9c56'
+              fill: '#22b573',
+              'stroke':  'none'
             },
             text: {
               text: stepText,
@@ -89,11 +90,10 @@ angular.module('riverApp')
           target: {
             id: index[link.target.stepId].id
           },
-          arrowheadMarkup: [
-            '<g class="marker-arrowhead-group marker-arrowhead-group-<%= end %>">',
-            '<path class="marker-arrowhead" end="<%= end %>" d="M 26 0 L 0 13 L 26 26 z" />',
-            '</g>'
-          ]
+          attrs:{
+            '.connection': { stroke: '#363636' },
+            '.marker-target': { fill: '#363636', d: 'M 10 0 L 0 5 L 10 10 z', stroke: 'none' }
+          }
         });
         cells.push(link);
       })

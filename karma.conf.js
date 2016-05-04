@@ -28,6 +28,7 @@ module.exports = function(config) {
       'client/bower_components/dagre/dist/dagre.core.js',
       'client/bower_components/dagre/dist/dagre.core.min.js',
       'client/bower_components/jointjs/dist/joint.js',
+      'client/bower_components/angular-xeditable/dist/js/xeditable.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'node_modules/socket.io-client/socket.io.js',

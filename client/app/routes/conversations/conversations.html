@@ -1,8 +1,8 @@
-<br>
-<div class="pull-right">
-  <button class="btn btn-default btn-md" ng-click="$ctrl.addConversation()">Add Conversation</button>
-</div>
 <div class="container">
+  <h2>
+    Conversations
+    &nbsp;<button class="btn btn-default btn-md" ng-click="$ctrl.addConversation()">Add</button>
+  </h2>
   <table class="table table-hover">
     <thead>
       <th>
@@ -12,7 +12,10 @@
         Type
       </th>
       <th>
-        
+        Purpose
+      </th>
+      <th>
+        Triggers
       </th>
     </thead>
     <tr ng-repeat="conversation in $ctrl.conversations | limitTo: 5">
@@ -20,8 +23,13 @@
         <a href="/conversations/view?id={{conversation._id}}">{{conversation.name || conversation._id}}</a>
       </td>
       <td>
+        {{conversation.type}}
       </td>
       <td>
+        {{conversation.purpose}}
+      </td>
+      <td>
+        {{conversation.triggers}}
       </td>
     </tr>
   </table>

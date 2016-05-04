@@ -4,10 +4,11 @@ var State = require('./conversation.state');
 export function handle(bot, step){
   return new Promise(function(resolve, reject){
     var next = false;
+    var data = false;
     var foundPattern;
     console.log('Checking pattern for step ' + step._id);
-    var data = checkEachPattern(bot, step);
-    if(data.found){
+    data = checkEachPattern(bot, step);
+    if(data){
       console.log('FOUND PATTERN')
       console.log(data.messages)
       next = data.next;
@@ -25,12 +26,12 @@ export function handle(bot, step){
 function checkEachPattern(bot, step){
   var data = false;
   step.paths = step.paths || [];
-  step.paths.forEach(function(path, p){
+  for (var j = 0; j < step.paths.length; j++){
+    var path = step.paths[j];
     bot.state.entities = bot.state.entities || {};
     // Handle button logic
     if(path._id == bot.state.entities.button){
       data = {
-        found: true,
         messages: path.button.messages,
         next: path.next
       }
@@ -48,7 +49,6 @@ function checkEachPattern(bot, step){
         if(patternMatches){
           console.log(patternMatches)
           data = {
-            found: true,
             messages: patternMatches.messages,
             next: path.next
           }
@@ -56,8 +56,7 @@ function checkEachPattern(bot, step){
         }
       }
     }
-
-  })
+  }
   return data;
 
 }

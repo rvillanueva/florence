@@ -18,7 +18,8 @@
     "angular-ui-router": "~0.2.15",
     "angular-validation-match": "~1.5.2",
     "moment": "^2.12.0",
-    "jointjs": "^0.9.7"
+    "jointjs": "^0.9.7",
+    "angular-xeditable": "^0.1.12"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.0"

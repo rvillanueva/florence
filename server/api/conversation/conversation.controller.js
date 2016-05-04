@@ -24,9 +24,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    entity.steps = updates.steps;
     var updated = _.merge(entity, updates);
-    entity.steps = entity.steps || [];
-    entity.steps.forEach((step, s) => {
+    updated.steps.forEach((step, s) => {
       if(step.constructor.name !== 'model'){
         step.toObject();
       }
