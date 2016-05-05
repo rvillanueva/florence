@@ -1,0 +1,12 @@
+<br>
+<div class="row">
+  <div class="col-md-8">
+    {{$ctrl.conversation.name}}
+<button class="pull-right btn btn-default btn-md" ng-click="$ctrl.editStep(null)">Add Step</button>
+    <div id="graph-paper" class="conversation-graph" ng-init="setupGraph()">
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div ng-if="$ctrl.index.s || $ctrl.index.s === 0" ng-include="'./app/routes/conversations/view/components/step/step.html'" ng-controller="ConversationEditStepController"></div>
+  </div>
+</div>

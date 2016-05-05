@@ -1,0 +1,99 @@
+<div class="row">
+  <h4 class="pull-left">{{conversation.steps[$ctrl.index.s].name}}&nbsp;&nbsp;&nbsp;</h4>
+  <uib-tabset active="active">
+    <uib-tab index="0" heading="Messages">
+      <br> Type:
+      <select ng-model="conversation.steps[$ctrl.index.s].type">
+        <option value="message">Message</option>
+        <option value="choice">Choice</option>
+      </select>
+      <br>
+      <br>
+      <div class="message-container" ng-repeat="message in conversation.steps[$ctrl.index.s].messages track by $index">
+        <div class="message-bubble message-app">{{message.text}}</div> <a href="#" ng-click="deleteMessage($index)">&times;</a>
+      </div>
+      <div class="message-container">
+        <div class="message-bubble message-app" ng-if="conversation.steps[$ctrl.index.s].type == 'choice'">
+          <span ng-repeat="path in conversation.steps[$ctrl.index.s].paths track by $index" ng-if="path.button.title">
+            [{{path.button.title}}]&nbsp;&nbsp;
+          </span>
+        </div>
+      </div>
+      <form ng-submit="addMessage()">
+        <input ng-model="newMessage.text" />
+        <button class="btn btn-default btn-sm" type="submit">Add</button>
+      </form>
+      <div ng-if="conversation.steps[$ctrl.index.s].type !== 'choice'">
+        <strong>Next: </strong>
+        <select ng-model="conversation.steps[$ctrl.index.s].next.action">
+          <option value="goTo">Go To</option>
+          <option value="end">End Conversation</option>
+        </select>
+        <div ng-if="conversation.steps[$ctrl.index.s].next.action == 'goTo'">
+          <select ng-model="conversation.steps[$ctrl.index.s].next.stepId">
+            <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[$ctrl.index.s]._id">{{step._id}}: {{step.name}}</option>
+            <option value="">[Select Step]</option>
+          </select>
+        </div>
+      </div>
+      <div ng-click="openPath($index)"ng-if="conversation.steps[$ctrl.index.s].type == 'choice'" class="message-container message-container-user" ng-repeat="(p, path) in conversation.steps[$ctrl.index.s].paths">
+        <div class="message-bubble message-user">{{path.name || path._id}}<span ng-show="path.button.title"><span>&nbsp;[{{path.button.title}}]</span></div>
+        <a href="#" ng-click="deleteMessage($index)"></a>
+      </div>
+      <br>
+    </uib-tab>
+    <uib-tab index="1" heading="Settings">
+      <div class="col-md-12">
+        <div ng-if="conversation.steps[$ctrl.index.s].type == 'choice'">
+          <br> Max Retries:
+          <input ng-model="conversation.steps[$ctrl.index.s].retries.max" />
+          <div ng-if="conversation.steps[$ctrl.index.s].retries.times > 0">
+            <br> Retry default phrases:
+            <p ng-repeat="message in conversation.steps[$ctrl.index.s].retries.messages">{{message.text}}</p>
+          </div>
+          <br><br>
+          <strong>Next: </strong>
+          <select ng-model="conversation.steps[$ctrl.index.s].next.action">
+            <option value="goTo">Go To</option>
+            <option value="end">End Conversation</option>
+          </select>
+          <div ng-if="conversation.steps[$ctrl.index.s].next.action == 'goTo'">
+            <select ng-model="conversation.steps[$ctrl.index.s].next.stepId">
+              <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[$ctrl.index.s]._id">{{step._id}}: {{step.name}}</option>
+              <option value="">[Select Step]</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </uib-tab>
+  </uib-tabset>
+</div>
+
+<!--
+<uib-tab index="1" heading="Links">
+  <br>
+  <div class="col-md-6">
+    <br>
+    <br>
+    <br>
+    <br>
+    <a href="#" ng-click="deleteStep($ctrl.index.s)">Delete Step</a>
+    <div>
+      <strong>Path</strong>
+      <button class="btn btn-default" ng-click="addPath()"><i class="fa fa-plus"></i></button>
+      <br>
+      <select class="form-control" ng-model="$ctrl.index.p" convert-to-number ng-show="conversation.steps[$ctrl.index.s].paths">
+        <option ng-repeat="(p, path) in conversation.steps[$ctrl.index.s].paths" value="{{p}}">{{path.name || path._id}}</option>
+      </select>
+    </div>
+    <br>
+  </div>
+  <div class="col-md-6">
+
+    <br>
+    <br>
+    <br>
+    <a href="#" ng-click="deletePath($ctrl.index.p)">Delete Path</a>
+  </div>
+</uib-tab>
+-->

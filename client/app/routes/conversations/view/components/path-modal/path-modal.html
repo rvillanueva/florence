@@ -1,0 +1,63 @@
+
+<div class="modal-body">
+  <h4 class="pull-left">Path&nbsp;&nbsp;&nbsp;</h4>
+  <button type="button" ng-click="cancel()" class="close pull-right">&times;</button>
+  <uib-tabset active="active">
+    <uib-tab index="0" heading="Path">
+      <br>
+      <strong>Link: </strong>
+      <select ng-model="conversation.steps[index.s].paths[index.p].next.action">
+        <option value="goTo">Go To</option>
+        <option value="end">End Conversation</option>
+        <option value="retry">Retry Step</option>
+      </select>
+      &nbsp;
+      <div ng-if="conversation.steps[index.s].paths[index.p].next.action == 'goTo'">
+        <select ng-model="conversation.steps[index.s].paths[index.p].next.stepId">
+          <option ng-repeat="step in conversation.steps" value="{{step._id || 'null'}}" ng-hide="!step._id || step._id == conversation.steps[index.s]._id">{{step._id}}: {{step.name}}</option>
+          <option value="">[Select Step]</option>
+        </select>
+      </div>
+      <br>
+      <br> Button:
+      <input ng-model="conversation.steps[index.s].paths[index.p].button.title" />
+      <p ng-repeat="message in conversation.steps[index.s].paths[index.p].button.messages">{{message.text}}</p>
+    </uib-tab>
+    <uib-tab index="1" heading="Patterns">
+      <br> Patterns ({{conversation.steps[index.s].paths[index.p].patterns.length}})
+      <input class="form-control" placeholder="Add new or search" />
+      <br>
+      <table class="table table-hover">
+        <thead>
+          <th>
+            Type
+          </th>
+          <th>
+            Matches
+          </th>
+          <th>
+            Response
+          </th>
+        </thead>
+        <tr ng-repeat="pattern in conversation.steps[index.s].paths[index.p].patterns | limitTo: 5">
+          <td>
+            {{pattern.type}}
+          </td>
+          <td>
+            <span ng-if="pattern.type == 'exact'" ng-repeat="phrase in pattern.phrases | limitTo: 5">{{phrase}}<br></span><span ng-if="pattern.phrases.length > 5">+{{pattern.phrases.length - 5}}</span>
+            <span ng-if="pattern.type == 'entity'">{{pattern.entity}} ({{pattern.value || 'all'}})</span>
+            <span ng-if="pattern.type == 'number'">Min: {{pattern.min}}<br>Max: ({{pattern.max}}</span>
+            <span ng-if="pattern.type == 'button'">{{pattern.value}}</span>
+          </td>
+          <td>
+            <p ng-repeat="message in pattern.messages | limitTo: 3">{{message.text}}</p>
+            <p ng-if="pattern.messages.length > 3">(+{{pattern.messages.length -1}})</p>
+          </td>
+        </tr>
+      </table>
+    </uib-tab>
+  </uib-tabset>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary btn-md" ng-click="savePath()">Save</button>
+</div>

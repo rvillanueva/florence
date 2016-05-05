@@ -1,8 +1,6 @@
 <div class="container page-conversation-view">
-  <h3>{{$ctrl.conversation.name}}
-    <button class="pull-right btn btn-default btn-md" ng-click="$ctrl.editStep(null)">Add Step</button>
-  </h3>
-  <br>
-  <div id="graph-paper" class="conversation-graph">
+  <div>&nbsp;
+    <button class="btn btn-sm btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
   </div>
+  <div ng-if="$ctrl.conversation" ng-controller="ConversationEditMapController" ng-include="'./app/routes/conversations/view/components/map/map.html'"></div>
 </div>

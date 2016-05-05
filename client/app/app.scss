@@ -107,11 +107,11 @@ img {
 @import 'routes/admin/admin.scss';
 @import 'routes/aspects/aspects.scss';
 @import 'routes/conversations/conversations.scss';
+@import 'routes/conversations/view/components/step/step.scss';
 @import 'routes/conversations/view/view.scss';
 @import 'routes/main/main.scss';
 @import 'routes/profile/profile.scss';
 @import '../components/footer/footer.scss';
 @import '../components/modal/modal.scss';
-@import '../components/modals/step-editor/step-editor.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';
 /* endinject */
