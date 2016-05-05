@@ -2,50 +2,62 @@
 
 import mongoose from 'mongoose';
 
-var MessageResponseSchema = new mongoose.Schema({
-  type: String,
-  text: String,
-  button: Object
+var RefSchema = new mongoose.Schema({
+  weight: Number,
+  conditions: [
+    {
+      type: String,
+      variable: String,
+      equality: String,
+      value: String
+    }
+  ],
+  refId: String
 })
 
-var PatternSchema = new mongoose.Schema({
-  type: String,
-  phrases: Array,
-  messages: [MessageResponseSchema]
-})
-
-var PathSchema = new mongoose.Schema({
-  name: String,
-  next: {
-    action: String,
-    stepId: String
-  },
-  button: {
-    title: String,
-    subtitle: String,
-    imgUrl: String,
-    messages: [MessageResponseSchema]
-  },
-  patterns: [PatternSchema]
-})
 
 var StepSchema = new mongoose.Schema({
-  name: String,
-  type: String,
-  next: {
-    action: String,
-    stepId: String
-  },
-  retries: {
-    max: Number,
-    replies: Array // Array string
-  },
-  messages:[MessageResponseSchema],
-  paths:[PathSchema]
+  type: String, // say, intent, messenger_buttons, messenger_cards
+  update: [{
+      type: String,
+      variable: String,
+      change: String,
+      value: String,
+  }],
+  // SAY / MESSENGER_BUTTONS
+  text: String,
+  // INTENT
+  matches: String,
+  intents: [
+    {
+      intentId: String // match prebuilt intent
+    }
+  ],
+  // MESSENGER BUTTONS
+  messenger_buttons: [
+    {
+      type: String,
+      title: String,
+      //data
+    }
+  ],
+  // MESSENGER CARDS
+  cards: [
+    {
+      type: String,
+      title: String,
+      subtitle: String,
+      // data
+    }
+  ],
+  next: [RefSchema]
 })
 
 var ConversationSchema = new mongoose.Schema({
   name: String,
+  tags: Array,
+  next: [RefSchema],
+  //type: String, // Learn, nudge, protocol, event
   steps: [StepSchema]
 });
 

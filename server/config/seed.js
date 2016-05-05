@@ -90,3 +90,40 @@ Aspect.find({}).remove()
         console.log('Aspects populated.');
       });
   });
+
+Conversation.find({}).remove()
+.then(() => Conversation.create({
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f876'),
+    name: 'Intro',
+    tags: [],
+    next: [
+      {
+        conditions: [],
+        weight: 1,
+        refId: '5726c7b47721d48e5c52f887'
+      }
+    ],
+    steps: [{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f887'),
+      type: 'say',
+      text: 'hello there',
+      next: [{
+        conditions: [],
+        weight: 1,
+        refId: '5726c7b47721d48e5c52f882'
+      }],
+    }, {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
+      type: 'say',
+      text: 'what\'s your name?',
+      next: [{
+        conditions: [],
+        weight: 1,
+        refId: '5726c7b47721d48e5c52f882'
+      }],
+    }]
+  })
+)
+  .then(() => {
+    console.log('Conversations populated.');
+  });

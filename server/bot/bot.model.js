@@ -9,13 +9,59 @@ export function constructor(message) {
   this.userId = message.userId;
   this.message = message;
   this.state = {
-    intent: false,
-    stepId: false,
-    returnStepId: false,
-    entities: {},
-    needed: []
+    conversation: {
+      status: '',
+      stepId: '',
+      expected: 'intentName',
+      diverted: []
+    },
+    received: {
+      intent: null,
+      entities: {},
+    },
+    variables: {}
   }
-  this.conversation;
+  this.active = {
+    conversation: null,
+    step: null
+  }
+
+  this.divert = function(conversationId) {
+    return new Promise((resolve, reject) => {
+      this.state.conversation.diverted = this.state.conversation.diverted || [];
+      this.active.conversation = stepId;
+      // Get conversation
+      Store.getConversationById(conversationId)
+      .then(convo => {
+          // Set conversation
+          this.active.conversation = convo;
+          // Queue previous step in diverted
+          if(this.state.conversation.stepId){
+            this.conversation.diverted.push(this.state.conversation.stepId);
+            this.state.conversation.stepId = null;
+          }
+          // Set active step to first conversation step
+          this.setStep(convo.startStepId || convo.steps[0]._id)
+          .then(() => resolve(this))
+          .catch(err => reject(err))
+      })
+      .catch(err => reject(err))
+    })
+
+  }
+
+  this.setStep = function(stepId){
+    return new Promise((resolve, reject) =>{
+      this.state.conversation.stepId = stepId;
+      Store.getStepById(stepId, conversation)
+      .then(step => {
+          this.active.step = step;
+          resolve(this)
+      })
+      .catch(err => reject(err))
+    })
+
+  }
 
   this.getState = function(){
     return new Promise((resolve, reject) =>{

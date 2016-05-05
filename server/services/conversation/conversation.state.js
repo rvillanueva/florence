@@ -2,6 +2,33 @@
 
 var Store = require('./conversation.store');
 
+
+export function setNextStep(bot, ref){
+  return new Promise(function(resolve, reject) {
+    if(!ref){
+      // if no ref (only intents and fallback), set status to waiting
+      setWaiting(bot, intents)
+      .then(() => resolve(false))
+    }
+    if(ref.type == 'step'){
+      bot.setStep(ref.refId)
+      .then(bot => resolve(bot))
+    } else if (ref.type == 'conversation'){
+      bot.divert(ref.refId)
+      .then(bot => resolve(bot))
+    }
+  })
+}
+
+//set status to waiting and set expected 'entity-state' with expected intents
+function setWaiting(bot, intents){
+  return new Promise(function(resolve, reject) {
+    bot.state.status = 'waiting';
+    resolve(false);
+  })
+}
+
+
 export function setNextState(bot, next){
   return new Promise(function(resolve, reject){
     bot.state.intent = null;
