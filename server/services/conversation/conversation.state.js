@@ -1,13 +1,12 @@
 'use strict';
 
-var Store = require('./conversation.store');
-
 
 export function setNextStep(bot, ref){
   return new Promise(function(resolve, reject) {
     if(!ref){
-      // if no ref (only intents and fallback), set status to waiting
-      setWaiting(bot, intents)
+      // if no ref, set status to waiting, save state, and break cycle
+      setWaiting(bot)
+      .then(bot => bot.updateState())
       .then(() => resolve(false))
     }
     if(ref.type == 'step'){
@@ -20,11 +19,12 @@ export function setNextStep(bot, ref){
   })
 }
 
-//set status to waiting and set expected 'entity-state' with expected intents
+// Set status to waiting and set expected intents
 function setWaiting(bot, intents){
   return new Promise(function(resolve, reject) {
     bot.state.status = 'waiting';
-    resolve(false);
+    // Need to set expected intents TODO
+    resolve(bot);
   })
 }
 
@@ -54,38 +54,5 @@ export function setNextState(bot, next){
     bot.updateState()
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-  })
-}
-
-export function setIntentState(bot) {
-  return new Promise(function(resolve, reject) {
-    if (bot.state.intent) {
-      Store.getStepIdByIntent(bot.state.intent)
-        .then(stepId => {
-              if (!stepId) {
-                resolve(bot);
-              }
-              bot.state.status = 'running';
-              bot.state.intent = null;
-              bot.state.entities = {};
-              bot.state.needed = [];
-              bot.state.retries = 0;
-              console.log('INTENTING...')
-              console.log(bot.state)
-          if (bot.state.returnStepId) {
-            bot.state.returnStepId = bot.state.stepId;
-            bot.state.stepId = stepId;
-            bot.updateState()
-              .then(bot => resolve(bot))
-          } else {
-            bot.state.stepId = stepId;
-            bot.updateState()
-              .then(bot => resolve(bot))
-          }
-        })
-        .catch(err => reject(err))
-    } else {
-      resolve(bot)
-    }
   })
 }

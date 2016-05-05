@@ -43,19 +43,19 @@ var UserSchema = new Schema({
     score: Number,
     fatigue: Number
   },
-  story: {
-    track: String,
-    state: String
-  },
   state: {
-    intent: String,
-    stepId: String, // main active step
-    returnStepId: String, // return to this step when done with digression or component
-    entities: Object,
-    needed: Array,
-    retries: Number,
-    status: String,
-    updated: Date
+    conversation: {
+      status: String,
+      stepId: String,
+      diverted: [{
+          stepId: String
+      }]
+    },
+    received: {
+      intent: String,
+      entities: Object,
+    },
+    variables: Object
   }
 });
 

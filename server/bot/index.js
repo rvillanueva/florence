@@ -10,7 +10,7 @@ export function respond(message){
     console.log(message)
     var bot = new Bot(message);
     bot.getState()
-    .then(bot => Interpret.getEntities(bot))
+    .then(bot => bot.getStep())
     .then(bot => {
       bot.state.status = 'receiving';
       Conversation.run(bot)

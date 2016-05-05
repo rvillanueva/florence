@@ -29,26 +29,3 @@ export function step(bot){
   }
 
 }
-
-function sendButtons(bot, step){
-  var array = [];
-  var message = {
-    type: 'button',
-    text: ' ',
-    buttons: []
-  }
-  if(step.paths){
-    step.paths.forEach(function(path, p){
-      if(path.button && path.button.title){
-        var button = {
-          title: path.button.title,
-          subtitle: path.button.subtitle,
-          value: path._id
-        }
-        message.buttons.push(button)
-      }
-    })
-    array.push(message);
-    bot.send(array);
-  }
-}

@@ -1,9 +1,10 @@
 'use strict';
 var Promise = require("bluebird");
-var Messages = require ('../services/messages');
+var Messages = require('../services/messages');
 import User from '../api/user/user.model';
 var Entry = require('../services/entry');
-var State = require ('./bot.state');
+var State = require('./bot.state');
+import Conversation from '../api/conversation/conversation.service'
 
 export function constructor(message) {
   this.userId = message.userId;
@@ -21,84 +22,117 @@ export function constructor(message) {
     },
     variables: {}
   }
-  this.active = {
-    conversation: null,
-    step: null
-  }
+  this.conversation;
+  this.step;
 
-  this.divert = function(conversationId) {
-    return new Promise((resolve, reject) => {
-      this.state.conversation.diverted = this.state.conversation.diverted || [];
-      this.active.conversation = stepId;
-      // Get conversation
-      Store.getConversationById(conversationId)
-      .then(convo => {
-          // Set conversation
-          this.active.conversation = convo;
-          // Queue previous step in diverted
-          if(this.state.conversation.stepId){
-            this.conversation.diverted.push(this.state.conversation.stepId);
-            this.state.conversation.stepId = null;
-          }
-          // Set active step to first conversation step
-          this.setStep(convo.startStepId || convo.steps[0]._id)
-          .then(() => resolve(this))
-          .catch(err => reject(err))
-      })
-      .catch(err => reject(err))
-    })
+  // RESPONSES
 
-  }
-
-  this.setStep = function(stepId){
-    return new Promise((resolve, reject) =>{
-      this.state.conversation.stepId = stepId;
-      Store.getStepById(stepId, conversation)
-      .then(step => {
-          this.active.step = step;
-          resolve(this)
-      })
-      .catch(err => reject(err))
-    })
-
-  }
-
-  this.getState = function(){
-    return new Promise((resolve, reject) =>{
-      State.get(this.userId)
-      .then(state => {
-        this.state = state;
-        resolve(this)
-      })
-      .catch(err => reject(err))
-    })
-  }
-
-  this.updateState = function(){
-    return new Promise((resolve, reject) =>{
-      State.set(this.userId, this.state)
-      .then(state => {
-        this.state = state;
-        resolve(this);
-      })
-      .catch(err => reject(err))
-    })
-  }
-
-  this.say = function(text){
+  this.say = function(text) {
     return Messages.send({
       userId: this.userId,
       text: text
     })
   }
 
-  this.send = function(messages){
+  this.send = function(messages) {
     return new Promise((resolve, reject) => {
       messages.forEach((message, m) => {
         message.userId = this.userId;
         Messages.send(message);
       })
       resolve(true);
+    })
+  }
+
+  // STATE MANAGEMENT
+
+  this.getState = function() {
+    return new Promise((resolve, reject) => {
+      State.get(this.userId)
+        .then(state => {
+          this.state = state;
+          resolve(this)
+        })
+        .catch(err => reject(err))
+    })
+  }
+
+  this.updateState = function() {
+    return new Promise((resolve, reject) => {
+      State.set(this.userId, this.state)
+        .then(state => {
+          this.state = state;
+          resolve(this);
+        })
+        .catch(err => reject(err))
+    })
+  }
+
+
+  // STEP MANAGEMENT
+
+
+
+  this.setStep = function(stepId) {
+    return new Promise((resolve, reject) => {
+      this.state.conversation.stepId = stepId;
+      this.getStep()
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+    })
+  }
+
+  this.getStep = function(){
+    return new Promise((resolve, reject) => {
+      if(this.conversation){
+        Conversation.getStep(this.state.conversation.stepId, this.conversation)
+          .then(step => {
+            this.step = step;
+            resolve(this)
+          })
+          .catch(err => reject(err))
+      } else {
+        this.getConversation()
+
+      }
+    })
+  }
+
+  this.setConversation = function(conversationId) {
+    return new Promise((resolve, reject) => {
+      this.state.conversation.diverted = this.state.conversation.diverted || [];
+      this.conversation = conversation;
+      // Get conversation
+      this.getConversation(conversationId)
+      .then(() => {
+        if (this.state.conversation.stepId) {
+          this.conversation.diverted.push(this.state.conversation.stepId);
+          this.state.conversation.stepId = null;
+        }
+        // Set active step to first conversation step
+        this.setStep(convo.startId || convo.steps[0]._id)
+          .then(() => resolve(this))
+          .catch(err => reject(err))
+      })
+    })
+
+  }
+
+  this.getConversation = function(conversationId) {
+    return new Promise((resolve, reject) => {
+      if(conversationId){
+        Conversation.getById(conversationId)
+          .then(convo => {
+            this.conversation = convo;
+          })
+          .catch(err => reject(err))
+      } else {
+        Conversation.getByStepId(this.state.conversation.stepId)
+          .then(convo => {
+            this.conversation = convo;
+          })
+          .catch(err => reject(err))
+      }
     })
   }
 

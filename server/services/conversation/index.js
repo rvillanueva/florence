@@ -1,19 +1,27 @@
 'use strict';
 
-var Store = require('./conversation.store');
 var Execute = require('./conversation.execute');
 var State = require('./conversation.state');
 var Selection = require('./conversation.select');
 
 export function run(bot) {
-  // look at intent and context and attach appropriate next step as stepId
-  // update context
-  // should probably set up some DDOS protection here too using a ready to receive flag
-  return new Promise(function(resolve, reject){
+  return new Promise(function(resolve, reject) {
+    console.log('Running conversation...')
     Selection.selectRef(bot)
     .then(ref => State.setNextStep(bot, ref))
-    .then(step => Execute.step(bot, step))
+    .then(bot => Execute.step(bot))
+    .then(bot => loop(bot))
     .then(res => resolve(res))
     .catch(err => reject(err))
   })
+}
+
+function loop(bot){
+  if(bot){
+    run(bot)
+    .then(res => resolve(res))
+    .catch(err => reject(err))
+  } else {
+    resolve(true);
+  }
 }

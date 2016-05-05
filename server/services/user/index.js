@@ -21,9 +21,11 @@ export function getUserByMessengerId(messengerId) {
           newUser.provider = 'messenger';
           newUser.role = 'user';
           newUser.state = {
-            intent: 'intro',
-            entities: {},
-            needed: []
+            conversation: {},
+            received: {
+              intent: 'intro'
+            },
+            variables: {}
           }
           updateFbProfile(newUser)
           .then(user => {
