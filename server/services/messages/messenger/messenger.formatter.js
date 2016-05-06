@@ -1,7 +1,7 @@
 'use strict';
 import User from '../../../api/user/user.model';
 var Messenger = require('./messenger.service');
-var UserService = require('../../user');
+var UserService = require('../../../api/user/user.service');
 
 export function toStandard(messageObj, user){
   return new Promise(function(resolve, reject){

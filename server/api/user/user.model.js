@@ -44,12 +44,13 @@ var UserSchema = new Schema({
     fatigue: Number
   },
   state: {
-    conversation: {
-      status: String,
-      stepId: String,
+    status: String,
+    step: {
+      id: String,
       diverted: [{
           stepId: String
-      }]
+      }],
+      intents: Array
     },
     received: {
       intent: String,

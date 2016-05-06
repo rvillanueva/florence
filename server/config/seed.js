@@ -107,17 +107,27 @@ Conversation.find({}).remove()
     steps: [{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f887'),
       type: 'say',
-      text: 'hello there',
+      text: 'Hey there!',
       next: [{
         conditions: [],
         weight: 1,
         type: 'step',
         refId: '5726c7b47721d48e5c52f882'
       }],
-    }, {
+    },{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
       type: 'say',
-      text: 'what\'s your name?',
+      text: 'What\'s your name?',
+      next: [{
+        conditions: [],
+        weight: 1,
+        type: 'step',
+        refId: '5726c7b47721d48e5c52f883'
+      }],
+    },{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),
+      type: 'say',
+      text: 'My name is River.',
       next: [],
     }]
   })

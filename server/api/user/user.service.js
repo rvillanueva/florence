@@ -28,9 +28,7 @@ export function getUserByMessengerId(messengerId) {
             variables: {}
           }
           updateFbProfile(newUser)
-          .then(user => {
-            resolve(user);
-          })
+          .then(user => resolve(user))
           .catch(err => {
             newUser.save()
             .then(user => resolve(user))
@@ -38,6 +36,7 @@ export function getUserByMessengerId(messengerId) {
           })
         }
       })
+      .catch(err => reject(err))
   })
 
 }

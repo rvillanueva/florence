@@ -10,10 +10,10 @@ export function constructor(message) {
   this.userId = message.userId;
   this.message = message;
   this.state = {
-    conversation: {
-      status: '',
-      stepId: '',
-      expected: 'intentName',
+    status: '',
+    step: {
+      id: '',
+      intents: [],
       diverted: []
     },
     received: {
@@ -63,7 +63,6 @@ export function constructor(message) {
       State.set(this.userId, this.state)
         .then(state => {
           this.state = state;
-          this.state.conversation = this.state.conversation || {};
           this.state.receiving = this.state.receiving || {};
           this.state.variables = this.state.variables || {};
 
@@ -79,11 +78,11 @@ export function constructor(message) {
 
   this.getStep = function(){
     return new Promise((resolve, reject) => {
-      if(this.state.conversation.stepId){
-        Conversation.getByStepId(this.state.conversation.stepId, this.conversation)
+      if(this.state.step.id){
+        Conversation.getByStepId(this.state.step.id, this.conversation)
         .then(convo => {
           this.conversation = convo;
-          return Conversation.getStep(this.state.conversation.stepId, this.conversation)
+          return Conversation.getStep(this.state.step.id, this.conversation)
         })
         .then(step => {
           this.step = step;
@@ -100,7 +99,7 @@ export function constructor(message) {
   this.setStep = function(stepId) {
     return new Promise((resolve, reject) => {
       console.log('Setting step to ' + stepId);
-      this.state.conversation.stepId = stepId;
+      this.state.step.id = stepId;
       this.getStep()
       .then(() => resolve(this))
       .catch(err => reject(err))
@@ -110,14 +109,16 @@ export function constructor(message) {
   this.divert = function(conversationId) {
     return new Promise((resolve, reject) => {
       console.log('Diverting...')
-      this.state.conversation.diverted = this.state.conversation.diverted || [];
+      this.state.step.diverted = this.state.step.diverted || [];
       // Get conversation
       this.getConversation(conversationId)
       .then(() => {
         console.log('Conversation retrieved...')
-        if (this.state.conversation.stepId) {
-          this.state.conversation.diverted.push(this.state.conversation.stepId);
-          this.state.conversation.stepId = null;
+        if (this.state.step.id) {
+          this.state.step.diverted.push({
+            stepId: this.state.step.id
+          });
+          this.state.step.id = null;
         }
         // Set active step to first conversation step
         console.log('Setting active step to the first conversation step...')

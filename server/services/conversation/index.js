@@ -6,9 +6,8 @@ var Selection = require('./conversation.select');
 
 export function run(bot) {
   return new Promise(function(resolve, reject) {
-    console.log('Running conversation...')
+    console.log('\n\n\n\nStarting new step...')
     Selection.selectRef(bot)
-    .then(bot => State.setNextStep(bot))
     .then(bot => Execute.step(bot))
     .then(bot => State.clear(bot))
     .then(bot => loop(bot))
@@ -18,11 +17,12 @@ export function run(bot) {
 }
 
 function loop(bot){
-  if(bot){
+  if(bot.state.status == 'executing'){
     run(bot)
     .then(res => resolve(res))
     .catch(err => reject(err))
   } else {
-    resolve(true);
+    bot.updateState()
+    .then(bot => resolve(bot))
   }
 }

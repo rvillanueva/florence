@@ -7,14 +7,9 @@ var Conversation = require('../../api/conversation/conversation.service');
 
 export function selectRef(bot) {
   return new Promise(function(resolve, reject) {
+    console.log('Selecting ref...')
     filterRefsByCondition(bot)
-      .then(refs => {
-        if (bot.state.status == 'receiving') {
-          return selectRefByIntent(bot, refs)
-        } else {
-          return selectRefToExecute(bot, refs)
-        }
-      })
+      .then(refs => selectRefByStatus(bot, refs))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
@@ -30,6 +25,55 @@ function filterRefsByCondition(bot) {
     }
     // build conditions TODO
     resolve(refs);
+  })
+}
+
+function selectRefByStatus(bot, refs) {
+  return new Promise(function(resolve, reject) {
+      var intents = [];
+      var executables = [];
+      for (var i = 0; i < refs.length; i++) {
+        var ref = refs[i];
+        // TODO need to handle non-intent and non-executable
+        if (ref.type == 'intent') {
+          intents.push(ref)
+        } else {
+          executables.push(ref)
+        }
+      }
+      setStatus(bot, intents, executables)
+      .then(bot => {
+        console.log('Selecting ref based on status ' + bot.state.status + '...')
+        if (bot.state.status == 'receiving') {
+          selectRefByIntent(bot, intents)
+            .then(bot => resolve(bot))
+        } else if(bot.state.status == 'executing'){
+          selectRefToExecute(bot, executables)
+            .then(bot => resolve(bot))
+        } else {
+          bot.ref = null;
+          resolve(bot)
+        }
+      })
+  })
+
+}
+
+function setStatus(bot, intents, executables){
+  return new Promise(function(resolve, reject) {
+    console.log('Setting status...')
+    if(bot.state.status == 'receiving'){
+      resolve(bot);
+    } else {
+      if (executables.length > 0) {
+        bot.state.status = 'executing';
+      } else if (intents.length > 0) {
+        bot.state.status = 'waiting';
+      } else {
+        bot.state.status = 'done';
+      }
+      resolve(bot);
+    }
   })
 }
 
@@ -82,21 +126,25 @@ function selectRefByIntent(bot, refs) {
           if (!convo) {
             reject('No convo found for intent.')
           }
-          console.log('Returned conversation for intent.');
           bot.ref = {
             type: 'conversation',
             refId: convo._id
           };
           bot.conversation = convo;
-          console.log('Returning bot for state change...');
+          bot.state.status = 'executing';
           resolve(bot);
         })
         .catch(err => reject(err))
     } else {
       if (!matched && fallback) {
         bot.ref = fallback;
-      } else {
+        bot.state.status = 'executing';
+      } else if (matched) {
         bot.ref = matched;
+        bot.state.status = 'executing';
+      } else {
+        bot.ref = false;
+        bot.state.status = 'waiting';
       }
       resolve(bot);
     }
@@ -108,16 +156,11 @@ function selectRefByIntent(bot, refs) {
 
 function selectRefToExecute(bot, refs) {
   return new Promise(function(resolve, reject) {
-    console.log('Selecting ref to execute...')
+    console.log('Selecting ref to execute...');
     var index = Math.floor(Math.random() * refs.length)
-    if(refs[index]){
-      bot.ref = refs[index];
-      console.log('Ref chosen: ')
-      console.log(bot.ref);
-    }
-      // CHOOSE REF BASED ON WEIGHT TODO
-      // find non-intent && fallback refs
-    resolve(bot)
+      // CHOOSE REF BASED ON WEIGHT TODO;
+    bot.ref = refs[index];
+    resolve(bot);
   });
 }
 
