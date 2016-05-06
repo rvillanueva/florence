@@ -67,7 +67,7 @@ angular.module('riverApp')
           $scope.$ctrl.conversations.steps.splice(s, 1, $scope.step);
           spliced = true;
         }
-      }
+      })
       if(!spliced){
         $scope.$ctrl.conversations.steps.push($scope.step);
       }

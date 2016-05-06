@@ -9,9 +9,9 @@ export function respond(message){
   return new Promise(function(resolve, reject){
     console.log(message)
     var bot = new Bot(message);
-    bot.getState()
-    .then(bot => bot.getStep())
+    bot.init()
     .then(bot => {
+      console.log(bot)
       bot.state.status = 'receiving';
       Conversation.run(bot)
     })

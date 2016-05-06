@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 var RefSchema = new mongoose.Schema({
   weight: Number,
+  type: String,
   conditions: [
     {
       type: String,
@@ -56,6 +57,7 @@ var StepSchema = new mongoose.Schema({
 var ConversationSchema = new mongoose.Schema({
   name: String,
   tags: Array,
+  intent: String,
   next: [RefSchema],
   //type: String, // Learn, nudge, protocol, event
   steps: [StepSchema]

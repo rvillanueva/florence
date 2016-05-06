@@ -18,6 +18,7 @@ export function checkRefMatch(text, ref){
   var found = false;
   if(ref.type == 'match' && typeof ref.match == 'string'){
     var rules = ref.match.split('\n')
+    console.log(rules);
     for(var i = 0; i < rules.length; i++){
       var string = rules[i];
       // Create custom REGEX

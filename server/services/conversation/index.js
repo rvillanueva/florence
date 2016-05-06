@@ -8,8 +8,9 @@ export function run(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Running conversation...')
     Selection.selectRef(bot)
-    .then(ref => State.setNextStep(bot, ref))
+    .then(bot => State.setNextStep(bot))
     .then(bot => Execute.step(bot))
+    .then(bot => State.clear(bot))
     .then(bot => loop(bot))
     .then(res => resolve(res))
     .catch(err => reject(err))

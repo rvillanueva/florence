@@ -2,11 +2,12 @@
 
 export function step(bot){
   return new Promise(function(resolve, reject) {
-    var step = bot.active.step;
+    var step = bot.step;
+    console.log('Executing step with type ' + step.type)
     if(!step){
       resolve(false);
     }
-    if(typeof stepFunctions[step.type] == 'function'){
+    if(typeof stepFunctions()[step.type] == 'function'){
       stepFunctions(bot, step)[step.type]()
       .then(() => resolve(bot))
     } else {

@@ -96,6 +96,7 @@ Conversation.find({}).remove()
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f876'),
     name: 'Intro',
     tags: [],
+    intent: 'intro',
     next: [
       {
         conditions: [],
@@ -110,17 +111,14 @@ Conversation.find({}).remove()
       next: [{
         conditions: [],
         weight: 1,
+        type: 'step',
         refId: '5726c7b47721d48e5c52f882'
       }],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
       type: 'say',
       text: 'what\'s your name?',
-      next: [{
-        conditions: [],
-        weight: 1,
-        refId: '5726c7b47721d48e5c52f882'
-      }],
+      next: [],
     }]
   })
 )

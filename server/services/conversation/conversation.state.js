@@ -1,21 +1,34 @@
 'use strict';
 
 
-export function setNextStep(bot, ref){
+export function setNextStep(bot){
   return new Promise(function(resolve, reject) {
-    if(!ref){
+    if(!bot.ref){
+      console.log('No ref, setting to wait...')
       // if no ref, set status to waiting, save state, and break cycle
       setWaiting(bot)
       .then(bot => bot.updateState())
       .then(() => resolve(false))
     }
-    if(ref.type == 'step'){
-      bot.setStep(ref.refId)
+    bot.state.status = 'executing';
+
+    if(bot.ref.type == 'step'){
+      bot.setStep(bot.ref.refId)
       .then(bot => resolve(bot))
-    } else if (ref.type == 'conversation'){
-      bot.divert(ref.refId)
+    } else if (bot.ref.type == 'conversation'){
+      bot.divert(bot.ref.refId)
       .then(bot => resolve(bot))
+    } else {
+      reject('Bot ref type ' + bot.ref.type + 'unrecognized.')
     }
+  })
+}
+
+export function clear(bot){ // This should probably be a bot function
+  return new Promise(function(resolve, reject) {
+    bot.ref = null;
+    bot.state.received.intent = null;
+    resolve(bot);
   })
 }
 

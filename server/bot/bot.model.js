@@ -4,7 +4,7 @@ var Messages = require('../services/messages');
 import User from '../api/user/user.model';
 var Entry = require('../services/entry');
 var State = require('./bot.state');
-import Conversation from '../api/conversation/conversation.service'
+var Conversation = require('../api/conversation/conversation.service');
 
 export function constructor(message) {
   this.userId = message.userId;
@@ -24,6 +24,7 @@ export function constructor(message) {
   }
   this.conversation;
   this.step;
+  this.ref;
 
   // RESPONSES
 
@@ -62,6 +63,10 @@ export function constructor(message) {
       State.set(this.userId, this.state)
         .then(state => {
           this.state = state;
+          this.state.conversation = this.state.conversation || {};
+          this.state.receiving = this.state.receiving || {};
+          this.state.variables = this.state.variables || {};
+
           resolve(this);
         })
         .catch(err => reject(err))
@@ -72,67 +77,78 @@ export function constructor(message) {
   // STEP MANAGEMENT
 
 
+  this.getStep = function(){
+    return new Promise((resolve, reject) => {
+      if(this.state.conversation.stepId){
+        Conversation.getByStepId(this.state.conversation.stepId, this.conversation)
+        .then(convo => {
+          this.conversation = convo;
+          return Conversation.getStep(this.state.conversation.stepId, this.conversation)
+        })
+        .then(step => {
+          this.step = step;
+          console.log('Step set to ' + this.step._id);
+          resolve(this)
+        })
+        .catch(err => reject(err))
+      } else {
+        resolve(false);
+      }
+    })
+  }
 
   this.setStep = function(stepId) {
     return new Promise((resolve, reject) => {
+      console.log('Setting step to ' + stepId);
       this.state.conversation.stepId = stepId;
       this.getStep()
-      .then(res => resolve(res))
+      .then(() => resolve(this))
       .catch(err => reject(err))
     })
   }
 
-  this.getStep = function(){
+  this.divert = function(conversationId) {
     return new Promise((resolve, reject) => {
-      if(this.conversation){
-        Conversation.getStep(this.state.conversation.stepId, this.conversation)
-          .then(step => {
-            this.step = step;
-            resolve(this)
-          })
-          .catch(err => reject(err))
-      } else {
-        this.getConversation()
-
-      }
-    })
-  }
-
-  this.setConversation = function(conversationId) {
-    return new Promise((resolve, reject) => {
+      console.log('Diverting...')
       this.state.conversation.diverted = this.state.conversation.diverted || [];
-      this.conversation = conversation;
       // Get conversation
       this.getConversation(conversationId)
       .then(() => {
+        console.log('Conversation retrieved...')
         if (this.state.conversation.stepId) {
-          this.conversation.diverted.push(this.state.conversation.stepId);
+          this.state.conversation.diverted.push(this.state.conversation.stepId);
           this.state.conversation.stepId = null;
         }
         // Set active step to first conversation step
-        this.setStep(convo.startId || convo.steps[0]._id)
+        console.log('Setting active step to the first conversation step...')
+        this.setStep(this.conversation.next[0].refId || this.conversation.steps[0]._id)
           .then(() => resolve(this))
           .catch(err => reject(err))
       })
     })
-
   }
 
-  this.getConversation = function(conversationId) {
+  this.getConversation = function(conversationId){
     return new Promise((resolve, reject) => {
-      if(conversationId){
-        Conversation.getById(conversationId)
-          .then(convo => {
-            this.conversation = convo;
-          })
-          .catch(err => reject(err))
+      if(this.conversation && this.conversation._id == conversationId){
+        resolve(this);
       } else {
-        Conversation.getByStepId(this.state.conversation.stepId)
-          .then(convo => {
+        Conversation.getById(conversationId)
+        .then(convo => {
             this.conversation = convo;
-          })
-          .catch(err => reject(err))
+            resolve(this);
+        })
+        .catch(err => reject(err))
       }
+    })
+  }
+
+  this.init = function(){
+    return new Promise((resolve, reject) => {
+      this.getState()
+        .then(()=> this.getStep())
+        .then(() => resolve(this))
+        .catch(err => reject(err))
     })
   }
 
