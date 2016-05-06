@@ -2,6 +2,7 @@
 var Promise = require('bluebird');
 import User from '../../api/user/user.model';
 var request = require('request');
+var Conversation = require('../conversation/conversation.service');
 
 export function getUserByMessengerId(messengerId) {
   return new Promise(function(resolve, reject) {
@@ -21,10 +22,8 @@ export function getUserByMessengerId(messengerId) {
           newUser.provider = 'messenger';
           newUser.role = 'user';
           newUser.state = {
-            conversation: {},
-            received: {
-              intent: 'intro'
-            },
+            step: {},
+            received: {},
             variables: {}
           }
           updateFbProfile(newUser)

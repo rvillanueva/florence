@@ -14,8 +14,38 @@ export function getEntities(bot){
   });
 }
 
-export function checkRefMatch(text, ref){
-  var found = false;
+export function checkRefsMatch(bot, refs){
+  //TODO Select by weight;
+  var matched;
+  var fallback;
+  for (var i = 0; i < refs.length; i++) {
+    var ref = refs[i];
+    var found = check(bot.message.text, ref)
+    if (found) {
+      matched = ref;
+    }
+    if (ref.type == 'fallback') {
+      fallback = ref;
+    }
+  }
+
+  // TRY WIT
+  // if nothing, try Wit
+  // if it matches expected intent, use that
+
+
+  if (matched.length > 0) {
+    return matched;
+  } else if (fallback.length > 0) {
+    return fallback;
+  } else {
+    return false;
+  }
+  // Split by line
+  // check for match by line
+}
+
+function check(text, ref){
   if(ref.type == 'match' && typeof ref.match == 'string'){
     var rules = ref.match.split('\n')
     console.log(rules);
@@ -32,6 +62,4 @@ export function checkRefMatch(text, ref){
   } else {
     return false;
   }
-  // Split by line
-  // check for match by line
 }

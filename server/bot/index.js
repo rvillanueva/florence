@@ -11,10 +11,10 @@ export function respond(message){
     var bot = new Bot(message);
     bot.init()
     .then(bot => {
-      console.log(bot)
       bot.state.status = 'receiving';
-      Conversation.run(bot)
+      return Conversation.run(bot)
     })
+    .then(res => resolve(res))
     .catch(err => reject(err))
   })
 }

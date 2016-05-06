@@ -47,7 +47,7 @@ function selectRefByStatus(bot, refs) {
         if (bot.state.status == 'receiving') {
           selectRefByIntent(bot, intents)
             .then(bot => resolve(bot))
-        } else if(bot.state.status == 'executing'){
+        } else if (bot.state.status == 'executing'){
           selectRefToExecute(bot, executables)
             .then(bot => resolve(bot))
         } else {
@@ -82,35 +82,15 @@ function selectRefByIntent(bot, refs) {
     console.log('Selecting refs by intent...');
     var matched = false;
     var fallback;
-    // CHECK GLOBAL INTENTS
-    // first check against global intents
-    // If there's an urgent intent, use it
-    // if there's a non-urgent intent, stash it as backup
-    // Maybe check against local intents
 
     // CHECK AGAINST REF RULE MATCHES
     // match incoming message data to rule based NLP
     if (!matched && refs) {
       console.log('Checking ref matches...')
-      for (var i = 0; i < refs.length; i++) {
-        var ref = refs[i];
-        var isMatch = Parser.checkRefMatch(bot.message.text, ref)
-        if (isMatch) {
-          matched = ref;
-        }
-        if (ref.type == 'fallback') {
-          fallback = ref;
-        }
-      }
+      matched = Parser.checkRefs(bot, ref)
     }
 
-    if (!matched) {
-      // TRY WIT
-      // if nothing, try Wit
-      // if it matches expected intent, use that
-    }
-
-    // IF NON-URGENT DIVERSION, USE IF NOTHING ELSE MATCHES
+    // CHECK INTENT
 
     // ELSE
     // use fallback if available
@@ -121,29 +101,16 @@ function selectRefByIntent(bot, refs) {
     //If diversion, build a ref
     if (bot.state.received.intent) {
       console.log('Returning conversation for intent ' + bot.state.received.intent)
-      Conversation.getByIntent(bot.state.received.intent)
-        .then(convo => {
-          if (!convo) {
-            reject('No convo found for intent.')
-          }
-          bot.ref = {
-            type: 'conversation',
-            refId: convo._id
-          };
-          bot.conversation = convo;
-          bot.state.status = 'executing';
-          resolve(bot);
-        })
+      Diversion.divertByIntent(bot)
+        .then(bot => resolve(bot))
         .catch(err => reject(err))
     } else {
-      if (!matched && fallback) {
-        bot.ref = fallback;
-        bot.state.status = 'executing';
-      } else if (matched) {
+      if (matched) {
         bot.ref = matched;
         bot.state.status = 'executing';
       } else {
         bot.ref = false;
+        bot.say('Sorry, I didn\'t quite understand that... can you try again?') // Need to handle confusion better;
         bot.state.status = 'waiting';
       }
       resolve(bot);
@@ -163,7 +130,6 @@ function selectRefToExecute(bot, refs) {
     resolve(bot);
   });
 }
-
 
 
 // NEXT CONVERSATION
