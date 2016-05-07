@@ -8,17 +8,31 @@
 // check events/nudge
 // else play ending
 
-
-export function setNext(bot){
-  return new Promise(function(resolve, reject){
-    if(bot.state.step.id){
+// Choose next conversation when there's no next step
+export function conversation(bot) {
+  return new Promise(function(resolve, reject) {
+    if (bot.state.step.id) {
       resolve(bot);
-    }
-    if(!bot.state.variables.onboarded){
-      Conversation.getByIntent('intro')
-      .then(convo => setConversation(bot, convo))
+    } else if(bot.state.diverted){
+      bot.setStep(bot.state.diverted[0].stepId)
+      .then(bot => {
+        resolve(bot);
+      })
+    } else {
+      selectBest(bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
+    }
+  })
+}
+
+function selectBest(bot){
+  return new Promise(function(resolve, reject) {
+    if (!bot.state.variables.onboarded) {
+      Conversation.getByIntent('intro')
+        .then(convo => setConversation(bot, convo))
+        .then(bot => resolve(bot))
+        .catch(err => reject(err))
     } else {
       console.log('No good next conversation found.')
       resolve(bot);
@@ -26,12 +40,12 @@ export function setNext(bot){
   })
 }
 
-function setConversation(bot, convo){
-  return new Promise(function(resolve, reject){
-    if(!convo){
+function setConversation(bot, convo) {
+  return new Promise(function(resolve, reject) {
+    if (!convo) {
       reject('No conversation provided.')
     }
-    bot.conversation = convo;
+    bot.loaded.conversation = convo;
     bot.state.step.id = convo.next[0].refId;
   })
 }

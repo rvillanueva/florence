@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 
 var RefSchema = new mongoose.Schema({
   weight: Number,
-  type: String,
   conditions: [
     {
       type: String,
@@ -13,12 +12,12 @@ var RefSchema = new mongoose.Schema({
       value: String
     }
   ],
-  refId: String
+  stepId: String
 })
 
 
 var StepSchema = new mongoose.Schema({
-  type: String, // say, intent, messenger_buttons, messenger_cards
+  type: String, // say, intent, messenger_buttons, messenger_cards// diversion
   update: [{
       type: String,
       variable: String,

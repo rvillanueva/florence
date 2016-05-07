@@ -22,8 +22,10 @@ export function constructor(message) {
     },
     variables: {}
   }
-  this.conversation;
-  this.step;
+  this.loaded = {
+    conversation: false,
+    step: false
+  }
   this.ref;
 
   // RESPONSES
@@ -75,23 +77,22 @@ export function constructor(message) {
 
   // STEP MANAGEMENT
 
-
-  this.getStep = function(){
+  this.getStep = function() {
     return new Promise((resolve, reject) => {
-      if(this.state.step.id){
-        Conversation.getByStepId(this.state.step.id, this.conversation)
-        .then(convo => {
-          this.conversation = convo;
-          return Conversation.getStep(this.state.step.id, this.conversation)
-        })
-        .then(step => {
-          this.step = step;
-          console.log('Step set to ' + this.step._id);
-          resolve(this)
-        })
-        .catch(err => reject(err))
+      if (this.state.step.id) {
+        Conversation.getByStepId(this.state.step.id, this.loaded.conversation)
+          .then(convo => {
+            this.loaded.conversation = convo;
+            return Conversation.getStep(this.state.step.id, this.loaded.conversation)
+          })
+          .then(step => {
+            this.loaded.step = step;
+            console.log('Step set to ' + this.loaded.step._id);
+            resolve(this)
+          })
+          .catch(err => reject(err))
       } else {
-        resolve(false);
+        resolve(this);
       }
     })
   }
@@ -101,45 +102,41 @@ export function constructor(message) {
       console.log('Setting step to ' + stepId);
       this.state.step.id = stepId;
       this.getStep()
-      .then(() => resolve(this))
+        .then(() => resolve(this))
+        .catch(err => reject(err))
+    })
+  }
+
+  this.divert = function(convo){
+    return new Promise((resolve, reject) => {
+      this.loaded.conversation = convo;
+      console.log(convo);
+      this.state.step.diverted = this.state.step.diverted || [];
+
+      // Get conversation
+      if (this.state.step.id) {
+        this.state.step.diverted.push({
+          stepId: this.state.step.id
+        });
+        this.state.step.id = null;
+      }
+      // Set active step to first conversation step
+      console.log('Setting active step to the first conversation step...');
+      this.setStep(this.loaded.conversation.next[0].refId || this.loaded.conversation.steps[0]._id)
+      .then(bot => resolve(bot))
       .catch(err => reject(err))
     })
   }
 
-  this.divert = function(conversationId) {
+  this.revert = function(){
     return new Promise((resolve, reject) => {
-      console.log('Diverting...')
       this.state.step.diverted = this.state.step.diverted || [];
-      // Get conversation
-      this.getConversation(conversationId)
-      .then(() => {
-        console.log('Conversation retrieved...')
-        if (this.state.step.id) {
-          this.state.step.diverted.push({
-            stepId: this.state.step.id
-          });
-          this.state.step.id = null;
-        }
-        // Set active step to first conversation step
-        console.log('Setting active step to the first conversation step...')
-        this.setStep(this.conversation.next[0].refId || this.conversation.steps[0]._id)
-          .then(() => resolve(this))
-          .catch(err => reject(err))
-      })
-    })
-  }
-
-  this.getConversation = function(conversationId){
-    return new Promise((resolve, reject) => {
-      if(this.conversation && this.conversation._id == conversationId){
-        resolve(this);
-      } else {
-        Conversation.getById(conversationId)
-        .then(convo => {
-            this.conversation = convo;
-            resolve(this);
+      if(!this.state.step.id && this.state.diverted.length > 0){
+        this.setStep(this.state.diverted[0].stepId)
+        .then(() => {
+          this.state.diverted.splice(0,1);
+          resolve(this);
         })
-        .catch(err => reject(err))
       }
     })
   }

@@ -1,9 +1,8 @@
 'use strict';
 
-export function clear(bot){ // This should probably be a bot function
+export function clearStep(bot){ // This should probably be a bot function
   return new Promise(function(resolve, reject) {
-    bot.ref = null;
-    bot.state.received.intent = null;
+    bot.loaded.step = false;
     resolve(bot);
   })
 }

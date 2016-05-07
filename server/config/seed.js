@@ -101,7 +101,7 @@ Conversation.find({}).remove()
       {
         conditions: [],
         weight: 1,
-        refId: '5726c7b47721d48e5c52f887'
+        stepId: '5726c7b47721d48e5c52f887'
       }
     ],
     steps: [{
@@ -112,7 +112,7 @@ Conversation.find({}).remove()
         conditions: [],
         weight: 1,
         type: 'step',
-        refId: '5726c7b47721d48e5c52f882'
+        stepId: '5726c7b47721d48e5c52f882'
       }],
     },{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
@@ -122,7 +122,7 @@ Conversation.find({}).remove()
         conditions: [],
         weight: 1,
         type: 'step',
-        refId: '5726c7b47721d48e5c52f883'
+        stepId: '5726c7b47721d48e5c52f883'
       }],
     },{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),

@@ -3,6 +3,7 @@
 var Promise = require("bluebird");
 var Interpret = require('./interpreter.service');
 var Patterns = require('./interpreter.patterns');
+var Conversation = require('../../api/conversation/conversation.service');
 
 export function getEntities(bot){
   return new Promise(function(resolve, reject){
@@ -14,18 +15,18 @@ export function getEntities(bot){
   });
 }
 
-export function checkRefsMatch(bot, refs){
+export function checkSteps(bot, steps){
   //TODO Select by weight;
   var matched;
   var fallback;
-  for (var i = 0; i < refs.length; i++) {
-    var ref = refs[i];
-    var found = check(bot.message.text, ref)
+  for (var i = 0; i < steps.length; i++) {
+    var step = steps[i];
+    var found = check(bot.message.text, step)
     if (found) {
-      matched = ref;
+      matched = step;
     }
-    if (ref.type == 'fallback') {
-      fallback = ref;
+    if (step.type == 'fallback') {
+      fallback = step;
     }
   }
 
@@ -45,9 +46,9 @@ export function checkRefsMatch(bot, refs){
   // check for match by line
 }
 
-function check(text, ref){
-  if(ref.type == 'match' && typeof ref.match == 'string'){
-    var rules = ref.match.split('\n')
+function check(text, step){
+  if(step.type == 'intent' && typeof step.match == 'string'){
+    var rules = step.match.split('\n')
     console.log(rules);
     for(var i = 0; i < rules.length; i++){
       var string = rules[i];
@@ -62,4 +63,13 @@ function check(text, ref){
   } else {
     return false;
   }
+}
+
+export function matchGlobalIntents(bot){
+  return new Promise(function(resolve, reject){
+    Conversation.getByIntent('intro')
+    .then(convo => resolve(convo))
+    .catch(err => reject(err))
+    //resolve(false);
+  });
 }
