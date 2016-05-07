@@ -117,7 +117,7 @@ Conversation.find({}).remove()
     },{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
       type: 'say',
-      text: 'What\'s your name?',
+      text: 'My name is River.',
       next: [{
         conditions: [],
         weight: 1,
@@ -127,9 +127,68 @@ Conversation.find({}).remove()
     },{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),
       type: 'say',
-      text: 'My name is River.',
+      text: 'What\'s your name?',
+      next: [{
+        conditions: [],
+        weight: 1,
+        stepId: '5726c7b47721d48e5c52f885'
+      },{
+        conditions: [],
+        weight: 1,
+        stepId: '5726c7b47721d48e5c52f886'
+      }],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f885'),
+      type: 'intent',
+      match: 'Ryan\nBob\nryan',
+      next: [{
+        conditions: [],
+        weight: 1,
+        type: 'step',
+        stepId: '5726c7b47721d48e5c52f884'
+      }],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f886'),
+      type: 'intent',
+      match: 'Amy',
+      next: [{
+        conditions: [],
+        weight: 1,
+        type: 'step',
+        stepId: '5726c7b47721d48e5c52f810'
+      }],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f886'),
+      type: 'fallback',
+      next: [{
+        conditions: [],
+        weight: 1,
+        type: 'step',
+        stepId: '5726c7b47721d48e5c52f800'
+      }],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
+      type: 'say',
+      text: 'Great!',
       next: [],
-    }]
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f810'),
+      type: 'say',
+      text: 'Awesome saucseom!',
+      next: [],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f800'),
+      type: 'say',
+      text: 'Uh oh, didn\'t understand!',
+      next: [],
+    }
+  ]
   })
 )
   .then(() => {

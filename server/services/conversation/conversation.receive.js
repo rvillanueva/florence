@@ -39,6 +39,7 @@ export function getResponse(bot) {
 function setStepOrMatchGlobal(bot, step) {
   // Should return bot
   return new Promise(function(resolve, reject) {
+    console.log('Setting step or matching global intent...')
     if (!step || step.type == 'fallback') {
       Interpreter.matchGlobalIntents(bot)
         .then(convo => {
@@ -54,6 +55,8 @@ function setStepOrMatchGlobal(bot, step) {
 
         })
     } else {
+      console.log('Setting step:')
+      console.log(step);
       setStep(bot, step)
         .then(bot => resolve(bot))
         .catch(err => reject(err))
@@ -64,7 +67,7 @@ function setStepOrMatchGlobal(bot, step) {
 function setStep(bot, step) {
   return new Promise(function(resolve, reject) {
     if (step) {
-      bot.setStep(bot)
+      bot.setStep(step._id)
         .then(bot => resolve(bot))
     } else {
       bot.say('Sorry, I didn\'t understand. Can you try again?') // Handle confusion better
@@ -88,13 +91,5 @@ function setStatus(bot, steps) {
       }
       resolve(bot);
     }
-  })
-}
-
-function loadStep(bot, step) {
-  return new Promise(function(resolve, reject) {
-    bot.setStep(step._id)
-      .then(() => resolve(bot))
-      .catch(err => reject(err))
   })
 }

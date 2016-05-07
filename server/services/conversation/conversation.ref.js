@@ -7,9 +7,7 @@ export function selectExecuteStep(bot) {
     getRefs(bot)
       .then(refs => filterRefsByCondition(bot, refs))
       .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => filterByStepType(bot, steps, 'executable')) // FIXME need to handle only intents remaining
-      .then(steps => selectStep(bot, steps))
-      .then(step => loadStep(bot, step))
+      .then(steps => handleByStepType(bot, steps, 'executable')) // If no step, should do nothing and unload step
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
@@ -20,9 +18,7 @@ export function selectIntentStep(bot) {
     getRefs(bot)
       .then(refs => filterRefsByCondition(bot, refs))
       .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => filterByStepType(bot, steps, 'intent'))
-      .then(steps => selectIntents(bot, steps))
-      .then(steps => selectStep(bot, steps))
+      .then(steps => handleByStepType(bot, steps, 'intent'))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
@@ -51,7 +47,7 @@ function filterRefsByCondition(bot, refs) {
 
 function getStepsFromRefs(bot, refs) {
   return new Promise(function(resolve, reject) {
-    console.log('Filtering refs...')
+    console.log('Getting steps from refs...')
     var steps = []
     refs = refs || [];
     refs.forEach((ref, r) => {
@@ -71,18 +67,33 @@ function getStepsFromRefs(bot, refs) {
   })
 }
 
-function filterByStepType(bot, steps, type) {
+function handleByStepType(bot, steps, filter) {
   return new Promise(function(resolve, reject) {
-    var returned = [];
+    var intents = [];
+    var executables = [];
     steps.forEach((step, s) => {
-      // TODO need to handle non-intent and non-executable
-      if (type == 'intent' && step.type == 'intent') {
-        returned.push(step)
-      } else if (type == 'executable') {
-        returned.push(step)
+      if (step.type == 'intent' || step.type == 'fallback') {
+        intents.push(step);
+      } else {
+        executables.push(step);
       }
     })
-    resolve(returned);
+    if(filter == 'executable'){
+      if(executables.length > 0){
+        selectStep(bot, executables)
+        .then(step => loadStep(bot, step))
+        .then(bot => resolve(bot))
+      } else if(intents.length > 0){
+        waitForIntent(bot, intents)
+        .then(bot => resolve(bot))
+      }
+    } else if (filter == 'intent'){
+      selectIntents(bot, intents)
+      .then(steps => selectStep(bot, steps))
+      .then(bot => resolve(bot))
+    } else {
+      reject('Unrecognized filter type')
+    }
   })
 
 }
@@ -93,7 +104,8 @@ export function selectIntents(bot, steps) {
     console.log('Selecting steps by intent...');
     // CHECK AGAINST REF RULE MATCHES
     if(steps && steps.length > 0){
-      returned = Interpreter.checkRefs(bot, steps)
+      var matched = Interpreter.checkSteps(bot, steps)
+      returned.push(matched); // TODO clean up array issue--should it return more than one match?
     }
     resolve(returned);
   })
@@ -119,8 +131,18 @@ function loadStep(bot, step){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
+      // Set ended.
       bot.loaded.step = false;
+      bot.state.step.id = false;
       resolve(bot);
     }
   });
+}
+
+function waitForIntent(bot, intents){
+  return new Promise(function(resolve, reject) {
+    // TODO set expected intents;
+    bot.loaded.step = false;
+    resolve(bot);
+  })
 }

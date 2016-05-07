@@ -27,7 +27,7 @@ var StepSchema = new mongoose.Schema({
   // SAY / MESSENGER_BUTTONS
   text: String,
   // INTENT
-  matches: String,
+  match: String,
   intents: [
     {
       intentId: String // match prebuilt intent

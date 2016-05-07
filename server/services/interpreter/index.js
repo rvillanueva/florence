@@ -17,6 +17,8 @@ export function getEntities(bot){
 
 export function checkSteps(bot, steps){
   //TODO Select by weight;
+  console.log('Checking steps:')
+  console.log(steps);
   var matched;
   var fallback;
   for (var i = 0; i < steps.length; i++) {
@@ -34,10 +36,11 @@ export function checkSteps(bot, steps){
   // if nothing, try Wit
   // if it matches expected intent, use that
 
-
-  if (matched.length > 0) {
+console.log(matched)
+console.log(fallback);
+  if (matched) {
     return matched;
-  } else if (fallback.length > 0) {
+  } else if (fallback) {
     return fallback;
   } else {
     return false;
@@ -47,19 +50,18 @@ export function checkSteps(bot, steps){
 }
 
 function check(text, step){
-  if(step.type == 'intent' && typeof step.match == 'string'){
+  if(step.type == 'intent' && typeof step.match == 'string' && typeof text == 'string'){
     var rules = step.match.split('\n')
+    var lowercased = text.toLowerCase();
     console.log(rules);
     for(var i = 0; i < rules.length; i++){
       var string = rules[i];
       // Create custom REGEX
-      if(text == string){
+      if(lowercased == string.toLowerCase()){
         return true;
       }
     }
-    if(!found){
-      return false;
-    }
+    return false;
   } else {
     return false;
   }
