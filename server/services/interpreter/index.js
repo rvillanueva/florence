@@ -1,19 +1,7 @@
 'use strict';
 
 var Promise = require("bluebird");
-var Interpret = require('./interpreter.service');
-var Patterns = require('./interpreter.patterns');
 var Conversation = require('../../api/conversation/conversation.service');
-
-export function getEntities(bot){
-  return new Promise(function(resolve, reject){
-    Patterns.check(bot)
-    .then(bot => Interpret.getEntities(bot))
-    .then(bot => Interpret.mergeEntities(bot))
-    .then(bot => resolve(bot))
-    .catch(err => reject(err))
-  });
-}
 
 export function checkSteps(bot, steps){
   //TODO Select by weight;
@@ -53,7 +41,6 @@ function check(text, step){
   if(step.type == 'intent' && typeof step.match == 'string' && typeof text == 'string'){
     var rules = step.match.split('\n')
     var lowercased = text.toLowerCase();
-    console.log(rules);
     for(var i = 0; i < rules.length; i++){
       var string = rules[i];
       // Create custom REGEX
@@ -67,11 +54,14 @@ function check(text, step){
   }
 }
 
-export function matchGlobalIntents(bot){
+export function matchGlobalIntents(text){
   return new Promise(function(resolve, reject){
-    Conversation.getByIntent('intro')
-    .then(convo => resolve(convo))
-    .catch(err => reject(err))
-    //resolve(false);
+    if(text == 'hello' || text == 'hi' || text == 'intro'){
+      Conversation.getByIntent('intro')
+      .then(convo => resolve(convo))
+      .catch(err => reject(err))
+    } else {
+      resolve(false)
+    }
   });
 }

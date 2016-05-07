@@ -136,6 +136,11 @@ Conversation.find({}).remove()
         conditions: [],
         weight: 1,
         stepId: '5726c7b47721d48e5c52f886'
+      },
+      {
+        conditions: [],
+        weight: 1,
+        stepId: '5726c7b47721d48e5c52f666'
       }],
     },
     {
@@ -161,13 +166,13 @@ Conversation.find({}).remove()
       }],
     },
     {
-      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f886'),
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f666'),
       type: 'fallback',
       next: [{
         conditions: [],
         weight: 1,
         type: 'step',
-        stepId: '5726c7b47721d48e5c52f800'
+        stepId: '5726c7b47721d48e5c52f889'
       }],
     },
     {
@@ -183,7 +188,7 @@ Conversation.find({}).remove()
       next: [],
     },
     {
-      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f800'),
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f889'),
       type: 'say',
       text: 'Uh oh, didn\'t understand!',
       next: [],

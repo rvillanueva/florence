@@ -41,7 +41,7 @@ function setStepOrMatchGlobal(bot, step) {
   return new Promise(function(resolve, reject) {
     console.log('Setting step or matching global intent...')
     if (!step || step.type == 'fallback') {
-      Interpreter.matchGlobalIntents(bot)
+      Interpreter.matchGlobalIntents(bot.message.text)
         .then(convo => {
           if (!convo) {
             setStep(bot, step)
@@ -71,24 +71,6 @@ function setStep(bot, step) {
         .then(bot => resolve(bot))
     } else {
       bot.say('Sorry, I didn\'t understand. Can you try again?') // Handle confusion better
-      resolve(bot);
-    }
-  })
-}
-
-function setStatus(bot, steps) {
-  return new Promise(function(resolve, reject) {
-    console.log('Setting status...')
-    if (bot.state.status == 'receiving') {
-      resolve(bot);
-    } else {
-      if (executables.length > 0) {
-        bot.state.status = 'executing';
-      } else if (intents.length > 0) {
-        bot.state.status = 'waiting';
-      } else {
-        bot.state.status = 'done';
-      }
       resolve(bot);
     }
   })

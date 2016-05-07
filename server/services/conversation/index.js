@@ -18,8 +18,10 @@ export function run(bot) {
 
 
     // clearing the chamber clears the active step, intent, and ref
+
     if(bot.loaded.step){
       console.log('\n\n\n\nRunning new step...')
+      console.log(bot.loaded.step);
       bot.state.status = 'executing';
       Execute.fire(bot)
         .then(bot => Ref.selectExecuteStep(bot))
