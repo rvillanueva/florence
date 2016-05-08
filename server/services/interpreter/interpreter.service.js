@@ -3,19 +3,6 @@
 var Wit = require('./wit');
 var Promise = require('bluebird');
 
-export function matchGlobalIntents(text){
-  return new Promise(function(resolve, reject){
-    if(text == 'hello' || text == 'hi' || text == 'intro'){
-      Conversation.getByIntent('intro')
-      .then(convo => resolve(convo))
-      .catch(err => reject(err))
-    } else {
-      resolve(false)
-    }
-  });
-}
-
-
 export function getEntities(bot) {
   // if intent = trigger, skip Wit. otherwise, interpret intent & actions
   return new Promise(function(resolve, reject) {

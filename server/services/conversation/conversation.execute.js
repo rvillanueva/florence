@@ -2,13 +2,11 @@
 
 export function fire(bot) {
   return new Promise(function(resolve, reject) {
-      if (bot.state.status !== 'executing') {
-        resolve(false);
-      } else {
-        executeStepByType(bot)
-          .then(bot => resolve(bot))
-          .catch(err => reject(err))
-      }
+    console.log('\n\n\n\nRunning new step...')
+    console.log(bot.loaded.step);
+    executeStepByType(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
   })
 
   function executeStepByType(bot) {

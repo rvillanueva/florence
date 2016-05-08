@@ -3,6 +3,7 @@ var Promise = require('bluebird');
 var Interpreter = require('../interpreter');
 var Ref = require('./conversation.ref');
 var Conversation = require('../../api/conversation/conversation.service');
+
 export function getResponse(bot) {
   return new Promise(function(resolve, reject) {
     bot.state.status = 'receiving';
@@ -14,6 +15,7 @@ export function getResponse(bot) {
     })
     .then(steps => loadStepByIntent(bot, steps, intents))
     .then(bot => resolve(bot))
+    .catch(err => reject(err))
   })
 }
 
@@ -32,9 +34,6 @@ function loadStepByIntent(bot, steps, intents){
           globalIntents.push(intent)
         }
       })
-    console.log(matchedSteps)
-    console.log(fallbackSteps)
-    console.log(globalIntents)
     // Cycle through intents and see if any match the steps
     if(matchedSteps.length > 0){ // TODO what if there are more than one matched step?
       bot.setStep(matchedSteps[0]._id)
@@ -52,6 +51,12 @@ function loadStepByIntent(bot, steps, intents){
     } else { // otherwise be confused
       bot.say('Uh oh, not sure I understood that one. Can you try again?') // TODO Handle confusion better
       resolve(bot)
+    }
+
+    function setNextStep(){
+      return new Promise(function(resolve, reject){
+
+      })
     }
   })
 }
