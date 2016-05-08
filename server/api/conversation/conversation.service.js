@@ -16,6 +16,9 @@ export function getByStepId(stepId, conversation) {
     if(conversation){
       resolve(conversation);
     } else {
+      if(!stepId){
+        reject('Error: No stepId to get.')
+      }
       Conversation.findOne({
           steps: {
             $elemMatch: {

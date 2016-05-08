@@ -2,16 +2,16 @@
 
 var Promise = require("bluebird");
 var Conversation = require('../../api/conversation/conversation.service');
+var Interpret = require('./interpreter.service');
+import Intent from '../../api/intent/intent.model';
 
 export function checkSteps(bot, steps){
   //TODO Select by weight;
-  console.log('Checking steps:')
-  console.log(steps);
   var matched;
   var fallback;
   for (var i = 0; i < steps.length; i++) {
     var step = steps[i];
-    var found = check(bot.message.text, step)
+    var found = Interpret.checkIntentRules(bot.message.text, step)
     if (found) {
       matched = step;
     }
@@ -24,8 +24,6 @@ export function checkSteps(bot, steps){
   // if nothing, try Wit
   // if it matches expected intent, use that
 
-console.log(matched)
-console.log(fallback);
   if (matched) {
     return matched;
   } else if (fallback) {
@@ -37,13 +35,13 @@ console.log(fallback);
   // check for match by line
 }
 
-function check(text, step){
-  if(step.type == 'intent' && typeof step.match == 'string' && typeof text == 'string'){
-    var rules = step.match.split('\n')
+export function match(text, intent){
+  if(typeof intent.match == 'string' && typeof text == 'string'){
+    var rules = intent.match.split('\n')
     var lowercased = text.toLowerCase();
     for(var i = 0; i < rules.length; i++){
       var string = rules[i];
-      // Create custom REGEX
+      // TODO Create custom REGEX
       if(lowercased == string.toLowerCase()){
         return true;
       }
@@ -54,14 +52,23 @@ function check(text, step){
   }
 }
 
-export function matchGlobalIntents(text){
+export function getIntents(text){
   return new Promise(function(resolve, reject){
-    if(text == 'hello' || text == 'hi' || text == 'intro'){
-      Conversation.getByIntent('intro')
-      .then(convo => resolve(convo))
-      .catch(err => reject(err))
-    } else {
-      resolve(false)
-    }
-  });
+    var returned = [];
+    Intent.find({}).exec()
+    .then(intents => {
+      intents.forEach(function(intent, i){
+        var found = match(text, intent);
+        if(found){
+          returned.push(intent);
+        }
+      })
+      console.log(returned)
+      resolve(returned);
+    })
+  })
+  // return intent ids that match
+  // get all intents that are relevant (global and match ids)
+  // cycle through and match by rule first
+  // then run through wit to see if there's a match by key
 }

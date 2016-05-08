@@ -8,6 +8,7 @@ import User from '../api/user/user.model';
 import Aspect from '../api/aspect/aspect.model';
 import Verification from '../api/verification/verification.model';
 import Conversation from '../api/conversation/conversation.model';
+import Intent from '../api/intent/intent.model';
 import mongoose from 'mongoose';
 
 Verification.find({}).remove();
@@ -92,18 +93,16 @@ Aspect.find({}).remove()
   });
 
 Conversation.find({}).remove()
-.then(() => Conversation.create({
+  .then(() => Conversation.create({
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f876'),
     name: 'Intro',
     tags: [],
     intent: 'intro',
-    next: [
-      {
-        conditions: [],
-        weight: 1,
-        stepId: '5726c7b47721d48e5c52f887'
-      }
-    ],
+    next: [{
+      conditions: [],
+      weight: 1,
+      stepId: '5726c7b47721d48e5c52f887'
+    }],
     steps: [{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f887'),
       type: 'say',
@@ -114,7 +113,7 @@ Conversation.find({}).remove()
         type: 'step',
         stepId: '5726c7b47721d48e5c52f882'
       }],
-    },{
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
       type: 'say',
       text: 'My name is River.',
@@ -124,7 +123,7 @@ Conversation.find({}).remove()
         type: 'step',
         stepId: '5726c7b47721d48e5c52f883'
       }],
-    },{
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),
       type: 'say',
       text: 'What\'s your name?',
@@ -132,40 +131,36 @@ Conversation.find({}).remove()
         conditions: [],
         weight: 1,
         stepId: '5726c7b47721d48e5c52f885'
-      },{
+      }, {
         conditions: [],
         weight: 1,
         stepId: '5726c7b47721d48e5c52f886'
-      },
-      {
+      }, {
         conditions: [],
         weight: 1,
         stepId: '5726c7b47721d48e5c52f666'
       }],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f885'),
       type: 'intent',
-      match: 'Ryan\nBob\nryan',
+      intentId: '5726c7b47721d48e5c52f901',
       next: [{
         conditions: [],
         weight: 1,
         type: 'step',
         stepId: '5726c7b47721d48e5c52f884'
       }],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f886'),
       type: 'intent',
-      match: 'Amy',
+      intentId: '5726c7b47721d48e5c52f902',
       next: [{
         conditions: [],
         weight: 1,
         type: 'step',
         stepId: '5726c7b47721d48e5c52f810'
       }],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f666'),
       type: 'fallback',
       next: [{
@@ -174,28 +169,44 @@ Conversation.find({}).remove()
         type: 'step',
         stepId: '5726c7b47721d48e5c52f889'
       }],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
       type: 'say',
       text: 'Great!',
       next: [],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f810'),
       type: 'say',
       text: 'Awesome saucseom!',
       next: [],
-    },
-    {
+    }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f889'),
       type: 'say',
       text: 'Uh oh, didn\'t understand!',
       next: [],
-    }
-  ]
-  })
-)
+    }]
+  }))
   .then(() => {
     console.log('Conversations populated.');
+  });
+
+
+Intent.find({}).remove()
+  .then(() => Intent.create({
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f900'),
+    match: 'hi\nhello\nhey',
+    key: 'intro',
+    global: true,
+    conversationId: '5726c7b47721d48e5c52f876'
+  }, {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f901'),
+    match: 'ryan\nbob\njon',
+    key: 'name1'
+  }, {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f902'),
+    match: 'amy',
+    key: 'name2'
+  }))
+  .then(() => {
+    console.log('Intents populated.');
   });

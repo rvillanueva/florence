@@ -17,22 +17,18 @@ var RefSchema = new mongoose.Schema({
 
 
 var StepSchema = new mongoose.Schema({
-  type: String, // say, intent, messenger_buttons, messenger_cards// diversion
+  type: String, // say, intent, messenger_buttons, messenger_cards// diversion//action
   update: [{
       type: String,
       variable: String,
       change: String,
       value: String,
   }],
+  name: String,
   // SAY / MESSENGER_BUTTONS
   text: String,
   // INTENT
-  match: String,
-  intents: [
-    {
-      intentId: String // match prebuilt intent
-    }
-  ],
+  intentId: String,
   // MESSENGER BUTTONS
   messenger_buttons: [
     {
@@ -55,8 +51,8 @@ var StepSchema = new mongoose.Schema({
 
 var ConversationSchema = new mongoose.Schema({
   name: String,
-  tags: Array,
   intent: String,
+  global: Boolean,
   next: [RefSchema],
   //type: String, // Learn, nudge, protocol, event
   steps: [StepSchema]

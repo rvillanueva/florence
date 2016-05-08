@@ -7,20 +7,21 @@ export function selectExecuteStep(bot) {
     getRefs(bot)
       .then(refs => filterRefsByCondition(bot, refs))
       .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => handleByStepType(bot, steps, 'executable')) // If no step, should do nothing and unload step
+      .then(steps => sortStepsByType(bot, steps)) // If no step, should do nothing and unload step
+      .then(sorted => handleExecutables(bot, sorted))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
 }
 
-export function selectIntentStep(bot) {
+export function getIntentSteps(bot) {
+  // returns steps that are intents
   return new Promise(function(resolve, reject){
     getRefs(bot)
       .then(refs => filterRefsByCondition(bot, refs))
       .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => handleByStepType(bot, steps, 'intent'))
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
+      .then(steps => sortStepsByType(bot, steps))
+      .then(sorted => resolve(sorted.intents))
   })
 }
 
@@ -67,35 +68,42 @@ function getStepsFromRefs(bot, refs) {
   })
 }
 
-function handleByStepType(bot, steps, filter) {
-  return new Promise(function(resolve, reject) {
-    var intents = [];
-    var executables = [];
+function sortStepsByType(bot, steps){
+  return new Promise(function(resolve, reject){
+    var sorted = {
+      intents: [],
+      executables: []
+    }
     steps.forEach((step, s) => {
       if (step.type == 'intent' || step.type == 'fallback') {
-        intents.push(step);
+        sorted.intents.push(step);
       } else {
-        executables.push(step);
+        sorted.executables.push(step);
       }
     })
-    if(filter == 'executable'){
-      if(executables.length > 0){
-        selectStep(bot, executables)
+    resolve(sorted);
+  })
+}
+
+
+function handleExecutables(bot, sorted) {
+  return new Promise(function(resolve, reject) {
+    if (sorted.executables.length > 0) {
+      //set to executing
+      selectStep(bot, sorted.executables)
         .then(step => loadStep(bot, step))
         .then(bot => resolve(bot))
-      } else if(intents.length > 0){
-        waitForIntent(bot, intents)
+        .catch(err => reject(err))
+    } else if (sorted.intents.length > 0) {
+      setWaiting(bot)
         .then(bot => resolve(bot))
-      }
-    } else if (filter == 'intent'){
-      selectIntents(bot, intents)
-      .then(steps => selectStep(bot, steps))
-      .then(bot => resolve(bot))
+        .catch(err => reject(err))
     } else {
-      reject('Unrecognized filter type')
+      setDone(bot)
+        .then(bot => resolve(bot))
+        .catch(err => reject(err))
     }
   })
-
 }
 
 export function selectIntents(bot, steps) {
@@ -139,10 +147,19 @@ function loadStep(bot, step){
   });
 }
 
-function waitForIntent(bot, intents){
+function setWaiting(bot, intents){
   return new Promise(function(resolve, reject) {
     // TODO set expected intents;
     bot.loaded.step = false;
+    resolve(bot);
+  })
+}
+
+function setDone(bot, intents){
+  return new Promise(function(resolve, reject) {
+    // TODO set expected intents;
+    bot.loaded.step = false;
+    bot.state.step.id = null;
     resolve(bot);
   })
 }

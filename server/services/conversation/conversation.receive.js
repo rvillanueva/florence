@@ -2,76 +2,56 @@
 var Promise = require('bluebird');
 var Interpreter = require('../interpreter');
 var Ref = require('./conversation.ref');
-
+var Conversation = require('../../api/conversation/conversation.service');
 export function getResponse(bot) {
   return new Promise(function(resolve, reject) {
     bot.state.status = 'receiving';
-    var step;
-    Ref.selectIntentStep(bot)
-      .then(step => setStepOrMatchGlobal(bot, step))
-      .then(bot => resolve(bot))
-
-
-    /*}
-    if(bot.state.step.id){
-
-      // checkLocalIntents() (can override global intents)
-      // if found, setStep()
-
-      // checkGlobalIntents()
-      // if didn't find and you find here, divert()
-
-      // run()
-      else {
-      matchGlobalIntents(bot)
-      .then(bot => resolve(bot))
-      // checkGlobalIntents()
-      // if greeting ->
-      // chooseNextConversation()
-      // load conversation
-      // chamber first step of conversation
-      // run()
-      resolve(bot)
-    }*/
+    var intents;
+    Interpreter.getIntents(bot.message.text)
+    .then(intentData => {
+      intents = intentData;
+      return Ref.getIntentSteps(bot)
+    })
+    .then(steps => loadStepByIntent(bot, steps, intents))
+    .then(bot => resolve(bot))
   })
 }
 
-function setStepOrMatchGlobal(bot, step) {
-  // Should return bot
-  return new Promise(function(resolve, reject) {
-    console.log('Setting step or matching global intent...')
-    if (!step || step.type == 'fallback') {
-      Interpreter.matchGlobalIntents(bot.message.text)
-        .then(convo => {
-          if (!convo) {
-            setStep(bot, step)
-              .then(bot => resolve(bot))
-              .catch(err => reject(err))
-          } else {
-            bot.divert(convo)
-              .then(bot => resolve(bot))
-              .catch(err => reject(err))
+function loadStepByIntent(bot, steps, intents){
+  return new Promise(function(resolve, reject){
+    var matchedSteps = [];
+    var fallbackSteps = [];
+    var globalIntents = [];
+      intents.forEach(function(intent, i){
+        steps.forEach(function(step, s){
+          if (step.intentId == intent._id){
+            matchedSteps.push(step);
           }
-
         })
-    } else {
-      console.log('Setting step:')
-      console.log(step);
-      setStep(bot, step)
-        .then(bot => resolve(bot))
-        .catch(err => reject(err))
-    }
-  })
-}
-
-function setStep(bot, step) {
-  return new Promise(function(resolve, reject) {
-    if (step) {
-      bot.setStep(step._id)
-        .then(bot => resolve(bot))
-    } else {
-      bot.say('Sorry, I didn\'t understand. Can you try again?') // Handle confusion better
-      resolve(bot);
+        if(intent.global){
+          globalIntents.push(intent)
+        }
+      })
+    console.log(matchedSteps)
+    console.log(fallbackSteps)
+    console.log(globalIntents)
+    // Cycle through intents and see if any match the steps
+    if(matchedSteps.length > 0){ // TODO what if there are more than one matched step?
+      bot.setStep(matchedSteps[0]._id)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else if (globalIntents.length > 0){   // Otherwise, if a global intent matches, divert. TODO only do this if urgent
+      Conversation.getById(globalIntents[0].conversationId)
+      .then(convo =>  bot.divert(convo))
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else if (fallbackSteps.length > 0){   // Otherwise, use fallback
+      bot.setStep(fallbackSteps[0]._id)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else { // otherwise be confused
+      bot.say('Uh oh, not sure I understood that one. Can you try again?') // TODO Handle confusion better
+      resolve(bot)
     }
   })
 }

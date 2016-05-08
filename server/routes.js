@@ -9,6 +9,7 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
+  app.use('/api/intents', require('./api/intent'));
   app.use('/api/conversations', require('./api/conversation'));
   app.use('/api/verify', require('./api/verification'));
   app.use('/api/aspects', require('./api/aspect'));
