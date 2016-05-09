@@ -26,7 +26,7 @@ export function constructor(message) {
     conversation: false,
     step: false
   }
-  this.ref;
+  this.cache = {};
 
   // RESPONSES
 

@@ -106,17 +106,7 @@ Conversation.find({}).remove()
     steps: [{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f887'),
       type: 'say',
-      text: 'Hey there!',
-      next: [{
-        conditions: [],
-        weight: 1,
-        type: 'step',
-        stepId: '5726c7b47721d48e5c52f882'
-      }],
-    }, {
-      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f882'),
-      type: 'say',
-      text: 'My name is River.',
+      text: 'Hey there! My name is River.',
       next: [{
         conditions: [],
         weight: 1,
@@ -126,7 +116,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),
       type: 'say',
-      text: 'What\'s your name?',
+      text: 'Is there anything you need me to do? Or should I explain what I am?',
       next: [{
         conditions: [],
         weight: 1,
@@ -143,7 +133,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f885'),
       type: 'intent',
-      intentId: '5726c7b47721d48e5c52f901',
+      intentId: '5726c7b47721d48e5c52f919',
       next: [{
         conditions: [],
         weight: 1,
@@ -153,7 +143,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f886'),
       type: 'intent',
-      intentId: '5726c7b47721d48e5c52f902',
+      intentId: '5726c7b47721d48e5c52f801',
       next: [{
         conditions: [],
         weight: 1,
@@ -172,12 +162,12 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
       type: 'say',
-      text: 'Great!',
+      text: 'Well here are some of the things I can do....',
       next: [],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f810'),
       type: 'say',
-      text: 'Awesome saucseom!',
+      text: 'Okay, let\'s track your meds...',
       next: [],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f889'),
@@ -194,19 +184,46 @@ Conversation.find({}).remove()
 Intent.find({}).remove()
   .then(() => Intent.create({
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f900'),
+    name: 'Greeting',
     match: 'hi\nhello\nhey',
-    key: 'intro',
+    key: 'hello',
     global: true,
     conversationId: '5726c7b47721d48e5c52f876'
   }, {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f919'),
+    name: 'Help',
+    match: 'help\nwhat do you do?\n',
+    global: true,
+    key: 'help'
+  },{
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f901'),
-    match: 'ryan\nbob\njon',
-    key: 'name1'
+    name: 'Name',
+    match: 'ryan\nbob\njon\namy',
+    key: 'name'
   }, {
-    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f902'),
-    match: 'amy',
-    key: 'name2'
-  }))
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f910'),
+    name: 'Number',
+    match: '',
+    key: 'number'
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f801'),
+    name: 'Track Medications',
+    match: 'help me track my meds\ntrack medications\nmeds',
+    key: 'track_meds',
+    global: true
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f912'),
+    name: 'Belief: Vaccine Danger',
+    match: 'vaccines are dangerous',
+    key: 'belief',
+    entities: [{
+      name: 'belief_vaccine_danger',
+      value: 'high'
+    }]
+  }
+))
   .then(() => {
     console.log('Intents populated.');
   });

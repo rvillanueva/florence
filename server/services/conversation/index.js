@@ -32,3 +32,10 @@ export function receive(bot) {
       .catch(err => reject(err))
   })
 }
+
+function clearCache(bot){
+  return new Promise(function(resolve, reject) {
+    bot.cache = {};
+    resolve(bot);
+  })
+}

@@ -3,21 +3,32 @@
 var Promise = require("bluebird");
 var Conversation = require('../../api/conversation/conversation.service');
 var Interpret = require('./interpreter.service');
+var Wit = require('./wit')
 import Intent from '../../api/intent/intent.model'
 
-export function getIntents(text){
+export function getIntents(bot){
   return new Promise(function(resolve, reject){
     var returned = [];
     Intent.find({}).exec()
     .then(intents => {
       intents.forEach(function(intent, i){
-        var found = match(text, intent);
+        var found = match(bot.message.text, intent);
+        if(!found){
+          bot.state.entities.intents.forEach(function(parsed, p){
+            console.log(parsed);
+            if(parsed == intent.key){
+              found = true;
+            }
+          })
+        }
         if(found){
           returned.push(intent);
         }
       })
-      console.log(returned)
-      resolve(returned);
+      bot.cache.intents = returned;
+      console.log(bot.state.entities)
+      console.log(bot.cache.intents);
+      resolve(bot);
     })
   })
   // return intent ids that match
@@ -41,4 +52,12 @@ export function match(text, intent){
   } else {
     return false;
   }
+}
+
+export function getEntities(bot){
+  return new Promise(function(resolve, reject){
+      Wit.getEntities(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+  })
 }

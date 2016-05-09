@@ -21,7 +21,10 @@ export function getIntentSteps(bot) {
       .then(refs => filterRefsByCondition(bot, refs))
       .then(refs => getStepsFromRefs(bot, refs))
       .then(steps => sortStepsByType(bot, steps))
-      .then(sorted => resolve(sorted.intents))
+      .then(sorted => {
+        bot.cache.steps = sorted.intents;
+        resolve(bot);
+      })
   })
 }
 

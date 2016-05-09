@@ -8,32 +8,31 @@ export function getResponse(bot) {
   return new Promise(function(resolve, reject) {
     bot.state.status = 'receiving';
     var intents;
-    Interpreter.getIntents(bot.message.text)
-    .then(intentData => {
-      intents = intentData;
-      return Ref.getIntentSteps(bot)
-    })
-    .then(steps => loadStepByIntent(bot, steps, intents))
+    Interpreter.getEntities(bot)
+    .then(bot => Interpreter.getIntents(bot))
+    .then(bot => Ref.getIntentSteps(bot))
+    .then(bot => loadStepByIntent(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
 }
 
-function loadStepByIntent(bot, steps, intents){
+function loadStepByIntent(bot){
   return new Promise(function(resolve, reject){
     var matchedSteps = [];
     var fallbackSteps = [];
     var globalIntents = [];
-      intents.forEach(function(intent, i){
-        steps.forEach(function(step, s){
-          if (step.intentId == intent._id){
-            matchedSteps.push(step);
-          }
-        })
-        if(intent.global){
-          globalIntents.push(intent)
+    bot.cache.intents.forEach(function(intent, i){
+      bot.cache.steps.forEach(function(step, s){
+        if (step.intentId == intent._id){
+          matchedSteps.push(step);
         }
       })
+      if(intent.global && intent.conversationId){
+        globalIntents.push(intent)
+      }
+    })
+    console.log(bot.cache.intents);
     // Cycle through intents and see if any match the steps
     if(matchedSteps.length > 0){ // TODO what if there are more than one matched step?
       bot.setStep(matchedSteps[0]._id)
@@ -49,14 +48,14 @@ function loadStepByIntent(bot, steps, intents){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else { // otherwise be confused
-      bot.say('Uh oh, not sure I understood that one. Can you try again?') // TODO Handle confusion better
+      var helpPhrases = [
+        'Uh oh, not sure I understood that one.',
+        'Sorry, I\'m still learning... can you try again?',
+        'Hey, didn\'t catch that one. Can you try rephrasing?'
+      ]
+      var phrase = helpPhrases[Math.floor(Math.random()*helpPhrases.length)]
+      bot.say(phrase) // TODO Handle confusion better
       resolve(bot)
-    }
-
-    function setNextStep(){
-      return new Promise(function(resolve, reject){
-
-      })
     }
   })
 }
