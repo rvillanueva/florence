@@ -1,8 +1,6 @@
 'use strict';
 
 var Promise = require("bluebird");
-var Conversation = require('../../api/conversation/conversation.service');
-var Interpret = require('./interpreter.service');
 var Wit = require('./wit')
 import Intent from '../../api/intent/intent.model'
 
@@ -37,6 +35,7 @@ export function getIntents(bot){
   // then run through wit to see if there's a match by key
 }
 
+// Match against given rules
 export function match(text, intent){
   if(typeof intent.match == 'string' && typeof text == 'string'){
     var rules = intent.match.split('\n')
