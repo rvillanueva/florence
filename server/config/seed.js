@@ -6,6 +6,7 @@
 'use strict';
 import User from '../api/user/user.model';
 import Aspect from '../api/aspect/aspect.model';
+import Metric from '../api/metric/metric.model';
 import Verification from '../api/verification/verification.model';
 import Conversation from '../api/conversation/conversation.model';
 import Intent from '../api/intent/intent.model';
@@ -38,58 +39,52 @@ Aspect.find({}).remove()
     Aspect.create({
         key: 'mood',
         name: 'mood',
-        imageUrl: 'https://i.imgur.com/FANqC05.jpg?1',
-        type: 'outcome',
-        callToAction: {
-          title: 'Track your mood',
-          subtitle: 'Log your mood patterns to understand what brings it up and down.'
-        },
-        scale: {
-          min: 1,
-          max: 10
-        },
-        questions: {
-          score: ['On a scale of 1 to 10, how do you feel right now?', 'If you had to rank your mood between 1 (the worst) and 10 (the best), where would it be?'],
-          trigger: ['What sort of things are making you feel better or worse?']
-        }
+        type: 'symptom',
       }, {
         key: 'anxiety',
         name: 'anxiety',
-        imageUrl: 'https://i.imgur.com/FANqC05.jpg?1',
-        type: 'outcome',
-        scale: {
-          min: 1,
-          max: 10
-        },
-        callToAction: {
-          title: 'Track your anxiety',
-          subtitle: 'Log your anxiety to understand how to better manage it.'
-        },
-        questions: {
-          score: ['On a scale of 1 to 10, how is your anxiety right now?'],
-          trigger: ['What sort of things are making you more or less anxious?']
-        }
+        type: 'symptom',
       }, {
-        key: 'medication',
-        name: 'medication',
-        imageUrl: 'https://i.imgur.com/OVko5.jpg',
-        type: 'outcome',
-        scale: {
-          min: 0,
-          max: 1
-        },
-        callToAction: {
-          title: 'Set medication reminders',
-          subtitle: 'Keeping your medication schedule can be confusing. I can help set reminders.'
-        },
-        questions: {
-          score: ['Hey there! Did you take your medications?'],
-          trigger: ['What sort of things are making you more or less anxious?']
-        }
+        key: 'takeMeds',
+        name: 'takeMeds',
+        type: 'behavior',
       })
       .then(() => {
         console.log('Aspects populated.');
       });
+  });
+
+Metric.find({}).remove()
+  .then(() => {
+    Metric.create({
+      aspectKey: 'mood',
+      secondaryKey: 'level',
+      name: 'Mood level',
+      public: true,
+      timespan: 'point',
+      question: 'How would you rate your mood right now on a scale of 1 to 10? (With 1 being the worst and 10 being the best.)',
+      accepted: {
+        dataType: 'numeric',
+        min: 1,
+        max: 10
+      }
+    },
+    {
+      aspectKey: 'mood',
+      secondaryKey: 'triggersPositive',
+      timespan: 'point',
+      public: true,
+      question: 'What \'s making your mood better?',
+      accepted: {
+        dataType: 'text',
+        extracted: [{
+            entity: 'behaviors'
+        }]
+      }
+  })
+    .then(() => {
+      console.log('Metrics populated.');
+    });
   });
 
 Conversation.find({}).remove()
@@ -111,12 +106,22 @@ Conversation.find({}).remove()
         conditions: [],
         weight: 1,
         type: 'step',
+        stepId: '5726c7b47721d48e5c52f723'
+      }],
+    },{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f723'),
+      type: 'say',
+      text: 'I\'m learning to be a personal care companion.',
+      next: [{
+        conditions: [],
+        weight: 1,
+        type: 'step',
         stepId: '5726c7b47721d48e5c52f883'
       }],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f883'),
       type: 'say',
-      text: 'Is there anything you need me to do? Or should I explain what I am?',
+      text: 'Right now, most people use me to track their mood. Is that something you\'re interested in?',
       next: [{
         conditions: [],
         weight: 1,
@@ -133,7 +138,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f885'),
       type: 'intent',
-      intentId: '5726c7b47721d48e5c52f919',
+      intentId: '5726c7b47721d48e5c52f901',
       next: [{
         conditions: [],
         weight: 1,
@@ -162,7 +167,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
       type: 'say',
-      text: 'Well here are some of the things I can do....',
+      text: 'Great! Let\'s get started. (END)',
       next: [],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f810'),
@@ -197,9 +202,14 @@ Intent.find({}).remove()
     key: 'help'
   },{
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f901'),
-    name: 'Name',
-    match: 'ryan\nbob\njon\namy',
-    key: 'name'
+    name: 'Yes',
+    match: 'yes\nyeah\nsure',
+    key: 'yes'
+  },{
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f100'),
+    name: 'No',
+    match: 'no\nnope\nnaw\nnot right now',
+    key: 'no'
   }, {
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f910'),
     name: 'Number',
@@ -208,14 +218,14 @@ Intent.find({}).remove()
   },
   {
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f801'),
-    name: 'Track Medications',
-    match: 'help me track my meds\ntrack medications\nmeds',
-    key: 'track_meds',
+    name: 'Add Tracking',
+    match: 'help me track my meds\ntrack medications\ntrack',
+    key: 'addTrack',
     global: true
   },
   {
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f912'),
-    name: 'Belief: Vaccine Danger',
+    name: 'Vaccine Danger',
     match: 'vaccines are dangerous',
     key: 'belief',
     entities: [{

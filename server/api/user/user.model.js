@@ -24,21 +24,23 @@ var UserSchema = new Schema({
   salt: String,
   created: Date,
   facebook: {},
-  google: {},
-  github: {},
   messenger: {},
   timezone: String,
-  tracked: [
+  tracked: {},
+
+  /*[
     {
-      type: String,
-      priority: Number,
-      frequency: Number,
-      aspectId: String // refid
+      aspectId: String,
+      //priority: Number,
+      frequency: String,
+      times: [{
+        from: Number,
+        to: Number,
+        condition: String // only, not
+      }]
+      // TODO add conditions
     }
-  ],
-  preferences: {
-    frequency: String
-  },
+  ],*/
   engagement: {
     score: Number,
     fatigue: Number

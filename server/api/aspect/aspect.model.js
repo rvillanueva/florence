@@ -9,11 +9,8 @@ var AspectSchema = new mongoose.Schema({
   },
   type: String, // Value, belief, behavior, or outcome
   name: String,
-  imageUrl: String,
-  callToAction: {
-    title: String,
-    subtitle: String
-  },
+  /*imageUrl: String,
+  defaultFrequency: String, // weekly, weekly3, daily, daily3
   scale: {
     min: Number,
     max: Number,
@@ -24,7 +21,7 @@ var AspectSchema = new mongoose.Schema({
     triggers: Array,
     confidence: Array,
     priority: Array
-  }
+  }*/
 });
 
 export default mongoose.model('Aspect', AspectSchema);

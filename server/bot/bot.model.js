@@ -74,6 +74,16 @@ export function constructor(message) {
     })
   }
 
+  // USER MANAGEMENT
+
+  this.getUser = function(){
+    return new Promise(function(resolve, reject){
+      User.findById(userId).exec()
+      .then(user => resolve(user))
+      .catch(err => reject(err))
+    })
+  }
+
 
   // STEP MANAGEMENT
 
