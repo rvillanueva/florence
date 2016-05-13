@@ -1,5 +1,7 @@
 'use strict';
 
+var Promise = require('bluebird');
+
 export function hasQueue(bot){
   if(bot.state.queue && bot.state.queue.length > 0){
     return true
@@ -10,4 +12,10 @@ export function hasQueue(bot){
   }
 
   return false;
+}
+
+export function run(bot){
+  return new Promise(function(resolve, reject){
+    resolve(bot)
+  })
 }

@@ -4,10 +4,7 @@ var Promise = require('bluebird');
 
 export function selectExecuteStep(bot) {
   return new Promise(function(resolve, reject){
-    getRefs(bot)
-      .then(bot => filterRefsByCondition(bot))
-      .then(bot => getStepsFromRefs(bot))
-      .then(bot => sortStepsByType(bot)) // If no step, should do nothing and unload step
+      sortStepsByType(bot) // If no step, should do nothing and unload step
       .then(bot => handleExecutables(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
@@ -17,58 +14,12 @@ export function selectExecuteStep(bot) {
 export function getIntentSteps(bot) {
   // returns steps that are intents
   return new Promise(function(resolve, reject){
-    getRefs(bot)
-      .then(bot => filterRefsByCondition(bot))
-      .then(bot => getStepsFromRefs(bot))
-      .then(bot => sortStepsByType(bot))
+    sortStepsByType(bot)
       .then(bot => {
         bot.cache.steps = bot.cache.sorted.intents;
         resolve(bot);
       })
-  })
-}
-
-function getRefs(bot) {
-  return new Promise(function(resolve, reject) {
-    console.log('Getting refs...')
-    var refs = [];
-    if (bot.loaded.step) {
-      bot.cache.refs = bot.loaded.step.next;
-    } else {
-      console.log('ERROR: No loaded step.')
-    }
-    // build conditions TODO
-    resolve(bot);
-  })
-}
-// Filter out refs that don't match given conditions
-function filterRefsByCondition(bot) {
-  return new Promise(function(resolve, reject) {
-    console.log('Filtering refs...')
-    resolve(bot);
-  })
-}
-
-function getStepsFromRefs(bot) {
-  return new Promise(function(resolve, reject) {
-    console.log('Getting steps from refs...')
-    var steps = []
-    bot.cache.refs = bot.cache.refs || [];
-    bot.cache.refs.forEach((ref, r) => {
-      var found = false;
-      bot.loaded.conversation.steps.forEach((step, s) => {
-        if (ref.stepId == step._id) {
-          step.weight = ref.weight;
-          steps.push(step);
-          found = true;
-        }
-      })
-      if (!found) {
-        console.log('No step found for ref with stepId ' + ref.stepId)
-      }
-    })
-    bot.cache.steps = steps;
-    resolve(bot);
+      .catch(err => reject(err))
   })
 }
 

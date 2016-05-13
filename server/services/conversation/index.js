@@ -1,42 +1,41 @@
 'use strict';
 
-var Execute = require('./conversation.execute');
-var Sort = require('./conversation.sort');
 var Receive = require('./conversation.receive');
 var Next = require('./conversation.next')
+var Converse = require('./conversation.converse')
+var Checkup = require('../checkup')
 
-export function run(bot) {
-  return new Promise(function(resolve, reject) {
-    if(bot.loaded.step){
-      bot.state.status = 'conversing';
-      Execute.fire(bot)
-        .then(bot => Sort.selectExecuteStep(bot))
-        .then(bot => run(bot))
-        .then(bot => clearCache(bot))
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-    } else if(bot.state.status == 'checkingin'){
-    } else if (Next.hasQueue(bot)){
-      Next.revert(bot)
-      .then(bot => run(bot))
-      .catch(err => reject(err))
-    } else {
-      console.log('Loop ended.')
-      bot.state.status = 'waiting';
-      bot.updateState()
-        .then(bot => resolve(bot))
-        .catch(err => reject(err))
-    }
-  })
+var router = {
+  receiving: function(bot){
+    return Receive.run(bot);
+  },
+  conversing: function(bot){
+    return Converse.run(bot)
+  },
+  checkup: function(bot){
+    return Checkup.run(bot);
+  },
+  next: function(bot){
+    return Next.run(bot);
+  },
 }
 
-export function receive(bot) {
+export function route(bot){
   return new Promise(function(resolve, reject) {
-    bot.state.status = 'receiving';
-    Receive.getResponse(bot)
-      .then(bot => run(bot))
+    if (bot.state.status == 'waiting' || bot.state.status == 'done'){
+      // End loop
+      bot.updateState()
       .then(bot => resolve(bot))
-      .catch(err => reject(err))
+      .then(err => reject(err))
+    } else if (bot.state.status && typeof router[bot.state.status] == 'function'){
+      clearCache(bot)
+      .then(bot => router[bot.state.status](bot))
+      .then(bot => route(bot))
+      .then(bot => resolve(bot))
+      .then(err => reject(err))
+    } else {
+      reject('Error: Unknown status ' + bot.state.status);
+    }
   })
 }
 

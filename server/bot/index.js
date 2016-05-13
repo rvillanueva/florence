@@ -10,7 +10,10 @@ export function respond(message){
     console.log(message)
     var bot = new Bot(message);
     bot.init()
-    .then(bot => Conversation.receive(bot))
+    .then(bot => {
+      bot.state.status = 'receiving';
+      return Conversation.route(bot)
+    })
     .then(res => resolve(res))
     .catch(err => reject(err))
   })

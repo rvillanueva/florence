@@ -3,13 +3,16 @@ var Promise = require('bluebird');
 var Interpreter = require('../interpreter');
 var Sort = require('./conversation.sort');
 var Conversation = require('../../api/conversation/conversation.service');
+var Refs = require('./conversation.refs');
 
-export function getResponse(bot) {
+export function run(bot) {
   return new Promise(function(resolve, reject) {
-    bot.state.status = 'receiving';
     var intents;
     Interpreter.getEntities(bot)
     .then(bot => Interpreter.getIntents(bot))
+    .then(bot => Refs.get(bot))
+    .then(bot => Refs.filterByCondition(bot))
+    .then(bot => Refs.convertToSteps(bot))
     .then(bot => Sort.getIntentSteps(bot))
     .then(bot => loadStepByIntent(bot))
     .then(bot => resolve(bot))
@@ -41,7 +44,7 @@ function loadStepByIntent(bot){
       .catch(err => reject(err))
     } else if (globalIntents.length > 0){   // Otherwise, if a global intent matches, divert. TODO only do this if urgent
       Conversation.getById(globalIntents[0].conversationId)
-      .then(convo =>  bot.divert(convo))
+      .then(convo => bot.divert(convo))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else if (fallbackSteps.length > 0){   // Otherwise, use fallback

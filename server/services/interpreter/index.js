@@ -13,7 +13,6 @@ export function getIntents(bot){
         var found = match(bot.message.text, intent);
         if(!found){
           bot.state.entities.intents.forEach(function(parsed, p){
-            console.log(parsed);
             if(parsed == intent.key){
               found = true;
             }

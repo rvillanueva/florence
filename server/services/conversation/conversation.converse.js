@@ -1,8 +1,23 @@
 'use strict';
 
+var Sort = require('./conversation.sort');
 var Actions = require('../actions');
+var Refs = require('./conversation.refs');
 
-export function fire(bot) {
+export function run(bot){
+  return new Promise(function(resolve, reject){
+    executeStep(bot)
+      .then(bot => Refs.get(bot))
+      .then(bot => Refs.filterByCondition(bot))
+      .then(bot => Refs.convertToSteps(bot))
+      .then(bot => Sort.selectExecuteStep(bot))
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+  })
+}
+
+
+export function executeStep(bot) {
   return new Promise(function(resolve, reject) {
     console.log('\n\n\n\nRunning new step...')
     console.log(bot.loaded.step);

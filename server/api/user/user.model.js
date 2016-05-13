@@ -39,9 +39,9 @@ var UserSchema = new Schema({
     step: {
       id: String,
       diverted: [{
+
           stepId: String
-      }],
-      intents: Array
+      }]
     },
     received: {
       intent: String,
