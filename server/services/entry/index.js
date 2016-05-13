@@ -32,6 +32,28 @@ function resolveEntries(lastEntry, newEntry) {
   })
 }
 
+function updateTracking(entry) {
+  return new Promise((resolve, reject) => {
+    // Cycle through each aspect
+    User.findById(entry.userId).exec()
+    .then(user => {
+      for (var aspect in entry) {
+        if (entry.hasOwnProperty(aspect)) {
+          // Cycle through each metric
+          for (var metric in entry[aspect]) {
+            if (entry[aspect].hasOwnProperty(metric)) {
+              user.tracked = user.tracked || {};
+              user.tracked[aspect] = user.tracked[aspect] || {};
+              user.tracked[aspect][metric] = user.tracked[aspect][metric] || {};
+              user.tracked[aspect][metric].updated = new Date();
+            }
+          }
+        }
+      }
+    })
+  })
+}
+
 export function add(entry) {
   return new Promise((resolve, reject) => {
     var expiration = moment().subtract(1, 'hours').toDate();

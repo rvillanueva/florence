@@ -95,7 +95,6 @@ function sortStepsByType(bot){
 function handleExecutables(bot) {
   return new Promise(function(resolve, reject) {
     if (bot.cache.sorted.executables.length > 0) {
-      //set to executing
       selectStep(bot, bot.cache.sorted.executables)
         .then(step => loadStep(bot, step))
         .then(bot => resolve(bot))
@@ -141,14 +140,15 @@ export function selectStep(bot, steps) {
 function loadStep(bot, step){
   return new Promise(function(resolve, reject) {
     if(step){
+      bot.state.status = 'conversing';
       bot.setStep(step._id)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
       // Set ended.
-      bot.loaded.step = false;
-      bot.state.step.id = false;
-      resolve(bot);
+      setDone(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
     }
   });
 }
@@ -156,6 +156,7 @@ function loadStep(bot, step){
 function setWaiting(bot, intents){
   return new Promise(function(resolve, reject) {
     // TODO set expected intents;
+    bot.state.status = 'waiting';
     bot.loaded.step = false;
     resolve(bot);
   })
@@ -164,6 +165,7 @@ function setWaiting(bot, intents){
 function setDone(bot, intents){
   return new Promise(function(resolve, reject) {
     // TODO set expected intents;
+    bot.state.status = 'done';
     bot.loaded.step = false;
     bot.state.step.id = null;
     resolve(bot);

@@ -13,10 +13,8 @@ export function add(bot, params){
       reject('Need aspect and metric.')
     }
 
-    User.findById(bot.userId, '-salt -password').exec()
+    bot.getUser()
     .then(user => {
-      console.log(user.tracked)
-      console.log(user._id)
       var frequency = params.frequency || 'daily';
       user.tracked = user.tracked || {};
       user.tracked[params.aspect] = user.tracked[params.aspect] || {};
@@ -26,9 +24,6 @@ export function add(bot, params){
       }
       User.findOneAndUpdate({'_id': user._id},user)
       .then(updated => {
-        console.log('Saved!')
-        console.log(updated._id)
-        console.log(updated.tracked)
         resolve(bot)
       })
       .catch(err => reject(err))
@@ -37,15 +32,39 @@ export function add(bot, params){
   })
 }
 
-export function remove(bot){
+export function remove(bot, params){
   return new Promise(function(resolve, reject){
-    user.tracked = {}
-    user.save()
-    .then(() => resolve(bot))
-    .catch(err => reject(err))
+    if(!params.aspect || !params.metric){
+      reject('Need aspect and metric to remove.')
+    }
+    bot.getUser()
+    .then(user => {
+      user.tracked = user.tracked || {};
+      user.tracked[params.aspect] = user.tracked[params.aspect] || {};
+      user.tracked[params.aspect][params.metric] = user.tracked[params.aspect][params.metric] || {};
+      user.tracked[params.aspect][params.metric].active = false;
+      User.findOneAndUpdate({'_id': user._id},user)
+      .then(updated => {
+        resolve(bot)
+      })
+      .catch(err => reject(err))
+    })
   })
 }
 
 export function removeAll(bot){
-
+  return new Promise(function(resolve, reject){
+    if(!params.aspect || !params.metric){
+      reject('Need aspect and metric to remove.')
+    }
+    bot.getUser()
+    .then(user => {
+      user.tracked = {}
+      User.findOneAndUpdate({'_id': user._id},user)
+      .then(updated => {
+        resolve(bot)
+      })
+      .catch(err => reject(err))
+    })
+  })
 }

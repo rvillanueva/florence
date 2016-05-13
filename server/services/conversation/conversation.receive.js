@@ -34,6 +34,7 @@ function loadStepByIntent(bot){
     })
     console.log(bot.cache.intents);
     // Cycle through intents and see if any match the steps
+    bot.state.status = 'conversing';
     if(matchedSteps.length > 0){ // TODO what if there are more than one matched step?
       bot.setStep(matchedSteps[0]._id)
       .then(bot => resolve(bot))
@@ -48,6 +49,7 @@ function loadStepByIntent(bot){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else { // otherwise be confused
+      bot.state.status = 'waiting';
       var helpPhrases = [
         'Uh oh, not sure I understood that one.',
         'Sorry, I\'m still learning... can you try again?',
