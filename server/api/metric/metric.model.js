@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 var MetricSchema = new mongoose.Schema({
   aspectKey: String,
-  secondaryKey: String,
+  metricKey: String,
   name: String,
   question: String,
   public: Boolean,

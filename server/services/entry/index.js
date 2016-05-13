@@ -2,58 +2,60 @@
 import Entry from '../../api/entry/entry.model';
 var moment = require('moment');
 
-export function addNew(entry){
+export function addNew(entry) {
   return new Promise((resolve, reject) => {
     var newEntry = new Entry(entry);
     newEntry.date = new Date();
     newEntry.save()
-    .then(res => resolve(entry))
-    .catch(err => resolve(err))
+      .then(res => resolve(entry))
+      .catch(err => resolve(err))
   })
 }
 
-function resolveEntries(lastEntry, newEntry){
+function resolveEntries(lastEntry, newEntry) {
   return new Promise((resolve, reject) => {
-    if(
-      lastEntry.score && newEntry.score ||
-      lastEntry.triggers && newEntry.triggers
-    ){ // FIX ME - handle for all properties
-      addNew(newEntry)
-    } else {
-      if(!lastEntry.score && newEntry.score){
-        lastEntry.score = newEntry.score
-      }
-      if(!lastEntry.triggers && newEntry.triggers){
-        lastEntry.triggers = newEntry.triggers
+    delete newEntry._id;
+    // Cycle through each aspect
+    for (var aspect in newEntry) {
+      if (newEntry.hasOwnProperty(aspect)) {
+        // Cycle through each metric
+        for (var metric in newEntry[aspect]) {
+          if (newEntry[aspect].hasOwnProperty(metric)) {
+            lastEntry.data[aspect] = lastEntry.data[aspect] || {};
+            lastEntry.data[aspect][metric] = newEntry.data[aspect][metric];
+          }
+        }
       }
     }
-
+    resolve(lastEntry);
     // Need to handle tags too
   })
 }
 
-export function add(entry){
+export function add(entry) {
   return new Promise((resolve, reject) => {
     var expiration = moment().subtract(1, 'hours').toDate();
-    if(!entry.aspectId){
-      reject('AspectId required for entry.')
-    }
-    if(!entry.userId){
+    if (!entry.userId) {
       reject('UserId required for entry.')
     }
     console.log('Creating entry:');
     console.log(entry);
-    Entry.find({date:{"$gt": expiration}, aspectId: entry.aspectId, userId: entry.userId}).sort('added').exec()
-    .then(entries => {
-      if (!entries || entries.length == 0 ) {
-        addNew(entry)
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-      } else {
-        resolveEntries(entries[0], entry)
-        .then(res => resolve(res))
-        .catch(err => reject(err))
-      }
-    })
+    Entry.find({
+        date: {
+          "$gt": expiration
+        },
+        userId: entry.userId
+      }).sort('added').exec()
+      .then(entries => {
+        if (!entries || entries.length == 0) {
+          addNew(entry)
+            .then(res => resolve(res))
+            .catch(err => reject(err))
+        } else {
+          resolveEntries(entries[0], entry)
+            .then(res => resolve(res))
+            .catch(err => reject(err))
+        }
+      })
   })
 }

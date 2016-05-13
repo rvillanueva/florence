@@ -58,7 +58,7 @@ Metric.find({}).remove()
   .then(() => {
     Metric.create({
       aspectKey: 'mood',
-      secondaryKey: 'level',
+      metricKey: 'level',
       name: 'Mood level',
       public: true,
       timespan: 'point',
@@ -71,7 +71,7 @@ Metric.find({}).remove()
     },
     {
       aspectKey: 'mood',
-      secondaryKey: 'triggersPositive',
+      metricKey: 'triggersPositive',
       timespan: 'point',
       public: true,
       question: 'What \'s making your mood better?',
@@ -139,6 +139,27 @@ Conversation.find({}).remove()
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f885'),
       type: 'intent',
       intentId: '5726c7b47721d48e5c52f901',
+      actions: [{
+        action: 'addTrack',
+        params: {
+          aspect: 'mood',
+          metric: 'level'
+        }
+      },
+      {
+        action: 'addTrack',
+        params: {
+          aspect: 'mood',
+          metric: 'triggersPositive'
+        }
+      },
+      {
+        action: 'addTrack',
+        params: {
+          aspect: 'mood',
+          metric: 'triggersNegative'
+        }
+      }],
       next: [{
         conditions: [],
         weight: 1,
@@ -167,7 +188,7 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
       type: 'say',
-      text: 'Great! Let\'s get started. (END)',
+      text: 'Great! Let\'s get started.',
       next: [],
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f810'),
@@ -178,6 +199,12 @@ Conversation.find({}).remove()
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f889'),
       type: 'say',
       text: 'Uh oh, didn\'t understand!',
+      next: [],
+    },
+    {
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f987'),
+      type: 'end',
+      action: 'checkin',
       next: [],
     }]
   }))

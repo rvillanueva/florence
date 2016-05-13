@@ -5,10 +5,10 @@ var Promise = require('bluebird');
 export function selectExecuteStep(bot) {
   return new Promise(function(resolve, reject){
     getRefs(bot)
-      .then(refs => filterRefsByCondition(bot, refs))
-      .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => sortStepsByType(bot, steps)) // If no step, should do nothing and unload step
-      .then(sorted => handleExecutables(bot, sorted))
+      .then(bot => filterRefsByCondition(bot))
+      .then(bot => getStepsFromRefs(bot))
+      .then(bot => sortStepsByType(bot)) // If no step, should do nothing and unload step
+      .then(bot => handleExecutables(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
@@ -18,11 +18,11 @@ export function getIntentSteps(bot) {
   // returns steps that are intents
   return new Promise(function(resolve, reject){
     getRefs(bot)
-      .then(refs => filterRefsByCondition(bot, refs))
-      .then(refs => getStepsFromRefs(bot, refs))
-      .then(steps => sortStepsByType(bot, steps))
-      .then(sorted => {
-        bot.cache.steps = sorted.intents;
+      .then(bot => filterRefsByCondition(bot))
+      .then(bot => getStepsFromRefs(bot))
+      .then(bot => sortStepsByType(bot))
+      .then(bot => {
+        bot.cache.steps = bot.cache.sorted.intents;
         resolve(bot);
       })
   })
@@ -33,28 +33,28 @@ function getRefs(bot) {
     console.log('Getting refs...')
     var refs = [];
     if (bot.loaded.step) {
-      refs = bot.loaded.step.next;
+      bot.cache.refs = bot.loaded.step.next;
     } else {
       console.log('ERROR: No loaded step.')
     }
     // build conditions TODO
-    resolve(refs);
+    resolve(bot);
   })
 }
 // Filter out refs that don't match given conditions
-function filterRefsByCondition(bot, refs) {
+function filterRefsByCondition(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Filtering refs...')
-    resolve(refs);
+    resolve(bot);
   })
 }
 
-function getStepsFromRefs(bot, refs) {
+function getStepsFromRefs(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Getting steps from refs...')
     var steps = []
-    refs = refs || [];
-    refs.forEach((ref, r) => {
+    bot.cache.refs = bot.cache.refs || [];
+    bot.cache.refs.forEach((ref, r) => {
       var found = false;
       bot.loaded.conversation.steps.forEach((step, s) => {
         if (ref.stepId == step._id) {
@@ -67,16 +67,18 @@ function getStepsFromRefs(bot, refs) {
         console.log('No step found for ref with stepId ' + ref.stepId)
       }
     })
-    resolve(steps);
+    bot.cache.steps = steps;
+    resolve(bot);
   })
 }
 
-function sortStepsByType(bot, steps){
+function sortStepsByType(bot){
   return new Promise(function(resolve, reject){
     var sorted = {
       intents: [],
       executables: []
     }
+    var steps = bot.cache.steps;
     steps.forEach((step, s) => {
       if (step.type == 'intent' || step.type == 'fallback') {
         sorted.intents.push(step);
@@ -84,20 +86,21 @@ function sortStepsByType(bot, steps){
         sorted.executables.push(step);
       }
     })
-    resolve(sorted);
+    bot.cache.sorted = sorted;
+    resolve(bot);
   })
 }
 
 
-function handleExecutables(bot, sorted) {
+function handleExecutables(bot) {
   return new Promise(function(resolve, reject) {
-    if (sorted.executables.length > 0) {
+    if (bot.cache.sorted.executables.length > 0) {
       //set to executing
-      selectStep(bot, sorted.executables)
+      selectStep(bot, bot.cache.sorted.executables)
         .then(step => loadStep(bot, step))
         .then(bot => resolve(bot))
         .catch(err => reject(err))
-    } else if (sorted.intents.length > 0) {
+    } else if (bot.cache.sorted.intents.length > 0) {
       setWaiting(bot)
         .then(bot => resolve(bot))
         .catch(err => reject(err))

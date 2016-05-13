@@ -1,10 +1,13 @@
 'use strict';
 
+var Actions = require('../actions');
+
 export function fire(bot) {
   return new Promise(function(resolve, reject) {
     console.log('\n\n\n\nRunning new step...')
     console.log(bot.loaded.step);
     executeStepByType(bot)
+      .then(bot => Actions.execute(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })

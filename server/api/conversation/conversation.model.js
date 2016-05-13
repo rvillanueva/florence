@@ -18,11 +18,9 @@ var RefSchema = new mongoose.Schema({
 
 var StepSchema = new mongoose.Schema({
   type: String, // say, intent, messenger_buttons, messenger_cards// diversion//action
-  update: [{
-      type: String,
-      variable: String,
-      change: String,
-      value: String,
+  actions: [{
+      action: String,
+      params: {}
   }],
   name: String,
   // SAY / MESSENGER_BUTTONS

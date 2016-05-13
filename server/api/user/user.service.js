@@ -48,7 +48,7 @@ export function updateFbProfile(user) {
     var options = {
       url: 'https://graph.facebook.com/v2.6/' + user.messenger.id,
       qs: {
-        fields: 'first_name,last_name,profile_pic',
+        fields: 'first_name,last_name,profile_pic,locale,timezone,gender',
         access_token: process.env.FB_PAGE_TOKEN
       }
     }
@@ -65,6 +65,15 @@ export function updateFbProfile(user) {
       }
       if(fbProfile.profile_pic){
         user.picture = fbProfile.profile_pic;
+      }
+      if(fbProfile.locale){
+        user.locale = fbProfile.locale;
+      }
+      if(fbProfile.gender){
+        user.gender = fbProfile.gender;
+      }
+      if(fbProfile.timezone){
+        user.timezone = fbProfile.timezone;
       }
       user.save()
       .then(user => resolve(user))

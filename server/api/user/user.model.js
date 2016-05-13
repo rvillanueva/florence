@@ -11,6 +11,9 @@ var UserSchema = new Schema({
   firstName: String, // Need to fix name virtual return
   lastName: String,
   picture: String,
+  gender: String,
+  locale: String,
+  timezone: String,
   email: {
     type: String,
     lowercase: true
@@ -27,20 +30,6 @@ var UserSchema = new Schema({
   messenger: {},
   timezone: String,
   tracked: {},
-
-  /*[
-    {
-      aspectId: String,
-      //priority: Number,
-      frequency: String,
-      times: [{
-        from: Number,
-        to: Number,
-        condition: String // only, not
-      }]
-      // TODO add conditions
-    }
-  ],*/
   engagement: {
     score: Number,
     fatigue: Number

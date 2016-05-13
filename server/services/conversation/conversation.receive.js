@@ -1,7 +1,7 @@
 'use strict';
 var Promise = require('bluebird');
 var Interpreter = require('../interpreter');
-var Ref = require('./conversation.ref');
+var Sort = require('./conversation.sort');
 var Conversation = require('../../api/conversation/conversation.service');
 
 export function getResponse(bot) {
@@ -10,7 +10,7 @@ export function getResponse(bot) {
     var intents;
     Interpreter.getEntities(bot)
     .then(bot => Interpreter.getIntents(bot))
-    .then(bot => Ref.getIntentSteps(bot))
+    .then(bot => Sort.getIntentSteps(bot))
     .then(bot => loadStepByIntent(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
