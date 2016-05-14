@@ -36,6 +36,9 @@ var UserSchema = new Schema({
   },
   state: {
     status: String,
+    checkup: {
+      active: Boolean
+    },
     step: {
       id: String,
       diverted: [{

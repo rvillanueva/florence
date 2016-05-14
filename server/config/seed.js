@@ -57,8 +57,8 @@ Aspect.find({}).remove()
 Metric.find({}).remove()
   .then(() => {
     Metric.create({
-      aspectKey: 'mood',
-      metricKey: 'level',
+      aspect: 'mood',
+      metric: 'level',
       name: 'Mood level',
       public: true,
       timespan: 'point',
@@ -70,8 +70,8 @@ Metric.find({}).remove()
       }
     },
     {
-      aspectKey: 'mood',
-      metricKey: 'triggersPositive',
+      aspect: 'mood',
+      metric: 'triggersPositive',
       timespan: 'point',
       public: true,
       question: 'What \'s making your mood better?',
@@ -140,21 +140,21 @@ Conversation.find({}).remove()
       type: 'intent',
       intentId: '5726c7b47721d48e5c52f901',
       actions: [{
-        action: 'addTrack',
+        type: 'addTrack',
         params: {
           aspect: 'mood',
           metric: 'level'
         }
       },
       {
-        action: 'addTrack',
+        type: 'addTrack',
         params: {
           aspect: 'mood',
           metric: 'triggersPositive'
         }
       },
       {
-        action: 'addTrack',
+        type: 'addTrack',
         params: {
           aspect: 'mood',
           metric: 'triggersNegative'

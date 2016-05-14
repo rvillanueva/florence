@@ -11,6 +11,9 @@ export function constructor(message) {
   this.message = message;
   this.state = {
     status: '',
+    checkup: {
+      active: true
+    },
     step: {
       id: '',
       intents: [],
@@ -49,12 +52,18 @@ export function constructor(message) {
 
   this.confused = function(){
     var helpPhrases = [
-      'Uh oh, not sure I understood that one.',
+      'Uh oh, not sure I understood that one. One more time?',
       'Sorry, I\'m still learning... can you try again?',
-      'Hey, didn\'t catch that one. Can you try rephrasing?'
+      'Hey, didn\'t catch that one. Can you try rephrasing?',
+      'Oof, sorry – I didn\'t understand that. Say \'help\' if you\'d like to know what I can do.'
     ]
     var phrase = helpPhrases[Math.floor(Math.random()*helpPhrases.length)]
     return this.say(phrase) // TODO Handle confusion better
+  }
+
+  this.entry = function(entry){
+    entry.userId = this.userId;
+    return Entry.add(entry)
   }
 
   // STATE MANAGEMENT
@@ -179,47 +188,6 @@ export function constructor(message) {
 /*
 
 
-  this.say = function(text){
-    return Messages.send({
-      userId: this.userId,
-      text: text
-    })
-  }
-
-  this.sayOne = function(phrases){
-    console.log('Saying one of:');
-    console.log(phrases);
-    var index = Math.floor(Math.random() * phrases.length);
-    var text = phrases[index];
-    return Messages.send({
-      userId: this.userId,
-      text: text
-    });
-  }
-
-  this.start = function(intent){
-    if(!intent){
-      console.log('No intent to start...')  // FIXME should this be handled with default intent?
-    }
-    this.intent = intent;
-    this.entities = {};
-    Paths.start(this.intent, this);
-  }
-
-  this.respond = function(intent){
-    this.intent = intent || this.intent;
-    Paths.respond(this.intent, this);
-  }
-
-  this.wait = function(intent, needed, entities){
-    this.intent = intent || this.intent;
-    return Context.set(this.userId, {
-      intent: this.intent,
-      needed: needed,
-      entities: entities
-    })
-  }
-
   this.choices = function(text, choices){
     var buttons = [];
     choices.forEach(function(choice, c){
@@ -261,35 +229,6 @@ export function constructor(message) {
         }
       }
     })
-  }
-
-  this.entry = function(entry){
-    entry.userId = this.userId;
-    return Entry.add(entry)
-  }
-
-  this.choose = function(branches, map){
-    if(!this.response.choice && map){
-      map.forEach(function(option, o){
-        if(this.entities[option.entity] == option.value){
-          return choices[option.choice];
-        }
-      })
-      return false;
-    } else if (!branches[this.response.choice]){
-      console.log('No branch found for ' + response.choice)
-      return false;
-    }
-    return choices[this.response.choice];
-  }
-
-  this.next = function(){
-    return new Promise((resolve, reject) => {
-        Context.clear(this.userId);
-        // get next best action;
-        resolve();
-      })
-      // choose next best option
   }
 
 */

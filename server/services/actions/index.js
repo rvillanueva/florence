@@ -2,11 +2,15 @@
 
 var Track = require('../track')
 import User from '../../api/user/user.model';
+var Checkup = require('../checkup')
 
 
 var actionRouter = {
   addTrack: function(bot, action) {
     return Track.add(bot, action.params)
+  },
+  startCheckup: function(bot, action) {
+    return Checkup.start(bot, action.params)
   }
 }
 
@@ -25,13 +29,13 @@ export function execute(bot) {
         resolve(bot)
       } else {
         var action = bot.loaded.step.actions[i];
-        if (action.action && typeof actionRouter[action.action] == 'function') {
+        if (action.type && typeof actionRouter[action.type] == 'function') {
           var newBot;
-          actionRouter[action.action](bot, action)
+          actionRouter[action.type](bot, action)
             .then(bot => next(bot))
             .catch(err => reject(err))
         } else {
-          console.log('Error: Unknown action ' + action.action);
+          console.log('Error: Unknown action ' + action.type);
           next(bot);
         }
       }

@@ -3,29 +3,34 @@
 import mongoose from 'mongoose';
 
 var MetricSchema = new mongoose.Schema({
-  aspectKey: String,
-  metricKey: String,
+  aspect: String,
+  metric: String,
   name: String,
   question: String,
   public: Boolean,
   ownerId: String,
   accepted: {
-    dataType: String, // Numeric, categorical, text
+    type: {
+      type: String
+    }, // Numeric, categorical, text
     // NUMERIC
     min: Number,
     max: Number,
     // CATEGORICAL
-    matched: String,
-    entity: String,
-    value: String,
+    categories: [{
+      matched: String,
+      entity: String,
+      value: String,
+      stored: String
+    }],
     // TEXT
     extracted: [{
       entity: String
     }]
   },
-  dependencies: [{
+  /*dependencies: [{
       metricId: String
-  }] // TODO Figure out how this works.
+  }] // TODO Figure out how this works.*/
 });
 
 export default mongoose.model('Metric', MetricSchema);
