@@ -39,9 +39,13 @@ export function constructor(message) {
   // RESPONSES
 
   this.say = function(text) {
-    return Messages.send({
-      userId: this.userId,
-      text: text
+    return new Promise((resolve, reject) => {
+      Messages.send({
+        userId: this.userId,
+        text: text
+      })
+      .then(() => resolve(this))
+      .catch(err => reject(err))
     })
   }
 

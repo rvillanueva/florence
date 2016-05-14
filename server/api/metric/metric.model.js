@@ -9,7 +9,7 @@ var MetricSchema = new mongoose.Schema({
   question: String,
   //public: Boolean,
   //ownerId: String,
-  accepted: {
+  validation: {
     type: {
       type: String
     }, // Numeric, categorical, text

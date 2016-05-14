@@ -5,6 +5,7 @@ import Metric from '../../api/metric/metric.model';
 
 export function run(bot) {
   return new Promise(function(resolve, reject) {
+    console.log('Receiving using checkin service...')
     if (bot.state.current.type !== 'checkup') {
       reject(new TypeError('Current step ' + bot.state.current.type + 'is not checkup.'))
     }
@@ -13,10 +14,13 @@ export function run(bot) {
     }
 
     var checkup = bot.state.current.checkup || {};
+    console.log('Parameters:')
+    console.log(checkup);
     if (checkup.query == 'measurement') {
       if (!checkup.metric || !checkup.aspect) {
         reject(new TypeError('For measurement query, need metric and aspect.'))
       } else {
+        console.log('Returning relevant metric...')
         Metric.findOne({
           $and:[{
             'aspect': bot.state.current.checkup.aspect
@@ -25,19 +29,24 @@ export function run(bot) {
           }]
         }).exec()
           .then(metric => {
-            if (!metric) {
-              reject(new TypeError('No metric found for key ' + checkup.metric))
-            } else {
-              console.log('Metric found:')
-              console.log(metric)
-              bot.cache.metric = metric;
-              return createCachedEntry(bot, metric)
-            }
+            return new Promise(function(resolve, reject) {
+              console.log('Returned data.')
+              if (!metric) {
+                reject(new TypeError('No metric found for key ' + checkup.metric))
+              } else {
+                console.log('Metric found:')
+                console.log(metric)
+                bot.cache.metric = metric;
+                resolve(bot);
+              }
+            })
           })
+          .then(bot => createCachedEntry(bot))
           .then(bot => handleMatched(bot))
           .then(bot => analyzeText(bot))
           .then(bot => handleUnmatched(bot))
           .then(bot => saveEntry(bot))
+          .then(bot => setNext(bot))
           .then(bot => resolve(bot))
           .catch(err => reject(err))
       }
@@ -49,34 +58,39 @@ export function run(bot) {
     // accept it or redirect remind and wait(wait)
     // if finished, end checkup
     // else continue to converse
-    resolve(bot)
   })
 
 }
 
-function createCachedEntry(bot, metric) {
+function createCachedEntry(bot) {
   return new Promise(function(resolve, reject) {
+    console.log('Creating cached entry...')
+    var metric = bot.cache.metric;
     bot.cache.entry = bot.cache.entry || {};
     bot.cache.entry.data = bot.cache.entry.data || {};
-    bot.cache.entry.data[metric.aspect] = bot.cache.entry[metric.aspect] || {};
-    bot.cache.entry.data[metric.aspect][metric.metric] = bot.cache.entry[metric.aspect][metric.metric] || {};
+    bot.cache.entry.data[metric.aspect] = bot.cache.entry.data[metric.aspect] || {};
+    bot.cache.entry.data[metric.aspect][metric.metric] = bot.cache.entry.data[metric.aspect][metric.metric] || {};
     bot.cache.entry.data[metric.aspect][metric.metric].unmatched = bot.cache.entry.data[metric.aspect][metric.metric].unmatched || [];
+    console.log('Cached entry created:')
+    console.log(bot.cache.entry)
     resolve(bot)
   })
 }
 
 // TODO add text analysis
 function analyzeText(bot) {
+  console.log('Analyzing text..')
   return new Promise(function(resolve, reject) {
     resolve(bot)
   })
 }
 
-function handleMatched(bot, metric) {
+function handleMatched(bot) {
   return new Promise(function(resolve, reject) {
+    console.log('Validating input for measurement...')
     var metric = bot.cache.metric;
-    Interpreter.matchMetricInput(bot)
-    .then(value => storeValue(bot, metric, value))
+    Interpreter.getMeasurementValue(bot)
+    .then(value => storeValue(bot, value))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
@@ -84,33 +98,43 @@ function handleMatched(bot, metric) {
 
 function handleUnmatched(bot) {
   return new Promise(function(resolve, reject) {
+    console.log('Handling data that didn\'t pass validation...')
+    var metric = bot.cache.metric;
     if (bot.cache.entry.data[metric.aspect][metric.metric].value) {
-      resolve(bot)
+      bot.say('Great, thanks so much.') // TODO Create bot.thanks function.
+     resolve(bot)
     } else {
+      console.log('Handling unmatched data.')
+      console.log(bot.cache.entry.data[metric.aspect][metric.metric]);
       bot.cache.entry.data[metric.aspect][metric.metric].unmatched.push({
         date: new Date(),
         text: bot.message.text
       })
       var string = '';
       var metric = bot.cache.metric;
-      if (metric.data.type == 'numerical') {
-        string = 'Try giving me a number.'
-      } else if (metric.data.type == 'categorical') {
-        string = 'Try typing something that matches one of the categories.'
+      if (metric.validation.type == 'number') {
+        string = ' It looks like we also need a number for this question, though.'
+      } else if (metric.validation.type == 'category') {
+        string = ' But it looks like we also need something that matches one of the categories.'
       }
-      bot.say('That wasn\'t I was expecting, but I\'ve stored it for future reference.')
-      bot.say(string);
-      resolve(bot);
+      bot.say('Thanks - I\'ve stored that for future reference.' + string)
+      bot.say(metric.question)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
     }
   })
 }
 
-function storeValue(bot, metric, value) {
+function storeValue(bot, value) {
   return new Promise(function(resolve, reject) {
-    if(value == false){
+    console.log('Storing value...')
+    var metric = bot.cache.metric;
+    if(!value){
+      console.log('No value stored...')
       resolve(bot);
     } else {
       bot.cache.entry.data[metric.aspect][metric.metric].value = value;
+      console.log('Value stored: ' + value)
       resolve(bot);
     }
   })
@@ -122,4 +146,14 @@ function saveEntry(bot){
     .then(() => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+function setNext(bot){
+  return new Promise(function(resolve, reject) {
+    bot.loaded.next = {
+      type: 'checkup'
+    }
+    resolve(bot);
+  })
+
 }

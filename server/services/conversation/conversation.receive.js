@@ -38,6 +38,7 @@ function receiveByType(bot){
 
 function receiveConversation(bot){
   return new Promise(function(resolve, reject){
+    console.log('Receiving conversation response...')
     Refs.getSteps(bot)
     .then(bot => Load.intentStep(bot))
     .then(bot => resolve(bot))
@@ -47,6 +48,7 @@ function receiveConversation(bot){
 
 function receiveCheckup(bot){
   return new Promise(function(resolve, reject){
+    console.log('Receiving checkup response...')
     Checkup.receive(bot)
     .then(bot => resolve(bot))
     .catch(err => reject(err))

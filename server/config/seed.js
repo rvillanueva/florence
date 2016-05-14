@@ -63,8 +63,8 @@ Metric.find({}).remove()
       public: true,
       timespan: 'point',
       question: 'How would you rate your mood right now on a scale of 1 to 10? (With 1 being the worst and 10 being the best.)',
-      accepted: {
-        dataType: 'numeric',
+      validation: {
+        type: 'number',
         min: 1,
         max: 10
       }
@@ -75,9 +75,9 @@ Metric.find({}).remove()
       timespan: 'point',
       public: true,
       question: 'What \'s making your mood worse?',
-      accepted: {
-        dataType: 'text',
-        extracted: [{
+      validation: {
+        type: 'text',
+        analyzed: [{
             entity: 'behaviors'
         }]
       }
@@ -88,9 +88,9 @@ Metric.find({}).remove()
       timespan: 'point',
       public: true,
       question: 'What \'s making your mood better?',
-      accepted: {
-        dataType: 'text',
-        extracted: [{
+      validation: {
+        type: 'text',
+        analyzed: [{
             entity: 'behaviors'
         }]
       }

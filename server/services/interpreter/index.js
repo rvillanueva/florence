@@ -58,23 +58,25 @@ export function getEntities(bot){
   })
 }
 
-export function matchMetricInput(bot, metric){
+export function getMeasurementValue(bot){
   return new Promise(function(resolve, reject){
     var metric = bot.cache.metric;
-    if(!metric){
-      reject(new TypeError('No metric provided.'))
-    } else {
-      if (metric.data.type == 'numerical') {
-        if(bot.cache.entities.number && bot.cache.entities.number.length > 0){
+    console.log(metric);
+    if(!metric || !metric.validation){
+      reject(new TypeError('No valid metric provided.'))
+    } else if (metric.validation.type == 'number') {
+      /*if(bot.cache.entities.number && bot.cache.entities.number.length > 0){
 
-        }
-      } else if (metric.data.type == 'categorical') {
-        // search through
-      } else if (metric.data.type == 'text') {
-        resolve(bot.message.text);
-      } else {
-        reject(new TypeError('Unknown metric data type ' + metric.data.type));
-      }
+      }*/
+      resolve(false)
+    } else if (metric.validation.type == 'category') {
+      // search through
+      resolve(false)
+    } else if (metric.validation.type == 'text') {
+      resolve(bot.message.text);
+    } else {
+      console.log('Unknown metric data type ' + metric.data.type)
+      reject(new TypeError('Unknown metric data type ' + metric.data.type));
     }
   })
 }

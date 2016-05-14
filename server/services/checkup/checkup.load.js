@@ -5,9 +5,9 @@ import Metric from '../../api/metric/metric.model';
 
 export function set(bot) {
   return new Promise(function(resolve, reject) {
-    console.log('Loading next checkin question...')
     var tracked;
     var entries;
+    console.log('Loading next checkin question...')
     getTracked(bot)
       .then(bot => getEntries(bot))
       .then(bot => chooseNextMeasurement(bot))
@@ -18,6 +18,7 @@ export function set(bot) {
       // Get latest entries
       // Check to see what needs to be entered
       // Load next metric needed
+
   })
 }
 
