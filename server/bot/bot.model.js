@@ -47,6 +47,16 @@ export function constructor(message) {
     })
   }
 
+  this.confused = function(){
+    var helpPhrases = [
+      'Uh oh, not sure I understood that one.',
+      'Sorry, I\'m still learning... can you try again?',
+      'Hey, didn\'t catch that one. Can you try rephrasing?'
+    ]
+    var phrase = helpPhrases[Math.floor(Math.random()*helpPhrases.length)]
+    return this.say(phrase) // TODO Handle confusion better
+  }
+
   // STATE MANAGEMENT
 
   this.getState = function() {

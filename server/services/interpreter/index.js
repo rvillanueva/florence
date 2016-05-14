@@ -10,7 +10,9 @@ export function getIntents(bot){
     Intent.find({}).exec()
     .then(intents => {
       intents.forEach(function(intent, i){
+        // Check if rules match
         var found = match(bot.message.text, intent);
+        // If no rule matched, also check if the intent was returned from NLP
         if(!found){
           bot.state.entities.intents.forEach(function(parsed, p){
             if(parsed == intent.key){
@@ -28,10 +30,6 @@ export function getIntents(bot){
       resolve(bot);
     })
   })
-  // return intent ids that match
-  // get all intents that are relevant (global and match ids)
-  // cycle through and match by rule first
-  // then run through wit to see if there's a match by key
 }
 
 // Match against given rules

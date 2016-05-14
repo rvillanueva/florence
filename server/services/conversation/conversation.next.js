@@ -2,20 +2,17 @@
 
 var Promise = require('bluebird');
 
-export function hasQueue(bot){
-  if(bot.state.queue && bot.state.queue.length > 0){
-    return true
-  }
-
-  if (bot.state.diverted && bot.state.diverted.length > 0){
-    return true;
-  }
-
-  return false;
-}
-
 export function run(bot){
   return new Promise(function(resolve, reject){
-    resolve(bot)
+    bot.state.step.id = null;
+
+    if(bot.state.step.diverted && bot.state.step.diverted.length > 0){
+      bot.revert()
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      bot.state.status = 'done';
+      resolve(bot);
+    }
   })
 }

@@ -13,54 +13,48 @@ export function run(bot) {
     .then(bot => Refs.get(bot))
     .then(bot => Refs.filterByCondition(bot))
     .then(bot => Refs.convertToSteps(bot))
-    .then(bot => Sort.getIntentSteps(bot))
-    .then(bot => loadStepByIntent(bot))
+    .then(bot => Sort.stepsByType(bot))
+    .then(bot => Sort.byIntentType(bot))
+    .then(bot => load(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
 }
 
-function loadStepByIntent(bot){
+
+function load(bot){
   return new Promise(function(resolve, reject){
-    var matchedSteps = [];
-    var fallbackSteps = [];
-    var globalIntents = [];
-    bot.cache.intents.forEach(function(intent, i){
-      bot.cache.steps.forEach(function(step, s){
-        if (step.intentId == intent._id){
-          matchedSteps.push(step);
-        }
-      })
-      if(intent.global && intent.conversationId){
-        globalIntents.push(intent)
-      }
-    })
-    console.log(bot.cache.intents);
-    // Cycle through intents and see if any match the steps
-    bot.state.status = 'conversing';
-    if(matchedSteps.length > 0){ // TODO what if there are more than one matched step?
-      bot.setStep(matchedSteps[0]._id)
+    console.log('Loading step...')
+
+    // TODO what if there are more than one matched step?
+    if(bot.cache.sortedIntents.matched.length > 0){
+      bot.state.status = 'conversing';
+      bot.setStep(bot.cache.sortedIntents.matched[0]._id)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-    } else if (globalIntents.length > 0){   // Otherwise, if a global intent matches, divert. TODO only do this if urgent
-      Conversation.getById(globalIntents[0].conversationId)
+
+      // Otherwise, if a global intent matches, divert. TODO only do this if urgent
+    } else if (bot.cache.sortedIntents.global.length > 0){
+      bot.state.status = 'conversing';
+      Conversation.getById(bot.cache.sortedIntents.global[0].conversationId)
       .then(convo => bot.divert(convo))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-    } else if (fallbackSteps.length > 0){   // Otherwise, use fallback
-      bot.setStep(fallbackSteps[0]._id)
+
+      // Otherwise, use fallback
+    } else if (bot.cache.sortedIntents.fallback.length > 0){
+      bot.state.status = 'conversing';
+      bot.setStep(bot.cache.sortedIntents.fallback[0]._id)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-    } else { // otherwise be confused
+
+      // Otherwise be confused
+    } else {
       bot.state.status = 'waiting';
-      var helpPhrases = [
-        'Uh oh, not sure I understood that one.',
-        'Sorry, I\'m still learning... can you try again?',
-        'Hey, didn\'t catch that one. Can you try rephrasing?'
-      ]
-      var phrase = helpPhrases[Math.floor(Math.random()*helpPhrases.length)]
-      bot.say(phrase) // TODO Handle confusion better
-      resolve(bot)
+      bot.confused()
+      .then(() => resolve(bot))
+      .catch(err => reject(err))
+
     }
   })
 }

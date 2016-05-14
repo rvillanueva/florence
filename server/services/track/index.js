@@ -7,11 +7,13 @@ import User from '../../api/user/user.model';
 // Add item to track. Needs aspect and frequency
 export function add(bot, params){
   return new Promise(function(resolve, reject){
-    console.log('Adding track...')
 
     if(!params.aspect || !params.metric){
       reject('Need aspect and metric.')
     }
+
+    console.log('Adding track ' + params.aspect + '.' + params.metric + '...')
+
 
     bot.getUser()
     .then(user => {
