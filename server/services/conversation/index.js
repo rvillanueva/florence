@@ -43,6 +43,7 @@ export function route(bot){
 function clearCache(bot){
   return new Promise(function(resolve, reject) {
     bot.cache = {};
+    bot.loaded.next = null;
     resolve(bot);
   })
 }

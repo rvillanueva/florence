@@ -26,9 +26,63 @@ export function run(bot) {
 function conversationReceive(bot){
   return new Promise(function(resolve, reject){
     Refs.getSteps(bot)
-    .then(bot => Load.intent(bot))
-    .then(bot => Load.finalize(bot))
+    .then(bot => Load.intentStep(bot))
+    .then(bot => handleGlobalIntent(bot))
+    .then(bot => handleConfusion(bot))
+    .then(bot => Load.set(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
+  })
+}
+
+function handleGlobalIntent(bot){
+  return new Promise(function(resolve, reject){
+    console.log('Handling global intent...')
+    var globalIntents = [];
+    if(bot.loaded.next && !bot.loaded.next.fallback){
+      resolve(bot)
+    } else {
+      bot.cache.intents.forEach(function(intent, i) {
+        if (intent.global && intent.conversationId) {
+          globalIntents.push(intent);
+        }
+      })
+      if(globalIntents.length > 0){
+        Conversation.getById(globalIntents[0].conversationId)
+          .then(convo => {
+            bot.loaded.conversation = convo;
+            bot.loaded.next = {
+              type: 'diversion',
+              stepId: convo.next[0].stepId
+            }
+            resolve(bot)
+          })
+          .catch(err => reject(err))
+      } else {
+        resolve(bot);
+      }
+    }
+
+  })
+
+}
+
+function handleConfusion(bot){
+  return new Promise(function(resolve, reject){
+    console.log('Handling any confusion...')
+    if(bot.loaded.next){
+      resolve(bot)
+    } else {
+      if(bot.state.status == 'receiving'){
+        bot.loaded.next = {
+          type: 'confused'
+        }
+      } else {
+        bot.loaded.next = {
+          type: 'next'
+        }
+      }
+      resolve(bot)
+    }
   })
 }

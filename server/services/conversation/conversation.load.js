@@ -2,7 +2,7 @@
 var Promise = require('bluebird');
 var Conversation = require('../../api/conversation/conversation.service');
 
-export function finalize(bot){
+export function set(bot){
   return new Promise(function(resolve, reject){
     console.log('Loading step...')
     console.log(bot.loaded.next);
@@ -69,7 +69,7 @@ export function step(bot) {
       bot.loaded.next = { type: 'wait'};
       resolve(bot);
     } else {
-      bot.loaded.next = { type: 'next' };
+      bot.loaded.next = null;
       resolve(bot);
     }
 
@@ -97,15 +97,13 @@ export function selectStep(bot, steps) {
 }
 
 
-export function intent(bot) {
+export function intentStep(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Sorting intents by type...')
-    console.log(bot.cache)
     var steps = {
       local: [],
       fallback: []
     }
-    var globalIntents = [];
 
     bot.cache.intents.forEach(function(intent, i) {
       bot.cache.steps.forEach(function(step, s) {
@@ -113,9 +111,6 @@ export function intent(bot) {
           steps.local.push(step);
         }
       })
-      if (intent.global && intent.conversationId) {
-        globalIntents.push(intent);
-      }
     })
     if (steps.local.length > 0) {
       bot.loaded.next = {
@@ -124,27 +119,16 @@ export function intent(bot) {
       }
       bot.loaded.step = steps.local[0];
       resolve(bot)
-    } else if (globalIntents.length > 0) {
-      Conversation.getById(globalIntents[0].conversationId)
-        .then(convo => {
-          bot.loaded.conversation = convo;
-          bot.loaded.next = {
-            type: 'diversion',
-            stepId: convo.next[0].stepId
-          }
-          resolve(bot)
-        })
-        .catch(err => reject(err))
-
     } else if (steps.fallback.length > 0) {
       bot.loaded.next = {
         type: 'step',
+        fallback: true,
         stepId: steps.fallback[0]._id
       }
       bot.loaded.step = steps.fallback[0];
       resolve(bot)
     } else {
-      bot.loaded.next = {type: 'confused'};
+      bot.loaded.next = null;
       resolve(bot)
     }
     // Cycle through intents and see if any match the steps

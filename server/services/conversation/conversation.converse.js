@@ -9,7 +9,7 @@ export function run(bot){
     executeStep(bot)
       .then(bot => Refs.getSteps(bot))
       .then(bot => Load.step(bot))
-      .then(bot => Load.finalize(bot))
+      .then(bot => Load.set(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
   })
