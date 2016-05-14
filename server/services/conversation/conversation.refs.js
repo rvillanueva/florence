@@ -2,6 +2,16 @@
 
 var Promise = require('bluebird');
 
+export function getSteps(bot) {
+  return new Promise(function(resolve, reject) {
+    get(bot)
+      .then(bot => filterByCondition(bot))
+      .then(bot => convertToSteps(bot))
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+  })
+}
+
 export function get(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Getting refs...')

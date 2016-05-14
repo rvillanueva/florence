@@ -24,6 +24,7 @@ export function route(bot){
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting' || bot.state.status == 'done'){
       // End loop
+      console.log('Ending loop...')
       bot.updateState()
       .then(bot => resolve(bot))
       .then(err => reject(err))

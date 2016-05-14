@@ -7,6 +7,13 @@ import {Schema} from 'mongoose';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
 
+var LoadableSchema = new Schema({
+  type: {
+    type: String
+  },
+  stepId: String,
+})
+
 var UserSchema = new Schema({
   firstName: String, // Need to fix name virtual return
   lastName: String,
@@ -36,16 +43,8 @@ var UserSchema = new Schema({
   },
   state: {
     status: String,
-    checkup: {
-      active: Boolean
-    },
-    step: {
-      id: String,
-      diverted: [{
-
-          stepId: String
-      }]
-    },
+    current: LoadableSchema,
+    queued: [LoadableSchema],
     received: {
       intent: String,
       entities: Object,

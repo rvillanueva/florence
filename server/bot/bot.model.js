@@ -14,11 +14,11 @@ export function constructor(message) {
     checkup: {
       active: true
     },
-    step: {
-      id: '',
-      intents: [],
-      diverted: []
+    current: {
+      type: null,
+      stepId: null
     },
+    queued: [],
     received: {
       intent: null,
       entities: {},
@@ -27,7 +27,12 @@ export function constructor(message) {
   }
   this.loaded = {
     conversation: false,
-    step: false
+    step: false,
+    type: false,
+    next: {
+      type: null, // step, checkup,
+      stepId: null
+    }
   }
   this.cache = {};
 
@@ -110,15 +115,16 @@ export function constructor(message) {
 
   this.getStep = function() {
     return new Promise((resolve, reject) => {
-      if (this.state.step.id) {
-        Conversation.getByStepId(this.state.step.id, this.loaded.conversation)
+      this.state.current = this.state.current || {};
+      if (this.state.current.stepId) {
+        Conversation.getByStepId(this.state.current.stepId, this.loaded.conversation)
           .then(convo => {
             this.loaded.conversation = convo;
-            return Conversation.getStep(this.state.step.id, this.loaded.conversation)
+            return Conversation.getStep(this.state.current.stepId, this.loaded.conversation)
           })
           .then(step => {
             this.loaded.step = step;
-            console.log('Step set to ' + this.loaded.step._id);
+            console.log('Step ' + this.loaded.step._id + ' loaded');
             resolve(this)
           })
           .catch(err => reject(err))
@@ -128,32 +134,25 @@ export function constructor(message) {
     })
   }
 
-  this.setStep = function(stepId) {
+  this.set = function(loadable) {
     return new Promise((resolve, reject) => {
-      console.log('Setting step to ' + stepId);
-      this.state.step.id = stepId;
+      console.log('Setting to ' + loadable.type);
+      this.state.current = loadable;
       this.getStep()
         .then(() => resolve(this))
         .catch(err => reject(err))
     })
   }
 
-  this.divert = function(convo){
+  this.divert = function(loadable){
     return new Promise((resolve, reject) => {
-      this.loaded.conversation = convo;
-      console.log(convo);
-      this.state.step.diverted = this.state.step.diverted || [];
-
-      // Get conversation
-      if (this.state.step.id) {
-        this.state.step.diverted.push({
-          stepId: this.state.step.id
-        });
-        this.state.step.id = null;
+      console.log('Diverting to ' + loadable.type);
+      this.state.queued = this.state.queued || [];
+      if (this.state.current) {
+        this.state.queued.push(this.state.current);
+        this.state.current = {};
       }
-      // Set active step to first conversation step
-      console.log('Setting active step to the first conversation step...');
-      this.setStep(this.loaded.conversation.next[0].refId || this.loaded.conversation.steps[0]._id)
+      this.set(loadable)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     })
@@ -161,11 +160,11 @@ export function constructor(message) {
 
   this.revert = function(){
     return new Promise((resolve, reject) => {
-      this.state.step.diverted = this.state.step.diverted || [];
-      if(!this.state.step.id && this.state.diverted.length > 0){
-        this.setStep(this.state.diverted[0].stepId)
+      this.state.queued = this.state.queued || [];
+      if(!this.state.current && this.state.queued.length > 0){
+        this.set(this.state.queued[0])
         .then(() => {
-          this.state.diverted.splice(0,1);
+          this.state.queued.splice(0,1);
           resolve(this);
         })
       }
