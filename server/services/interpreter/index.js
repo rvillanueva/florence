@@ -57,3 +57,24 @@ export function getEntities(bot){
       .catch(err => reject(err))
   })
 }
+
+export function matchMetricInput(bot, metric){
+  return new Promise(function(resolve, reject){
+    var metric = bot.cache.metric;
+    if(!metric){
+      reject(new TypeError('No metric provided.'))
+    } else {
+      if (metric.data.type == 'numerical') {
+        if(bot.cache.entities.number){
+
+        }
+      } else if (metric.data.type == 'categorical') {
+        // search through
+      } else if (metric.data.type == 'text') {
+        resolve(bot.message.text);
+      } else {
+        reject(new TypeError('Unknown metric data type ' + metric.data.type));
+      }
+    }
+  })
+}

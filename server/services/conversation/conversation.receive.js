@@ -11,25 +11,43 @@ export function run(bot) {
     var intents;
     Interpreter.getEntities(bot)
     .then(bot => Interpreter.getIntents(bot))
-    .then(bot => {
-      if(bot.state.checkup && bot.state.checkup.active){
-        return Checkup.receive(bot);
-      } else {
-        return conversationReceive(bot);
-      }
-    })
+    .then(bot => receiveByType(bot))
+    .then(bot => handleGlobalIntent(bot))
+    .then(bot => handleConfusion(bot))
+    .then(bot => Load.set(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
 }
 
-function conversationReceive(bot){
+function receiveByType(bot){
+  return new Promise(function(resolve, reject){
+    if(bot.state.current.type == 'step'){
+      receiveConversation(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else if(bot.state.current.type == 'checkup'){
+      receiveCheckup(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      reject(new TypeError('Unrecognized current loadable type ' + bot.state.current.type));
+    }
+  })
+}
+
+function receiveConversation(bot){
   return new Promise(function(resolve, reject){
     Refs.getSteps(bot)
     .then(bot => Load.intentStep(bot))
-    .then(bot => handleGlobalIntent(bot))
-    .then(bot => handleConfusion(bot))
-    .then(bot => Load.set(bot))
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
+  })
+}
+
+function receiveCheckup(bot){
+  return new Promise(function(resolve, reject){
+    Checkup.receive(bot)
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
@@ -62,9 +80,7 @@ function handleGlobalIntent(bot){
         resolve(bot);
       }
     }
-
   })
-
 }
 
 function handleConfusion(bot){

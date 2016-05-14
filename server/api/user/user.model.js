@@ -12,6 +12,11 @@ var LoadableSchema = new Schema({
     type: String
   },
   stepId: String,
+  checkup: {
+    query: String,
+    aspect: String,
+    metric: String
+  }
 })
 
 var UserSchema = new Schema({

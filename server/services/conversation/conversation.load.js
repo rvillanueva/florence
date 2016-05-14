@@ -23,6 +23,9 @@ export function set(bot){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
 
+    } else if (bot.loaded.next.type == 'checkup'){
+      bot.state.status = 'checkup';
+      resolve(bot);
     } else if(bot.loaded.next.type == 'next'){
       bot.state.status = 'done'; // TODO should really check for next step
       bot.state.current = {};
@@ -40,7 +43,7 @@ export function set(bot){
       .then(() => resolve(bot))
       .catch(err => reject(err))
     } else {
-      reject(new TypeError('Unrecognize loaded type ' + bot.loaded.type));
+      reject(new TypeError('Unrecognized loaded type ' + bot.loaded.type));
     }
   })
 }
@@ -100,7 +103,7 @@ export function selectStep(bot, steps) {
 export function intentStep(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Sorting intents by type...')
-    var steps = {
+    var sorted = {
       local: [],
       fallback: []
     }
@@ -108,25 +111,29 @@ export function intentStep(bot) {
     bot.cache.intents.forEach(function(intent, i) {
       bot.cache.steps.forEach(function(step, s) {
         if (step.intentId == intent._id) {
-          steps.local.push(step);
+          if(step.type == 'fallback'){
+            sorted.fallback.push(step);
+          } else {
+            sorted.local.push(step);
+          }
         }
       })
     })
-    if (steps.local.length > 0) {
+    if (sorted.local.length > 0) {
       bot.loaded.next = {
         type: 'step',
-        stepId: steps.local[0]._id
+        stepId: sorted.local[0]._id
       }
-      bot.loaded.step = steps.local[0];
+      bot.loaded.step = sorted.local[0];
       resolve(bot)
-    } else if (steps.fallback.length > 0) {
+    } else if (sorted.fallback.length > 0) {
       bot.loaded.next = {
         type: 'step',
         fallback: true,
-        stepId: steps.fallback[0]._id
+        stepId: sorted.fallback[0]._id
       }
-      bot.loaded.step = steps.fallback[0];
-      resolve(bot)
+      bot.loaded.step = sorted.fallback[0];
+      resolve(bot);
     } else {
       bot.loaded.next = null;
       resolve(bot)

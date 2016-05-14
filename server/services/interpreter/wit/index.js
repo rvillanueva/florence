@@ -45,7 +45,7 @@ function attachEntities(bot, response){
       for (var property in outcome.entities) {
         if (outcome.entities.hasOwnProperty(property)) {
             if(property !== 'intent' && !bot.state.entities[property]){ // ?? Right now won't overwrite current entities
-              bot.state.entities[property] = outcome.entities[property][0].value;
+              bot.state.entities[property] = outcome.entities[property];
             }
         }
       }

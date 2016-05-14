@@ -158,15 +158,37 @@ export function constructor(message) {
     })
   }
 
-  this.revert = function(){
+  this.queueNext = function(loadable){
     return new Promise((resolve, reject) => {
       this.state.queued = this.state.queued || [];
-      if(!this.state.current && this.state.queued.length > 0){
+      this.state.queued.push(loadable);
+      resolve(this);
+    })
+  }
+
+  this.queueNext = function(loadable){
+    return new Promise((resolve, reject) => {
+      this.state.queued = this.state.queued || [];
+      this.state.queued.push(loadable);
+      resolve(this);
+    })
+  }
+
+  this.next = function(){
+    return new Promise((resolve, reject) => {
+      this.state.queued = this.state.queued || [];
+      if(this.state.current){
+        reject('Can\'t proceed to next in queue with active step.')
+      } else if(this.state.queued.length > 0){
         this.set(this.state.queued[0])
         .then(() => {
           this.state.queued.splice(0,1);
           resolve(this);
         })
+      } else {
+        console.log('Nothing left in queue.')
+        bot.state.status = 'done';
+        resolve(this)
       }
     })
   }
