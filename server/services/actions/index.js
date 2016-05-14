@@ -9,8 +9,8 @@ var actionRouter = {
   addTrack: function(bot, action) {
     return Track.add(bot, action.params)
   },
-  startCheckup: function(bot, action) {
-    return Checkup.start(bot, action.params)
+  queueCheckin: function(bot, action) {
+    return Checkup.queue(bot, action.params)
   }
 }
 

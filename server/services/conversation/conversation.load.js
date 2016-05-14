@@ -7,7 +7,12 @@ export function set(bot){
     console.log('Loading step...')
     console.log(bot.loaded.next);
     // TODO what if there are more than one matched step?
-    if(bot.loaded.next.type == 'step'){
+    if(!bot.loaded.next || bot.loaded.next.type == 'next'){
+        bot.state.status = 'next';
+        bot.state.current = null;
+        resolve(bot);
+
+    } else if(bot.loaded.next.type == 'step'){
       bot.state.status = 'conversing';
       bot.set(bot.loaded.next)
       .then(bot => resolve(bot))
@@ -25,11 +30,9 @@ export function set(bot){
 
     } else if (bot.loaded.next.type == 'checkup'){
       bot.state.status = 'checkup';
-      resolve(bot);
-    } else if(bot.loaded.next.type == 'next'){
-      bot.state.status = 'done'; // TODO should really check for next step
-      bot.state.current = {};
-      resolve(bot);
+      bot.set(bot.loaded.next)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
     } else if (bot.loaded.next.type == 'wait'){
       bot.state.status = 'waiting';
       resolve(bot)

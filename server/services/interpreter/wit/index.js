@@ -34,22 +34,8 @@ export function getEntities(bot){
 
 function attachEntities(bot, response){
   return new Promise(function(resolve, reject){
-    bot.state.entities = bot.cache.entities || {};
-    bot.state.entities.intents = [];
-    response.outcomes.forEach(function(outcome, o){
-      if(outcome.entities.intent){
-        outcome.entities.intent.forEach(function(intent, i){
-          bot.state.entities.intents.push(intent.value);
-        })
-      }
-      for (var property in outcome.entities) {
-        if (outcome.entities.hasOwnProperty(property)) {
-            if(property !== 'intent' && !bot.state.entities[property]){ // ?? Right now won't overwrite current entities
-              bot.state.entities[property] = outcome.entities[property];
-            }
-        }
-      }
-    })
+    bot.cache.entities = response.outcomes[0].entities;
+    bot.state.entities = bot.cache.entities;
     resolve(bot);
   })
 }

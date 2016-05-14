@@ -22,13 +22,16 @@ var router = {
 
 export function route(bot){
   return new Promise(function(resolve, reject) {
-    if (bot.state.status == 'waiting' || bot.state.status == 'done'){
+    console.log('Routing...')
+    if(!bot.state.status){
+      reject(new TypeError('No bot status available...'))
+    } else if (bot.state.status == 'waiting' || bot.state.status == 'done'){
       // End loop
       console.log('Ending loop...')
       bot.updateState()
       .then(bot => resolve(bot))
       .then(err => reject(err))
-    } else if (bot.state.status && typeof router[bot.state.status] == 'function'){
+    } else if (typeof router[bot.state.status] == 'function'){
       clearCache(bot)
       .then(bot => router[bot.state.status](bot))
       .then(bot => route(bot))

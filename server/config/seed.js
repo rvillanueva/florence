@@ -71,6 +71,19 @@ Metric.find({}).remove()
     },
     {
       aspect: 'mood',
+      metric: 'triggersNegative',
+      timespan: 'point',
+      public: true,
+      question: 'What \'s making your mood worse?',
+      accepted: {
+        dataType: 'text',
+        extracted: [{
+            entity: 'behaviors'
+        }]
+      }
+    },
+    {
+      aspect: 'mood',
       metric: 'triggersPositive',
       timespan: 'point',
       public: true,
@@ -188,6 +201,11 @@ Conversation.find({}).remove()
     }, {
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f884'),
       type: 'say',
+      actions:[
+        {
+          type: 'queueCheckin'
+        }
+      ],
       text: 'Great! Let\'s get started.',
       next: [],
     }, {

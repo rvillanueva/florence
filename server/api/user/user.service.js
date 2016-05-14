@@ -5,7 +5,7 @@ var request = require('request');
 var Conversation = require('../conversation/conversation.service');
 
 export function getUserByMessengerId(messengerId) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     User.findOne({
         'messenger.id': messengerId
       }, '_id').exec()
@@ -52,7 +52,7 @@ export function updateFbProfile(user) {
         access_token: process.env.FB_PAGE_TOKEN
       }
     }
-    request.get(options, function(err, response, body) {
+    request.get(options, (err, response, body) => {
       if(err){
         reject(err);
       }

@@ -116,7 +116,10 @@ export function constructor(message) {
   this.getStep = function() {
     return new Promise((resolve, reject) => {
       this.state.current = this.state.current || {};
-      if (this.state.current.stepId) {
+      console.log('Getting step...')
+      console.log(this.state.current);
+      // TODO fix when it's not a step type
+      if (this.state.current.type == 'step') {
         Conversation.getByStepId(this.state.current.stepId, this.loaded.conversation)
           .then(convo => {
             this.loaded.conversation = convo;
@@ -128,8 +131,14 @@ export function constructor(message) {
             resolve(this)
           })
           .catch(err => reject(err))
-      } else {
+      } else if (this.state.current.type == 'checkup'){
+        console.log('Setting status to checkup...')
+        this.state.status = 'checkup';
         resolve(this);
+      } else if(!this.state.current.type){
+        resolve(this);
+      } else {
+        reject(new TypeError('Unrecognized current step type.'));
       }
     })
   }

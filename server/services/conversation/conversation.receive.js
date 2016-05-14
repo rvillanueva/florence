@@ -22,16 +22,16 @@ export function run(bot) {
 
 function receiveByType(bot){
   return new Promise(function(resolve, reject){
-    if(bot.state.current.type == 'step'){
-      receiveConversation(bot)
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
-    } else if(bot.state.current.type == 'checkup'){
+    console.log('Receiving by type...')
+    console.log(bot.state.current)
+    if(bot.state.current && bot.state.current.type == 'checkup'){
       receiveCheckup(bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
-      reject(new TypeError('Unrecognized current loadable type ' + bot.state.current.type));
+      receiveConversation(bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
     }
   })
 }

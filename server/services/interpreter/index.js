@@ -13,9 +13,9 @@ export function getIntents(bot){
         // Check if rules match
         var found = match(bot.message.text, intent);
         // If no rule matched, also check if the intent was returned from NLP
-        if(!found){
-          bot.state.entities.intents.forEach(function(parsed, p){
-            if(parsed == intent.key){
+        if(!found && bot.state.entities.intent){
+          bot.state.entities.intent.forEach(function(parsed, p){
+            if(parsed.value == intent.key){
               found = true;
             }
           })
@@ -65,7 +65,7 @@ export function matchMetricInput(bot, metric){
       reject(new TypeError('No metric provided.'))
     } else {
       if (metric.data.type == 'numerical') {
-        if(bot.cache.entities.number){
+        if(bot.cache.entities.number && bot.cache.entities.number.length > 0){
 
         }
       } else if (metric.data.type == 'categorical') {

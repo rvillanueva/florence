@@ -5,10 +5,10 @@ import mongoose from 'mongoose';
 var MetricSchema = new mongoose.Schema({
   aspect: String,
   metric: String,
-  name: String,
+  //name: String,
   question: String,
-  public: Boolean,
-  ownerId: String,
+  //public: Boolean,
+  //ownerId: String,
   accepted: {
     type: {
       type: String

@@ -2,6 +2,48 @@
 import Entry from '../../api/entry/entry.model';
 var moment = require('moment');
 
+export function add(entry) {
+  return new Promise((resolve, reject) => {
+    var expiration = moment().subtract(1, 'hours').toDate();
+    if (!entry.userId) {
+      reject('UserId required for entry.')
+    }
+    console.log('Creating entry:');
+    console.log(entry);
+    Entry.find({
+        date: {
+          "$gt": expiration
+        },
+        userId: entry.userId
+      }).sort('date').exec()
+      .then(entries => {
+        if (!entries || entries.length == 0) {
+          addNew(entry)
+            .then(res => resolve(res))
+            .catch(err => reject(err))
+        } else {
+          resolveEntries(entries[0], entry)
+            .then(res => resolve(res))
+            .catch(err => reject(err))
+        }
+      })
+  })
+}
+
+export function getDay(bot) {
+  return new Promise((resolve, reject) => {
+    var earliest = moment().subtract(1, 'hours').toDate();
+    Entry.find({
+        date: {
+          "$gt": earliest
+        },
+        userId: bot.userId
+      }).sort('date').exec()
+      .then(entries => resolve(entries))
+      .catch(err => reject(err))
+  })
+}
+
 export function addNew(entry) {
   return new Promise((resolve, reject) => {
     var newEntry = new Entry(entry);
@@ -36,47 +78,19 @@ function updateTracking(entry) {
   return new Promise((resolve, reject) => {
     // Cycle through each aspect
     User.findById(entry.userId).exec()
-    .then(user => {
-      for (var aspect in entry) {
-        if (entry.hasOwnProperty(aspect)) {
-          // Cycle through each metric
-          for (var metric in entry[aspect]) {
-            if (entry[aspect].hasOwnProperty(metric)) {
-              user.tracked = user.tracked || {};
-              user.tracked[aspect] = user.tracked[aspect] || {};
-              user.tracked[aspect][metric] = user.tracked[aspect][metric] || {};
-              user.tracked[aspect][metric].updated = new Date();
+      .then(user => {
+        for (var aspect in entry) {
+          if (entry.hasOwnProperty(aspect)) {
+            // Cycle through each metric
+            for (var metric in entry[aspect]) {
+              if (entry[aspect].hasOwnProperty(metric)) {
+                user.tracked = user.tracked || {};
+                user.tracked[aspect] = user.tracked[aspect] || {};
+                user.tracked[aspect][metric] = user.tracked[aspect][metric] || {};
+                user.tracked[aspect][metric].updated = new Date();
+              }
             }
           }
-        }
-      }
-    })
-  })
-}
-
-export function add(entry) {
-  return new Promise((resolve, reject) => {
-    var expiration = moment().subtract(1, 'hours').toDate();
-    if (!entry.userId) {
-      reject('UserId required for entry.')
-    }
-    console.log('Creating entry:');
-    console.log(entry);
-    Entry.find({
-        date: {
-          "$gt": expiration
-        },
-        userId: entry.userId
-      }).sort('added').exec()
-      .then(entries => {
-        if (!entries || entries.length == 0) {
-          addNew(entry)
-            .then(res => resolve(res))
-            .catch(err => reject(err))
-        } else {
-          resolveEntries(entries[0], entry)
-            .then(res => resolve(res))
-            .catch(err => reject(err))
         }
       })
   })
