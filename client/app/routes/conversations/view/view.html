@@ -8,6 +8,9 @@
     <div class="col-md-12">
       <div ng-repeat="ref in $ctrl.conversation.next" ng-include="'stepTree'">
       </div>
+      <div ng-if="!$ctrl.conversation.next || $ctrl.conversation.next.length == 0">
+        No steps in this conversation. <a href="#">Try adding one.</a>
+      </div>
     </div>
   </div>
 </div>
@@ -25,21 +28,21 @@
           <span ng-show="$ctrl.map[ref.stepId].type !== 'fallback' && $ctrl.map[ref.stepId].type !== 'intent' && $ctrl.map[ref.stepId].type !== 'say'"><i style="color:red">error: unknown step type</i></span>
         </a>
       <span ng-show="$ctrl.map[ref.stepId].actions.length > 0">&nbsp;&nbsp;<i class="fa fa-bolt" style="color: rgb(219, 219, 219)"></i></span>
-
         <span class="convo-dropdown" uib-dropdown>
           &nbsp;&nbsp;&nbsp;<a href="#" uib-dropdown-toggle><i class="fa fa-angle-down" style="font-size: 1.4em"></i></a>
           <ul class="dropdown-menu dropdown-menu-small" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+            <li role="menuitem"><a href="#">+ Reference</a></li>
             <li role="menuitem"><a href="#">+ Say</a></li>
             <li role="menuitem"><a href="#">+ Intent</a></li>
             <li role="menuitem"><a href="#">+ Fallback</a></li>
             <li role="menuitem"><a href="#">Move</a></li>
             <li class="divider"></li>
-            <li role="menuitem"><a href="#" class="dropdown-danger-item">Delete</a></li>
+            <li role="menuitem"><a href="#" class="dropdown-danger-item">Remove Reference</a></li>
           </ul>
         </span>
       </div>
     </div>
-    <div ng-if="$ctrl.map[ref.stepId].next && $ctrl.map[ref.stepId].next.length > 0" ng-hide="hidden">
+    <div ng-if="$ctrl.map[ref.stepId].next && $ctrl.map[ref.stepId].next.length > 0 && !hidden">
       <div class="convo-line-indented" ng-repeat="ref in $ctrl.map[ref.stepId].next" ng-include="'stepTree'">
       </div>
     </div>

@@ -5,10 +5,12 @@ class AspectsComponent {
   constructor($http) {
     this.$http = $http;
     this.aspects = [];
+    this.getAspects();
   }
   getAspects(){
-    this.$http.get('api/aspects').then(aspects => {
+    this.$http.get('/api/aspects').success(aspects => {
       this.aspects = aspects;
+      console.log(aspects);
     })
   }
 }

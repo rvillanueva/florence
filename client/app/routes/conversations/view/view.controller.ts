@@ -69,3 +69,11 @@
     controller: ConversationViewComponent
   });
 })();
+
+angular.module('riverApp')
+  .controller('ConversationLineController', function($scope){
+    $scope.hidden = true;
+    $scope.toggleHidden = function(){
+      $scope.hidden = !$scope.hidden;
+    }
+  });

@@ -7,12 +7,3 @@ angular.module('riverApp')
   });
 
 })();
-
-
-angular.module('riverApp')
-  .controller('ConversationLineController', function($scope){
-    $scope.hidden = false;
-    $scope.toggleHidden = function(){
-      $scope.hidden = !$scope.hidden;
-    }
-  });

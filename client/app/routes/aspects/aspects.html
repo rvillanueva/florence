@@ -1,16 +1,16 @@
 <div class="aspects-page">
   <div class="container">
     <h2>Aspects</h2>
-    <table>
+    <table class="table">
       <thead>
-        <td>Aspect</td>
-        <td>Type</td>
-        <td>_id</td>
+        <th>Aspect</th>
+        <th>Key</th>
+        <th>Type</th>
       </thead>
       <tr ng-repeat="aspect in $ctrl.aspects">
         <td>{{aspect.name}}</td>
+        <td>{{aspect.key}}</td>
         <td>{{aspect.type}}</td>
-        <td>{{aspect._id}}</td>
       </tr>
     </table>
   </div>

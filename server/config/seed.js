@@ -38,15 +38,15 @@ Aspect.find({}).remove()
   .then(() => {
     Aspect.create({
         key: 'mood',
-        name: 'mood',
+        name: 'Mood',
         type: 'symptom',
       }, {
         key: 'anxiety',
-        name: 'anxiety',
+        name: 'Anxiety',
         type: 'symptom',
       }, {
         key: 'takeMeds',
-        name: 'takeMeds',
+        name: 'Medication Adherence',
         type: 'behavior',
       })
       .then(() => {

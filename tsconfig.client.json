@@ -37,6 +37,8 @@
         "client/app/routes/intents/view/view.ts",
         "client/app/routes/main/main.controller.ts",
         "client/app/routes/main/main.ts",
+        "client/app/routes/manage/manage.controller.ts",
+        "client/app/routes/manage/manage.ts",
         "client/app/routes/profile/profile.controller.ts",
         "client/app/routes/profile/profile.ts",
         "client/components/auth/auth.module.ts",
