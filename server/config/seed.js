@@ -280,7 +280,7 @@ Intent.find({}).remove()
     match: 'vaccines are dangerous',
     key: 'belief',
     entities: [{
-      name: 'belief_vaccine_danger',
+      key: 'belief_vaccine_danger',
       value: 'high'
     }]
   }

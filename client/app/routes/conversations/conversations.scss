@@ -72,3 +72,58 @@ $bubble-radius: 20px;
     right: 18px;
   }
 }
+
+.convo-line-indented {
+  margin-left: 20px;
+}
+
+.expander {
+  width: 1.2em;
+  font-size: 1em;
+  color: rgb(26, 112, 135);
+}
+
+.convo-line-container {
+  width: 100%;
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+}
+
+.convo-line-text{
+  display: inline-block;
+  padding: 8px 12px 8px 12px;
+  margin: 1px;
+  &:hover {
+    border-radius: 8px;
+    border: 1px solid rgb(129, 129, 129);
+    margin: 0px;
+    & .convo-dropdown {
+      visibility: visible;
+    }
+  }
+}
+
+.convo-dropdown {
+  visibility: hidden;
+  cursor: pointer;
+  & a {
+    color: rgb(128, 128, 128);
+    &:hover {
+      color: rgb(50, 50, 50);
+    }
+  }
+}
+
+.convo-line-text-edit {
+  color: rgb(57, 57, 57);
+  text-decoration: none;
+  &:hover{
+    text-decoration: underline;
+    color: rgb(57, 57, 57);
+  }
+  &:active, &:focus {
+    color: rgb(57, 57, 57);
+  }
+}

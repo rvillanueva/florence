@@ -17,10 +17,12 @@ class ConversationsComponent {
     var newConvo = {
       name: name
     }
-    this.conversationService.create(newConvo)
-    .then(convo => {
-      this.$state.go('conversations-view', {id:convo._id})
-    })
+    if(name){
+      this.conversationService.create(newConvo)
+      .then(convo => {
+        this.$state.go('conversations-view', {id:convo._id})
+      })
+    }
   }
 }
 

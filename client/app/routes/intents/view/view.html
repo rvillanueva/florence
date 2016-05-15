@@ -1,0 +1,20 @@
+<div class="container page-intent-view">
+  <h3>
+    {{$ctrl.intent.name}}
+    <button class="btn btn-sm btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+  </h3>
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      Rules:
+      <p style="white-space: pre">{{$ctrl.intent.match}}</p>
+      <br><br>
+      Intent: {{$ctrl.intent.key}}
+      <br><br>
+      Only if:
+      <div ng-repeat="entity in $ctrl.intent.entities">
+        {{entity.key}} = {{entity.value}}
+      </div>
+    </div>
+  </div>
+</div>

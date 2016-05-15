@@ -2,55 +2,44 @@
 (function() {
 
   class ConversationViewComponent {
-    constructor(Conversation, $stateParams, $state, $scope) {
+    constructor(Conversation, Intent, $stateParams, $state, $scope) {
       this.conversationService = Conversation;
+      this.intentService = Intent;
       this.$scope = $scope;
       this.isPristine;
       this.watcher;
       this.conversation;
-      this.index = {
-        s: null,
-        p: 0
-      }
-      this.tab = {
-        id: null
-      }
+      this.map = {};
+      this.intents = {};
       if(!$stateParams.id){
         $state.go('conversations');
       } else {
         this.conversationService.getById($stateParams.id).then(convo => {
+          if(!convo){
+            $state.go('conversations');
+          }
           this.conversation = convo;
+          console.log(convo)
+          this.buildStepMap(convo);
           this.isPristine = true;
           this.setWatcher();
-          this.tab.id = 'map';
+        })
+        this.intentService.getAll().then(intents => {
+          this.buildIntentMap(intents)
         })
       }
     }
 
-    editStep(stepId){
-      console.log(stepId)
-      if(!stepId){
-          $scope.step={
-            type: 'message',
-            next: {
-              action: 'end'
-            },
-            name: 'New step'
-          }
-          this.index.s = this.conversation.steps.length - 1;
-      } else {
-        this.index.s = this.getStepIndex(stepId);
-      }
+    buildStepMap(convo){
+      angular.forEach(this.conversation.steps, (step, s) => {
+        this.map[step._id] = step;
+      })
     }
 
-    getStepIndex(stepId){
-      var found;
-      angular.forEach(this.conversation.steps,function(step, s){
-        if(step._id == stepId){
-          found = s;
-        }
+    buildIntentMap(intents){
+      angular.forEach(intents, (intent, s) => {
+        this.intents[intent._id] = intent;
       })
-      return found;
     }
 
     save(updated){
@@ -75,7 +64,7 @@
   }
 
   angular.module('riverApp')
-    .component('view', {
+    .component('conversationView', {
     templateUrl: 'app/routes/conversations/view/view.html',
     controller: ConversationViewComponent
   });

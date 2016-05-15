@@ -46,14 +46,6 @@ img {
   & .navbar-nav .nav-dropdown-btn{
     margin: 20px;
     padding: 5px;
-    & .dropdown-menu li a {
-      color: rgb(23, 23, 23);
-      padding: 8px 14px 8px 14px;
-      &:hover {
-        color: white;
-        background-color: rgb(34, 181, 115);
-      }
-    }
   }
   & .navbar-text {
     color: white;
@@ -63,6 +55,21 @@ img {
     color: white;
     padding: 0 0 0 0;
     height: 70px;
+  }
+}
+
+.dropdown-menu li a {
+  color: rgb(23, 23, 23);
+  padding: 8px 14px 8px 14px;
+  &.dropdown-menu-small {
+    padding: 4px 10px 4px 10px;
+    font-size: 0.9em;
+  }
+  &.dropdown-danger-item {
+    color: red;
+  }
+  &:hover {
+    background-color: rgb(230, 230, 230);
   }
 }
 
@@ -100,6 +107,10 @@ img {
   overflow: hidden;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 
 // Component styles are injected through grunt
 /* inject:scss */
@@ -109,6 +120,8 @@ img {
 @import 'routes/conversations/conversations.scss';
 @import 'routes/conversations/view/components/step/step.scss';
 @import 'routes/conversations/view/view.scss';
+@import 'routes/intents/intents.scss';
+@import 'routes/intents/view/view.scss';
 @import 'routes/main/main.scss';
 @import 'routes/profile/profile.scss';
 @import '../components/footer/footer.scss';

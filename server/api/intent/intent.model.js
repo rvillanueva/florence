@@ -9,6 +9,12 @@ var IntentSchema = new mongoose.Schema({
   urgent: Boolean,
   global: Boolean,
   conversationId: String,
+  entities: [
+    {
+      key: String,
+      value: String
+    }
+  ]
   //public: Boolean,
 });
 

@@ -1,6 +1,6 @@
 <div class="container">
   <h2>
-    Conversations
+    Intents
     &nbsp;<button class="btn btn-default btn-md" ng-click="$ctrl.addConversation()">Add</button>
   </h2>
   <table class="table table-hover">
@@ -9,27 +9,29 @@
         Name
       </th>
       <th>
-        Type
+        Public
       </th>
       <th>
-        Purpose
+        Global
       </th>
       <th>
-        Triggers
+        Conversation
       </th>
     </thead>
-    <tr ng-repeat="conversation in $ctrl.conversations">
+    <tr ng-repeat="intent in $ctrl.intents">
       <td>
-        <a href="/conversations/view?id={{conversation._id}}">{{conversation.name || conversation._id}}</a>
+        <a href="/intents/view?id={{intent._id}}">
+          {{intent.name}}
+        </a>
       </td>
       <td>
-        {{conversation.type}}
+        {{intent.public}}
       </td>
       <td>
-        {{conversation.purpose}}
+        {{intent.global}}
       </td>
       <td>
-        {{conversation.triggers}}
+        <a href="/conversations/view?id={{intent.conversation._id}}">{{intent.conversation.name}}</a>
       </td>
     </tr>
   </table>

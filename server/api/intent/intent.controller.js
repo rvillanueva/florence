@@ -10,7 +10,9 @@
 'use strict';
 
 import _ from 'lodash';
+import Conversation from '../conversation/conversation.model';
 import Intent from './intent.model';
+var Promise = require('bluebird');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -20,6 +22,38 @@ function respondWithResult(res, statusCode) {
     }
   };
 }
+
+function attachConversations(res) {
+  return function(entities) {
+    return new Promise(function(resolve, reject){
+      if (entities) {
+        var conversationIds = [];
+        entities.forEach(function(intent, i){
+          if(intent.conversationId){
+            conversationIds.push(intent.conversationId)
+          }
+        });
+        Conversation.find({'_id': {
+          $in: conversationIds
+        }}, 'name').exec()
+        .then(conversations => {
+          entities.forEach(function(intent, i){
+            conversations.forEach(function(conversation, c){
+              if(intent.conversationId == conversation._id){
+                intent.conversation = conversation;
+                console.log(intent)
+              }
+            })
+          })
+          resolve(entities)
+        })
+      } else {
+        resolve(null)
+      }
+    })
+  };
+}
+
 
 function saveUpdates(updates) {
   return function(entity) {
@@ -61,7 +95,8 @@ function handleError(res, statusCode) {
 
 // Gets a list of Intents
 export function index(req, res) {
-  return Intent.find().exec()
+  return Intent.find().lean().exec()
+    .then(attachConversations(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

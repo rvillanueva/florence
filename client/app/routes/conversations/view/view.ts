@@ -5,6 +5,6 @@ angular.module('riverApp')
     $stateProvider
       .state('conversations-view', {
         url: '/conversations/view?:id',
-        template: '<view></view>'
+        template: '<conversation-view></conversation-view>'
       });
   });
