@@ -43,11 +43,9 @@ function askOrSet(bot) {
 function ask(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Asking...')
-    console.log('Asking about measurement...')
     if (!bot.state.current.checkup.aspect || !bot.state.current.checkup.metric) {
       reject('Need aspect and metric in checkup measurement.')
     }
-    console.log('Finding metric...')
     Metric.findOne({
         $and: [{
           'aspect': bot.state.current.checkup.aspect
@@ -57,7 +55,6 @@ function ask(bot) {
       }).exec()
       .then(metric => {
         if (!metric) {
-          console.log('No metric found.')
           reject(new TypeError('No metric found with aspect ' + bot.state.current.checkup.aspect + ' and metric ' + bot.state.current.checkup.metric))
         } else {
           console.log('Metric found:')

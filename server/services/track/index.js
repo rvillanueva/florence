@@ -18,10 +18,12 @@ export function add(bot, params){
     bot.getUser()
     .then(user => {
       var frequency = params.frequency || 'daily';
+      var priority = params.priority || 10;
       user.tracked = user.tracked || {};
       user.tracked[params.aspect] = user.tracked[params.aspect] || {};
       user.tracked[params.aspect][params.metric] = {
         active: true,
+        priority: priority,
         frequency: frequency //TODO customize default frequency based on metric
       }
       User.findOneAndUpdate({'_id': user._id},user)

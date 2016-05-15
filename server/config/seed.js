@@ -63,6 +63,7 @@ Metric.find({}).remove()
       public: true,
       timespan: 'point',
       question: 'How would you rate your mood right now on a scale of 1 to 10? (With 1 being the worst and 10 being the best.)',
+      priority: 1,
       validation: {
         type: 'number',
         min: 1,
@@ -75,6 +76,7 @@ Metric.find({}).remove()
       timespan: 'point',
       public: true,
       question: 'What \'s making your mood worse?',
+      priority: 4,
       validation: {
         type: 'text',
         analyzed: [{
@@ -87,7 +89,8 @@ Metric.find({}).remove()
       metric: 'triggersPositive',
       timespan: 'point',
       public: true,
-      question: 'What \'s making your mood better?',
+      question: 'What\'s making your mood better?',
+      priority: 5,
       validation: {
         type: 'text',
         analyzed: [{
@@ -156,21 +159,24 @@ Conversation.find({}).remove()
         type: 'addTrack',
         params: {
           aspect: 'mood',
-          metric: 'level'
+          metric: 'level',
+          priority: 1
         }
       },
       {
         type: 'addTrack',
         params: {
           aspect: 'mood',
-          metric: 'triggersPositive'
+          metric: 'triggersPositive',
+          priority: 4
         }
       },
       {
         type: 'addTrack',
         params: {
           aspect: 'mood',
-          metric: 'triggersNegative'
+          metric: 'triggersNegative',
+          priority: 5
         }
       }],
       next: [{

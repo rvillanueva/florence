@@ -22,7 +22,9 @@ export function add(entry) {
             .then(res => resolve(res))
             .catch(err => reject(err))
         } else {
+          console.log(entries);
           resolveEntries(entries[0], entry)
+            .then(entry => saveEntry(entry))
             .then(res => resolve(res))
             .catch(err => reject(err))
         }
@@ -49,20 +51,21 @@ export function addNew(entry) {
     var newEntry = new Entry(entry);
     newEntry.date = new Date();
     newEntry.save()
-      .then(res => resolve(entry))
+      .then(res => resolve(res))
       .catch(err => resolve(err))
   })
 }
 
 function resolveEntries(lastEntry, newEntry) {
   return new Promise((resolve, reject) => {
+    console.log('Resolving entries...')
     delete newEntry._id;
     // Cycle through each aspect
-    for (var aspect in newEntry) {
-      if (newEntry.hasOwnProperty(aspect)) {
+    for (var aspect in newEntry.data) {
+      if (newEntry.data.hasOwnProperty(aspect)) {
         // Cycle through each metric
-        for (var metric in newEntry[aspect]) {
-          if (newEntry[aspect].hasOwnProperty(metric)) {
+        for (var metric in newEntry.data[aspect]) {
+          if (newEntry.data[aspect].hasOwnProperty(metric)) {
             lastEntry.data[aspect] = lastEntry.data[aspect] || {};
             lastEntry.data[aspect][metric] = newEntry.data[aspect][metric];
           }
@@ -71,6 +74,14 @@ function resolveEntries(lastEntry, newEntry) {
     }
     resolve(lastEntry);
     // Need to handle tags too
+  })
+}
+
+function saveEntry(entry){
+  return new Promise((resolve, reject) => {
+    Entry.findOneAndUpdate({'_id': entry._id}, entry)
+    .then(saved => resolve(saved))
+    .catch(err => reject(err))
   })
 }
 

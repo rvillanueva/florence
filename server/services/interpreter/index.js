@@ -65,10 +65,18 @@ export function getMeasurementValue(bot){
     if(!metric || !metric.validation){
       reject(new TypeError('No valid metric provided.'))
     } else if (metric.validation.type == 'number') {
-      /*if(bot.cache.entities.number && bot.cache.entities.number.length > 0){
-
-      }*/
-      resolve(false)
+      if(bot.cache.entities.number && bot.cache.entities.number.length > 0){
+        var number = bot.cache.entities.number[0].value;
+        if(metric.validation.min && number < metric.validation.min){
+          number = false;
+        }
+        if(metric.validation.max && number > metric.validation.max){
+          number = false;
+        }
+        resolve(number);
+      } else {
+        resolve(false)
+      }
     } else if (metric.validation.type == 'category') {
       // search through
       resolve(false)

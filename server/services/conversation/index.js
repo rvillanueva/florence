@@ -22,7 +22,7 @@ var router = {
 
 export function route(bot){
   return new Promise(function(resolve, reject) {
-    console.log('Routing...')
+    console.log('\n\n\n\n\nRouting...')
     if(!bot.state.status){
       reject(new TypeError('No bot status available...'))
     } else if (bot.state.status == 'waiting' || bot.state.status == 'done'){

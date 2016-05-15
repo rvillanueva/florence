@@ -7,6 +7,7 @@ var MetricSchema = new mongoose.Schema({
   metric: String,
   //name: String,
   question: String,
+  priority: Number,
   //public: Boolean,
   //ownerId: String,
   validation: {

@@ -18,7 +18,7 @@ export function run(bot){
 
 export function executeStep(bot) {
   return new Promise(function(resolve, reject) {
-    console.log('\n\n\n\nRunning new step...')
+    console.log('Running new step...')
     executeStepByType(bot)
       .then(bot => Actions.execute(bot))
       .then(bot => resolve(bot))

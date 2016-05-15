@@ -73,11 +73,15 @@ function chooseNextMeasurement(bot) {
     bot.cache.tracked = bot.cache.tracked || {};
     console.log('Entry data:')
     console.log(bot.cache.entryData);
+    var sorted = {
+      sameAspect: [],
+      changedAspect: []
+    }
     var currentAspect;
     var tracked = bot.cache.tracked;
-    var followsAspect = [];
-    var switchAspect = [];
-    var selected;
+    console.log('Tracked:')
+    console.log(tracked);
+    var selected = false;
     if(bot.state.current.checkup && bot.state.current.checkup.aspect){
       currentAspect = bot.state.current.checkup.aspect
     }
@@ -96,19 +100,27 @@ function chooseNextMeasurement(bot) {
               !bot.cache.entryData[aspect][metric] ||
               !bot.cache.entryData[aspect][metric].value
             ){
-              console.log('Found missing metric ' + metric);
               if(currentAspect && aspect == currentAspect){
-                followsAspect.push(coords);
+                sorted.sameAspect.push(coords)
               } else {
-                switchAspect.push(coords);
+                sorted.changedAspect.push(coords)
               }
             }
           }
         }
       }
     }
-    console.log('Search complete.')
-    selected = followsAspect[0] || switchAspect[0] || null;
+    var searched = []
+    if(sorted.sameAspect.length > 0){
+      searched = sorted.sameAspect;
+    } else if (sorted.changedAspect.length > 0){
+      searched = sorted.changedAspect;
+    }
+    searched.forEach(function(coords, c){
+      if(!selected || tracked[coords.aspect][coords.metric].priority < tracked[selected.aspect][selected.metric].priority){
+        selected = coords;
+      }
+    })
     if(selected){
       bot.loaded.next = {
         type: 'checkup',
@@ -129,7 +141,7 @@ function handleNext(bot) { // TODO Should reroute all load setting into single s
   return new Promise(function(resolve, reject) {
     console.log('Handling next...')
     if(!bot.loaded.next){
-      bot.say('Great! That\'s all I have for now.');
+      bot.say('That\'s all I have for now.');
       bot.state.current = null;
       bot.state.status = 'next';
       resolve(bot);
