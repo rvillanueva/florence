@@ -111,19 +111,34 @@ img {
   cursor: pointer;
 }
 
+.navbar-manage {
+  background-color: rgb(226, 226, 226);
+  & a.navbar-manage-item {
+    font-size: 12px;
+    margin: 10px;
+    display: inline-block;
+    color: rgb(47, 47, 47);
+    text-decoration: none;
+    &:hover,&:focus,&:active {
+      color: rgb(47, 47, 47);
+      text-decoration: underline;
+    }
+  }
+}
 
 // Component styles are injected through grunt
 /* inject:scss */
 @import 'routes/account/login/verify/verify.scss';
 @import 'routes/admin/admin.scss';
-@import 'routes/aspects/aspects.scss';
-@import 'routes/conversations/conversations.scss';
-@import 'routes/conversations/view/components/step/step.scss';
-@import 'routes/conversations/view/view.scss';
-@import 'routes/intents/intents.scss';
-@import 'routes/intents/view/view.scss';
 @import 'routes/main/main.scss';
-@import 'routes/manage/manage.scss';
+@import 'routes/manage/aspects/aspects.scss';
+@import 'routes/manage/conversations/conversations.scss';
+@import 'routes/manage/conversations/view/components/step/step.scss';
+@import 'routes/manage/conversations/view/view.scss';
+@import 'routes/manage/dashboard/dashboard.scss';
+@import 'routes/manage/intents/intents.scss';
+@import 'routes/manage/intents/view/view.scss';
+@import 'routes/manage/users/users.scss';
 @import 'routes/profile/profile.scss';
 @import '../components/footer/footer.scss';
 @import '../components/modal/modal.scss';
