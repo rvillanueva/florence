@@ -3,26 +3,6 @@ var Messenger = require('./messenger');
 var Bot = require('../../bot');
 var Queue = require('./messages.queue');
 
-/*
-Standardized message format
-
-message: {
-  userId: String,
-  timestamp: Date,
-  from: String, // user, app
-  text: String,
-  input: String,
-  attachments: Array,
-  data: Object,
-  interface: String,
-  messenger: {
-    mid: String,
-    seq: Number
-  }
-}
-
-*/
-
 export function send(message){
     return Queue.add(message)
 }

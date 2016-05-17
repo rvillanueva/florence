@@ -2,11 +2,12 @@
 var Promise = require('bluebird');
 var Receive = require('./checkup.receive');
 var Load = require('./checkup.load')
+var Bot = require('../../bot')
 import Metric from '../../api/metric/metric.model';
 
 export function run(bot) {
   return new Promise(function(resolve, reject) {
-    console.log('Running checkup...')
+    console.log('Running check-in...')
     askOrSet(bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
@@ -15,10 +16,10 @@ export function run(bot) {
 
 export function queue(bot, params) {
   return new Promise(function(resolve, reject) {
-    console.log('Adding checkin to queue.')
+    console.log('Adding check-in to queue.')
     bot.queueNext({
-        type: 'checkup'
-      })
+      type: 'checkup'
+    })
       .then(bot => resolve(bot)) // TODO This should really be a diversion but after the current step ends.
       .catch(err => reject(err))
   })
@@ -31,6 +32,20 @@ export function receive(bot) {
       .catch(err => reject(err))
   })
 }
+
+
+export function start(userId){
+  return new Promise(function(resolve, reject) {
+    Bot.create(userId)
+    .then(bot => run(bot))
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
+  })
+}
+
+
+
+
 
 function askOrSet(bot) {
   if (bot.state.current.checkup && bot.state.current.checkup.query == 'measurement') {

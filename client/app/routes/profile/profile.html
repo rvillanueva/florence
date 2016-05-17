@@ -21,8 +21,19 @@
           <li><a href="#">Aspects</a></li>
         </ul>
         <h3>Entries</h3>
-        <div ng-repeat="entry in $ctrl.entries">
-          {{entry.date | date: "MMMM d h:mma"}}: {{entry.score}}
+        <div class="panel panel-default" ng-repeat="entry in $ctrl.entries">
+          <div class="panel-heading">
+            {{entry.date | date: "MMMM d, h:mma"}}
+          </div>
+          <div class="panel-body">
+            <div ng-repeat="(aspectKey, aspect) in entry.data">
+              <strong>{{aspectKey}}</strong>
+              <div ng-repeat="(metricKey, metric) in aspect">
+                {{metricKey}}: {{metric.value}}
+                {{metric.unmatched}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

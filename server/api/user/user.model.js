@@ -43,8 +43,11 @@ var UserSchema = new Schema({
   timezone: String,
   tracked: {},
   engagement: {
-    score: Number,
-    fatigue: Number
+    weeklySessions: Number,
+    sessionMessages: Number,
+    checkInConversion: Number,
+    maxFrequency: Number,
+    lastCheckInRequest: Date
   },
   state: {
     status: String,

@@ -6,9 +6,9 @@ var Entry = require('../services/entry');
 var State = require('./bot.state');
 var Conversation = require('../api/conversation/conversation.service');
 
-export function constructor(message) {
-  this.userId = message.userId;
-  this.message = message;
+export function constructor(userId) {
+  this.userId = userId;
+  this.message;
   this.state = {
     status: '',
     checkup: {

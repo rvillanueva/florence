@@ -9,6 +9,9 @@ var actionRouter = {
   addTrack: function(bot, action) {
     return Track.add(bot, action.params)
   },
+  removeAllTracks: function(bot, action) {
+    return Track.removeAll(bot, action.params)
+  },
   queueCheckin: function(bot, action) {
     return Checkup.queue(bot, action.params)
   }
