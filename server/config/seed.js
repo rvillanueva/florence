@@ -231,6 +231,59 @@ Conversation.find({}).remove()
       action: 'checkin',
       next: [],
     }]
+  },{
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f511'),
+    name: 'Help',
+    tags: [],
+    next: [{
+      conditions: [],
+      weight: 1,
+      stepId: '5726c7b47721d48e5c52f611'
+    }],
+    steps: [{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f611'),
+      type: 'say',
+      text: 'Helpity help help.',
+      next: [],
+    }]
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f512'),
+    name: 'Unsubscribe',
+    tags: [],
+    next: [{
+      conditions: [],
+      weight: 1,
+      stepId: '5726c7b47721d48e5c52f513'
+    }],
+    steps: [{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f513'),
+      type: 'say',
+      actions: [{
+        type: 'unsubscribe'
+      }],
+      text: 'Unsubscribing you....',
+      next: [],
+    }]
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f516'),
+    name: 'Remove Tracks',
+    tags: [],
+    next: [{
+      conditions: [],
+      weight: 1,
+      stepId: '5726c7b47721d48e5c52f514'
+    }],
+    steps: [{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f514'),
+      type: 'say',
+      actions: [{
+        type: 'removeAllTracks'
+      }],
+      text: 'Okay, I\'ve removed all tracked metrics.',
+      next: [],
+    }]
   }))
   .then(() => {
     console.log('Conversations populated.');
@@ -248,9 +301,17 @@ Intent.find({}).remove()
   }, {
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f919'),
     name: 'Help',
-    match: 'help\nwhat do you do?\n',
+    match: 'help\nwhat do you do?\n/help',
     global: true,
+    conversationId: '5726c7b47721d48e5c52f511',
     key: 'help'
+  },{
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52d000'),
+    name: 'Unsubscribe',
+    match: 'unsubscribe\nstop\nend',
+    global: true,
+    conversationId: '5726c7b47721d48e5c52f512',
+    key: 'unsubscribe'
   },{
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f901'),
     name: 'Yes',
@@ -283,6 +344,20 @@ Intent.find({}).remove()
       key: 'belief_vaccine_danger',
       value: 'high'
     }]
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f145'),
+    name: 'View Trends',
+    match: 'overview\nreview\nanalysis\nview trends',
+    key: 'viewTrends',
+    entities: []
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f146'),
+    name: 'Remove All Tracks',
+    match: 'remove tracks\nremove tracking\nstop tracking\nstop checkins\nstop check ins',
+    key: 'removeAllTracks',
+    entities: []
   }
 ))
   .then(() => {

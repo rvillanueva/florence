@@ -3,6 +3,7 @@
 var Track = require('../track')
 import User from '../../api/user/user.model';
 var CheckIn = require('../checkin')
+var Subscription = require('../subscription')
 
 
 var actionRouter = {
@@ -14,6 +15,9 @@ var actionRouter = {
   },
   queueCheckin: function(bot, action) {
     return CheckIn.queue(bot, action.params)
+  },
+  unsubscribe: function(bot, action){
+    return Subscription.unsubscribe(bot, action.params)
   }
 }
 

@@ -28,7 +28,7 @@ export function init() {
 export function runCheckIns() {
   return new Promise(function(resolve, reject) {
     console.log('Running check in....')
-    User.find({}).exec()
+    User.find({'active': true}).exec()
       .then(users => filterUsers(users))
       .then(users => checkInWithUsers(users))
       .then(() => resolve(true))

@@ -26,6 +26,7 @@ export function getUserByMessengerId(messengerId) {
             received: {},
             variables: {}
           }
+          newUser.active = true;
           updateFbProfile(newUser)
           .then(user => resolve(user))
           .catch(err => {

@@ -34,6 +34,7 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
+  active: Boolean,
   password: String,
   provider: String,
   salt: String,
