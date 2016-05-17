@@ -1,7 +1,6 @@
 'use strict';
 
 var Promise = require('bluebird');
-var moment = require('moment');
 import User from '../../api/user/user.model';
 import * as Messages from '../../services/messages';
 import Verification from '../../api/verification/verification.model';

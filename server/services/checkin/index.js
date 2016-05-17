@@ -2,7 +2,6 @@
 var Promise = require('bluebird');
 var Receive = require('./checkin.receive');
 var Load = require('./checkin.load')
-var Bot = require('../../bot')
 import Metric from '../../api/metric/metric.model';
 
 export function run(bot) {
@@ -34,10 +33,9 @@ export function receive(bot) {
 }
 
 
-export function start(userId){
+export function start(bot){
   return new Promise(function(resolve, reject) {
-    Bot.create(userId)
-    .then(bot => run(bot))
+    run(bot)
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
@@ -57,7 +55,7 @@ function askOrSet(bot) {
 
 function ask(bot) {
   return new Promise(function(resolve, reject) {
-    console.log('Asking...')
+    console.log('Asking...') // TODO build expiration
     if (!bot.state.current.checkin.aspect || !bot.state.current.checkin.metric) {
       reject('Need aspect and metric in checkin measurement.')
     }

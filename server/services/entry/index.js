@@ -1,6 +1,5 @@
 'use strict';
 import Entry from '../../api/entry/entry.model';
-var moment = require('moment');
 
 export function add(entry) {
   return new Promise((resolve, reject) => {
