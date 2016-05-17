@@ -11,7 +11,7 @@ export function constructor(userId) {
   this.message;
   this.state = {
     status: '',
-    checkup: {
+    checkin: {
       active: true
     },
     current: {
@@ -30,7 +30,7 @@ export function constructor(userId) {
     step: false,
     type: false,
     next: {
-      type: null, // step, checkup,
+      type: null, // step, checkin,
       stepId: null
     }
   }
@@ -135,9 +135,9 @@ export function constructor(userId) {
             resolve(this)
           })
           .catch(err => reject(err))
-      } else if (this.state.current.type == 'checkup'){
-        console.log('Setting status to checkup...')
-        this.state.status = 'checkup';
+      } else if (this.state.current.type == 'checkin'){
+        console.log('Setting status to checkin...')
+        this.state.status = 'checkin';
         resolve(this);
       } else if(!this.state.current.type){
         resolve(this);

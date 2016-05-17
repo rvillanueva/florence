@@ -1,7 +1,7 @@
 'use strict';
 var Promise = require('bluebird');
-var Receive = require('./checkup.receive');
-var Load = require('./checkup.load')
+var Receive = require('./checkin.receive');
+var Load = require('./checkin.load')
 var Bot = require('../../bot')
 import Metric from '../../api/metric/metric.model';
 
@@ -18,7 +18,7 @@ export function queue(bot, params) {
   return new Promise(function(resolve, reject) {
     console.log('Adding check-in to queue.')
     bot.queueNext({
-      type: 'checkup'
+      type: 'checkin'
     })
       .then(bot => resolve(bot)) // TODO This should really be a diversion but after the current step ends.
       .catch(err => reject(err))
@@ -48,7 +48,7 @@ export function start(userId){
 
 
 function askOrSet(bot) {
-  if (bot.state.current.checkup && bot.state.current.checkup.query == 'measurement') {
+  if (bot.state.current.checkin && bot.state.current.checkin.query == 'measurement') {
     return ask(bot)
   } else {
     return Load.set(bot)
@@ -58,19 +58,19 @@ function askOrSet(bot) {
 function ask(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Asking...')
-    if (!bot.state.current.checkup.aspect || !bot.state.current.checkup.metric) {
-      reject('Need aspect and metric in checkup measurement.')
+    if (!bot.state.current.checkin.aspect || !bot.state.current.checkin.metric) {
+      reject('Need aspect and metric in checkin measurement.')
     }
     Metric.findOne({
         $and: [{
-          'aspect': bot.state.current.checkup.aspect
+          'aspect': bot.state.current.checkin.aspect
         }, {
-          'metric': bot.state.current.checkup.metric
+          'metric': bot.state.current.checkin.metric
         }]
       }).exec()
       .then(metric => {
         if (!metric) {
-          reject(new TypeError('No metric found with aspect ' + bot.state.current.checkup.aspect + ' and metric ' + bot.state.current.checkup.metric))
+          reject(new TypeError('No metric found with aspect ' + bot.state.current.checkin.aspect + ' and metric ' + bot.state.current.checkin.metric))
         } else {
           console.log('Metric found:')
           console.log(metric)

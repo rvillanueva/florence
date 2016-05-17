@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var Interpreter = require('../interpreter');
 var Conversation = require('../../api/conversation/conversation.service');
 var Refs = require('./conversation.refs');
-var Checkup = require('../checkup');
+var CheckIn = require('../checkin');
 var Load = require('./conversation.load');
 
 export function run(bot) {
@@ -24,8 +24,8 @@ function receiveByType(bot){
   return new Promise(function(resolve, reject){
     console.log('Receiving by type...')
     console.log(bot.state.current)
-    if(bot.state.current && bot.state.current.type == 'checkup'){
-      receiveCheckup(bot)
+    if(bot.state.current && bot.state.current.type == 'checkin'){
+      receiveCheckIn(bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
@@ -46,10 +46,10 @@ function receiveConversation(bot){
   })
 }
 
-function receiveCheckup(bot){
+function receiveCheckIn(bot){
   return new Promise(function(resolve, reject){
-    console.log('Receiving checkup response...')
-    Checkup.receive(bot)
+    console.log('Receiving checkin response...')
+    CheckIn.receive(bot)
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })

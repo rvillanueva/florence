@@ -12,7 +12,7 @@ var LoadableSchema = new Schema({
     type: String
   },
   stepId: String,
-  checkup: {
+  checkin: {
     query: String,
     aspect: String,
     metric: String
@@ -44,8 +44,8 @@ var UserSchema = new Schema({
   tracked: {},
   engagement: {
     weeklySessions: Number,
-    sessionMessages: Number,
-    checkInConversion: Number,
+    sessionLength: Number,
+    notificationConversion: Number,
     maxFrequency: Number,
     lastCheckInRequest: Date
   },

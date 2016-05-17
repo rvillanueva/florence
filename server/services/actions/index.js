@@ -2,7 +2,7 @@
 
 var Track = require('../track')
 import User from '../../api/user/user.model';
-var Checkup = require('../checkup')
+var CheckIn = require('../checkin')
 
 
 var actionRouter = {
@@ -13,7 +13,7 @@ var actionRouter = {
     return Track.removeAll(bot, action.params)
   },
   queueCheckin: function(bot, action) {
-    return Checkup.queue(bot, action.params)
+    return CheckIn.queue(bot, action.params)
   }
 }
 

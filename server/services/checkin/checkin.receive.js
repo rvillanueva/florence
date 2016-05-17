@@ -6,33 +6,33 @@ import Metric from '../../api/metric/metric.model';
 export function run(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Receiving using checkin service...')
-    if (bot.state.current.type !== 'checkup') {
-      reject(new TypeError('Current step ' + bot.state.current.type + 'is not checkup.'))
+    if (bot.state.current.type !== 'checkin') {
+      reject(new TypeError('Current step ' + bot.state.current.type + 'is not checkin.'))
     }
-    if (!bot.state.current.checkup) {
-      reject(new TypeError('No checkup data.'))
+    if (!bot.state.current.checkin) {
+      reject(new TypeError('No checkin data.'))
     }
 
-    var checkup = bot.state.current.checkup || {};
+    var checkin = bot.state.current.checkin || {};
     console.log('Parameters:')
-    console.log(checkup);
-    if (checkup.query == 'measurement') {
-      if (!checkup.metric || !checkup.aspect) {
+    console.log(checkin);
+    if (checkin.query == 'measurement') {
+      if (!checkin.metric || !checkin.aspect) {
         reject(new TypeError('For measurement query, need metric and aspect.'))
       } else {
         console.log('Returning relevant metric...')
         Metric.findOne({
           $and:[{
-            'aspect': bot.state.current.checkup.aspect
+            'aspect': bot.state.current.checkin.aspect
           },{
-            'metric': bot.state.current.checkup.metric
+            'metric': bot.state.current.checkin.metric
           }]
         }).exec()
           .then(metric => {
             return new Promise(function(resolve, reject) {
               console.log('Returned data.')
               if (!metric) {
-                reject(new TypeError('No metric found for key ' + checkup.metric))
+                reject(new TypeError('No metric found for key ' + checkin.metric))
               } else {
                 console.log('Metric found:')
                 console.log(metric)
@@ -51,12 +51,12 @@ export function run(bot) {
           .catch(err => reject(err))
       }
     } else {
-      reject(new TypeError('Unknown checkup query ' + checkup.query))
+      reject(new TypeError('Unknown checkin query ' + checkin.query))
     }
     // get metric from current
     // validate response
     // accept it or redirect remind and wait(wait)
-    // if finished, end checkup
+    // if finished, end checkin
     // else continue to converse
   })
 
@@ -151,7 +151,7 @@ function saveEntry(bot){
 function setNext(bot){
   return new Promise(function(resolve, reject) {
     bot.loaded.next = {
-      type: 'checkup'
+      type: 'checkin'
     }
     resolve(bot);
   })

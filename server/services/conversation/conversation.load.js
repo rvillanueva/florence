@@ -28,8 +28,8 @@ export function set(bot){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
 
-    } else if (bot.loaded.next.type == 'checkup'){
-      bot.state.status = 'checkup';
+    } else if (bot.loaded.next.type == 'checkin'){
+      bot.state.status = 'checkin';
       bot.set(bot.loaded.next)
       .then(bot => resolve(bot))
       .catch(err => reject(err))

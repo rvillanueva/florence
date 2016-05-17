@@ -3,7 +3,7 @@
 var Receive = require('./conversation.receive');
 var Next = require('./conversation.next')
 var Converse = require('./conversation.converse')
-var Checkup = require('../checkup')
+var CheckIn = require('../checkin')
 
 var router = {
   receiving: function(bot){
@@ -12,8 +12,8 @@ var router = {
   conversing: function(bot){
     return Converse.run(bot)
   },
-  checkup: function(bot){
-    return Checkup.run(bot);
+  checkin: function(bot){
+    return CheckIn.run(bot);
   },
   next: function(bot){
     return Next.run(bot);

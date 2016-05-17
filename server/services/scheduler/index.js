@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var CheckIn = require('../checkup');
+var CheckIn = require('../checkin');
 import User from '../../api/user/user.model';
 
 export function init() {

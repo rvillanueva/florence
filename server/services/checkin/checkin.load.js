@@ -82,8 +82,8 @@ function chooseNextMeasurement(bot) {
     console.log('Tracked:')
     console.log(tracked);
     var selected = false;
-    if(bot.state.current.checkup && bot.state.current.checkup.aspect){
-      currentAspect = bot.state.current.checkup.aspect
+    if(bot.state.current.checkin && bot.state.current.checkin.aspect){
+      currentAspect = bot.state.current.checkin.aspect
     }
     console.log('Looping through tracked metrics...')
     for (var aspect in tracked) {
@@ -123,8 +123,8 @@ function chooseNextMeasurement(bot) {
     })
     if(selected){
       bot.loaded.next = {
-        type: 'checkup',
-        checkup: {
+        type: 'checkin',
+        checkin: {
           query: 'measurement',
           metric: selected.metric,
           aspect: selected.aspect
@@ -146,7 +146,7 @@ function handleNext(bot) { // TODO Should reroute all load setting into single s
       bot.state.status = 'next';
       resolve(bot);
     } else {
-      bot.state.status = 'checkup';
+      bot.state.status = 'checkin';
       bot.set(bot.loaded.next)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
