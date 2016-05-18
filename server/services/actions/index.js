@@ -18,6 +18,9 @@ var actionRouter = {
   },
   unsubscribe: function(bot, action){
     return Subscription.unsubscribe(bot, action.params)
+  },
+  subscribe: function(bot, action){
+    return Subscription.subscribe(bot, action.params)
   }
 }
 

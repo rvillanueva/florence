@@ -39,6 +39,9 @@ export function executeStep(bot) {
       },
       fallback: () => {
         //do fallback stuff
+      },
+      container: () => {
+        //is just a container, no action
       }
     }
 

@@ -21,11 +21,12 @@
       <i class="fa expander clickable" ng-class="{'fa-minus-square-o': !hidden,'fa-plus-square': hidden}" ng-show="$ctrl.map[ref.stepId].next.length > 0" ng-click="hidden = !hidden"></i>
       <i class="fa expander" ng-hide="$ctrl.map[ref.stepId].next.length > 0"></i>
       <div class="convo-line-text">
-        <a href="#" class="convo-line-text-edit" ng-click="editStep(step)">
-          <span ng-show="$ctrl.map[ref.stepId].type == 'say'">{{ $ctrl.map[ref.stepId].text || '[no text]'}}</span>
-          <span ng-show="$ctrl.map[ref.stepId].type == 'intent'"><strong>INTENT: {{ $ctrl.intents[$ctrl.map[ref.stepId].intentId].name || '[untitled intent]'}}</strong></span>
-          <span ng-show="$ctrl.map[ref.stepId].type == 'fallback'"><i>fallback</i></span>
-          <span ng-show="$ctrl.map[ref.stepId].type !== 'fallback' && $ctrl.map[ref.stepId].type !== 'intent' && $ctrl.map[ref.stepId].type !== 'say'"><i style="color:red">error: unknown step type</i></span>
+        <a href="#" class="convo-line-text-edit" ng-click="editStep(step)" ng-switch="$ctrl.map[ref.stepId].type">
+          <span ng-switch-when="say">{{ $ctrl.map[ref.stepId].text || '[no text]'}}</span>
+          <span ng-switch-when="intent"><strong>INTENT: {{ $ctrl.intents[$ctrl.map[ref.stepId].intentId].name || '[untitled intent]'}}</strong></span>
+          <span ng-switch-when="fallback"><i>fallback</i></span>
+          <span ng-switch-when="container"><i>container</i></span>
+          <span ng-switch-default><i style="color:red">error: unknown step type</i></span>
         </a>
       <span ng-show="$ctrl.map[ref.stepId].actions.length > 0">&nbsp;&nbsp;<i class="fa fa-bolt" style="color: rgb(219, 219, 219)"></i></span>
         <span class="convo-dropdown" uib-dropdown>

@@ -151,6 +151,7 @@ export function constructor(userId) {
     return new Promise((resolve, reject) => {
       console.log('Setting to ' + loadable.type);
       this.state.current = loadable;
+      this.state.current.updated = new Date();
       this.getStep()
         .then(() => resolve(this))
         .catch(err => reject(err))

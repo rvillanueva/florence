@@ -11,6 +11,7 @@ var LoadableSchema = new Schema({
   type: {
     type: String
   },
+  updated: Date,
   stepId: String,
   checkin: {
     query: String,

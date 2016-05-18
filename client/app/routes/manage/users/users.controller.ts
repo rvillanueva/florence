@@ -2,8 +2,12 @@
 (function(){
 
 class UsersComponent {
-  constructor() {
-    this.message = 'Hello';
+  constructor(User) {
+    // Use the User $resource to fetch all users
+    this.users = User.query();
+    setTimeout(() => {
+      console.log(this.users)
+    }, 1000)
   }
 }
 

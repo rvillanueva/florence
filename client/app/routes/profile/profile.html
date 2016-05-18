@@ -27,9 +27,9 @@
           </div>
           <div class="panel-body">
             <div ng-repeat="(aspectKey, aspect) in entry.data">
-              <strong>{{aspectKey}}</strong>
+              <strong>{{$ctrl.aspectMap[aspectKey].name}}</strong>
               <div ng-repeat="(metricKey, metric) in aspect">
-                {{metricKey}}: {{metric.value}}
+                {{$ctrl.aspectMap[aspectKey].metrics[metricKey].name}}: {{metric.value}}
                 {{metric.unmatched}}
               </div>
             </div>

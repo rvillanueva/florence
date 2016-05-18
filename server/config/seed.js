@@ -59,7 +59,7 @@ Metric.find({}).remove()
     Metric.create({
       aspect: 'mood',
       metric: 'level',
-      name: 'Mood level',
+      name: 'Level',
       public: true,
       timespan: 'point',
       question: 'How would you rate your mood right now on a scale of 1 to 10? (With 1 being the worst and 10 being the best.)',
@@ -73,9 +73,10 @@ Metric.find({}).remove()
     {
       aspect: 'mood',
       metric: 'triggersNegative',
+      name: 'Negative Triggers',
       timespan: 'point',
       public: true,
-      question: 'What \'s making your mood worse?',
+      question: 'What\'s making your mood worse?',
       priority: 4,
       validation: {
         type: 'text',
@@ -87,6 +88,7 @@ Metric.find({}).remove()
     {
       aspect: 'mood',
       metric: 'triggersPositive',
+      name: 'Positive Triggers',
       timespan: 'point',
       public: true,
       question: 'What\'s making your mood better?',
@@ -258,11 +260,28 @@ Conversation.find({}).remove()
     }],
     steps: [{
       _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f513'),
-      type: 'say',
+      type: 'container',
       actions: [{
         type: 'unsubscribe'
       }],
-      text: 'Unsubscribing you....',
+      next: [],
+    }]
+  },
+  {
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52a000'),
+    name: 'Subscribe',
+    tags: [],
+    next: [{
+      conditions: [],
+      weight: 1,
+      stepId: '5726c7b47721d48e5c52f517'
+    }],
+    steps: [{
+      _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f517'),
+      type: 'container',
+      actions: [{
+        type: 'subscribe'
+      }],
       next: [],
     }]
   },
@@ -312,6 +331,13 @@ Intent.find({}).remove()
     global: true,
     conversationId: '5726c7b47721d48e5c52f512',
     key: 'unsubscribe'
+  },{
+    _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52d001'),
+    name: 'Subscribe',
+    match: 'subscribe\nstart\nstart again',
+    global: true,
+    conversationId: '5726c7b47721d48e5c52a000',
+    key: 'subscribe'
   },{
     _id: new mongoose.mongo.ObjectID('5726c7b47721d48e5c52f901'),
     name: 'Yes',

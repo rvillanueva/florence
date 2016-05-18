@@ -11,6 +11,39 @@
 
 import _ from 'lodash';
 import Aspect from './aspect.model';
+import Metric from '../metric/metric.model';
+
+function attachMetrics(res) {
+  return function(aspects) {
+    return new Promise(function(resolve, reject){
+      if (aspects) {
+        var aspectKeys = [];
+        aspects.forEach(function(aspect, a){
+          aspectKeys.push(aspect.key)
+        });
+        Metric.find({'aspect': {
+          $in: aspectKeys
+        }}).exec()
+        .then(metrics => {
+          if(metrics){
+            aspects.forEach(function(aspect, a){
+              aspect.metrics = [];
+              metrics.forEach(function(metric, m){
+                if(metric.aspect == aspect.key){
+                  aspect.metrics.push(metric);
+                }
+              })
+            })
+          }
+          resolve(aspects)
+        })
+      } else {
+        resolve(false)
+      }
+    })
+  };
+}
+
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -61,7 +94,8 @@ function handleError(res, statusCode) {
 
 // Gets a list of Aspects
 export function index(req, res) {
-  return Aspect.find().exec()
+  return Aspect.find().lean().exec()
+    .then(attachMetrics(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

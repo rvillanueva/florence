@@ -8,8 +8,10 @@ class ProfileComponent {
     if(!this.userId){
       this.userId = 'me';
     }
+    this.aspectMap = {};
     this.getProfile(this.userId);
     this.getEntries(this.userId);
+    this.getAspectMap();
   }
   getProfile(userId){
     console.log(userId);
@@ -33,6 +35,25 @@ class ProfileComponent {
         console.log('No entries');
       }
       console.log(this.entries)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  getAspectMap(){
+    this.$http.get('api/aspects')
+    .then(res => {
+      this.aspects = res.data;
+      angular.forEach(this.aspects, (aspect, a) => {
+        var metricMap = {};
+        this.aspectMap[aspect.key] = aspect;
+        angular.forEach(aspect.metrics, (metric, m) => {
+          metricMap[metric.metric] = metric;
+        })
+        this.aspectMap[aspect.key].metrics = metricMap;
+      })
+      console.log(this.aspectMap);
     })
     .catch(err => {
       console.log(err)
