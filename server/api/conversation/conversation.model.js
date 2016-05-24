@@ -17,7 +17,7 @@ var RefSchema = new mongoose.Schema({
 
 
 var StepSchema = new mongoose.Schema({
-  type: String, // say, intent, messenger_buttons, messenger_cards// diversion//action
+  type: String, // say, intent, diversion, end
   actions: [{
       type: {
         type: String
@@ -51,8 +51,7 @@ var StepSchema = new mongoose.Schema({
 
 var ConversationSchema = new mongoose.Schema({
   name: String,
-  intent: String,
-  global: Boolean,
+  public: Boolean,
   next: [RefSchema],
   //type: String, // Learn, nudge, protocol, event
   steps: [StepSchema]

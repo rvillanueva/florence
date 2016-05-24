@@ -14,11 +14,6 @@ export function set(bot) {
       .then(bot => handleNext(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-      // Get user tracked data
-      // Get latest entries
-      // Check to see what needs to be entered
-      // Load next metric needed
-
   })
 }
 
