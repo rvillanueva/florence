@@ -2,7 +2,7 @@
 
 var Promise = require("bluebird");
 var Wit = require('./wit')
-import Intent from '../../api/intent/intent.model'
+import Intent from '../../api/intent/intent.model';
 
 export function getIntents(bot){
   return new Promise(function(resolve, reject){

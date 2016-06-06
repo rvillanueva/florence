@@ -14,7 +14,6 @@ export default function(app) {
   app.use('/api/conversations', require('./api/conversation'));
   app.use('/api/verify', require('./api/verification'));
   app.use('/api/aspects', require('./api/aspect'));
-  app.use('/api/messages', require('./api/message'));
   app.use('/api/messenger', require('./api/messenger'));
   app.use('/api/entries', require('./api/entry'));
   app.use('/api/users', require('./api/user'));

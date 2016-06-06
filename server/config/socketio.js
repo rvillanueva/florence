@@ -22,7 +22,6 @@ function onConnect(socket) {
   require('../api/conversation/conversation.socket').register(socket);
   require('../api/verification/verification.socket').register(socket);
   require('../api/aspect/aspect.socket').register(socket);
-  require('../api/message/message.socket').register(socket);
   require('../api/entry/entry.socket').register(socket);
 
 }
