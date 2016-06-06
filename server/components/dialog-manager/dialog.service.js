@@ -10,7 +10,7 @@ var Strategy = require('./strategy');
 export function handleTaskResponse(bot){
   return new Promise(function(resolve, reject){
     // TODO add in permissions handling
-    if(bot.status == 'waiting'){
+    if(bot.state.status == 'waiting'){
       Conversation.getRelevant(bot)
       .then(bot => Task.matchAllByConversations(bot))
       .then(bot => Task.makeResponseBid(bot))
@@ -26,7 +26,7 @@ export function handleTaskResponse(bot){
 
 export function handleNextTask(bot){
   return new Promise(function(resolve, reject){
-    if(bot.status == 'ready'){
+    if(bot.state.status == 'ready'){
       Strategy.selectTask(bot)
       .then(bot => Conversation.update(bot))
       //.then(bot => Flow.handleTopicChange(bot))

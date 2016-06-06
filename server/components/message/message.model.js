@@ -11,6 +11,7 @@ var MessageSchema = new mongoose.Schema({
   provider: String,
   attachments: Array,
   messenger: {
+    id: String,
     mid: String,
     seq: Number
   }

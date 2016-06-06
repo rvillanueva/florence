@@ -1,5 +1,4 @@
 var Promise = require('bluebird');
-var Bot = require('../../bot');
 var Queue = require('./message.queue');
 var Router = require('./message.router');
 

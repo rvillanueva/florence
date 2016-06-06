@@ -1,9 +1,7 @@
 'use strict';
-import User from '../../../api/user/user.model';
-var request = require("request");
-var Messages = require("../../message");
-var Format = require('./messenger.formatter');
 var Promise = require('bluebird');
+var request = require('request');
+var Format = require('./messenger.formatter');
 
 export function sendToApi(message){
   return new Promise(function(resolve, reject){

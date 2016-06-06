@@ -7,7 +7,10 @@ export function notify(bot){
     bot.send({
       text: 'Hey'
     })
-    .then(bot => bot.setStatus('waiting'))
+    .then(bot => {
+      bot.state.status = 'waiting';
+      return bot.update();
+    })
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })

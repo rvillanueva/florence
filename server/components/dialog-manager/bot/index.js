@@ -7,8 +7,8 @@ export default function(userId, received){
   this.userId = userId;
   this.provider;
   this.received = received;
-  this.status = null;
-  this.bot = {
+  this.state = {
+    status: null
   }
   this.conversations = {
     current: false,
@@ -30,13 +30,8 @@ export default function(userId, received){
   }
 
   this.update = function(){
-    //save
+    // Save
     return this;
-  }
-
-  this.setStatus = function(status){
-    this.status = status;
-    return this.update();
   }
 
   this.init = function(){
