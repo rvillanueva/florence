@@ -8,6 +8,7 @@ export function respond(received){
   return new Promise(function(resolve, reject){
     var bot = new Bot(received.userId, received);
     bot.init()
+    .then(bot => DialogService.handleTextParsing(bot))
     //.then(bot => Flow.handleAskPermissionResponse(bot))
     .then(bot => DialogService.handleTaskResponse(bot)
     .then(bot => DialogService.handleNextTask(bot)

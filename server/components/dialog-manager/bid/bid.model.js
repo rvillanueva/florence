@@ -1,22 +1,13 @@
 'use strict';
 
 import mongoose from 'mongoose';
+import Reward from '../reward/reward.model';
+
+var RewardSchema = Reward.schema;
 
 var BidSchema = new mongoose.Schema({
   userId: String,
-  force: Boolean,
-  rewards: [
-    {
-      targets: [
-        {
-          property: String,
-          value: String
-        }
-      ],
-      value: Number,
-      operation: String
-    }
-  ],
+  rewards: [RewardSchema],
   created: {
     userId: String,
     date: Date,

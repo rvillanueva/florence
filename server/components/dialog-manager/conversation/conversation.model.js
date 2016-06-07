@@ -2,6 +2,16 @@
 
 import mongoose from 'mongoose';
 
+/*
+CONVERSATION
+A conversation is composed of
+
+1) an intent (when user-initiated)
+2) an associated task
+3) entities/properties associated with it
+
+*/
+
 var ConversationSchema = new mongoose.Schema({
   userId: String,
   taskId: String,
@@ -9,9 +19,9 @@ var ConversationSchema = new mongoose.Schema({
   topics: Array,
   messages: Array,
   entities: {},
-  slots: Array,
   started: {
     by: String,
+    intent: String,
     date: Date,
     turn: Number,
   },

@@ -25,7 +25,7 @@ function topicChange(bot){
 // If bot hasn't introduced itself yet, run introduction
 function introduction(bot){
   return new Promise(function(resolve, reject){
-    if(!bot.state.hello && bot.cache.task.task == 'hello'){
+    if(!bot.state.hello && bot.cache.task.role == 'hello'){
       bot.cache.score += 50;
     }
     resolve(bot);

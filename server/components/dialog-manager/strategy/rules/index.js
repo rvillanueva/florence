@@ -15,7 +15,7 @@ Also models social rules such as cost of conversation length and rapid topic swi
 
 // INPUT: cache.tasks
 // OUTPUT: cache.scores
-export function getScores(bot){
+export function applyToScores(bot){
   return new Promise(function(resolve, reject){
     RulesService.initMap(bot)
     .then(bot => RulesService.scoreTasks(bot))

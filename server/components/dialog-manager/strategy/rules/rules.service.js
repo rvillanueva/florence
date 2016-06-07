@@ -2,8 +2,8 @@
 
 var Promise = require('bluebird');
 
-// Cycle through each task and score it
-// INPUT: cache.tasks, cache.scores
+// Cycle through each score in map and update it
+// INPUT: cache.scores
 // OUTPUT: cache.scores
 
 export function scoreTasks(bot){
@@ -13,7 +13,7 @@ export function scoreTasks(bot){
 
     function score(bot){
       if(i >= bot.cache.tasks.length - 1){
-        resolve(bot);cd
+        resolve(bot);
       } else {
         i++;
         bot.cache.task = bot.cache.tasks[i];
@@ -35,18 +35,4 @@ export function scoreTask(bot, task){
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
-}
-
-// Start a new score map
-// INPUT: none
-// OUTPUT: cache.scores
-export function initMap(bot){
-  bot.cache.scores = [];
-}
-
-// Add a score to the reward map
-// INPUT: cache.score, cache.scores
-// OUTPUT: cache.scores
-export function addScoreToMap(bot){
-  bot.cache.scores.push(bot.cache.score);
 }

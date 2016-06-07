@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 
 // -- GET
 
+// OUPUT: cache.tasks
 export function get(bot){
   return new Promise(function(resolve, reject){
     Task.find()
@@ -26,42 +27,91 @@ export function getById(bot){
   })
 }
 
+export function buildIndex(bot){
+  return new Promise(function(resolve, reject){
+    bot.cache.taskMap = {};
+    bot.cache.tasks.forEach(function(task, t){
+      bot.cache.taskMap[task._id] = task;
+    })
+    resolve(bot)
+  })
+}
+
 // -- RUN
 
 // Queue sendables from task
+// INPUT: cache.task, cache.task.send
 export function executeSend(bot){
+  return new Promise(function(resolve, reject){
+    var promises = [];
+    var sendables = [];
+    var messages = [];
+    var attachments = [];
+    var task = bot.cache.task;
 
+    // TODO Use text-generator to split say
+
+    if(task.say){
+      messages = [
+        {
+          type: 'text',
+          text: say
+        }
+      ]
+    }
+    if(task.attachments && task.attachments.length > 0){
+      attachments = task.attachments;
+    }
+
+    sendables.concat(messages);
+    sendables.concat(attachments);
+
+    sendables.forEach(function(sendable, s){
+      promises.push(bot.send(sendable))
+    })
+
+    Promise.all(promises)
+    .then(() => resolve(bot))
+    .catch(err => reject(err))
+  })
 }
 
 // If task is a question, set status
+// INPUT: cache.task
 export function handleWait(bot){
-
+  return new Promise(function(resolve, reject){
+    if(bot.cache.task.type == 'ask'){
+      bot.state.status = 'waiting';
+      bot.update()
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      resolve(bot);
+    }
+  })
 }
 
 // -- RESPOND
 
 // Use cached conversations to return relevant tasks
-// INPUT: cache.conversations
+// INPUT: entities, cache.conversations;
 // OUTPUT: cache.tasks
-export function matchAllByConversations(bot){
-  // Return tasks related to current, previous, and topical conversations
-  // Otherwise, search global tasks
+export function searchConversations(bot){
+  return new Promise(function(resolve, reject){
+
+  })
 }
 
-// Rank and select cached tasks based on intent match and slot matches
+
+// Select most relevant task
 // INPUT: cache.tasks
 // OUTPUT: cache.task
-export function matchOne(bot){
+export function selectMostRelevantTask(bot){
 
 }
 
 // Match entities to conversation slots
 export function fillSlots(bot){
-
-}
-
-//
-export function handleUserInput(bot){
 
 }
 

@@ -1,30 +1,44 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Bid = require('../bid');
 
-// Apply bids to the score map
-// INPUT: cache.scores
+// Initialize score map and task index
+// INPUT: cache.tasks
 // OUTPUT: cache.scores
-export function applyBids(bot){
-  return new Promise(function(resolve, reject){
-    Bid.get(bot)
-    .then(bot => cycleThroughBids(bot))
-    .then(bot => resolve(bot))
-    .catch(err => reject(err))
+export function initScoreMap(bot) {
+  return new Promise(function(resolve, reject) {
+    bot.cache.scores = [];
+    // Push a score holder referencing each task
+    bot.cache.tasks.forEach(function(task, t) {
+      var score = {
+        taskId: task._id
+      }
+      bot.cache.scores.push(score);
+    })
+    resolve(bot);
+  })
+}
 
-    function cycleThroughBids(bot){
-      return new Promise(function(resolve, reject){
-        for(var i = 0; i < bot.bids.length; i ++){
-          var bid = bot.bids[i];
-          for (var j = 0; j < bot.scores.length; j++){
-            var score = bot.scores[j];
-            // needs to match bid attributes with task attributes
-          }
-        }
-        resolve(bot)
-      })
+// Select best task based on scores
+// INPUT: cache.scores, cache.taskMap
+// OUTPUT: cache.task
+export function selectBestTask(bot) {
+  return new Promise(function(resolve, reject) {
+
+    if (bot.cache.scores.length == 0) {
+      bot.cache.task = null;
+    } else {
+
+      // Sort score map by score
+      bot.cache.scores.sort(function(a, b) {
+        return parseFloat(b.score) - parseFloat(a.score);
+      });
+
+      // Select best
+      bot.cache.task = bot.cache.taskMap[bot.cache.scores[0].taskId]
+
+      // Return associated task
+      resolve(bot)
     }
-    
   })
 }
