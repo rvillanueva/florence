@@ -63,11 +63,15 @@ function handleError(res, statusCode) {
 }
 
 function handleEachMessage(messages){
-  var promises = [];
-  messages.forEach(function(message, m){
-    Dialog.respond(message);
-  });
-  return Promises.all(promises)
+  return new Promise(function(resolve, reject){
+    var promises = [];
+    messages.forEach(function(message, m){
+      promises.push(Dialog.respond(message));
+    });
+    Promise.all(promises)
+    .then(() => resolve(true))
+    .catch(err => reject(err))
+  })
 }
 
 // Facebook Messenger Webhook. Should respond with the challenge
@@ -83,7 +87,7 @@ export function receive(req, res) {
   return new Promise(function(resolve, reject){
     console.log('Received:')
     console.log(req.body);
-    Message.standardize(req.body)
+    Message.standardize(req.body, 'messenger')
     .then(messages => handleEachMessage(messages))
     .then(() => resolve(res.status(200).end()))
     .catch(err => reject(err))

@@ -2,8 +2,8 @@
 
 var Promise = require("bluebird");
 var Bot = require('./bot.model').constructor;
-var Interpret = require('../services/interpreter');
-var Conversation = require('../services/conversation');
+//var Interpret = require('../services/interpreter');
+//var Conversation = require('../services/conversation');
 
 export function respond(message){
   return new Promise(function(resolve, reject){

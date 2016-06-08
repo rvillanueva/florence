@@ -16,7 +16,7 @@ export function standardize(data){
     MessengerService.convertToArray(data)
       //.then(messages => Messenger.filterOutDeliveries(messages))
       //.then(filtered => Messenger.checkUsersExist(filtered))
-      .then(unformatted => MessengerService.formatEachMessage(formatted))
+      .then(unformatted => MessengerService.formatEachMessage(unformatted))
       .then(messages => resolve(messages))
       .catch(err => console.log(err))
   })

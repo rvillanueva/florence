@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 var Bid = require('../../bid');
-var BidService = require('bids.service');
+var BidService = require('./bids.service');
 
 export function applyToScores(bot){
   Bid.get(bot)

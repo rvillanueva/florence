@@ -40,12 +40,15 @@ export function convertToArray(obj){
 
 export function formatEachMessage(messages){
   return new Promise(function(resolve, reject){
-    var formatted = []
+    var promises = []
     messages.forEach(function(message, j){
-      formatted.push(Format.toStandard(message))
+      promises.push(Format.toStandard(message))
     })
     Promise.all(promises)
-    .then(() => resolve(formatted))
+    .then(formatted => {
+      console.log(formatted)
+      resolve(formatted)
+    })
     .catch(err => reject(err))
   })
 }

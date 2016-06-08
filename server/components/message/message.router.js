@@ -12,7 +12,7 @@ export function deliver(message){
       .then(log => resolve(log))
       .catch(err => reject(err))
     } else {
-      reject(new TypeError('Provider ' + provider + ' not recognized.'))
+      reject(new TypeError('Provider ' + message.provider + ' not recognized.'))
     }
   })
 }

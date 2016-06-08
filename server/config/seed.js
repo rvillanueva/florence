@@ -5,14 +5,14 @@
 
 'use strict';
 import User from '../api/user/user.model';
-import Aspect from '../api/aspect/aspect.model';
-import Metric from '../api/metric/metric.model';
-import Verification from '../api/verification/verification.model';
-import Conversation from '../api/conversation/conversation.model';
-import Intent from '../api/intent/intent.model';
+//import Aspect from '../api/aspect/aspect.model';
+//import Metric from '../api/metric/metric.model';
+//import Verification from '../api/verification/verification.model';
+//import Conversation from '../api/conversation/conversation.model';
+//import Intent from '../api/intent/intent.model';
 import mongoose from 'mongoose';
 
-Verification.find({}).remove();
+//Verification.find({}).remove();
 User.find({}).remove()
   .then(() => {
     User.create({
@@ -34,7 +34,7 @@ User.find({}).remove()
       });
   });
 
-Aspect.find({}).remove()
+/*Aspect.find({}).remove()
   .then(() => {
     Aspect.create({
         key: 'mood',
@@ -389,3 +389,4 @@ Intent.find({}).remove()
   .then(() => {
     console.log('Intents populated.');
   });
+  */

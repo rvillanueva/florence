@@ -9,7 +9,7 @@ export function update(bot){
 export function getRelevant(bot){
   return new Promise(function(resolve, reject){
     // TODO Narrow query to most recent
-    Conversation.find({'userId': bot.userId})
+    Conversation.find({'userId': bot.user._id})
     .then(conversations => {
       bot.cache.conversations = conversations;
       resolve(bot)

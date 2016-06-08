@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var TextGenerator = require('../text-generator')
+var TextGenerator = require('../../text-generator')
 
 
 export function handleTopicChange(bot){

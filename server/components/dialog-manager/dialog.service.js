@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Parser = requier('../parser');
+var Parser = require('../parser');
 
 var Flow = require('./flow');
 var Task = require('./task');

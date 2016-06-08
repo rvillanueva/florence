@@ -3,9 +3,8 @@ var request = require("request");
 
 export function classify(text){
  return new Promise(function(resolve, reject){
-  if(typeof bot.message.text !== 'string'){
-     reject('Message must have text.')
-     return false;
+  if(typeof text !== 'string'){
+     reject('Input must be a string.')
    }
    var options = {
      url: "https://api.wit.ai/message",
@@ -23,9 +22,10 @@ export function classify(text){
      if(err){
        reject(err);
      }
-     var responseObj = JSON.parse(body);
-     var standardized = toStandard(responseObj);
-     resolve(responseObj)
+     var parsed = JSON.parse(body);
+     console.log(parsed);
+     var standardized = toStandard(parsed);
+     resolve(standardized)
    })
  })
 }

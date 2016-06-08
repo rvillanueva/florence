@@ -39,7 +39,7 @@ export function getDay(bot) {
         date: {
           "$gt": earliest
         },
-        userId: bot.userId
+        userId: bot.user._id
       }).sort('date').exec()
       .then(entries => resolve(entries))
       .catch(err => reject(err))
