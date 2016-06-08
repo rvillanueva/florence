@@ -2,6 +2,7 @@
 
 var Promise = require('bluebird');
 import Bot from './bot';
+import BotState from './bot/bot.model';
 var DialogService = require('./dialog.service');
 
 export function respond(received){
@@ -27,3 +28,5 @@ export function initiate(userId){
     .catch(err => reject(err))
   })
 }
+
+module.exports.BotState = BotState;

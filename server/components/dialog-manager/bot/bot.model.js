@@ -2,8 +2,8 @@
 
 import mongoose from 'mongoose';
 
-var BotSchema = new mongoose.Schema({
+var BotStateSchema = new mongoose.Schema({
   status: String
 });
 
-export default mongoose.model('Bot', BotSchema);
+export default mongoose.model('BotState', BotStateSchema);

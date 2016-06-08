@@ -11,7 +11,7 @@ export function getRelevant(bot){
     // TODO Narrow query to most recent
     Conversation.find({'userId': bot.user._id})
     .then(conversations => {
-      bot.cache.conversations = conversations;
+      bot.cache.conversations = conversations || [];
       resolve(bot)
     })
     .catch(err => reject(err))

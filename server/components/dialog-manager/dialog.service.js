@@ -31,10 +31,7 @@ export function handleTaskResponse(bot){
   return new Promise(function(resolve, reject){
     // TODO add in permissions handling
     if(bot.state.status == 'waiting'){
-      Conversation.getRelevant(bot)
-      .then(bot => Task.matchAllByConversations(bot))
-      .then(bot => Task.makeResponseBid(bot))
-      .then(bot => Strategy.selectTask(bot))
+      Strategy.selectTaskForResponse(bot)
       .then(bot => Task.respond(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
@@ -47,7 +44,7 @@ export function handleTaskResponse(bot){
 export function handleNextTask(bot){
   return new Promise(function(resolve, reject){
     if(bot.state.status == 'ready'){
-      Strategy.selectTask(bot)
+      Strategy.selectTaskToRun(bot)
       .then(bot => Conversation.update(bot))
       //.then(bot => Flow.handleTopicChange(bot))
       //.then(bot => Flow.handleAskPermission(bot))
