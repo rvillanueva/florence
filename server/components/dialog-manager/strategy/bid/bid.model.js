@@ -1,22 +1,24 @@
 'use strict';
 
 import mongoose from 'mongoose';
-import Reward from '../reward/reward.model';
-
-var RewardSchema = Reward.schema;
 
 var BidSchema = new mongoose.Schema({
+  // META
   userId: String,
-  rewards: [RewardSchema],
   created: {
-    userId: String,
+    source: String,
+    sourceId: String,
     date: Date,
     turn: Number
   },
-  expires: {
-    date: Date,
-    turn: Number
-  },
+  // EDITABLE
+  targets: {},
+  force: Boolean,
+  modifier: Number,
+  expiration: {
+    minutes: Number,
+    turns: Number
+  }
 });
 
 export default mongoose.model('Bid', BidSchema);

@@ -3,23 +3,24 @@
 var Promise = require('bluebird');
 var StrategyService = require('./strategy.service');
 
-var Task = require('../task');
-
-var Intents = require('./intents');
-var Rules = require('./rules');
-var Bids = require('./bids');
-
 // OUTPUT: cache.task
-export function selectTask(bot){
+export function selectNextTask(bot){
   return new Promise(function(resolve, reject){
-    Task.get(bot)
-    .then(bot => Task.buildIndex(bot))
+    StrategyService.getAllTasks(bot)
     .then(bot => StrategyService.initScoreMap(bot))
-    .then(bot => Intents.applyToScores(bot))
-    .then(bot => Rules.applyToScores(bot))
-    .then(bot => Bids.applyToScores(bot))
+    .then(bot => StrategyService.applyNextTaskScoring(bot))
     .then(bot => StrategyService.selectBestTask(bot))
+    .then(bot => StrategyService.updateConversation(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+export function selectResponseTask(bot){
+  StrategyService.getResponseTasks(bot)
+  .then(bot => StrategyService.initScoreMap(bot))
+  .then(bot => StrategyService.applyResponseScoring(bot))
+  .then(bot => StrategyService.selectBestTask(bot))
+  .then(bot => StrategyService.handleClarifications(bot))
+  .then(bot => StrategyService.handleConfusion(bot))
 }

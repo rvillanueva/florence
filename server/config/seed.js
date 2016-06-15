@@ -9,7 +9,9 @@ import User from '../api/user/user.model';
 //import Metric from '../api/metric/metric.model';
 //import Verification from '../api/verification/verification.model';
 //import Conversation from '../api/conversation/conversation.model';
-//import Intent from '../api/intent/intent.model';
+import Response from '../components/dialog-manager/strategy/response/response.model';
+import Task from '../components/dialog-manager/task/task.model';
+
 import mongoose from 'mongoose';
 
 //Verification.find({}).remove();
@@ -33,6 +35,31 @@ User.find({}).remove()
         console.log('Users populated.');
       });
   });
+
+  Response.find({}).remove()
+  .then(() => {
+    Response.create({
+      features: {
+        intent: 'greet'
+      },
+      bids: [
+        {
+          targets: {
+            objective: 'introduceSelf'
+          },
+          modifier: 1
+        }
+      ]
+    })
+  })
+
+  Task.find({}).remove()
+  .then(() => {
+    Task.create({
+      objective: 'introduceSelf',
+      say: 'Hi! My name is River.'
+    })
+  })
 
 /*Aspect.find({}).remove()
   .then(() => {

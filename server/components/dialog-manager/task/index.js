@@ -8,14 +8,10 @@ export function run(bot){
   .then(bot => TaskService.handleWait(bot))
   .then(bot => resolve(bot))
   .catch(err => reject(err))
-
 }
 
 export function respond(bot){
-  Conversation.getRelevant(bot)
-  .then(bot => TaskService.searchConversations(bot))
-  .then(bot => TaskService.selectMostRelevantTask(bot))
-  .then(bot => TaskService.fillSlots(bot))
+  TaskService.fillSlots(bot)
   .then(bot => TaskService.handleClarification(bot))
   .then(bot => TaskService.handleCompletion(bot))
   .then(bot => resolve(bot))
@@ -30,6 +26,10 @@ export function get(bot){
 
 export function getById(bot){
   return TaskService.getById(bot);
+}
+
+export function getByIds(bot){
+  return TaskService.getByIds(bot);
 }
 
 export function buildIndex(bot){

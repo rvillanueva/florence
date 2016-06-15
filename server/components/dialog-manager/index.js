@@ -5,9 +5,9 @@ import Bot from './bot';
 import BotState from './bot/bot.model';
 var DialogService = require('./dialog.service');
 
-export function respond(received){
+export function respond(data){
   return new Promise(function(resolve, reject){
-    var bot = new Bot(received.userId, received);
+    var bot = new Bot(data);
     bot.init()
     .then(bot => DialogService.handleTextParsing(bot))
     //.then(bot => Flow.handleAskPermissionResponse(bot))

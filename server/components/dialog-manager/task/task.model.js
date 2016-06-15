@@ -3,11 +3,14 @@
 import mongoose from 'mongoose';
 
 var TaskSchema = new mongoose.Schema({
-  name: String,
-  type: String,
+  objective: String,
+  type: {
+    type: String
+  },
+  features: {},
   slots: [
     {
-      entity: String,
+      feature: String,
       validation: {
         min: Number,
         max: Number,

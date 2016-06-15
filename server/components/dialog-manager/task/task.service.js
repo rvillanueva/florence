@@ -7,12 +7,16 @@ var Promise = require('bluebird');
 // OUPUT: cache.tasks
 export function get(bot){
   return new Promise(function(resolve, reject){
-    Task.find()
-    .then(tasks => {
-      bot.cache.tasks = tasks;
+    if(!bot.cache.tasks){
+      Task.find()
+      .then(tasks => {
+        bot.cache.tasks = tasks;
+        resolve(bot)
+      })
+      .catch(err => reject(err))
+    } else {
       resolve(bot)
-    })
-    .catch(err => reject(err))
+    }
   })
 }
 
@@ -27,13 +31,28 @@ export function getById(bot){
   })
 }
 
+export function getByIds(bot){
+  return new Promise(function(resolve, reject){
+    Task.find({'_id': {'$in':bot.cache.taskIds}}) //FIXME
+    .then(task => {
+      bot.cache.tasks = tasks;
+      resolve(bot)
+    })
+    .catch(err => reject(err))
+  })
+}
+
 export function buildIndex(bot){
   return new Promise(function(resolve, reject){
-    bot.cache.taskMap = {};
-    bot.cache.tasks.forEach(function(task, t){
-      bot.cache.taskMap[task._id] = task;
-    })
-    resolve(bot)
+    if(!bot.cache.taskMap){
+      bot.cache.taskMap = {};
+      bot.cache.tasks.forEach(function(task, t){
+        bot.cache.taskMap[task._id] = task;
+      })
+      resolve(bot)
+    } else {
+      resolve(bot)
+    }
   })
 }
 
@@ -94,7 +113,7 @@ export function handleWait(bot){
 // -- RESPOND
 
 // Use cached conversations to return relevant tasks
-// INPUT: entities, cache.conversations;
+// INPUT: features, cache.conversations;
 // OUTPUT: cache.tasks
 export function searchConversations(bot){
   return new Promise(function(resolve, reject){

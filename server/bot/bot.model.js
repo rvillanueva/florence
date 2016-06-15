@@ -21,7 +21,7 @@ export function constructor(userId) {
     queued: [],
     received: {
       intent: null,
-      entities: {},
+      features: {},
     },
     variables: {}
   }

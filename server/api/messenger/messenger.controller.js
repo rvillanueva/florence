@@ -80,16 +80,21 @@ function handleEachMessage(messages){
       console.log('Received:')
       console.log(message);
       UserService.getUserByMessengerId(message.messenger.id)
-      .then(user => attachUserIdToMessage(message, user))
-      .then(message => Dialog.respond(message))
-      .then(() = resolve(true))
+      .then(user => setupBotOptions(user, message))
+      .then(options => Dialog.respond(options))
+      .then(() => resolve(true))
       .catch(err => reject(err))
     })
 
-    function attachUserIdToMessage(message, user){
+    function setupBotOptions(user, message){
       return new Promise(function(resolve, reject){
-        message.userId = user._id;
-        resolve(message)
+        var options = {
+          user: user,
+          state: user.state,
+          received: message
+        }
+        options.received.userId = user._id;
+        resolve(options);
       })
     }
   }

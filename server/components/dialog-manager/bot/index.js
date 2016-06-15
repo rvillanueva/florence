@@ -11,13 +11,14 @@ provider
 
 */
 
-export default function(user, state, received){
+export default function(options){
 
   // PROPERTIES
+  options = options || {};
 
-  this.user = user;
-  this.state = state || {};
-  this.received = received;
+  this.user = options.user;
+  this.state = options.state || {};
+  this.received = options.received;
 
   this.conversations = [];
   this.cache = {};
@@ -33,7 +34,7 @@ export default function(user, state, received){
       Promise.all(promises)
       .then(() => resolve(true))
       .catch(err => reject(err))
-    }
+    })
   }
 
   this.clearCache = function(){

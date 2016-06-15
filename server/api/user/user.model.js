@@ -40,7 +40,7 @@ var UserSchema = new Schema({
     maxFrequency: Number,
     lastCheckInRequest: Date
   },
-  bot: BotStateSchema
+  state: BotStateSchema
 });
 
 /**

@@ -1,8 +1,8 @@
 'use strict';
 
 var Promise = require('bluebird');
-var RulesService = require('./rules.service')
-var SocialRules = require('./rules.social');
+var RulesService = require('./rule.service')
+var SocialRules = require('./rule.social');
 
 /*
 RULES
