@@ -2,12 +2,12 @@
 
 var ResponseService = require('./response.service');
 
-export function handleExpectedInputs(bot){
-  return ResponseService.handleExpectedResponse(bot);
+export function handleExpected(bot){
+  return ResponseService.handleExpected(bot);
 }
 
-export function handleInterjection(bot){
-  return ResponseService.handleInterjection(bot);
+export function handleUnexpected(bot){
+  return ResponseService.handleUnexpected(bot);
 }
 
 export function handleNonUnderstanding(bot){

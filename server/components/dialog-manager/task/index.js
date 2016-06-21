@@ -36,7 +36,6 @@ export function buildIndex(bot){
   return TaskService.buildIndex(bot);
 }
 
-// Apply slot matching scores
-export function applyToScores(bot){
-  return TaskService.applyToScores(bot);
+export function getByNext(bot){
+  return TaskService.getByNext(bot);
 }

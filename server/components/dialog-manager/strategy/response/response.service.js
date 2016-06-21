@@ -1,29 +1,29 @@
 'use strict';
 
 var Promise = ('bluebird');
-import Task from '../task/task.model';
-var TaskService = require('../task')
+var TaskService = require('../task');
 
 // Get expected responses from active task
 // INPUT: bot.cache.task
 // OUPUT: bot.cache.tasks
-export function handleExpectedInputs(bot){
+export function handleExpected(bot){
   return new Promise(function(resolve, reject){
 
-    if(!bot.cache.task.responseIds || bot.cache.task.responseIds.length == 0){
+    if(!bot.cache.task.next || bot.cache.task.next.length == 0){
       bot.cache.tasks = [];
       resolve(bot)
     }
 
-    Task.find({'_id': bot.cache.task.responseIds})
-      .then(tasks => {
-        bot.cache.tasks = tasks;
-        resolve(bot)
-      })
-      .catch(err => reject(err))
+    TaskService.getByNext(bot.cache.next)
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
 
     }
   })
+
+  function filterByParams(bot){
+    // Match context to params
+  }
 }
 
 // If no expected response matches, search related tasks and then global tasks

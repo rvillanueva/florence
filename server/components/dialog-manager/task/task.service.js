@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-
+import Task from './task.model';
 // -- GET
 
 // OUPUT: cache.tasks
@@ -154,9 +154,22 @@ export function handleClarification(bot){
 
 }
 
-export function applyToScores(bot){
+export function getByNext(bot){
   return new Promise(function(resolve, reject){
-    // Cycle through each task and add scores from response
+    var objectives = [];
+
+    bot.cache.task.next.forEach(function(response, r){
+      if(response.objective){
+        objectives.push(response.objective)
+      }
+    })
+
+    Task.find({'objective': { '$in': objectives}})
+      .then(tasks => {
+        bot.cache.tasks = tasks;
+        resolve(bot)
+      })
+      .catch(err => reject(err))
 
   })
 }

@@ -4,11 +4,10 @@ import mongoose from 'mongoose';
 
 var TaskSchema = new mongoose.Schema({
   objective: String,
-  intents: [String],
-  type: {
+  type: { // say, ask
     type: String
   },
-  conditions: [{
+  preconditions: [{
     type: {
       type: String
     },
@@ -27,21 +26,28 @@ var TaskSchema = new mongoose.Schema({
     }
   ],
   say: String,
-  attachments: [
-    {
-      type: String,
-      title: String,
-      subtitle: String,
-      imageUrl: String,
-      postback: String,
-      webUrl: String
-    }
-  ],
   action: {
     name: String,
     params: {}
   },
-  responseTaskIds: [String]
+  next: [{
+    intent: String,
+    objective: String,
+    execution: String
+  }]
 });
 
 export default mongoose.model('Task', TaskSchema);
+
+
+
+/*attachments: [
+  {
+    type: String,
+    title: String,
+    subtitle: String,
+    imageUrl: String,
+    postback: String,
+    webUrl: String
+  }
+],*/
