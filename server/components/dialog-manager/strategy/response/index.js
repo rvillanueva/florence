@@ -2,20 +2,14 @@
 
 var ResponseService = require('./response.service');
 
-
-
-// Create bids from matching responses
-// INPUT: received.features
-
-export function getRelevantTaskIds(bot){
-  return new Promise(function(resolve, reject){
-    ResponseService.getMatching(bot)
-    .then(bot => ResponseService.listTaskIds(bot))
-    .then(bot => resolve(bot))
-    .catch(err => reject(err))
-  })
+export function handleExpectedInputs(bot){
+  return ResponseService.handleExpectedResponse(bot);
 }
 
-export function createBids(bot){
-  return ResponseService.createBids(bot);
+export function handleInterjection(bot){
+  return ResponseService.handleInterjection(bot);
+}
+
+export function handleNonUnderstanding(bot){
+  return ResponseService.handleNonUnderstanding(bot);
 }

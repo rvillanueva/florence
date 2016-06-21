@@ -4,13 +4,20 @@ import mongoose from 'mongoose';
 
 var TaskSchema = new mongoose.Schema({
   objective: String,
+  intents: [String],
   type: {
     type: String
   },
-  features: {},
+  conditions: [{
+    type: {
+      type: String
+    },
+    params: {}
+  }],
+  entities: {},
   slots: [
     {
-      feature: String,
+      entity: String,
       validation: {
         min: Number,
         max: Number,
@@ -34,9 +41,7 @@ var TaskSchema = new mongoose.Schema({
     name: String,
     params: {}
   },
-  clarifications: {
-    confirmation: String
-  }
+  responseTaskIds: [String]
 });
 
 export default mongoose.model('Task', TaskSchema);

@@ -1,23 +1,71 @@
 'use strict';
 
 var Promise = ('bluebird');
-import Response from './response.model';
-import Bid from '../bid';
+import Task from '../task/task.model';
+var TaskService = require('../task')
 
-// Get relevant responses
-// INPUT: received.features
-// OUPUT: cache.responses
-export function getMatching(bot){
+// Get expected responses from active task
+// INPUT: bot.cache.task
+// OUPUT: bot.cache.tasks
+export function handleExpectedInputs(bot){
   return new Promise(function(resolve, reject){
-    Response.findOne({'features': bot.received.features})
-      .then(responses => {
-        bot.cache.responses = responses;
+
+    if(!bot.cache.task.responseIds || bot.cache.task.responseIds.length == 0){
+      bot.cache.tasks = [];
+      resolve(bot)
+    }
+
+    Task.find({'_id': bot.cache.task.responseIds})
+      .then(tasks => {
+        bot.cache.tasks = tasks;
         resolve(bot)
       })
       .catch(err => reject(err))
 
+    }
   })
 }
+
+// If no expected response matches, search related tasks and then global tasks
+// INPUT: bot.cache.tasks
+// OUPUT: bot.cache.task
+export function handleInterjection(bot){
+  return new Promise(function(resolve, reject){
+    if(bot.cache.tasks && bot.cache.tasks.length > 0){
+      resolve(bot)
+    } else {
+      resolve(bot)
+    }
+
+  })
+}
+
+// If still no tasks have been found, use task's confusion handle or default
+// INPUT: bot.cache.tasks
+// OUPUT: bot.cache.task
+export function handleNonUnderstanding(bot){
+  return new Promise(function(resolve, reject){
+    if(bot.cache.tasks && bot.cache.tasks.length > 0){
+      resolve(bot)
+    }
+
+    bot.send({
+      text: 'I\'m sorry, I didn\'t understand that. Can you try again?'
+    })
+    .then(bot => {
+      bot.state.status = 'waiting';
+      resolve(bot)
+    })
+    .catch(err => reject(err))
+
+  })
+}
+
+
+
+
+
+
 
 // Filter out tasks that didn't match a response
 // INPUT: cache.responses, cache.scores
@@ -27,7 +75,7 @@ export function listTaskIds(bot){
  bot.cache.taskIds = [];
  bot.cache.responses.forEach(function(response, r){
    response.bids.forEach(function(bid, b){
-     if(bid.targets.intent == bot.received.features.intent){
+     if(bid.targets.intent == bot.received.entities.intent){
        bot.cache.taskIds.push(bid.task)
      }
    })

@@ -8,7 +8,7 @@ A conversation is composed of
 
 1) an intent (when user-initiated)
 2) an associated task
-3) associated features
+3) associated entities
 
 */
 
@@ -18,7 +18,7 @@ var ConversationSchema = new mongoose.Schema({
   step: String,
   topics: Array,
   messages: Array,
-  features: {},
+  entities: {},
   started: {
     by: String,
     intent: String,

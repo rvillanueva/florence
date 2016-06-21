@@ -31,10 +31,12 @@ export function getById(bot){
   })
 }
 
-export function getByIds(bot){
+// INPUT: cache.taskTypes
+// OUTPUT: cahce.tasks
+export function getByTypes(bot){
   return new Promise(function(resolve, reject){
-    Task.find({'_id': {'$in':bot.cache.taskIds}}) //FIXME
-    .then(task => {
+    Task.find({'type': {'$in':bot.cache.taskTypes}}) //FIXME
+    .then(tasks => {
       bot.cache.tasks = tasks;
       resolve(bot)
     })
@@ -112,26 +114,39 @@ export function handleWait(bot){
 
 // -- RESPOND
 
-// Use cached conversations to return relevant tasks
-// INPUT: features, cache.conversations;
-// OUTPUT: cache.tasks
-export function searchConversations(bot){
+// Match entities to conversation slots
+export function fillSlots(bot){
   return new Promise(function(resolve, reject){
-
+    bot.cache.unfilledSlots = [];
+    bot.cache.slots = bot.cache.task.slots || [];
+    bot.cache.slots.forEach(function(slot, s){
+      var entitiyValue = bot.cache.received.entities[slot.feature];
+      if(entityValue){
+        slot.value == entityValue;
+      } else {
+        bot.cache.taskCompleted = false;
+      }
+    })
   })
 }
 
-
-// Select most relevant task
-// INPUT: cache.tasks
-// OUTPUT: cache.task
-export function selectMostRelevantTask(bot){
-
-}
-
-// Match entities to conversation slots
-export function fillSlots(bot){
-
+// Check if all required slots are filled and then execute action
+export function handleCompletion(bot){
+  if(bot.cache.taskCompleted == true){
+    // TODO execute action;
+    bot.state.status == 'ready';
+    if(bot.cache.task.confirmations && bot.cache.task.confirmations.completed){
+      bot.send([{
+        text: bot.cache.task.confirmations.completed
+      }])
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      resolve(bot)
+    }
+  } else {
+    resolve(bot);
+  }
 }
 
 //
@@ -139,7 +154,9 @@ export function handleClarification(bot){
 
 }
 
-//
-export function handleCompletion(bot){
+export function applyToScores(bot){
+  return new Promise(function(resolve, reject){
+    // Cycle through each task and add scores from response
 
+  })
 }

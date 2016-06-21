@@ -8,23 +8,32 @@ var BidService = require('./bid.service');
 
 /*
 bid: {
-  rewards: []
+  targets: {}
   expiration.minutes and/or expiration.turns
 }
 
 */
 export function create(bot){
-
-}
-
-// Get all bot bids
-// OUtPUT: cache.bids
-export function get(bot){
-  return BidService.get(bot);
+  return new Promise(function(resolve, reject){
+    var bidRef = bot.cache.newBid;
+    var bid = {
+      created: {
+        date: new Date(),
+        turn: bot.turn
+      },
+      targets: bidRef.targets,
+      force: bidRef.force,
+      modifier: bidRef.modifier,
+      expiration: bidRef.expiration
+    }
+    Bid.create(bid)
+    .then(() => resolve(bot))
+    .catch(err => reject(err))
+  })
 }
 
 export function applyToScores(bot){
-  BidService.get(bot)
+  BidService.getActive(bot)
   .then(bot => BidService.applyEachBid(bot))
   .then(bot => resolve(bot))
   .catch(err => reject(err))

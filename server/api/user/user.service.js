@@ -22,8 +22,7 @@ export function getUserByMessengerId(messengerId) {
           newUser.provider = 'messenger';
           newUser.role = 'user';
           newUser.state = {
-            step: {},
-            received: {},
+            status: {},
             variables: {}
           }
           newUser.active = true;

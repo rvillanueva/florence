@@ -8,25 +8,21 @@ var Rule = require('./rule');
 var Bid = require('./bid');
 var Conversation = require('./conversation');
 
-export function getAllTasks(bot){
-  Task.getByType(bot)
-  .then(bot => Task.buildIndex(bot))
-  .then(bot => resolve(bot))
-  .catch(err => reject(err))
-}
+export function getTaskByTypes(bot){
+  if(bot.state.status == 'responding'){
+    bot.cache.taskTypes == ['ask'];
+  } else if (bot.state.status == 'ready'){
+    bot.cache.taskTypes = ['say', 'ask'];
+  }
 
-// If a response, handle bid creation and task filtering
-export function getResponseTasks(bot) {
-  return new Promise(function(resolve, reject) {
-    Task.getByType(bot)
+  Task.getByTypes(bot)
     .then(bot => Task.buildIndex(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
-  })
 }
 
 // Initialize score map and task index
-// INPUT: cache.tasks
+// INPUT: cache.tasks, cache.taskMap
 // OUTPUT: cache.scores
 export function initScoreMap(bot) {
   return new Promise(function(resolve, reject) {
@@ -37,7 +33,8 @@ export function initScoreMap(bot) {
       // Push a score holder referencing each task
       bot.cache.tasks.forEach(function(task, t) {
         var score = {
-          taskId: task._id
+          task: bot.cache.taskMap[task._id],
+          value: 1
         }
         bot.cache.scores.push(score);
       })
@@ -47,28 +44,26 @@ export function initScoreMap(bot) {
   })
 }
 
-export function applyNextTaskScoring(bot){
+export function applyRelevantScoring(bot){
   return new Promise(function(resolve, reject){
     // When responding to a user input
+    if(bot.state.status == 'responding'){
+      // Do response bids
+      // Score based on conversation recency
+      // Score based on slot matching
+      Response.createBids(bot)
+        .then(bot => Bid.applyToScores(bot))
+        .then(bot => Conversation.applyToScores(bot))
+        .then(bot => Task.applyToScores(bot))
+        .then(bot => resolve(bot))
+        .catch(err => reject(err))
+    } else if (bot.state.status == 'ready'){
       Conversation.applyToScores(bot)
       .then(bot => Rule.applyToScores(bot))
       .then(bot => Bid.applyToScores(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-  })
-}
-
-export function applyResponseScoring(bot){
-  return new Promise(function(resolve, reject){
-    // Do response bids
-    // Score based on conversation recency
-    // Score based on slot matching
-    Response.createBids(bot)
-      .then(bot => Bid.applyToScores(bot))
-      .then(bot => Conversation.applyToScores(bot))
-      .then(bot => Task.applyToScores(bot))
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
+    }
   })
 }
 

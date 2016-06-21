@@ -39,7 +39,7 @@ User.find({}).remove()
   Response.find({}).remove()
   .then(() => {
     Response.create({
-      features: {
+      entities: {
         intent: 'greet'
       },
       bids: [
@@ -56,7 +56,7 @@ User.find({}).remove()
   Task.find({}).remove()
   .then(() => {
     Task.create({
-      objective: 'introduceSelf',
+      intent: 'introduceSelf',
       say: 'Hi! My name is River.'
     })
   })
