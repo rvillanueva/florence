@@ -2,17 +2,15 @@
 
 var Promise = require('bluebird');
 var StrategyService = require('./strategy.service');
-var Response = require('./response');
-var Skills = require('./skills');
+var Bid = require('./bid');
+var Task = require('../task');
 
 // OUTPUT: cache.task
 export function selectNext(bot){
   return new Promise(function(resolve, reject){
-    StrategyService.getTasks(bot)
-    .then(bot => StrategyService.initScoreMap(bot))
-    .then(bot => StrategyService.applyBids(bot))
-    .then(bot => StrategyService.selectBestTask(bot))
-    .then(bot => StrategyService.updateConversation(bot))
+    Task.cache(bot)
+    .then(bot => Bid.applyToScores(bot))
+    .then(bot => StrategyService.selectTopTask(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
@@ -20,14 +18,9 @@ export function selectNext(bot){
 
 export function selectResponse(bot){
   return new Promise(function(resolve, reject){
-    Response.handleExpectedInputs(bot))
-    .then(bot => Response.handleUnexpected(bot))
-    .then(bot => Response.handleRequiredSlots(bot))
-    .then(bot => Response.handleNonUnderstanding(bot))
-    .then(bot => StrategyService.initScoreMap(bot))
-    .then(bot => StrategyService.filterByConditions(bot))
-    .then(bot => StrategyService.selectBestTask(bot))
-    .then(bot => StrategyService.updateConversation(bot))
+    bot.state.status == 'responding';
+    StrategyService.handleUnfilledSlots(bot)
+    .then(bot => StrategyService.getTaskFromResponseAction(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })

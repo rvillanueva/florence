@@ -2,62 +2,6 @@
 
 var Promise = require('bluebird');
 import Task from './task.model';
-// -- GET
-
-// OUPUT: cache.tasks
-export function get(bot){
-  return new Promise(function(resolve, reject){
-    if(!bot.cache.tasks){
-      Task.find()
-      .then(tasks => {
-        bot.cache.tasks = tasks;
-        resolve(bot)
-      })
-      .catch(err => reject(err))
-    } else {
-      resolve(bot)
-    }
-  })
-}
-
-export function getById(bot){
-  return new Promise(function(resolve, reject){
-    Task.findById(bot.cache.taskId)
-    .then(task => {
-      bot.cache.task = task;
-      resolve(bot)
-    })
-    .catch(err => reject(err))
-  })
-}
-
-// INPUT: cache.taskTypes
-// OUTPUT: cahce.tasks
-export function getByTypes(bot){
-  return new Promise(function(resolve, reject){
-    Task.find({'type': {'$in':bot.cache.taskTypes}}) //FIXME
-    .then(tasks => {
-      bot.cache.tasks = tasks;
-      resolve(bot)
-    })
-    .catch(err => reject(err))
-  })
-}
-
-export function buildIndex(bot){
-  return new Promise(function(resolve, reject){
-    if(!bot.cache.taskMap){
-      bot.cache.taskMap = {};
-      bot.cache.tasks.forEach(function(task, t){
-        bot.cache.taskMap[task._id] = task;
-      })
-      resolve(bot)
-    } else {
-      resolve(bot)
-    }
-  })
-}
-
 // -- RUN
 
 // Queue sendables from task
@@ -112,64 +56,16 @@ export function handleWait(bot){
   })
 }
 
-// -- RESPOND
 
-// Match entities to conversation slots
-export function fillSlots(bot){
+// CRUD
+
+export function cache(bot){
   return new Promise(function(resolve, reject){
-    bot.cache.unfilledSlots = [];
-    bot.cache.slots = bot.cache.task.slots || [];
-    bot.cache.slots.forEach(function(slot, s){
-      var entitiyValue = bot.cache.received.entities[slot.feature];
-      if(entityValue){
-        slot.value == entityValue;
-      } else {
-        bot.cache.taskCompleted = false;
-      }
-    })
-  })
-}
-
-// Check if all required slots are filled and then execute action
-export function handleCompletion(bot){
-  if(bot.cache.taskCompleted == true){
-    // TODO execute action;
-    bot.state.status == 'ready';
-    if(bot.cache.task.confirmations && bot.cache.task.confirmations.completed){
-      bot.send([{
-        text: bot.cache.task.confirmations.completed
-      }])
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
-    } else {
+    Task.find().lean().exec()
+    .then(tasks => {
+      bot.cache.tasks = tasks;
       resolve(bot)
     }
-  } else {
-    resolve(bot);
-  }
-}
-
-//
-export function handleClarification(bot){
-
-}
-
-export function getByNext(bot){
-  return new Promise(function(resolve, reject){
-    var objectives = [];
-
-    bot.cache.task.next.forEach(function(response, r){
-      if(response.objective){
-        objectives.push(response.objective)
-      }
-    })
-
-    Task.find({'objective': { '$in': objectives}})
-      .then(tasks => {
-        bot.cache.tasks = tasks;
-        resolve(bot)
-      })
-      .catch(err => reject(err))
-
+    .catch(err => reject(err))
   })
 }

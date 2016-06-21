@@ -9,9 +9,9 @@ export function respond(data){
   return new Promise(function(resolve, reject){
     var bot = new Bot(data);
     bot.init()
-    .then(bot => DialogService.handleTextParsing(bot))
-    //.then(bot => Flow.handleAskPermissionResponse(bot))
-    .then(bot => DialogService.handleTaskResponse(bot))
+    .then(bot => DialogService.logMessage(bot))
+    .then(bot => DialogService.getResponse(bot))
+    .then(bot => DialogService.handleResponse(bot))
     .then(bot => DialogService.handleNextTask(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))

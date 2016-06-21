@@ -16,38 +16,41 @@ export function getActive(bot){
 }
 
 
-// Apply each bid to the score map
-// INPUT: cache.scores, cache.bids
-// OUPUT: cache.scores
+// Apply each bid to the task map
+// INPUT: cache.tasks, cache.bids
+// OUPUT: cache.tasks
 
 export function applyEachBid(bot){
   return new Promise(function(resolve, reject){
     for(var i = 0; i < bot.cache.bids.length; i ++){
       var bid = bot.cache.bids[i];
-      for (var j = 0; j < bot.cache.scores.length; j++){
-        var score = bot.cache.scores[j];
-        score = applyBid(score, bid);
+      for (var j = 0; j < bot.cache.tasks.length; j++){
+        var task = bot.cache.tasks[j];
+        task = applyBid(task, bid);
       }
     }
     resolve(bot)
 
-    function applyBid(score, bid){
-      if(isMatch(score, bid)){
-        score.force = bid.force;
+    function applyBid(task, bid){
+      if(!task.score){
+        task.score = 1;
+      }
+      if(isMatch(task, bid)){
+        task.force = bid.force;
         if(typeof bid.modifier === 'number'){
-          score.value = score.value * bid.modifier;
+          task.score = task.score * bid.modifier;
         }
-        return score;
+        return task;
       }
     }
 
-    function isMatch(score, bid){
+    function isMatch(task, bid){
       var matched = true;
-      var entities = bid.targets.entities
-      if(entities){
-        for (var entity in bid.targets.entities) {
-          if (entities.hasOwnProperty(param)) {
-            if (bot.entities[entity] !== bid.targets.entities[entity]) {
+      var params = bid.targets.params
+      if(params){
+        for (var param in params) {
+          if (params.hasOwnProperty(param)) {
+            if (bot.response.result.parameters[param] !== bid.targets.params[param] && bid.targets.params[param] !== '*') {
               matched = false;
             }
           }

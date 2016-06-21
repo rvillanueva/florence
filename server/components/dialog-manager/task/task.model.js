@@ -7,33 +7,12 @@ var TaskSchema = new mongoose.Schema({
   type: { // say, ask
     type: String
   },
-  preconditions: [{
-    type: {
-      type: String
-    },
-    params: {}
-  }],
-  entities: {},
-  slots: [
-    {
-      entity: String,
-      validation: {
-        min: Number,
-        max: Number,
-        values: Array
-      },
-      ask: String
-    }
-  ],
+  params: {},
+  validation: {}, // takes min, max, and values []
   say: String,
-  action: {
+  actions: [{
     name: String,
     params: {}
-  },
-  next: [{
-    intent: String,
-    objective: String,
-    execution: String
   }]
 });
 
@@ -50,4 +29,10 @@ export default mongoose.model('Task', TaskSchema);
     postback: String,
     webUrl: String
   }
-],*/
+],
+preconditions: [{
+  type: {
+    type: String
+  },
+  params: {}
+}],*/
