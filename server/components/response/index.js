@@ -10,12 +10,12 @@ export function query(params){
       url: "https://api.api.ai/v1/query",
       qs: {
         text: params.text,
-        sessionId: params.userId + '_' + params.agentId,
+        sessionId: params.sessionId,
         language: 'en',
         v: 20150910
       },
       auth: {
-        bearer: process.env.API_AI_SECRET
+        bearer: process.env.API_AI_CLIENT
       }
 
     }

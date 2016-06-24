@@ -1,49 +1,67 @@
 'use strict';
 var Promise = require('bluebird');
-import User from '../../api/user/user.model';
 var request = require('request');
-var Conversation = require('../conversation/conversation.service');
+
+import User from '../../api/user/user.model';
+import Bid from '../../components/dialog-manager/strategy/bid/bid.model';
 
 export function getUserByMessengerId(messengerId) {
   return new Promise((resolve, reject) => {
     User.findOne({
         'messenger.id': messengerId
-      }, '_id').exec()
-      .then(user => {
-        if (user) {
-          resolve(user);
-        } else {
-          var userData = {
-            messenger: {
-              id: messengerId
-            },
-          }
-          var newUser = new User(userData);
-          newUser.provider = 'messenger';
-          newUser.role = 'user';
-          newUser.state = {
-            status: {},
-            variables: {}
-          }
-          newUser.active = true;
-          updateFbProfile(newUser)
-          .then(user => resolve(user))
-          .catch(err => {
-            newUser.save()
-            .then(user => resolve(user))
-            .catch(reject(err))
-          })
-        }
-      })
+      }).exec()
+      .then(user => handleUserCreation(user, messengerId))
+      .then(user => updateFbProfile(user))
+      .then(user => resolve(user))
+      .catch(err => reject(err))
       .catch(err => reject(err))
   })
 
 }
 
+export function handleUserCreation(user, messengerId){
+  return new Promise(function(resolve, reject){
+    if (user) {
+      resolve(user);
+    } else {
+      var userData = {
+        messenger: {
+          id: messengerId
+        },
+      }
+      var newUser = new User(userData);
+      newUser.provider = 'messenger';
+      newUser.role = 'user';
+      newUser.state = {
+        state: 'waiting',
+        turn: 0,
+        stored: {}
+      }
+      newUser.active = true;
+      newUser.save()
+      .then(savedUser => {
+        Bid.create({
+          userId: savedUser._id,
+          created: {
+            date: new Date(),
+            turn: 0
+          },
+          objective: 'introduceSelf',
+          modifier: 10
+        })
+        .then(() => resolve(savedUser))
+        .catch(err => reject(err))
+      })
+      .catch(err => reject(err))
+    }
+  })
+}
+
 export function updateFbProfile(user) {
   return new Promise(function(resolve, reject) {
+    console.log(user)
     if(!user || !user.messenger || !user.messenger.id){
-      reject('Need user with messenger id.')
+      reject(new ReferenceError('Need user with messenger id.'))
     }
     var options = {
       url: 'https://graph.facebook.com/v2.6/' + user.messenger.id,
@@ -75,8 +93,8 @@ export function updateFbProfile(user) {
       if(fbProfile.timezone){
         user.timezone = fbProfile.timezone;
       }
-      user.save()
-      .then(user => resolve(user))
+      User.update({'_id': user._id}, user)
+      .then(() => resolve(user))
       .catch(err => reject(err))
     })
   })

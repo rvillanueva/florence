@@ -4,9 +4,8 @@ import mongoose from 'mongoose';
 
 var BotStateSchema = new mongoose.Schema({
   status: String,
-  variables: {
-    intro: Boolean
-  }
+  turn: Number,
+  stored: {}
 });
 
 export default mongoose.model('BotState', BotStateSchema);

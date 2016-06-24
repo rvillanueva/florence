@@ -33,8 +33,10 @@ export function create(bot){
 }
 
 export function applyToScores(bot){
-  BidService.getActive(bot)
-  .then(bot => BidService.applyEachBid(bot))
-  .then(bot => resolve(bot))
-  .catch(err => reject(err))
+  return new Promise(function(resolve, reject){
+    BidService.getActive(bot)
+    .then(bot => BidService.applyEachBid(bot))
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
+  })
 }

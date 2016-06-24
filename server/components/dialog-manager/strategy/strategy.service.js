@@ -1,29 +1,9 @@
 'use strict';
 
 var Promise = require('bluebird');
+var TaskService = require('../task')
 var Task = require('../task/task.model');
 
-// NEXT TASK HANDLING
-
-export function initScoreMap(bot) {
-  return new Promise(function(resolve, reject) {
-    Task.get(bot)
-    .then(bot => Task.buildIndex(bot))
-    .then(bot => {
-      bot.cache.scores = [];
-      // Push a score holder referencing each task
-      bot.cache.tasks.forEach(function(task, t) {
-        var score = {
-          task: bot.cache.taskMap[task._id],
-          value: 1
-        }
-        bot.cache.scores.push(score);
-      })
-      resolve(bot);
-    })
-    .catch(err => reject(err))
-  })
-}
 
 // Select best task based on scores
 // INPUT: cache.tasks
@@ -31,7 +11,7 @@ export function initScoreMap(bot) {
 export function selectTopTask(bot) {
   return new Promise(function(resolve, reject) {
 
-    if (bot.cache.scores.length == 0) {
+    if (bot.cache.tasks.length == 0) {
       bot.cache.task = null;
       resolve(bot);
     } else {
@@ -87,10 +67,11 @@ export function getTaskFromResponseAction(bot){
       var query = {
         'objective': bot.response.result.action
       }
+      // TODO just find one
       Task.find(query)
       .then(tasks => filterByParams(tasks, responseParams))
-      .then(tasks => {
-        bot.cache.tasks = tasks;
+      .then(task => {
+        bot.cache.task = task;
         resolve(bot)
       })
       .catch(err => reject(err))
@@ -125,6 +106,7 @@ export function getTaskFromResponseAction(bot){
             return true;
           }
         }
+
         if(returned.length > 0){
           resolve(returned[0]);
         } else {

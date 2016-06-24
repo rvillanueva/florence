@@ -17,10 +17,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/metric/metric.socket').register(socket);
-  require('../api/intent/intent.socket').register(socket);
-  require('../api/aspect/aspect.socket').register(socket);
-  require('../api/entry/entry.socket').register(socket);
+  //require('../api/metric/metric.socket').register(socket);
 
 }
 

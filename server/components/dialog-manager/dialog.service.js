@@ -1,12 +1,11 @@
 'use strict';
 
 var Promise = require('bluebird');
+var Message = require('../message');
 
 var Task = require('./task');
 var Notification = require('./notification');
 var Strategy = require('./strategy');
-
-var Response = require('../response')
 
 // INPUT: received.text
 // OUTPUT: received.entities, received.attributes
@@ -19,17 +18,16 @@ export function logMessage(bot){
 }
 
 // INPUT: received.text
-// OUTPUT: received.entities, received.attributes
+// OUTPUT: response
 export function getResponse(bot){
   return new Promise(function(resolve, reject){
     if(bot.state.status == 'waiting'){
-      if(!bot.received.text ){
+      if(!bot.received.text){
         reject('No text provided.')
       }
       var params = {
         text: bot.received.text,
-        userId: bot.userId,
-        agentId: '0' //FIXME with custom bot id
+        sessionId: bot.user._id
       }
       Response.query(params)
       .then(response => {
@@ -66,7 +64,9 @@ export function handleNextTask(bot){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
-      resolve(bot)
+      bot.update()
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
     }
   })
 }
@@ -79,9 +79,9 @@ export function handleResponseError(bot){
   return new Promise(function(resolve, reject){
     if(!bot.cache.task){
       bot.state.status = 'waiting';
-      bot.send({
-        text: 'Uh oh, it looks like there was a problem. I\'ve reported it and we\'ll get back to you shortly.'
-      })
+      bot.send([{
+        text: 'Uh oh, it looks like there was a problem. I\'ve reported it, but in the meantime let me know if there\'s anything else I can help you with.'
+      }])
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {

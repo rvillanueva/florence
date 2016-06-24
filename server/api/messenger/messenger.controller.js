@@ -15,7 +15,7 @@ var Promise = require('bluebird');
 var Message = require('../../components/message');
 var Dialog = require('../../components/dialog-manager');
 import User from '../user/user.model';
-var UserService = require('../user/user.model');
+var UserService = require('../user/user.service');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -66,6 +66,7 @@ function handleError(res, statusCode) {
 
 function handleEachMessage(messages){
   return new Promise(function(resolve, reject){
+    console.log(messages);
     var promises = [];
     messages.forEach(function(message, m){
       promises.push(handleMessage(message));

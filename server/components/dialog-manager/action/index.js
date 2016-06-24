@@ -1,5 +1,5 @@
 'use strict';
 
 export function execute(bot){
-  // should run custom actions
+  return actionService.execute(bot);
 }

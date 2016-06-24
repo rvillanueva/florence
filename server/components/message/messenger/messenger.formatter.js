@@ -46,12 +46,17 @@ export function toMessenger(message) {
       recipient: {},
       message: {}
     };
+    if (!message.messenger || !message.messenger.id) {
+      reject(new TypeError('No messenger id provided.'))
+    } else {
+      formatted.recipient = {
+        id: message.messenger.id
+      }
+    }
     convertAttachmentsToMessenger(message)
       .then(messageData => {
         message = messageData;
-        if (!message.messenger || !message.messenger.id) {
-          reject('No messenger id provided.')
-        }
+
 
         if (message.text) {
           formatted.message.text = message.text;
@@ -62,9 +67,10 @@ export function toMessenger(message) {
         }
 
         if (!formatted.message.text && !formatted.message.attachment) {
-          reject('Message contained no content.');
+          reject(new TypeError('Message contained no content.'));
         }
-
+        console.log('Formatted:')
+        console.log(formatted)
         resolve(formatted);
 
       })

@@ -14,13 +14,16 @@ export function executeSend(bot){
     var attachments = [];
     var task = bot.cache.task;
 
+    console.log('Running task:')
+    console.log(task);
+
     // TODO Use text-generator to split say
 
     if(task.say){
       messages = [
         {
           type: 'text',
-          text: say
+          text: task.say
         }
       ]
     }
@@ -28,9 +31,8 @@ export function executeSend(bot){
       attachments = task.attachments;
     }
 
-    sendables.concat(messages);
-    sendables.concat(attachments);
-
+    sendables = sendables.concat(messages);
+    sendables = sendables.concat(attachments);
     sendables.forEach(function(sendable, s){
       promises.push(bot.send(sendable))
     })
@@ -65,7 +67,7 @@ export function cache(bot){
     .then(tasks => {
       bot.cache.tasks = tasks;
       resolve(bot)
-    }
+    })
     .catch(err => reject(err))
   })
 }

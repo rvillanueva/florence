@@ -56,6 +56,7 @@ function setupStorage(userId){
 
 export function add(message){
   return new Promise(function(resolve, reject){
+    console.log('Queued: ' + message.text);
     setupStorage(message.userId);
     addToQueue(message);
     resolve(message);

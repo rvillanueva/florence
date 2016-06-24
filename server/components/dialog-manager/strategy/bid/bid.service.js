@@ -3,16 +3,17 @@
 var Promise = require('bluebird');
 import Bids from './bid.model';
 
-// Get all bids
+// Get all active bids for user
 // OUPUT: cache.bids
 export function getActive(bot){
-  // Get bids
-  Bids.find({'userId': bot.user._id})
-    .then(bids => {
-      bot.cache.bids = bids;
-      resolve(bot)
-    })
-    .catch(err => reject(err))
+  return new Promise(function(resolve, reject){
+    Bids.find({'userId': bot.user._id})
+      .then(bids => {
+        bot.cache.bids = bids;
+        resolve(bot)
+      })
+      .catch(err => reject(err))
+  })
 }
 
 
