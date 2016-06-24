@@ -9,9 +9,9 @@ export function query(params){
     var options = {
       url: "https://api.api.ai/v1/query",
       qs: {
-        text: params.text,
+        query: params.text,
         sessionId: params.sessionId,
-        language: 'en',
+        lang: 'en',
         v: 20150910
       },
       auth: {
@@ -20,7 +20,7 @@ export function query(params){
 
     }
 
-    request.post(options, function(err, response, body){
+    request.get(options, function(err, response, body){
       if(err){
         reject(err);
       }

@@ -67,6 +67,7 @@ export function handleWait(bot){
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
+      bot.state.status = 'ready';
       resolve(bot);
     }
   })
@@ -77,7 +78,7 @@ export function handleWait(bot){
 
 export function cache(bot){
   return new Promise(function(resolve, reject){
-    Task.find().lean().exec()
+    Task.find({'type': {'$in': ['say','ask']}}).lean().exec()
     .then(tasks => {
       bot.cache.tasks = tasks;
       resolve(bot)

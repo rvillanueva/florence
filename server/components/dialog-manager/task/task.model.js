@@ -5,7 +5,8 @@ import mongoose from 'mongoose';
 var TaskSchema = new mongoose.Schema({
   objective: String,
   type: { // say, ask
-    type: String
+    type: String,
+    required: true
   },
   params: {},
   validation: {}, // takes min, max, and values []

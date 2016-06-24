@@ -6,6 +6,9 @@ var Message = require('../message');
 var Task = require('./task');
 var Notification = require('./notification');
 var Strategy = require('./strategy');
+var Bid = require('./strategy/bid');
+
+var Response = require('../response');
 
 // INPUT: received.text
 // OUTPUT: received.entities, received.attributes
@@ -21,9 +24,9 @@ export function logMessage(bot){
 // OUTPUT: response
 export function getResponse(bot){
   return new Promise(function(resolve, reject){
-    if(bot.state.status == 'waiting'){
+    //if(bot.state.status == 'waiting'){  // TODO applying this logic will prevent processing multiple responses
       if(!bot.received.text){
-        reject('No text provided.')
+        reject(new TypeError('No text provided.'))
       }
       var params = {
         text: bot.received.text,
@@ -35,23 +38,24 @@ export function getResponse(bot){
         resolve(bot);
       })
       .catch(err => reject(err))
-    } else {
-      resolve(bot)
-    }
+    //} else {
+      //resolve(bot)
+    //}
   })
 }
 
 export function handleResponse(bot){
   return new Promise(function(resolve, reject){
-    if(bot.state.status == 'waiting'){
+    //if(bot.state.status == 'waiting'){
+    bot.state.status = 'responding';
       Strategy.selectResponse(bot)
       .then(bot => handleResponseError(bot))
       .then(bot => handleTaskExecution(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
-    } else {
-      resolve(bot)
-    }
+    //} else {
+      //resolve(bot)
+    //}
   })
 }
 
@@ -60,6 +64,7 @@ export function handleNextTask(bot){
     if(bot.state.status == 'ready'){
       Strategy.selectNext(bot)
       .then(bot => Task.run(bot))
+      .then(bot => fulfillBid(bot))
       .then(bot => handleNextTask(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
@@ -78,11 +83,12 @@ export function handleNotification(bot){
 export function handleResponseError(bot){
   return new Promise(function(resolve, reject){
     if(!bot.cache.task){
+      console.log('ERROR: No appropriate task found based on response')
       bot.state.status = 'waiting';
-      bot.send([{
+      bot.send({
         text: 'Uh oh, it looks like there was a problem. I\'ve reported it, but in the meantime let me know if there\'s anything else I can help you with.'
-      }])
-      .then(bot => resolve(bot))
+      })
+      .then(() => resolve(bot))
       .catch(err => reject(err))
     } else {
       resolve(bot)
@@ -92,12 +98,19 @@ export function handleResponseError(bot){
 
 export function handleTaskExecution(bot){
   return new Promise(function(resolve, reject){
-    if(bot.state.status == 'responding'){
+    console.log('BOT')
+    console.log(bot)
+    if(bot.cache.task){
       Task.run(bot)
+      .then(bot => fulfillBid(bot))
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
       resolve(bot)
     }
   })
+}
+
+function fulfillBid(bot){
+  return Bid.fulfillFromTask(bot)
 }

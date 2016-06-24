@@ -40,3 +40,11 @@ export function applyToScores(bot){
     .catch(err => reject(err))
   })
 }
+
+export function fulfillFromTask(bot){
+  return new Promise(function(resolve, reject){
+    BidService.fulfillFromTask(bot)
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
+  })
+}

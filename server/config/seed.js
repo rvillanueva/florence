@@ -35,6 +35,7 @@ User.find({}).remove()
     Task.create(
       {
         objective: 'greet',
+        type: 'say',
         say: 'Hi!',
         actions: [
           {
@@ -43,6 +44,7 @@ User.find({}).remove()
         ]
       },{
       objective: 'introduceSelf',
+      type: 'say',
       say: 'My name is Clara. I\'m a robot (though sometimes I get help from humans). I\'m happy to help you achieve your health goals by occasionally checking in to see if you\'ve run into any problems.',
       actions: [
         {
@@ -57,7 +59,7 @@ User.find({}).remove()
     },
     {
       objective: 'transitionToAboutYou',
-      type: 'ask',
+      type: 'say',
       say: 'In the meantime, I was hoping learn a bit about you. (It helps me make sure I\'m staying relevant :) )',
     },
     {
@@ -73,6 +75,7 @@ User.find({}).remove()
     },
     {
       objective: 'giveGoalIdeas',
+      type: 'say',
       say: 'You might want to track your mood – that helps a lot of people see what makes them feel better or worse. I can also check in to see if you\'re taking your medications. Or maybe you want something fitness related, like exercising daily. It\'s okay if you don\'t know right now too. I can just chat to get to know you as well.',
     },
     {
@@ -123,7 +126,6 @@ User.find({}).remove()
       params: {
         interest: 'reading'
       },
-      type: 'say',
       say: 'Sounds like a lot of fun — I’m working on reading too :)',
       actions: [
         {

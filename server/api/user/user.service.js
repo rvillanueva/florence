@@ -40,8 +40,10 @@ export function handleUserCreation(user, messengerId){
       newUser.active = true;
       newUser.save()
       .then(savedUser => {
+        console.log('Created intro bid.')
         Bid.create({
           userId: savedUser._id,
+          open: true,
           created: {
             date: new Date(),
             turn: 0

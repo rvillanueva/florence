@@ -2,8 +2,7 @@
 
 var Promise = require('bluebird');
 var TaskService = require('../task')
-var Task = require('../task/task.model');
-
+import Task from '../task/task.model';
 
 // Select best task based on scores
 // INPUT: cache.tasks
@@ -71,21 +70,28 @@ export function handleUnfilledSlots(bot){
 export function getTaskFromResponseAction(bot){
   return new Promise(function(resolve, reject){
     var responseParams = bot.response.result.parameters;
-    if(bot.state.status == 'responding'){
+    //if(bot.state.status == 'responding'){
       var query = {
         'objective': bot.response.result.action
       }
       // TODO just find one
-      Task.find(query)
+      Task.find({'objective': bot.response.result.action}).exec()
       .then(tasks => filterByParams(tasks, responseParams))
       .then(task => {
-        bot.cache.task = task;
+        if(task){
+          console.log('FOUND RESPONSE TASK:')
+          console.log(task)
+          bot.cache.task = task;
+        } else {
+          console.log('NO RESPONSE TASK FOUND')
+          bot.cache.task = null;
+        }
         resolve(bot)
       })
       .catch(err => reject(err))
-    } else {
-      resolve(bot)
-    }
+    //} else {
+      //resolve(bot)
+    //}
 
     function filterByParams(tasks, params){
       return new Promise(function(resolve, reject){

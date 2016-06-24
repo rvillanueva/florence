@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 var BidSchema = new mongoose.Schema({
   // META
   userId: String,
+  open: Boolean,
   created: {
     source: String,
     sourceId: String,
