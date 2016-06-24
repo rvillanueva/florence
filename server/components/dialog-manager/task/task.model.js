@@ -12,7 +12,9 @@ var TaskSchema = new mongoose.Schema({
   validation: {}, // takes min, max, and values []
   say: String,
   actions: [{
-    name: String,
+    type: {
+      type: String
+    },
     params: {}
   }]
 });

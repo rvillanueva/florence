@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Bid = require('./bid.model');
+import Bid from './bid.model';
 var BidService = require('./bid.service');
 
 // INPUT: cache.bid
@@ -17,17 +17,23 @@ export function create(bot){
   return new Promise(function(resolve, reject){
     var bidRef = bot.cache.newBid;
     var bid = {
+      userId: bot.user._id,
       created: {
         date: new Date(),
         turn: bot.turn
       },
-      targets: bidRef.targets,
+      open: true,
+      target: bidRef.target,
       force: bidRef.force,
       modifier: bidRef.modifier,
       expiration: bidRef.expiration
     }
     Bid.create(bid)
-    .then(() => resolve(bot))
+    .then(bid => {
+      console.log('Bid created:')
+      console.log(bid)
+      resolve(bot)
+    })
     .catch(err => reject(err))
   })
 }

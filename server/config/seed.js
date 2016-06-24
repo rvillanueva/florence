@@ -6,6 +6,7 @@
 'use strict';
 import User from '../api/user/user.model';
 import Task from '../components/dialog-manager/task/task.model';
+import Bid from '../components/dialog-manager/strategy/bid/bid.model';
 
 import mongoose from 'mongoose';
 
@@ -39,7 +40,7 @@ User.find({}).remove()
         say: 'Hi!',
         actions: [
           {
-            type: 'chooseGreetingFollowup'
+            type: 'selectGreetingResponse'
           }
         ]
       },{
@@ -157,3 +158,5 @@ User.find({}).remove()
       say: 'Let me know if there\'s anything I can help you with.'
     })
   })
+
+Bid.find({}).remove();

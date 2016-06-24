@@ -1,6 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
+var Action = require('../action');
 import Task from './task.model';
 // -- RUN
 
@@ -33,6 +34,7 @@ export function executeSend(bot){
 
     // TODO Use text-generator to split say
 
+
     if(task.say){
       messages = [
         {
@@ -55,6 +57,10 @@ export function executeSend(bot){
     .then(() => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+export function executeActions(bot){
+  return Action.execute(bot);
 }
 
 // If task is a question, set status

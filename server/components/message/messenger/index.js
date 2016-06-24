@@ -18,6 +18,6 @@ export function standardize(data){
       //.then(filtered => Messenger.checkUsersExist(filtered))
       .then(unformatted => MessengerService.formatEachMessage(unformatted))
       .then(messages => resolve(messages))
-      .catch(err => console.log(err))
+      .catch(err => reject(err))
   })
 }

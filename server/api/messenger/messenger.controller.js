@@ -66,7 +66,6 @@ function handleError(res, statusCode) {
 
 function handleEachMessage(messages){
   return new Promise(function(resolve, reject){
-    console.log(messages);
     var promises = [];
     messages.forEach(function(message, m){
       promises.push(handleMessage(message));
@@ -115,7 +114,7 @@ export function receive(req, res) {
   return new Promise(function(resolve, reject){
     Message.standardize(req.body, 'messenger')
     .then(messages => handleEachMessage(messages))
-    .then(() => resolve(res.status(200).end()))
     .catch(err => reject(err))
+    resolve(res.status(200).end())
   })
 }

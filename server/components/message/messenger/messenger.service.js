@@ -46,7 +46,6 @@ export function formatEachMessage(messages){
     })
     Promise.all(promises)
     .then(formatted => {
-      console.log(formatted)
       resolve(formatted)
     })
     .catch(err => reject(err))

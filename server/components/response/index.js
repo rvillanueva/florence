@@ -25,6 +25,9 @@ export function query(params){
         reject(err);
       }
       var parsed = JSON.parse(body);
+      if(parsed.status.code !== 200){
+        reject(new Error(parsed.status.errorType))
+      }
       console.log('API.AI response: ')
       console.log(parsed);
       resolve(parsed)

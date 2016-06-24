@@ -8,6 +8,7 @@ export function run(bot){
   return new Promise(function(resolve, reject){
     TaskService.handleLoop(bot)
     .then(bot => TaskService.executeSend(bot))
+    .then(bot => TaskService.executeActions(bot))
     .then(bot => TaskService.handleWait(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))

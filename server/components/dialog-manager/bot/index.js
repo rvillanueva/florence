@@ -58,9 +58,9 @@ export default function(options){
     return new Promise((resolve, reject) => {
       this.cache.newBid = bid;
       Bid.create(this)
-      .then(() => {
-        this.cache.newBid = null;
-        resolve(this)
+      .then(bot => {
+        bot.cache.newBid = null;
+        resolve(bot)
       })
       .catch(err => reject(err))
     })
@@ -71,13 +71,13 @@ export default function(options){
   this.init = function(){
     return new Promise((resolve, reject) => {
       if(!this.user || !this.user._id || !this.user.provider){
+        console.log('INITIALIZING BOT:')
         console.log(this);
         reject(new ReferenceError('Need additional user data to initialize bot.'))
       }
 
-      if(!this.state.status){
-        this.state.status = 'ready';
-      }
+      this.state.status = this.state.status || 'waiting';
+      this.state.stored = this.state.stored || {};
 
       resolve(this)
     })
