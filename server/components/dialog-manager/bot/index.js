@@ -24,6 +24,7 @@ export default function(options){
 
   this.conversations = [];
   this.cache = {};
+  this.loops = 0;
 
   // METHODS
 

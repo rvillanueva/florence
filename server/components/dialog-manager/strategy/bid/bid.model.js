@@ -12,9 +12,9 @@ var BidSchema = new mongoose.Schema({
     turn: Number
   },
   // EDITABLE
-  targets: {
+  target: {
     objective: String,
-    entities: {}
+    params: {}
   },
   force: Boolean,
   modifier: Number,

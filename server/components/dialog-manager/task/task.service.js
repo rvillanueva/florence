@@ -4,6 +4,20 @@ var Promise = require('bluebird');
 import Task from './task.model';
 // -- RUN
 
+var maxLoops = 5;
+
+export function handleLoop(bot){
+  return new Promise(function(resolve, reject){
+    if(bot.loops == (maxLoops - 1) || bot.loops > (maxLoops - 1)){
+      bot.state.status = 'waiting';
+      console.log('TIMED OUT: Too many loops.');
+    }
+    bot.loops++;
+    console.log('\n\n\n\n\n\n\n\n' + 'LOOP ' + bot.loops);
+    resolve(bot);
+  })
+}
+
 // Queue sendables from task
 // INPUT: cache.task, cache.task.send
 export function executeSend(bot){

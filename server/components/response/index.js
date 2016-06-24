@@ -25,6 +25,8 @@ export function query(params){
         reject(err);
       }
       var parsed = JSON.parse(body);
+      console.log('API.AI response: ')
+      console.log(parsed);
       resolve(parsed)
     })
 

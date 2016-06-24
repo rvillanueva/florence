@@ -22,7 +22,7 @@ export function selectTopTask(bot) {
       });
 
       // Sort score map by forced = true
-      bot.cache.tasks.sort(function(a, b) {
+      /*bot.cache.tasks.sort(function(a, b) {
         if(a.force && !b.force){
           return 1;
         } else if(!a.force && b.force){
@@ -30,11 +30,19 @@ export function selectTopTask(bot) {
         } else {
           return 0;
         }
-      });
-
+      });*/
       // Select best
       bot.cache.task = bot.cache.tasks[0];
 
+      // LOG
+      console.log('TASK SCORE MAP');
+      bot.cache.tasks.forEach(function(task, t){
+        var str = '(' + task.score + ') ' + task.objective;
+        if(task.force){
+          str += ' FORCED'
+        }
+        console.log(str)
+      })
       // Return associated task
       resolve(bot);
     }

@@ -6,7 +6,8 @@ var TaskService = require('./task.service');
 
 export function run(bot){
   return new Promise(function(resolve, reject){
-    TaskService.executeSend(bot)
+    TaskService.handleLoop(bot)
+    .then(bot => TaskService.executeSend(bot))
     .then(bot => TaskService.handleWait(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))

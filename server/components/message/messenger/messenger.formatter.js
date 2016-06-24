@@ -69,8 +69,6 @@ export function toMessenger(message) {
         if (!formatted.message.text && !formatted.message.attachment) {
           reject(new TypeError('Message contained no content.'));
         }
-        console.log('Formatted:')
-        console.log(formatted)
         resolve(formatted);
 
       })

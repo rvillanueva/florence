@@ -10,6 +10,8 @@ export function getActive(bot){
     Bids.find({'userId': bot.user._id})
       .then(bids => {
         bot.cache.bids = bids;
+        console.log('BIDS')
+        console.log(bids);
         resolve(bot)
       })
       .catch(err => reject(err))
@@ -47,11 +49,14 @@ export function applyEachBid(bot){
 
     function isMatch(task, bid){
       var matched = true;
-      var params = bid.targets.params
+      var params = bid.target.params
+      if(bid.target.objective && bid.target.objective !== task.objective){
+        matched = false;
+      }
       if(params){
         for (var param in params) {
           if (params.hasOwnProperty(param)) {
-            if (bot.response.result.parameters[param] !== bid.targets.params[param] && bid.targets.params[param] !== '*') {
+            if (bot.response.result.parameters[param] !== bid.target.params[param] && bid.target.params[param] !== '*') {
               matched = false;
             }
           }

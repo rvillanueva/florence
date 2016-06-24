@@ -46,7 +46,9 @@ export function handleUserCreation(user, messengerId){
             date: new Date(),
             turn: 0
           },
-          objective: 'introduceSelf',
+          target:{
+            objective: 'introduceSelf',
+          },
           modifier: 10
         })
         .then(() => resolve(savedUser))

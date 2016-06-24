@@ -4,7 +4,6 @@ var actionIndex = {
   introduceSelf: function(bot, action) {
     return new Promise(function(resolve, reject) {
       bot.state.stored.introduced = true;
-      if()
       resolve(bot);
     })
   },
@@ -19,7 +18,9 @@ var actionIndex = {
         .catch(err => reject(err))
       } else {
         bot.bid({
-          objective: 'askToHelp',
+          target: {
+            objective: 'askToHelp',
+          },
           force: true
         })
         .then(bot => resolve(bot))
@@ -33,7 +34,9 @@ var actionIndex = {
         reject('Missing objective parameter in action');
       }
       bot.bid({
-        objective: bot.action.params.objective,
+        target: {
+          objective: bot.action.params.objective,
+        },
         force: true
       }))
       .then(bot => resolve(bot))
