@@ -25,25 +25,47 @@ export function getActive(bot){
 
 export function applyEachBid(bot){
   return new Promise(function(resolve, reject){
-    for (var j = 0; j < bot.cache.tasks.length; j++){
-      var task = bot.cache.tasks[j];
-      if(!task.score){
-        task.score = 1;
+
+    seedEligibleTasks();
+    applyBids();
+    resolve(bot);
+
+    function seedEligibleTasks(){
+        for (var j = 0; j < bot.cache.tasks.length; j++){
+          var task = bot.cache.tasks[j];
+          task.bids = task.bids || [];
+          for(var i = 0; i < bot.cache.bids.length; i ++){
+            var bid = bot.cache.bids[i];
+            if(objectivesMatch(task, bid)){
+              task.score = 1;
+            }
+          }
+          if(!task.score){
+            task.score = 0;
+          }
+        }
+    }
+
+    function objectivesMatch(task, bid){
+      if(task.objective == bid.target.objective){
+        return true
+      } else if (!task.score){
+        return false
       }
     }
 
-    for(var i = 0; i < bot.cache.bids.length; i ++){
-      var bid = bot.cache.bids[i];
-      for (var j = 0; j < bot.cache.tasks.length; j++){
-        var task = bot.cache.tasks[j];
-        task.bids = task.bids || [];
-        task = applyBid(task, bid);
+    function applyBids(){
+      for(var i = 0; i < bot.cache.bids.length; i ++){
+        var bid = bot.cache.bids[i];
+        for (var j = 0; j < bot.cache.tasks.length; j++){
+          var task = bot.cache.tasks[j];
+          task = applyBidToTask(task, bid);
+        }
       }
     }
-    resolve(bot)
 
-    function applyBid(task, bid){
-      if(isMatch(task, bid)){
+    function applyBidToTask(task, bid){
+      if(taskMatchesAllBidParams(task, bid)){
         task.force = bid.force;
         if(typeof bid.modifier === 'number'){
           task.score = task.score * bid.modifier;
@@ -53,7 +75,7 @@ export function applyEachBid(bot){
       return task;
     }
 
-    function isMatch(task, bid){
+    function taskMatchesAllBidParams(task, bid){
       var matched = true;
       var params = bid.target.params
       if(bid.target.objective && bid.target.objective !== task.objective){
@@ -70,6 +92,7 @@ export function applyEachBid(bot){
       }
       return matched;
     }
+
   })
 }
 

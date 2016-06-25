@@ -6,8 +6,6 @@ var Response = require('../../response');
 import Task from './task.model';
 // -- RUN
 
-var maxLoops = 5;
-
 // Queue sendables from task
 // INPUT: cache.task, cache.task.send
 export function executeSend(bot){
@@ -81,34 +79,6 @@ export function updateContext(bot){
     } else {
       resolve(bot)
     }
-  })
-}
-
-// If task is a question, set status
-// INPUT: cache.task
-export function handleWait(bot){
-  return new Promise(function(resolve, reject){
-    if(bot.cache.task.type == 'ask'){
-      bot.state.status = 'waiting';
-      bot.update()
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
-    } else {
-      bot.state.status = 'ready';
-      resolve(bot);
-    }
-  })
-}
-
-export function handleLoop(bot){
-  return new Promise(function(resolve, reject){
-    bot.loops++;
-    if(bot.loops > (maxLoops - 1)){
-      bot.state.status = 'waiting';
-      console.log('TIMED OUT: Too many loops.');
-    }
-    console.log('\n\n\n\n\n\n\n\n' + 'LOOP ' + bot.loops);
-    resolve(bot);
   })
 }
 

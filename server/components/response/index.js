@@ -12,7 +12,7 @@ export function query(params){
       url: "https://api.api.ai/v1/query",
       qs: {
         query: params.text,
-        sessionId: 'tester',
+        sessionId: params.sessionId.toString(),
         lang: 'en',
         v: 20150910
       },
@@ -59,10 +59,10 @@ export function addContexts(params){
     // name, params (name, value), lifespan
 
     var options = {
-      url: "https://api.api.ai/v1/contexts?sessionId=" + 'tester',
-      //qs: {
-        //sessionId: sessionId,
-      //},
+      url: 'https://api.api.ai/v1/contexts',
+      qs: {
+        sessionId: sessionId.toString(),
+      },
       json: true,
       auth: {
         bearer: process.env.API_AI_CLIENT

@@ -44,9 +44,10 @@ export default function(options){
 
   this.update = function(){
     return new Promise((resolve, reject) => {
+      this.state.updated = new Date();
       this.state.save()
       .then(state => {
-        console.log('State saved.')
+        console.log('State saved as')
         console.log(state)
         resolve(this)
       })

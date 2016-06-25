@@ -9,8 +9,6 @@ export function run(bot){
     TaskService.executeSend(bot)
     .then(bot => TaskService.executeActions(bot))
     .then(bot => TaskService.updateContext(bot))
-    .then(bot => TaskService.handleWait(bot))
-    .then(bot => TaskService.handleLoop(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
 

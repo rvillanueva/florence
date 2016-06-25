@@ -112,9 +112,15 @@ export function webhook(req, res) {
 
 export function receive(req, res) {
   return new Promise(function(resolve, reject){
+    var timeout = setTimeout(respondOk(), 5000)
+
     Message.standardize(req.body, 'messenger')
     .then(messages => handleEachMessage(messages))
+    .then(() => writeRes())
     .catch(err => reject(err))
-    resolve(res.status(200).end())
+
+    function respondOk(){
+      resolve(res.status(200).end())
+    }
   })
 }

@@ -31,7 +31,11 @@ export function selectTopTask(bot) {
         }
       });*/
       // Select best
-      bot.cache.task = bot.cache.tasks[0];
+      if(bot.cache.tasks[0].score > 0){
+        bot.cache.task = bot.cache.tasks[0];
+      } else {
+        bot.cache.task = null;
+      }
 
       // LOG
       console.log('TASK SCORE MAP');
