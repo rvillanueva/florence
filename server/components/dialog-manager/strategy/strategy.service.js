@@ -72,10 +72,11 @@ export function getTaskFromResponseAction(bot){
     var responseParams = bot.response.result.parameters;
     //if(bot.state.status == 'responding'){
       var query = {
-        'objective': bot.response.result.action
+        'objective': bot.response.result.action,
+        type: 'respond'
       }
       // TODO just find one
-      Task.find({'objective': bot.response.result.action}).exec()
+      Task.find({'objective': bot.response.result.action, 'type':'respond'}).exec()
       .then(tasks => filterByParams(tasks, responseParams))
       .then(task => {
         if(task){

@@ -36,7 +36,7 @@ User.find({}).remove()
     Task.create(
       {
         objective: 'greet',
-        type: 'say',
+        type: 'respond',
         say: 'Hi!',
         actions: [
           {
@@ -46,7 +46,7 @@ User.find({}).remove()
       },{
       objective: 'introduceSelf',
       type: 'say',
-      say: 'My name is Clara. I\'m a robot (though sometimes I get help from humans). I\'m happy to help you achieve your health goals by occasionally checking in to see if you\'ve run into any problems.',
+      say: 'My name is Clara, and I\'m here to help you stick to your health goals – even the hard ones! Oh, and I\'m also a robot :)',
       actions: [
         {
           type: 'introduceSelf'
@@ -54,9 +54,12 @@ User.find({}).remove()
       ]
     },
     {
-      objective: 'processNewGoals',
-      type: 'say',
-      say: 'It looks like you sent me a health plan. I\'ll processing these and I\'ll get back to you soon!'
+      objective: 'noContext',
+      params: {
+        inputType: 'image'
+      },
+      type: 'respond',
+      say: 'It looks like you sent me a health plan. I\'m going to start processing these and will get back to you soon!'
     },
     {
       objective: 'transitionToAboutYou',
@@ -66,7 +69,7 @@ User.find({}).remove()
     {
       objective: 'askForNewGoals',
       type: 'ask',
-      say: 'Is there anything you\'d like to be doing to improve your health? I\'m happy to give ideas. If you were referred to me by a care provider, you can enter their health plan here.',
+      say: 'Is there anything you\'d like to be doing to improve your health? Let me know if you need ideas!',
     },
     {
       objective: 'askForAdditionalNewGoals',
@@ -80,8 +83,11 @@ User.find({}).remove()
       say: 'You might want to track your mood – that helps a lot of people see what makes them feel better or worse. I can also check in to see if you\'re taking your medications. Or maybe you want something fitness related, like exercising daily. It\'s okay if you don\'t know right now too. I can just chat to get to know you as well.',
     },
     {
-      objective: 'respondTo_askForNewGoals_none',
+      objective: 'askForNewGoals',
       type: 'respond',
+      params: {
+        intent: 'name'
+      },
       say: 'No problem! In that case, I\'d love to learn a little bit about you. (And who knows, we might discover some good goals in the process :) ) First order of business:',
     },
     {
@@ -90,8 +96,11 @@ User.find({}).remove()
       say: 'What should I call you?'
     },
     {
-      objective: 'askForGivenName_response_name',
+      objective: 'askForGivenName',
       type: 'respond',
+      params: {
+        intent: 'name'
+      },
       say: 'Great to meet you, [[user.givenName]]',
       actions: [
         {
@@ -103,8 +112,11 @@ User.find({}).remove()
       ]
     },
     {
-      objective: 'askForGivenName_response_reject',
+      objective: 'askForGivenName',
       type: 'respond',
+      params: {
+        intent: 'reject'
+      },
       say: 'Well, I do need to call you by name. But you can make something up if you\'d like.',
       actions: [
         {
@@ -115,14 +127,13 @@ User.find({}).remove()
         }
       ]
     },
-
     {
       objective: 'askForInterests',
       type: 'ask',
       say: 'What sort of things do you enjoy doing?'
     },
     {
-      objective: 'askForInterests_response_interest',
+      objective: 'askForInterests',
       type: 'respond',
       params: {
         interest: 'reading'
@@ -143,13 +154,14 @@ User.find({}).remove()
       say: 'So, it looks like you have a solid health plan in place. What sort of challenges do you think might come up?'
     },
     {
-      objective: 'askForConcerns_response_none',
+      objective: 'askForConcerns',
+      input: 'none',
       type: 'respond',
       say: 'Good to hear! It sounds like you’re someone who’s pretty committed to their health. That’s a good thing. In my experience, those types of people are the ones who are the quickest to bring up challenges they face and work through them with their care provider.'
     },
     {
       objective: 'endIntro',
-      type: 'respond',
+      type: 'say',
       say: 'Anyways, that\'s it for now! I\'ll be checking in with you soon to see how you’re doing. Until then, have fun and let me know if you have any questions.'
     },
     {

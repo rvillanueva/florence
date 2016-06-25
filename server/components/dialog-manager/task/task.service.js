@@ -2,22 +2,11 @@
 
 var Promise = require('bluebird');
 var Action = require('../action');
+var Response = require('../../response');
 import Task from './task.model';
 // -- RUN
 
 var maxLoops = 5;
-
-export function handleLoop(bot){
-  return new Promise(function(resolve, reject){
-    if(bot.loops == (maxLoops - 1) || bot.loops > (maxLoops - 1)){
-      bot.state.status = 'waiting';
-      console.log('TIMED OUT: Too many loops.');
-    }
-    bot.loops++;
-    console.log('\n\n\n\n\n\n\n\n' + 'LOOP ' + bot.loops);
-    resolve(bot);
-  })
-}
 
 // Queue sendables from task
 // INPUT: cache.task, cache.task.send
@@ -63,6 +52,38 @@ export function executeActions(bot){
   return Action.execute(bot);
 }
 
+export function updateContext(bot){
+  return new Promise(function(resolve, reject){
+    if(bot.cache.task.type == 'ask'){
+      var request = {
+        sessionId: bot.user._id,
+        contexts: [{
+          name: bot.cache.task.objective,
+          params: []
+        }]
+      }
+      var params = bot.cache.task.params;
+
+      if(params){
+        for (var param in params){
+          if (params.hasOwnProperty(param)) {
+              var paramPair = {
+                name: param,
+                value: params[param]
+              }
+              request.context.params.push(paramPair)
+          }
+        }
+      }
+      Response.addContexts(request)
+      .then(() => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      resolve(bot)
+    }
+  })
+}
+
 // If task is a question, set status
 // INPUT: cache.task
 export function handleWait(bot){
@@ -79,6 +100,17 @@ export function handleWait(bot){
   })
 }
 
+export function handleLoop(bot){
+  return new Promise(function(resolve, reject){
+    bot.loops++;
+    if(bot.loops > (maxLoops - 1)){
+      bot.state.status = 'waiting';
+      console.log('TIMED OUT: Too many loops.');
+    }
+    console.log('\n\n\n\n\n\n\n\n' + 'LOOP ' + bot.loops);
+    resolve(bot);
+  })
+}
 
 // CRUD
 

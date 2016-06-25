@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 var TaskSchema = new mongoose.Schema({
   objective: String,
+  aliasOf: String,
   type: { // say, ask
     type: String,
     required: true
