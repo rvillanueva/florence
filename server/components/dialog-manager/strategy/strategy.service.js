@@ -21,18 +21,19 @@ export function selectTopTask(bot) {
       });
 
       // Sort score map by forced = true
-      /*bot.cache.tasks.sort(function(a, b) {
+      bot.cache.tasks.sort(function(a, b) {
         if(a.force && !b.force){
-          return 1;
-        } else if(!a.force && b.force){
           return -1;
+        } else if(!a.force && b.force){
+          return 1;
         } else {
           return 0;
         }
-      });*/
+      });
       // Select best
-      if(bot.cache.tasks[0].score > 0){
-        bot.cache.task = bot.cache.tasks[0];
+      var selected = bot.cache.tasks[0]
+      if(selected.score > 0 || selected.force){
+        bot.cache.task = selected;
       } else {
         bot.cache.task = null;
       }
@@ -42,10 +43,11 @@ export function selectTopTask(bot) {
       bot.cache.tasks.forEach(function(task, t){
         var str = '(' + task.score + ') ' + task.objective;
         if(task.force){
-          str += ' FORCED'
+          str += ' - FORCED'
         }
         console.log(str)
       })
+      console.log('\n\n\n')
       // Return associated task
       resolve(bot);
     }
@@ -59,7 +61,7 @@ export function selectTopTask(bot) {
 export function handleUnfilledSlots(bot){
   return new Promise(function(resolve, reject){
     if(bot.response.result.actionIncomplete){
-      bot.send(bot.response.result.fulfillment)
+      bot.send(bot.response.result.fulfillment.speech)
       .then(bot => {
         bot.state.status == 'waiting';
         resolve(bot)
@@ -73,8 +75,8 @@ export function handleUnfilledSlots(bot){
 
 export function getTaskFromResponseAction(bot){
   return new Promise(function(resolve, reject){
-    var responseParams = bot.response.result.parameters;
-    //if(bot.state.status == 'responding'){
+    if(bot.state.status == 'responding'){
+      var responseParams = bot.response.result.parameters;
       var query = {
         'objective': bot.response.result.action,
         type: 'respond'
@@ -94,36 +96,48 @@ export function getTaskFromResponseAction(bot){
         resolve(bot)
       })
       .catch(err => reject(err))
-    //} else {
-      //resolve(bot)
-    //}
+    } else {
+      resolve(bot)
+    }
 
-    function filterByParams(tasks, params){
+    function filterByParams(tasks, responseParams){
       return new Promise(function(resolve, reject){
         var returned = [];
 
         tasks.forEach(function(task, t){
-          var isValid = checkProperties(task, params);
-          if(isValid){
+          if(responseMatchesAllTaskParams(task, responseParams)){
             returned.push(task)
           }
         })
 
-        function checkProperties(task, params){
+        function responseMatchesAllTaskParams(task, responseParams){
           var isValid = true;
-          if(tasks.params && tasks.params.constructor === Object && Object.keys(params).length > 0){
-            for (var param in task.params) {
-              if (task.params.hasOwnProperty(property)) {
-                if(task.params[property] == params[property] || (task.params[property] === '*' && params[property])){
-                  return true
-                } else {
-                  return false
+          if(task.params){
+            for (var taskParam in task.params) {
+              if (task.params.hasOwnProperty(taskParam)) {
+                if(!valueMatch() && !wildcardMatch()){
+                  isValid = false;
+                }
+
+                function valueMatch(){
+                  if(responseParams[taskParam] == task.params[taskParam]){
+                    return true
+                  } else {
+                    return false
+                  }
+                }
+
+                function wildcardMatch(){
+                  if(task.params[taskParam] === '*' && responseParams[taskParam]){
+                    return true;
+                  } else {
+                    return false
+                  }
                 }
               }
             }
-          } else {
-            return true;
           }
+          return isValid;
         }
 
         if(returned.length > 0){

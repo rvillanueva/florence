@@ -28,6 +28,8 @@ export function create(bot){
       modifier: bidRef.modifier,
       expiration: bidRef.expiration
     }
+    console.log('Creating bid...')
+    console.log(bid);
     Bid.create(bid)
     .then(bid => {
       console.log('Bid created:')

@@ -78,17 +78,41 @@ User.find({}).remove()
       say: 'Any other goals?'
     },
     {
+      objective: 'askForNewGoals',
+      type: 'respond',
+      params: {
+        intent: 'needIdeas'
+      },
+      say: 'Sure, here are a few:',
+      actions: [
+        {
+          type: 'forceNextTask',
+          params: {
+            objective: 'giveGoalIdeas'
+          }
+        }
+      ]
+    },
+    {
       objective: 'giveGoalIdeas',
       type: 'say',
-      say: 'You might want to track your mood – that helps a lot of people see what makes them feel better or worse. I can also check in to see if you\'re taking your medications. Or maybe you want something fitness related, like exercising daily. It\'s okay if you don\'t know right now too. I can just chat to get to know you as well.',
+      say: 'You might want to track your mood. That helps a lot of people see what makes them feel better or worse. I can also check in to see if you\'re taking your medications. Or maybe you want something fitness related, like exercising daily. It\'s okay if you don\'t know right now too. I can just chat to get to know you as well.',
     },
     {
       objective: 'askForNewGoals',
       type: 'respond',
       params: {
-        intent: 'name'
+        intent: 'none'
       },
-      say: 'No problem! In that case, I\'d love to learn a little bit about you. (And who knows, we might discover some good goals in the process :) ) First order of business:',
+      say: 'No problem! In that case, I\'d love to learn a little bit about you.',
+      actions: [
+        {
+          type: 'forceNextTask',
+          params: {
+            objective: 'askForGivenName'
+          }
+        }
+      ]
     },
     {
       objective: 'askForGivenName',

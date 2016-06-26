@@ -4,6 +4,7 @@ var Router = require('./message.router');
 
 export function send(message){
   console.log('Bot says: ' + message.text);
+  console.log(message)
     return Queue.add(message)
 }
 

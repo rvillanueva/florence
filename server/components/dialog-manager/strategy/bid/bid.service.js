@@ -114,7 +114,7 @@ export function fulfillFromTask(bot){
       return new Promise(function(resolve, reject){
         bid.open = false;
         console.log('BID FULFILLED:')
-        console.log(bid)
+        console.log(bid.target)
         Bid.update({'_id':bid._id}, bid)
         .then(bid => resolve(bid))
         .catch(err => reject(err))

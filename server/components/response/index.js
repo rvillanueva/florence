@@ -6,8 +6,6 @@ var request = require('request');
 export function query(params){
   return new Promise(function(resolve, reject){
     // Query API.ai for a response
-    console.log('query params')
-    console.log(params)
     var options = {
       url: "https://api.api.ai/v1/query",
       qs: {
@@ -70,8 +68,6 @@ export function addContexts(params){
       body: contexts
     }
 
-    console.log(options)
-
     request.post(options, function(err, response, body){
       if(err){
         console.log(err)
@@ -83,8 +79,7 @@ export function addContexts(params){
         console.log(body);
         reject(new Error(body.status.errorType))
       } else {
-        console.log('Context added:')
-        console.log(body.names);
+        console.log('Context added:' + JSON.stringify(body.names))
         resolve(body)
       }
     })

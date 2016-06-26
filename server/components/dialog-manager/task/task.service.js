@@ -16,8 +16,7 @@ export function executeSend(bot){
     var attachments = [];
     var task = bot.cache.task;
 
-    console.log('Running task:')
-    console.log(task);
+    console.log('Running task ' + task._id + ': ' + task.objective)
 
     // TODO Use text-generator to split say
 

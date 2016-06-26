@@ -18,7 +18,6 @@ export function selectNext(bot){
 
 export function selectResponse(bot){
   return new Promise(function(resolve, reject){
-    bot.state.status == 'responding';
     StrategyService.handleUnfilledSlots(bot)
     .then(bot => StrategyService.getTaskFromResponseAction(bot))
     .then(bot => resolve(bot))

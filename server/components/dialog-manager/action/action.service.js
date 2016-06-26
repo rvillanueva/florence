@@ -32,12 +32,14 @@ var actionIndex = {
   },
   forceNextTask: function(bot, action) {
     return new Promise(function(resolve, reject) {
+      console.log('Forcing next task...')
+      console.log(action.params);
       if (!action.params || !action.params.objective) {
-        reject('Missing objective parameter in action');
+        reject(new Error('Missing objective parameter in action'));
       }
       bot.bid({
         target: {
-          objective: bot.action.params.objective,
+          objective: action.params.objective,
         },
         force: true
       })
@@ -69,7 +71,7 @@ export function execute(bot) {
 
     function executeOne(action) {
         if (typeof actionIndex[action.type] !== 'function') {
-          reject('Unknown task type ' + action.type)
+          reject(new Error('Unknown task type ' + action.type))
         }
         console.log('EXECUTING ACTION: ' + action.type);
         if(action.params){

@@ -49,6 +49,7 @@ export function getResponse(bot){
 export function handleResponse(bot){
   return new Promise(function(resolve, reject){
     if(bot.state.status == 'waiting'){
+      console.log('responding')
       bot.state.status = 'responding';
       Strategy.selectResponse(bot)
       .then(bot => handleConfusion(bot))
