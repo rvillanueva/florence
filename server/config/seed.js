@@ -86,9 +86,10 @@ User.find({}).remove()
       say: 'Sure, here are a few:',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'giveGoalIdeas'
+            objective: 'giveGoalIdeas',
+            force: true
           }
         }
       ]
@@ -107,9 +108,10 @@ User.find({}).remove()
       say: 'No problem! In that case, I\'d love to learn a little bit about you.',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'askForGivenName'
+            objective: 'askForGivenName',
+            force: true
           }
         }
       ]
@@ -128,9 +130,10 @@ User.find({}).remove()
       say: 'Great to meet you, [[user.givenName]]',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'askForInterests'
+            objective: 'askForInterests',
+            force: true
           }
         }
       ]
@@ -144,9 +147,10 @@ User.find({}).remove()
       say: 'Well, I do need to call you by name. But you can make something up if you\'d like.',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'askForGivenName'
+            objective: 'askForGivenName',
+            force: true
           }
         }
       ]
@@ -165,9 +169,10 @@ User.find({}).remove()
       say: 'Sounds like a lot of fun — I’m working on reading too :)',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'askForConcerns'
+            objective: 'askForConcerns',
+            force: true
           }
         }
       ]
@@ -209,9 +214,10 @@ User.find({}).remove()
       say: 'My name is Clara. We\'ll get to the health part in a moment, but I like to get to know people better first. So...',
       actions: [
         {
-          type: 'forceNextTask',
+          type: 'createBid',
           params: {
-            objective: 'askAboutImaginaryLife'
+            objective: 'askAboutImaginaryLife',
+            force: true
           }
         }
       ]
@@ -334,6 +340,27 @@ User.find({}).remove()
       say: 'Great, then let\'s get started!'
     },
     {
+      objective: 'askForQuestionsAfterPurpose',
+      type: 'respond',
+      params: {
+        intent: 'yes'
+      },
+      say: 'No problem -',
+      actions: [
+        {
+          type: 'createBid',
+          params: {
+            objective: 'askForQuestionsAfterPurposeFollowup'
+          }
+        }
+      ]
+    },
+    {
+      objective: 'askForQuestionsAfterPurposeFollowup',
+      type: 'ask',
+      say: 'What questions can I help answer?'
+    },
+    {
       objective: 'askForConversationCategory',
       type: 'ask',
       say: 'So there a few things we can discuss. Would you like to talk about medication, exercise, or just get to know each other better?'
@@ -342,9 +369,9 @@ User.find({}).remove()
       objective: 'askForConversationCategory',
       type: 'respond',
       params: {
-        intent: 'medication'
+        topic: 'medication'
       },
-      say: 'Ok, let\'s talk about medication. I\'m able to help you keep up with your medication schedule. Has your healthcare provider prescribed any medications?'
+      say: 'Ok, let\'s talk about medication. So, one of my roles is to help you keep up with your medication schedule. Has your healthcare provider prescribed any medications?'
     },
     {
       objective: 'askForConversationCategory',
@@ -352,7 +379,7 @@ User.find({}).remove()
       params: {
         intent: 'exercise'
       },
-      say: '[Insert medication conversation here, END]'
+      say: '[Insert exercise conversation here, END]'
     },
     {
       objective: 'askDataPrivacy',
@@ -380,6 +407,11 @@ User.find({}).remove()
       params: {
         intent: 'continue'
       }
+    },
+    {
+      objective: 'help',
+      type: 'respond',
+      say: 'If you need help'
     }
   )
   })

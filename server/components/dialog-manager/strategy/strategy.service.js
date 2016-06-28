@@ -131,17 +131,22 @@ export function getTaskFromResponseAction(bot) {
         var returned = [];
 
         tasks.forEach(function(task, t) {
-          if (responseMatchesAllTaskParams(task, responseParams)) {
+          var paramsMatched = responseMatchesAllTaskParams(task, responseParams)
+          if (paramsMatched !== false) {
+            task.score = paramsMatched;
             returned.push(task)
           }
         })
 
         function responseMatchesAllTaskParams(task, responseParams) {
           var isValid = true;
+          var paramsMatched = 0;
           if (task.params) {
             for (var taskParam in task.params) {
               if (task.params.hasOwnProperty(taskParam)) {
-                if (!valueMatch() && !wildcardMatch()) {
+                if (valueMatch() || wildcardMatch()) {
+                  paramsMatched ++;
+                } else {
                   isValid = false;
                 }
 
@@ -163,7 +168,20 @@ export function getTaskFromResponseAction(bot) {
               }
             }
           }
-          return isValid;
+          if(isValid){
+            return paramsMatched;
+          } else {
+            return false;
+          }
+        }
+
+        if(returned.length > 1){
+          console.log('MULTIPLE RESPONSES AVAILABLE:')
+          console.log(returned)
+
+          returned.sort(function(a, b){
+            return parseFloat(b.score) - parseFloat(a.score);
+          })
         }
 
         if (returned.length > 0) {

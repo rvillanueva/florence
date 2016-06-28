@@ -30,23 +30,6 @@ var actionIndex = {
       }
     })
   },
-  forceNextTask: function(bot, action) {
-    return new Promise(function(resolve, reject) {
-      console.log('Forcing next task...')
-      console.log(action.params);
-      if (!action.params || !action.params.objective) {
-        reject(new Error('Missing objective parameter in action'));
-      }
-      bot.bid({
-        target: {
-          objective: action.params.objective,
-        },
-        force: true
-      })
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
-    })
-  },
   createBid: function(bot, action) {
     return new Promise(function(resolve, reject) {
       console.log('Creating bid...')
@@ -60,7 +43,7 @@ var actionIndex = {
           params: action.params.params
         },
         force: action.params.force,
-        modifier: action.params.modifier
+        modifier: action.params.modifier || 1
       })
       .then(bot => resolve(bot))
       .catch(err => reject(err))
