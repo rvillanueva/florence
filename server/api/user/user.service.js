@@ -39,25 +39,31 @@ export function handleUserCreation(user, messengerId){
       }
       newUser.active = true;
       newUser.save()
-      .then(savedUser => {
-        console.log('Created intro bid.')
-        Bid.create({
-          userId: savedUser._id,
-          open: true,
-          created: {
-            date: new Date(),
-            turn: 0
-          },
-          target:{
-            objective: 'introduceSelf',
-          },
-          modifier: 10
-        })
-        .then(() => resolve(savedUser))
-        .catch(err => reject(err))
-      })
+      .then(user => createIntroBid(user))
+      .then(user => resolve(user))
       .catch(err => reject(err))
     }
+  })
+}
+
+function createIntroBid(user){
+  return new Promise(function(resolve, reject){
+    console.log('Creating intro bid...')
+    Bid.create({
+      userId: user._id,
+      open: true,
+      created: {
+        date: new Date(),
+        turn: 0
+      },
+      target:{
+        objective: 'preIntroduction',
+      },
+      force: true,
+      modifier: 10
+    })
+    .then(() => resolve(user))
+    .catch(err => reject(err))
   })
 }
 

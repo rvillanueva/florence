@@ -47,6 +47,25 @@ var actionIndex = {
       .catch(err => reject(err))
     })
   },
+  createBid: function(bot, action) {
+    return new Promise(function(resolve, reject) {
+      console.log('Creating bid...')
+      console.log(action.params);
+      if (!action.params) {
+        reject(new Error('Missing params'));
+      }
+      bot.bid({
+        target: {
+          objective: action.params.objective,
+          params: action.params.params
+        },
+        force: action.params.force,
+        modifier: action.params.modifier
+      })
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    })
+  },
 }
 
 export function execute(bot) {

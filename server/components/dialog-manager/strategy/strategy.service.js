@@ -10,45 +10,68 @@ import Task from '../task/task.model';
 export function selectTopTask(bot) {
   return new Promise(function(resolve, reject) {
 
-    if (bot.cache.tasks.length == 0) {
-      bot.cache.task = null;
-      resolve(bot);
-    } else {
+      if (bot.cache.tasks.length == 0) {
+        bot.cache.task = null;
+        resolve(bot);
+      } else {
 
-      // Sort score map by score
-      bot.cache.tasks.sort(function(a, b) {
-        return parseFloat(b.score) - parseFloat(a.score);
-      });
+        // Sort score map by score and force
+        bot.cache.tasks.sort(function(a, b) {
 
-      // Sort score map by forced = true
-      bot.cache.tasks.sort(function(a, b) {
-        if(a.force && !b.force){
-          return -1;
-        } else if(!a.force && b.force){
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+            var forceCheck = isForced();
+            var scoreCheck = isHigher();
+
+            if (forceCheck) {
+              return forceCheck;
+            } else {
+              return scoreCheck;
+            }
+
+            function isForced() {
+              if (a.force == true && !b.force) {
+                return -1;
+              } else if (!a.force && b.force == true) {
+                return 1;
+              } else {
+                return 0;
+              }
+            }
+
+            function isHigher() {
+              return parseFloat(b.score) - parseFloat(a.score);
+            }
+
+
+          })
+
+
       // Select best
       var selected = bot.cache.tasks[0]
-      if(selected.score > 0 || selected.force){
+      if (selected.score > 0 || selected.force) {
         bot.cache.task = selected;
       } else {
         bot.cache.task = null;
       }
 
+      console.log('TOP:')
+      console.log(selected)
+      console.log('\n')
+
+
       // LOG
+      console.log('SELECTED:')
+      console.log(bot.cache.task)
+      console.log('\n\n')
       console.log('TASK SCORE MAP');
-      bot.cache.tasks.forEach(function(task, t){
+      bot.cache.tasks.forEach(function(task, t) {
         var str = '(' + task.score + ') ' + task.objective;
-        if(task.force){
+        if (task.force) {
           str += ' - FORCED'
         }
         console.log(str)
       })
       console.log('\n\n\n')
-      // Return associated task
+        // Return associated task
       resolve(bot);
     }
   })
@@ -58,77 +81,80 @@ export function selectTopTask(bot) {
 // RESPONSE HANDLING
 
 
-export function handleUnfilledSlots(bot){
-  return new Promise(function(resolve, reject){
-    if(bot.response.result.actionIncomplete){
+export function handleUnfilledSlots(bot) {
+  return new Promise(function(resolve, reject) {
+    if (bot.response.result.actionIncomplete) {
       bot.send(bot.response.result.fulfillment.speech)
-      .then(bot => {
-        bot.state.status == 'waiting';
-        resolve(bot)
-      })
-      .catch(err => reject(err))
-    } else  {
+        .then(bot => {
+          bot.state.status == 'waiting';
+          resolve(bot)
+        })
+        .catch(err => reject(err))
+    } else {
       resolve(bot)
     }
   })
 }
 
-export function getTaskFromResponseAction(bot){
-  return new Promise(function(resolve, reject){
-    if(bot.state.status == 'responding'){
+export function getTaskFromResponseAction(bot) {
+  return new Promise(function(resolve, reject) {
+    if (bot.state.status == 'responding') {
       var responseParams = bot.response.result.parameters;
       var query = {
-        'objective': bot.response.result.action,
-        type: 'respond'
-      }
-      // TODO just find one
-      Task.find({'objective': bot.response.result.action, 'type':'respond'}).exec()
-      .then(tasks => filterByParams(tasks, responseParams))
-      .then(task => {
-        if(task){
-          console.log('FOUND RESPONSE TASK:')
-          console.log(task)
-          bot.cache.task = task;
-        } else {
-          console.log('NO RESPONSE TASK FOUND')
-          bot.cache.task = null;
+          'objective': bot.response.result.action,
+          type: 'respond'
         }
-        resolve(bot)
-      })
-      .catch(err => reject(err))
+        // TODO just find one
+      Task.find({
+          'objective': bot.response.result.action,
+          'type': 'respond'
+        }).exec()
+        .then(tasks => filterByParams(tasks, responseParams))
+        .then(task => {
+          if (task) {
+            console.log('FOUND RESPONSE TASK:')
+            console.log(task)
+            bot.cache.task = task;
+          } else {
+            console.log('NO RESPONSE TASK FOUND')
+            bot.cache.task = null;
+          }
+          resolve(bot)
+        })
+        .catch(err => reject(err))
     } else {
       resolve(bot)
     }
 
-    function filterByParams(tasks, responseParams){
-      return new Promise(function(resolve, reject){
+    function filterByParams(tasks, responseParams) {
+      return new Promise(function(resolve, reject) {
         var returned = [];
 
-        tasks.forEach(function(task, t){
-          if(responseMatchesAllTaskParams(task, responseParams)){
+        tasks.forEach(function(task, t) {
+          if (responseMatchesAllTaskParams(task, responseParams)) {
             returned.push(task)
           }
         })
 
-        function responseMatchesAllTaskParams(task, responseParams){
+        function responseMatchesAllTaskParams(task, responseParams) {
           var isValid = true;
-          if(task.params){
+          if (task.params) {
             for (var taskParam in task.params) {
               if (task.params.hasOwnProperty(taskParam)) {
-                if(!valueMatch() && !wildcardMatch()){
+                if (!valueMatch() && !wildcardMatch()) {
                   isValid = false;
                 }
 
-                function valueMatch(){
-                  if(responseParams[taskParam] == task.params[taskParam]){
+                function valueMatch() {
+                  if (responseParams[taskParam] == task.params[taskParam]) {
                     return true
                   } else {
                     return false
                   }
                 }
 
-                function wildcardMatch(){
-                  if(task.params[taskParam] === '*' && responseParams[taskParam]){
+                function wildcardMatch() {
+                  if (task.params[taskParam] === '*' && responseParams[taskParam]) {
                     return true;
                   } else {
                     return false
@@ -140,7 +166,7 @@ export function getTaskFromResponseAction(bot){
           return isValid;
         }
 
-        if(returned.length > 0){
+        if (returned.length > 0) {
           resolve(returned[0]);
         } else {
           resolve(false);

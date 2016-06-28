@@ -192,7 +192,196 @@ User.find({}).remove()
       objective: 'askToHelp',
       type: 'ask',
       say: 'Let me know if there\'s anything I can help you with.'
-    })
+    },
+    {
+      objective: 'askAdherenceChallenges',
+      type: 'ask',
+      params: {
+        activity: 'takeMeds',
+        medication: 'amoxicillin'
+      },
+      say: 'Have you have you had any challenges taking your amoxicillin recently?'
+    },
+    {
+      objective: 'preIntroduction',
+      type: 'say',
+      params: {},
+      say: 'My name is Clara. We\'ll get to the health part in a moment, but I like to get to know people better first. So...',
+      actions: [
+        {
+          type: 'forceNextTask',
+          params: {
+            objective: 'askAboutImaginaryLife'
+          }
+        }
+      ]
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'ask',
+      params: {},
+      say: 'If you won a huge amount of money and you no longer had to worry about your finances, what would you do with the rest of your life?',
+      actions: [
+        {
+          type: 'createBid',
+          params: {
+            objective: 'transitionToIntro',
+            modifier: 10
+          }
+        }
+      ]
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'travel'
+      },
+      say: 'Traveling! That sounds amazing. I haven\'t traveled much myself, but I\'ve seen pictures of far off places and have dreamed of going.'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'entrepreneurship'
+      },
+      say: 'Wow, that sounds ambitious! Running your own company sounds difficult but rewarding.'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'relax'
+      },
+      say: 'I hear you! Sometimes life can feel overwhelming. As fun as excitement is, relaxing is very underrated.'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'family'
+      },
+      say: 'I think that\'s a really great answer. Sometimes it feels like we\'re working hard, but family is what makes it worthwhile.'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'vacation'
+      },
+      say: 'I hear you! Life can feel so much easier after a long, stress-free vacation'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      params: {
+        topic: 'nothing'
+      },
+      say: 'Hah, not sure if that means you\'d relax all day or if nothing would change. Both sound great, to be honest'
+    },
+    {
+      objective: 'askAboutImaginaryLife',
+      type: 'respond',
+      say: 'Sounds like a solid plan!'
+    },
+    {
+      objective: 'transitionToIntro',
+      type: 'say',
+      say: 'Okay, now on to business :)',
+      actions: [
+        {
+          type: 'createBid',
+          params: {
+            objective: 'introducePurpose',
+            force: true,
+            modifier: 5
+          }
+        }
+      ]
+    },
+    {
+      objective: 'introducePurpose',
+      type: 'say',
+      say: 'So, my name\'s Clara, and if you haven\'t figured it out already, I\'m a robot. I\'m here to help you stay on track with your health goals',
+      actions: [
+        {
+          type: 'createBid',
+          params: {
+            objective: 'askForQuestionsAfterPurpose',
+            force: true,
+            modifier: 7
+          }
+        },
+        {
+          type: 'createBid',
+          params: {
+            objective: 'askForConversationCategory',
+          }
+        }
+      ]
+    },
+    {
+      objective: 'askForQuestionsAfterPurpose',
+      type: 'ask',
+      say: 'Any questions before we start talking about a few health topics?'
+    },
+    {
+      objective: 'askForQuestionsAfterPurpose',
+      type: 'respond',
+      params: {
+        intent: 'no'
+      },
+      say: 'Great, then let\'s get started!'
+    },
+    {
+      objective: 'askForConversationCategory',
+      type: 'ask',
+      say: 'So there a few things we can discuss. Would you like to talk about medication, exercise, or just get to know each other better?'
+    },
+    {
+      objective: 'askForConversationCategory',
+      type: 'respond',
+      params: {
+        intent: 'medication'
+      },
+      say: 'Ok, let\'s talk about medication. I\'m able to help you keep up with your medication schedule. Has your healthcare provider prescribed any medications?'
+    },
+    {
+      objective: 'askForConversationCategory',
+      type: 'respond',
+      params: {
+        intent: 'exercise'
+      },
+      say: '[Insert medication conversation here, END]'
+    },
+    {
+      objective: 'askDataPrivacy',
+      type: 'respond',
+      say: '[Data privacy placeholder]'
+    },
+    {
+      objective: 'askPurpose',
+      type: 'respond',
+      say: '[askPurpose placeholder]'
+    },
+    {
+      objective: 'askWhereBorn',
+      type: 'respond',
+      say: '[where were you born placeholder]'
+    },
+    {
+      objective: 'confusion',
+      type: 'ask',
+      say: 'Sorry, I didn\'t quite understand that one - I\'ve let my team know about it. You can try rephrasing the question, or we can move on to the next topic.'
+    },
+    {
+      objective: 'confusion',
+      type: 'respond',
+      params: {
+        intent: 'continue'
+      }
+    }
+  )
   })
 
 Bid.find({}).remove();
