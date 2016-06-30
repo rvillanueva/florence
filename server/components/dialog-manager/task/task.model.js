@@ -7,17 +7,45 @@ var TaskSchema = new mongoose.Schema({
   aliasOf: String,
   type: { // say, ask
     type: String,
-    required: true
+    required: true,
+    enum: [
+      'say',
+      'ask',
+      'respond'
+    ]
   },
   params: {},
-  validation: {}, // takes min, max, and values []
   say: String,
   actions: [{
     type: {
       type: String
     },
     params: {}
-  }]
+  }],
+  public: Boolean,
+  auth: {
+    ownerId: String
+  },
+  validation: {
+    type: {
+      type: String,
+      enum: [
+        'number',
+        'category',
+        'open',
+        'entity'
+      ]
+    },
+    min: Number,
+    max: Number,
+    terms: [
+      {
+        value: String,
+        synonyms: [String]
+      }
+    ],
+    entity: String
+  }
 });
 
 export default mongoose.model('Task', TaskSchema);
