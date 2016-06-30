@@ -176,8 +176,7 @@ export function getTaskFromResponseAction(bot) {
         }
 
         if(returned.length > 1){
-          console.log('MULTIPLE RESPONSES AVAILABLE:')
-          console.log(returned)
+          console.log(returned.length + ' matched responses.')
 
           returned.sort(function(a, b){
             return parseFloat(b.score) - parseFloat(a.score);

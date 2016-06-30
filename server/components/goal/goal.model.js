@@ -2,24 +2,15 @@
 
 import mongoose from 'mongoose';
 
-var EntrySchema = new mongoose.Schema({
+
+var GoalSchema = new mongoose.Schema({
   userId: String,
   type: {
     type: String
   },
-  message: {
-    id: String,
-    text: String,
-    features: {}
-  },
   adherence: {
-    activity: {
-      name: String,
-      params: {},
-    },
-    frequency: {
-      times: Number,
-      unit: String
+    type: {
+      type: String
     },
   },
   created: {
@@ -28,7 +19,7 @@ var EntrySchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model('Entry', EntrySchema);
+export default mongoose.model('Goal', GoalSchema);
 
 
 /*
