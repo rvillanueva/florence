@@ -26,7 +26,8 @@ var TaskSchema = new mongoose.Schema({
   auth: {
     ownerId: String
   },
-  validation: {
+  validation: [{
+    param: String,
     type: {
       type: String,
       enum: [
@@ -44,7 +45,8 @@ var TaskSchema = new mongoose.Schema({
         synonyms: [String]
       }
     ],
-    entity: String
+  }]
+
   }
 });
 

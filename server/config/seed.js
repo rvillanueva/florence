@@ -415,24 +415,54 @@ User.find({}).remove()
       say: 'If you need help'
     },
     {
-      _id: '00d01',
       objective: 'askProgramQuestion',
       type: 'say',
-      say: 'Diabetes q 1'
+      params: {
+        question: '*',
+        measureKey: '*',
+        programId: '*',
+        questionId: '*'
+      },
+      say: '[task.question]'
     },
     {
-      _id: '00d02',
       objective: 'askProgramQuestion',
-      type: 'say',
-      say: 'Diabetes q 2'
-    }
-    ,{
-      _id: '00d03',
+      type: 'respond',
+      params: {
+        programId: '*',
+        questionId: '*',
+        value: '*'
+      },
+      actions: [
+        {
+          type: 'validateProgramQuestion',
+          params: {
+            programId: '*',
+            questionId: '*',
+            value: '*'
+          }
+        }
+      ]
+    },
+    {
       objective: 'askProgramQuestion',
-      type: 'say',
-      say: 'Diabetes q 3'
-    }
-
+      type: 'respond',
+      params: {
+        programId: '*',
+        questionId: '*',
+        value: '*'
+      },
+      actions: [
+        {
+          type: 'validateProgramQuestion',
+          params: {
+            programId: '*',
+            questionId: '*',
+            value: '*'
+          }
+        }
+      ]
+    },
   )
   })
 
@@ -442,9 +472,28 @@ Program.find({}).remove()
 .then(() => Program.create({
   _id: '111',
   name: 'Diabetes',
-  tasks: [
-    {
-      taskId: '123'
-    }
-  ]
+  questions: [{
+    _id: '111q1',
+    say: 'Test survey question here.',
+    responses: [
+      {
+        min: 0,
+        max: 10,
+        say: 'Oh boy oh boy.',
+        skipTo: '111q3'
+      }
+    ]
+  },
+  {
+    _id: '111q2',
+    say: 'Test survey question here.',
+    responses: [
+      {
+        min: 0,
+        max: 10,
+        say: 'Oh boy oh boy.',
+        skipTo: '111q3'
+      }
+    ]
+  }]
 }))

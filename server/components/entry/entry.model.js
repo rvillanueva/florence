@@ -5,25 +5,20 @@ import mongoose from 'mongoose';
 var EntrySchema = new mongoose.Schema({
   userId: String,
   created: Date,
-  message: {
-    id: String,
-    text: String
+  conversation: {
+    messageId: String,
+    promptTaskId: String,
+    responseTaskId: String,
+    programId: String,
+    questionId: String
   },
-  task: {
-    id: String,
-    objective: String,
-    params: {}
+  question: String,
+  text: String,
+  measure: {
+    key: String,
+    primaryParam: String,
   },
-  data: {
-    type: {
-      type: String,
-      enum: [
-        'number',
-        'category'
-      ]
-    },
-    value: mongoose.ObjectTypes.Mixed
-  }
+  params: {}
 });
 
 export default mongoose.model('Entry', EntrySchema);
