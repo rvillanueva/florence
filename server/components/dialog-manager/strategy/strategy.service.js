@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 var TaskService = require('../task')
-import Task from '../task/task.model';
+import Task from '../../../models/task/task.model';
 
 // Select best task based on scores
 // INPUT: cache.tasks

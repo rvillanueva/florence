@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 var Action = require('../action');
 var Response = require('../../response');
-import Task from './task.model';
+import Task from '../../../models/task/task.model';
 // -- RUN
 
 // Queue sendables from task

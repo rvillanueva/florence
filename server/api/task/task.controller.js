@@ -1,16 +1,16 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/goals              ->  index
- * POST    /api/goals              ->  create
- * GET     /api/goals/:id          ->  show
- * PUT     /api/goals/:id          ->  update
- * DELETE  /api/goals/:id          ->  destroy
+ * GET     /api/tasks              ->  index
+ * POST    /api/tasks              ->  create
+ * GET     /api/tasks/:id          ->  show
+ * PUT     /api/tasks/:id          ->  update
+ * DELETE  /api/tasks/:id          ->  destroy
  */
 
 'use strict';
 
 import _ from 'lodash';
-import Goal from '../../components/goal/goal.model';
+import Task from '../../models/task/task.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -59,43 +59,43 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Goals
+// Gets a list of Tasks
 export function index(req, res) {
-  return Goal.find().exec()
+  return Task.find().exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Gets a single Goal from the DB
+// Gets a single Task from the DB
 export function show(req, res) {
-  return Goal.findById(req.params.id).exec()
+  return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Creates a new Goal in the DB
+// Creates a new Task in the DB
 export function create(req, res) {
-  return Goal.create(req.body)
+  return Task.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Updates an existing Goal in the DB
+// Updates an existing Task in the DB
 export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return Goal.findById(req.params.id).exec()
+  return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Deletes a Goal from the DB
+// Deletes a Task from the DB
 export function destroy(req, res) {
-  return Goal.findById(req.params.id).exec()
+  return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));

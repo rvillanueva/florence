@@ -31,22 +31,3 @@ var TaskSchema = new mongoose.Schema({
 });
 
 export default mongoose.model('Task', TaskSchema);
-
-
-
-/*attachments: [
-  {
-    type: String,
-    title: String,
-    subtitle: String,
-    imageUrl: String,
-    postback: String,
-    webUrl: String
-  }
-],
-preconditions: [{
-  type: {
-    type: String
-  },
-  params: {}
-}],*/

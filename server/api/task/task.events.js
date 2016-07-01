@@ -1,15 +1,15 @@
 /**
- * Goal model events
+ * Task model events
  */
 
 'use strict';
 
 import {EventEmitter} from 'events';
-import Goal from '../../components/goal/goal.model';
-var GoalEvents = new EventEmitter();
+import Task from '../../models/task/task.model';
+var TaskEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)
-GoalEvents.setMaxListeners(0);
+TaskEvents.setMaxListeners(0);
 
 // Model events
 var events = {
@@ -20,14 +20,14 @@ var events = {
 // Register the event emitter to the model events
 for (var e in events) {
   var event = events[e];
-  Goal.schema.post(e, emitEvent(event));
+  Task.schema.post(e, emitEvent(event));
 }
 
 function emitEvent(event) {
   return function(doc) {
-    GoalEvents.emit(event + ':' + doc._id, doc);
-    GoalEvents.emit(event, doc);
+    TaskEvents.emit(event + ':' + doc._id, doc);
+    TaskEvents.emit(event, doc);
   }
 }
 
-export default GoalEvents;
+export default TaskEvents;

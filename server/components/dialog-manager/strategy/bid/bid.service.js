@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-import Bid from './bid.model';
+import Bid from '../../../../models/bid/bid.model';
 
 // Get all active bids for user
 // OUPUT: cache.bids

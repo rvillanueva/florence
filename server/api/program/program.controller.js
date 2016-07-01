@@ -10,7 +10,7 @@
 'use strict';
 
 import _ from 'lodash';
-import Program from './program.model';
+import Program from '../../models/program/program.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

@@ -3,40 +3,40 @@
 var app = require('../..');
 import request from 'supertest';
 
-var newGoal;
+var newTask;
 
-describe('Goal API:', function() {
+describe('Task API:', function() {
 
-  describe('GET /api/goals', function() {
-    var goals;
+  describe('GET /api/tasks', function() {
+    var tasks;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/goals')
+        .get('/api/tasks')
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) {
             return done(err);
           }
-          goals = res.body;
+          tasks = res.body;
           done();
         });
     });
 
     it('should respond with JSON array', function() {
-      goals.should.be.instanceOf(Array);
+      tasks.should.be.instanceOf(Array);
     });
 
   });
 
-  describe('POST /api/goals', function() {
+  describe('POST /api/tasks', function() {
     beforeEach(function(done) {
       request(app)
-        .post('/api/goals')
+        .post('/api/tasks')
         .send({
-          name: 'New Goal',
-          info: 'This is the brand new goal!!!'
+          name: 'New Task',
+          info: 'This is the brand new task!!!'
         })
         .expect(201)
         .expect('Content-Type', /json/)
@@ -44,55 +44,55 @@ describe('Goal API:', function() {
           if (err) {
             return done(err);
           }
-          newGoal = res.body;
+          newTask = res.body;
           done();
         });
     });
 
-    it('should respond with the newly created goal', function() {
-      newGoal.name.should.equal('New Goal');
-      newGoal.info.should.equal('This is the brand new goal!!!');
+    it('should respond with the newly created task', function() {
+      newTask.name.should.equal('New Task');
+      newTask.info.should.equal('This is the brand new task!!!');
     });
 
   });
 
-  describe('GET /api/goals/:id', function() {
-    var goal;
+  describe('GET /api/tasks/:id', function() {
+    var task;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/goals/' + newGoal._id)
+        .get('/api/tasks/' + newTask._id)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) {
             return done(err);
           }
-          goal = res.body;
+          task = res.body;
           done();
         });
     });
 
     afterEach(function() {
-      goal = {};
+      task = {};
     });
 
-    it('should respond with the requested goal', function() {
-      goal.name.should.equal('New Goal');
-      goal.info.should.equal('This is the brand new goal!!!');
+    it('should respond with the requested task', function() {
+      task.name.should.equal('New Task');
+      task.info.should.equal('This is the brand new task!!!');
     });
 
   });
 
-  describe('PUT /api/goals/:id', function() {
-    var updatedGoal;
+  describe('PUT /api/tasks/:id', function() {
+    var updatedTask;
 
     beforeEach(function(done) {
       request(app)
-        .put('/api/goals/' + newGoal._id)
+        .put('/api/tasks/' + newTask._id)
         .send({
-          name: 'Updated Goal',
-          info: 'This is the updated goal!!!'
+          name: 'Updated Task',
+          info: 'This is the updated task!!!'
         })
         .expect(200)
         .expect('Content-Type', /json/)
@@ -100,27 +100,27 @@ describe('Goal API:', function() {
           if (err) {
             return done(err);
           }
-          updatedGoal = res.body;
+          updatedTask = res.body;
           done();
         });
     });
 
     afterEach(function() {
-      updatedGoal = {};
+      updatedTask = {};
     });
 
-    it('should respond with the updated goal', function() {
-      updatedGoal.name.should.equal('Updated Goal');
-      updatedGoal.info.should.equal('This is the updated goal!!!');
+    it('should respond with the updated task', function() {
+      updatedTask.name.should.equal('Updated Task');
+      updatedTask.info.should.equal('This is the updated task!!!');
     });
 
   });
 
-  describe('DELETE /api/goals/:id', function() {
+  describe('DELETE /api/tasks/:id', function() {
 
     it('should respond with 204 on successful removal', function(done) {
       request(app)
-        .delete('/api/goals/' + newGoal._id)
+        .delete('/api/tasks/' + newTask._id)
         .expect(204)
         .end((err, res) => {
           if (err) {
@@ -130,9 +130,9 @@ describe('Goal API:', function() {
         });
     });
 
-    it('should respond with 404 when goal does not exist', function(done) {
+    it('should respond with 404 when task does not exist', function(done) {
       request(app)
-        .delete('/api/goals/' + newGoal._id)
+        .delete('/api/tasks/' + newTask._id)
         .expect(404)
         .end((err, res) => {
           if (err) {

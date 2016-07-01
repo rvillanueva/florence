@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-import Bid from './bid.model';
+import Bid from '../../../../models/bid/bid.model';
 var BidService = require('./bid.service');
 
 // INPUT: cache.bid

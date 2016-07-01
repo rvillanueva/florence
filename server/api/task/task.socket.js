@@ -4,7 +4,7 @@
 
 'use strict';
 
-import GoalEvents from './goal.events';
+import TaskEvents from './task.events';
 
 // Model events to emit
 var events = ['save', 'remove'];
@@ -13,9 +13,9 @@ export function register(socket) {
   // Bind model events to socket events
   for (var i = 0, eventsLength = events.length; i < eventsLength; i++) {
     var event = events[i];
-    var listener = createListener('goal:' + event, socket);
+    var listener = createListener('task:' + event, socket);
 
-    GoalEvents.on(event, listener);
+    TaskEvents.on(event, listener);
     socket.on('disconnect', removeListener(event, listener));
   }
 }
@@ -29,6 +29,6 @@ function createListener(event, socket) {
 
 function removeListener(event, listener) {
   return function() {
-    GoalEvents.removeListener(event, listener);
+    TaskEvents.removeListener(event, listener);
   };
 }

@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var request = require('request');
 
 import User from '../../api/user/user.model';
-import Bid from '../../components/dialog-manager/strategy/bid/bid.model';
+import Bid from '../../models/bid/bid.model';
 
 export function getUserByMessengerId(messengerId) {
   return new Promise((resolve, reject) => {
