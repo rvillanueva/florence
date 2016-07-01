@@ -25,28 +25,6 @@ var TaskSchema = new mongoose.Schema({
   public: Boolean,
   auth: {
     ownerId: String
-  },
-  validation: [{
-    param: String,
-    type: {
-      type: String,
-      enum: [
-        'number',
-        'category',
-        'open',
-        'entity'
-      ]
-    },
-    min: Number,
-    max: Number,
-    terms: [
-      {
-        value: String,
-        synonyms: [String]
-      }
-    ],
-  }]
-
   }
 });
 

@@ -14,6 +14,7 @@ var BidSchema = new mongoose.Schema({
   },
   // EDITABLE
   target: {
+    taskId: String,
     objective: String,
     params: {}
   },

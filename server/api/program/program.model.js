@@ -5,12 +5,13 @@ import mongoose from 'mongoose';
 var ProgramSchema = new mongoose.Schema({
   name: String,
   bids: [{
-    objective: String,
-    params: {},
-    force: Boolean,
+    target: {
+      taskId: String,
+      objective: String,
+      params: {}
+    },
     modifier: Number
-  }],
-  key: String
+  }]
 });
 
 export default mongoose.model('Program', ProgramSchema);
