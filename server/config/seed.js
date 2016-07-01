@@ -5,6 +5,7 @@
 
 'use strict';
 import User from '../api/user/user.model';
+import Program from '../api/program/program.model';
 import Task from '../components/dialog-manager/task/task.model';
 import Bid from '../components/dialog-manager/strategy/bid/bid.model';
 
@@ -412,8 +413,38 @@ User.find({}).remove()
       objective: 'help',
       type: 'respond',
       say: 'If you need help'
+    },
+    {
+      _id: '00d01',
+      objective: 'askProgramQuestion',
+      type: 'say',
+      say: 'Diabetes q 1'
+    },
+    {
+      _id: '00d02',
+      objective: 'askProgramQuestion',
+      type: 'say',
+      say: 'Diabetes q 2'
     }
+    ,{
+      _id: '00d03',
+      objective: 'askProgramQuestion',
+      type: 'say',
+      say: 'Diabetes q 3'
+    }
+
   )
   })
 
 Bid.find({}).remove();
+
+Program.find({}).remove()
+.then(() => Program.create({
+  _id: '111',
+  name: 'Diabetes',
+  tasks: [
+    {
+      taskId: '123'
+    }
+  ]
+}))
