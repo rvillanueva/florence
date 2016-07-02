@@ -1,0 +1,22 @@
+<div class="container page-program-view">
+  <br>
+  <div class="row">
+    <div class="col-md-8">
+      <h3>
+        {{$ctrl.program.name}}
+        <button class="btn btn-sm btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+      </h3>
+      <br><br>
+      <h4>Questions</h4>
+      <div ng-repeat="bid in $ctrl.program.bids">
+        {{bid.target}}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h4>Tasks</h4>
+      <div ng-repeat="task in $ctrl.tasks">
+        {{task.objective}}
+      </div>
+    </div>
+  </div>
+</div>

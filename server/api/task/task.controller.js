@@ -61,7 +61,13 @@ function handleError(res, statusCode) {
 
 // Gets a list of Tasks
 export function index(req, res) {
-  return Task.find().exec()
+  return Task.find({
+    '$or': [{
+      'integration.available':true
+    },{
+      'ownerId': 'test'
+    }]
+  }).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

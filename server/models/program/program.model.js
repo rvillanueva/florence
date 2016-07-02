@@ -7,7 +7,6 @@ var ProgramSchema = new mongoose.Schema({
   bids: [{
     target: {
       taskId: String,
-      objective: String,
       params: {}
     },
     modifier: Number

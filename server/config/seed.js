@@ -198,7 +198,10 @@ Task.find({}).remove()
               objective: 'transitionToIntro',
               modifier: 10
             }
-          }]
+          }],
+          integration: {
+            available: true
+          }
         }, {
           objective: 'askAboutImaginaryLife',
           type: 'respond',
@@ -346,49 +349,20 @@ Task.find({}).remove()
           objective: 'help',
           type: 'respond',
           say: 'If you need help'
-        }, {
-          objective: 'askProgramQuestion',
-          type: 'say',
-          params: {
-            question: '*',
-            measureKey: '*',
-            programId: '*',
-            questionId: '*'
-          },
-          say: '[task.question]'
-        }, {
-          objective: 'askProgramQuestion',
-          type: 'respond',
-          params: {
-            programId: '*',
-            questionId: '*',
-            value: '*'
-          },
-          actions: [{
-            type: 'validateProgramQuestion',
-            params: {
-              programId: '*',
-              questionId: '*',
-              value: '*'
-            }
-          }]
-        }, {
-          objective: 'askProgramQuestion',
-          type: 'respond',
-          params: {
-            programId: '*',
-            questionId: '*',
-            value: '*'
-          },
-          actions: [{
-            type: 'validateProgramQuestion',
-            params: {
-              programId: '*',
-              questionId: '*',
-              value: '*'
-            }
-          }]
-      })
+        },
+        {
+          _id: '5776dfb33308891e1250e6f8',
+          objective: 'test',
+          type: 'ask',
+          say: 'If you need help'
+        },
+        {
+          _id: '5776dfb33308891e1250e6f9',
+          objective: 'test',
+          type: 'ask',
+          say: 'If you need help testable',
+          ownerId: 'test'
+        })
   })
 
     Bid.find({}).remove();
@@ -397,6 +371,14 @@ Task.find({}).remove()
     .then(() => {
       Program.create({
         name: 'Diabetes',
-        bids: []
+        bids: [{
+          target: {
+            taskId: '5776dfb33308891e1250e6f8'
+          }
+        },{
+          target: {
+            taskId: '5776dfb33308891e1250e6f9'
+          }
+        }]
       })
     })
