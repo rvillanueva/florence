@@ -16,10 +16,23 @@
           }
           this.program = program;
           console.log(program)
+          this.buildTaskIndex();
+        })
+        .error(err => {
+          $state.go('programs');
         })
       }
     }
 
+    buildTaskIndex(){
+      this.taskIndex = {};
+      if(this.program.tasks){
+        angular.forEach(this.program.tasks, (task, t) => {
+          this.taskIndex[task._id] = task;
+        })
+      }
+      console.log(this.taskIndex)
+    }
   }
 
   angular.module('riverApp')

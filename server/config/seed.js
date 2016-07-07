@@ -354,13 +354,14 @@ Task.find({}).remove()
           _id: '5776dfb33308891e1250e6f8',
           objective: 'test',
           type: 'ask',
-          say: 'If you need help'
+          say: 'Have you missed any antibiotic doses today?',
+          ownerId: 'test'
         },
         {
           _id: '5776dfb33308891e1250e6f9',
           objective: 'test',
           type: 'ask',
-          say: 'If you need help testable',
+          say: 'Are you having any problems taking your antibiotics?',
           ownerId: 'test'
         })
   })
@@ -370,7 +371,7 @@ Task.find({}).remove()
     Program.find({}).remove()
     .then(() => {
       Program.create({
-        name: 'Diabetes',
+        name: 'Antibiotics',
         bids: [{
           target: {
             taskId: '5776dfb33308891e1250e6f8'

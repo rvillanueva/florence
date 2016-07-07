@@ -17,18 +17,18 @@ import Task from '../../models/task/task.model';
 
 function attachTasks(entity) {
     return new Promise(function(resolve, reject){
-      var taskIds = [];
       if(entity && entity.bids){
-        getTasks()
+        getTasks();
       } else {
         resolve(entity);
       }
 
       function getTasks(){
+        var taskIds = [];
           entity.bids.forEach(function(bid, b){
             taskIds.push(bid.target.taskId)
           })
-          Task.find({'_id': {'$in': taskIds}}).lean().exec()
+          Task.find({'_id': {'$in': taskIds}}).exec()
           .then(tasks => {
             entity.tasks = tasks;
             resolve(entity);
@@ -94,7 +94,7 @@ export function index(req, res) {
 
 // Gets a single Program from the DB
 export function show(req, res) {
-  return Program.findById(req.params.id).exec()
+  return Program.findById(req.params.id).lean().exec()
     .then(entity => attachTasks(entity))
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
