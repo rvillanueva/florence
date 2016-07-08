@@ -3,15 +3,13 @@
 import mongoose from 'mongoose';
 
 var BotStateSchema = new mongoose.Schema({
-  status: String,
-  turn: Number,
-  flow: {
+  state: {
     id: String,
     stepIndex: String,
-    responses: {}
+    responseId: String
   },
   stored: {},
-  updated: Date
+  lastModified: Date
 });
 
 export default mongoose.model('BotState', BotStateSchema);
