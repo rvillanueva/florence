@@ -19,10 +19,12 @@ var TaskSchema = new mongoose.Schema({
               'number',
               'date',
               'term',
-              'pattern'
+              'pattern',
+              'classification'
             ]
           },
           termKey: String,
+          classificationKey: String,
           pattern: String,
           min: Number,
           max: Number
@@ -53,7 +55,11 @@ var TaskSchema = new mongoose.Schema({
     next: Boolean,
     priority: Number
   }],
-  branches: [{
+  flow: [{
+    elementId: String,
+    elementType: {
+      type: String
+    },
     conditions: [{
       conditionType: {
         type: String,
@@ -63,24 +69,21 @@ var TaskSchema = new mongoose.Schema({
       operator: {
         type: String,
         enum: [
-          'equal',
-          'notEqual'
+          'equal to',
+          'not equal to',
+          'less than',
+          'greater than'
         ]
       },
-      value: mongoose.ObjectTypes.Mixed
-    }],
-    elements: [{
-      elementType: {
-        type: String
-      },
-      elementId: String
+      operand: mongoose.ObjectTypes.Mixed,
+      conjunction: {
+        type: String,
+        enum: [
+          'and',
+          'or'
+        ]
+      }
     }]
-  }],
-  flow: [{
-    elementId: String,
-    elementType: {
-      type: String
-    }
   }],
 });
 

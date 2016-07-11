@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 
 var BotStateSchema = new mongoose.Schema({
   state: {
-    id: String,
-    stepIndex: String,
+    taskId: String,
+    flowIndex: String,
     responseId: String
   },
   stored: {},

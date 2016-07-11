@@ -11,7 +11,7 @@ var BotStateSchema = new mongoose.Schema({
     responses: {}
   },
   stored: {},
-  updated: Date
+  lastModified: Date
 });
 
 export default mongoose.model('BotState', BotStateSchema);

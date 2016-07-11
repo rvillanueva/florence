@@ -18,3 +18,11 @@ export function run(bot){
 export function cache(bot){
   return TaskService.cache(bot);
 }
+
+export function get(taskId){
+  return new Promise(function(resolve, reject){
+    Task.findById(taskId).exec()
+    .then(task => resolve(task))
+    .catch(err => reject(err))
+  })
+}
