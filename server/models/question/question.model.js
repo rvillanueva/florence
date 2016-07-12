@@ -5,20 +5,20 @@ import mongoose from 'mongoose';
 var QuestionSchema = new mongoose.Schema({
   text: String,
   choices: [{
-    match: {
-      matchType: {
+    pattern: {
+      type: {
         type: String,
         enum: [
           'number',
           'date',
-          'term',
-          'pattern',
+          'expression',
+          'match',
           'classification'
         ]
       },
-      termKey: String,
+      expressionKey: String,
       classificationKey: String,
-      pattern: String,
+      match: String,
       min: Number,
       max: Number
     },

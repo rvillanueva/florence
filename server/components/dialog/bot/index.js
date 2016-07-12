@@ -113,7 +113,7 @@ export default function(options){
 
     function getActiveTask(){
       return new Promise((resolve, reject) => {
-        Task.findById(this.state.active.taskId)
+        Task.findById(this.state.active.taskId).lean().exec()
         .then(task => {
           this.task = task;
           resolve()

@@ -28,7 +28,7 @@ var TaskSchema = new mongoose.Schema({
       }
     },
     conditions: [{
-      conditionType: {
+      type: {
         type: String,
         enum: ['question']
       },

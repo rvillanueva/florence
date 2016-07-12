@@ -2,6 +2,7 @@
 
 var Promise = require('bluebird');
 var Message = require('../message');
+var Pattern = require('../pattern');
 var DialogExecutionService = require('./dialog.execution');
 var maxLoops = 5;
 
@@ -17,28 +18,62 @@ export function logMessage(bot) {
 
 
 export function handleExpectedResponse(bot) {
+  var step = bot.task.steps[bot.stepIndex];
+  var choice = false;
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
-      Pattern.checkAgainstExpected(text, patterns)
-        .then(pattern => selectChoiceFromPattern(pattern))
-        .then(choice => handleReplyToUser(pattern))
-        .then(choice => handleResponseStorage(choice))
-        .then(() => resolve(bot))
+      if(step.type == 'question'){
+        checkChoiceMatch()
+          .then(handleReplyToUser(choice))
+          .then(handleResponseStorage(choice))
+          .then(() => resolve(bot))
+      } else {
+        console.log('ERROR: Waiting step is not a question. Resetting active state.');
+        bot.state.active = {
+          taskId: null,
+          stepId: null
+        }
+        resolve(bot)
+      }
     } else {
       resolve(bot)
     }
   })
 
-  function selectChoiceFromPattern(pattern) {
+  function checkChoiceMatch() {
     return new Promise(function(resolve, reject) {
-      if (pattern) {
+      setupPatternArray()
+      .then(patterns => Parser.checkForPatterns(bot.received.text, patterns))
+      .then(pattern => resolveAssociatedChoice(pattern))
+      .catch(err => reject(err))
+    })
 
-      }
+    function setupPatternArray(){
+      return new Promise(function(resolve, reject){
+        var patterns = [];
+        step.choices.forEach(function(choice, c){
+          var pushed = choice.pattern;
+          pushed.choiceId = choice._id;
+          patterns.push(pushed);
+        })
+        resolve(patterns);
+      })
+    }
+
+    function resolveAssociatedChoice(pattern){
+      var found = false;
+      step.choices.forEach(function(stepChoice, s){
+        if(!found && pattern.choiceId == choice._id){
+          choice = stepChoice;
+          resolve();
+        }
+      })
+      resolve()
     })
   }
 
-  function handleReplyToUser(choice) {
+  function handleReplyToUser() {
     return new Promise(function(resolve, reject) {
       if (choice) {
         bot.send({
@@ -47,7 +82,11 @@ export function handleExpectedResponse(bot) {
         .then(() => resolve())
         .catch(err => reject(err))
       } else {
-        resolve(false)
+        bot.send({
+          text: 'Sorry, I didn\'t quite get that. Can you try again?'
+        })
+        .then(() => resolve())
+        .catch(err => reject(err))
       }
 
     })
@@ -56,7 +95,8 @@ export function handleExpectedResponse(bot) {
   function handleResponseStorage(choice) {
     return new Promise(function(resolve, reject) {
       if (choice) {
-
+        // TODO Build response storage
+        resolve(false)
       } else {
         resolve(false)
       }
@@ -79,7 +119,7 @@ export function handleNextStep(bot) {
       resolve(bot)
     }
 
-    function handleTaskCompletion() {
+    function handleTaskCompletion(){
       return new Promise(function(resolve, reject){
         if(bot.stepIndex > (bot.task.steps.length - 1){
           bot.completeTask(bot.task._id)
