@@ -80,16 +80,3 @@ export function updateContext(bot){
     }
   })
 }
-
-// CRUD
-
-export function cache(bot){
-  return new Promise(function(resolve, reject){
-    Task.find({'type': {'$in': ['say','ask']}}).lean().exec()
-    .then(tasks => {
-      bot.cache.tasks = tasks;
-      resolve(bot)
-    })
-    .catch(err => reject(err))
-  })
-}

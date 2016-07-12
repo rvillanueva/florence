@@ -24,7 +24,7 @@ export function logMessage(bot){
 
 // INPUT: received.text
 // OUTPUT: response
-export function getResponse(bot){
+export function getCurrentTask(bot){
   return new Promise(function(resolve, reject){
     if(bot.state.status == 'waiting'){  // TODO applying this logic will prevent processing multiple responses
       if(!bot.received.text){

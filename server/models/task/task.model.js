@@ -3,31 +3,55 @@
 import mongoose from 'mongoose';
 
 var TaskSchema = new mongoose.Schema({
-  objective: String,
-  aliasOf: String,
-  type: { // say, ask
-    type: String,
-    required: true,
-    enum: [
-      'say',
-      'ask',
-      'respond'
-    ]
-  },
-  params: {},
-  say: String,
-  actions: [{
+  name: String,
+  ownerId: String,
+  organizationId: String,
+  isActive: true,
+  created: Date,
+  lastModified: Date,
+  steps: [{
     type: {
-      type: String
+      type: String,
+      enum: [
+        'question',
+        'speech',
+        'action'
+      ]
     },
-    params: {}
+    questionId: String,
+    speech: {
+      text: String
+    },
+    action: {
+      type: {
+        type: String
+      }
+    },
+    conditions: [{
+      conditionType: {
+        type: String,
+        enum: ['question']
+      },
+      questionId: String,
+      operator: {
+        type: String,
+        enum: [
+          'equal to',
+          'not equal to',
+          'less than',
+          'greater than'
+        ]
+      },
+      operand: mongoose.ObjectTypes.Mixed,
+      conjunction: {
+        type: String,
+        enum: [
+          'and',
+          'or'
+        ]
+      }
+    }]
   }],
-  public: Boolean,
-  integration: {
-    available: Boolean,
-    params: {}
-  },
-  ownerId: String
 });
 
 export default mongoose.model('Task', TaskSchema);

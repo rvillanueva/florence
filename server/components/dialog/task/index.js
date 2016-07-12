@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-
+import Task from '../../../models/task/task.model';
 var TaskService = require('./task.service');
 
 export function run(bot){
@@ -19,13 +19,10 @@ export function cache(bot){
   return TaskService.cache(bot);
 }
 
-export function get(bot){
+export function getById(taskId){
   return new Promise(function(resolve, reject){
-    Task.findById(bot.current.taskId).exec()
-    .then(task => {
-      bot.cache.task = task;
-      resolve(task)
-    })
+    Task.findById(taskId).exec()
+    .then(task => resolve(task))
     .catch(err => reject(err))
   })
 }

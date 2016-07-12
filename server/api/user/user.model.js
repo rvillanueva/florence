@@ -32,15 +32,22 @@ var UserSchema = new Schema({
   created: Date,
   facebook: {},
   messenger: {},
-  tracked: {},
-  engagement: {
-    weeklySessions: Number,
-    sessionLength: Number,
-    notificationConversion: Number,
-    maxFrequency: Number,
-    lastCheckInRequest: Date
+  state: {
+    status: String,
+    active: {
+      taskId: String,
+      stepId: String,
+      responseId: String
+    },
+    stored: {},
+    lastModified: Date
   },
-  state: BotStateSchema
+  queue: [{
+    taskId: String,
+    forced: Boolean,
+    started: Date,
+    added: Date
+  }]
 });
 
 /**
