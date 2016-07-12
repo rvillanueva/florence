@@ -20,7 +20,7 @@ export function handleExpectedResponse(bot) {
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
-      Pattern.checkForExpected(text, patterns)
+      Pattern.checkAgainstExpected(text, patterns)
         .then(pattern => selectChoiceFromPattern(pattern))
         .then(choice => handleReplyToUser(pattern))
         .then(choice => handleResponseStorage(choice))
@@ -80,27 +80,38 @@ export function handleNextStep(bot) {
     }
 
     function handleTaskCompletion() {
-      if(bot.stepIndex > (bot.task.steps.length - 1){
-        bot.completeTask(bot.task._id)
-        .then(bot => bot.loadNextTask())
-        .then(updatedBot => {
-          bot = updatedBot;
-          if(!bot.task){
-            bot.state.status == 'waiting';
-            bot.send({
-              text: 'Done!'
-            })
-            .then(updatedBot => {
-              bot = updatedBot;
-              resolve(bot)
-            })
-            .catch(err => reject(err))
-          } else {
+      return new Promise(function(resolve, reject){
+        if(bot.stepIndex > (bot.task.steps.length - 1){
+          bot.completeTask(bot.task._id)
+          .then(bot => bot.loadNextTask())
+          .then(updatedBot => {
+            bot = updatedBot;
+            return handleEmptyQueue()
+          })
+          .then(() => resolve())
+          .catch(err => reject(err))
+        } else {
+          resolve()
+        }
+      })
+    }
+
+    function handleEmptyQueue(){
+      return new Promise(function(resolve, reject){
+        if(!bot.task){
+          bot.state.status == 'waiting';
+          bot.send({
+            text: 'Done!'
+          })
+          .then(updatedBot => {
+            bot = updatedBot;
             resolve(bot)
-          }
-        })
-        .catch(err => reject(err))
-      }
+          })
+          .catch(err => reject(err))
+        } else {
+          resolve(bot)
+        }
+      })
     }
 
     function executeStep() {
@@ -116,7 +127,10 @@ export function handleNextStep(bot) {
     }
 
     function incrementStepIndex(){
-      bot.stepIndex ++;
+      return new Promise(function(resolve, reject) {
+        bot.stepIndex ++;
+        resolve()
+      })
     }
 
   })

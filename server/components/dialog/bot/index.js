@@ -90,6 +90,8 @@ export default function(options){
         .then(() => resolve(this))
         .catch(err => reject(err))
       } else {
+        this.task = null;
+        this.stepIndex = null;
         resolve(this)
       }
 

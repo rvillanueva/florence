@@ -46,6 +46,5 @@ export function completeTodo(queue, taskId){
     } else {
       reject('Task with id ' + taskId + ' not found in queue.')
     }
-
   })
 }
