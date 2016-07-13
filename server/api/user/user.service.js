@@ -3,14 +3,44 @@ var Promise = require('bluebird');
 var request = require('request');
 
 import User from '../../api/user/user.model';
-import Bid from '../../models/bid/bid.model';
+var Queue = require('../../components/dialog/queue');
+var Message = require('../../components/message');
+
+export function getUserByPhoneNumber(phoneNumber) {
+  return new Promise((resolve, reject) => {
+    var options = {
+      user: {
+        provider: 'mobile',
+        mobile: {
+          number: phoneNumber
+        }
+      }
+    }
+    User.findOne({
+        'mobile.number': phoneNumber
+      }).exec()
+      .then(user => handleUserCreation(user, options))
+      .then(user => resolve(user))
+      .catch(err => reject(err))
+      .catch(err => reject(err))
+  })
+
+}
 
 export function getUserByMessengerId(messengerId) {
   return new Promise((resolve, reject) => {
+    var options = {
+      user: {
+        provider: 'messenger',
+        messenger: {
+          id: messengerId
+        }
+      }
+    }
     User.findOne({
         'messenger.id': messengerId
       }).exec()
-      .then(user => handleUserCreation(user, messengerId))
+      .then(user => handleUserCreation(user, options))
       .then(user => updateFbProfile(user))
       .then(user => resolve(user))
       .catch(err => reject(err))
@@ -19,50 +49,85 @@ export function getUserByMessengerId(messengerId) {
 
 }
 
-export function handleUserCreation(user, messengerId){
+export function handleUserCreation(user, options){
   return new Promise(function(resolve, reject){
-    if (user) {
+    if (user && user.active) {
       resolve(user);
     } else {
-      var userData = {
-        messenger: {
-          id: messengerId
-        },
-      }
-      var newUser = new User(userData);
-      newUser.provider = 'messenger';
-      newUser.role = 'user';
-      newUser.state = {
-        state: 'waiting',
-        turn: 0,
-        stored: {}
-      }
-      newUser.active = true;
-      newUser.save()
-      .then(user => createIntroBid(user))
+      createInactiveUser(options.user)
+      .then(user => replyToInactiveUser(user))
       .then(user => resolve(user))
       .catch(err => reject(err))
     }
   })
 }
 
-function createIntroBid(user){
+function replyToInactiveUser(user){
   return new Promise(function(resolve, reject){
-    console.log('Creating intro bid...')
-    Bid.create({
+    console.log('Sending inactive user reply...')
+    var sendable = {
+      provider: user.provider,
       userId: user._id,
-      open: true,
-      created: {
-        date: new Date(),
-        turn: 0
-      },
-      target:{
-        objective: 'preIntroduction',
-      },
-      force: true,
-      modifier: 10
-    })
+      messenger: user.messenger,
+      mobile: user.mobile,
+      text: 'Sorry, it looks like this number has not yet been activated in our system. If you think this is in error, talk with your referring care provider.'
+    }
+    Message.send(sendable)
     .then(() => resolve(user))
+    .catch(err => reject(err))
+  })
+}
+
+function createNewUser(user){
+  return new Promise(function(resolve, reject){
+    var newUser = new User(user);
+    newUser.role = 'user';
+    newUser.state = {
+      state: 'waiting',
+      active: {
+        taskId: null,
+        stepId: null
+      }
+    }
+    console.log(newUser)
+    newUser.active = true;
+    newUser.save()
+    .then(user => resolve(user))
+    .catch(err => reject(err))
+
+  })
+}
+
+function createInactiveUser(user){
+  return new Promise(function(resolve, reject){
+    console.log('Creating inactive user...')
+    console.log(user)
+    var newUser = new User(user);
+    newUser.role = 'user';
+    newUser.state = {
+      state: 'waiting',
+      active: {
+        taskId: null,
+        stepId: null
+      }
+    }
+    newUser.active = false;
+    console.log(newUser)
+    newUser.save()
+    .then(user => resolve(user))
+    .catch(err => reject(err))
+  })
+}
+
+
+function queueOnboardingTask(user){
+  return new Promise(function(resolve, reject){
+    user.queue = user.queue || [];
+    Queue.addTodo(user.queue, 'test123')
+    .then(queue => {
+      user.queue = queue;
+      resolve(user)
+    })
     .catch(err => reject(err))
   })
 }

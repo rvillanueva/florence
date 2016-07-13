@@ -20,6 +20,7 @@ export function receive(message){
 // Receives raw message data and resolves an array of messages
 export function standardize(data, provider){
   return new Promise(function(resolve, reject){
+    console.log(data)
     Router.standardize(data, provider)
     .then(messages => resolve(messages))
     .catch(err => reject(err))

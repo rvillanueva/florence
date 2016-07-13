@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 
-import User as '../../api/user';
+import User from '../../../api/user';
 var Queue = require('../queue');
 var Message = require('../../message');
 
@@ -31,9 +31,8 @@ export default function(options){
   this.send = function(sendable){
     sendable.provider = this.user.provider;
     sendable.userId = this.user._id;
-    if(this.user.provider == 'messenger'){
-      sendable.messenger = this.user.messenger
-    }
+    sendable.messenger = this.user.messenger;
+    sendable.mobile = this.user.mobile;
     return Message.send(sendable)
   }
 

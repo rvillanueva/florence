@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div ui-sref="task-view({id: task._id})" class="panel panel-default" ng-repeat="task in $ctrl.tasks">
+        <div class="panel-body">
+          {{task.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

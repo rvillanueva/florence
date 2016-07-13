@@ -1,6 +1,7 @@
 'use strict';
 
-var Messenger = require('./messenger');
+var MessengerService = require('./messenger');
+var TwilioService = require('./twilio');
 
 export function deliver(message){
   return new Promise(function(resolve, reject){
@@ -8,11 +9,17 @@ export function deliver(message){
       // TODO handle logs better
       var log = message.text || message.attachment;
       console.log('Reply to ' + message.userId + ': ' + log);
-      Messenger.send(message)
+      MessengerService.send(message)
+      .then(log => resolve(log))
+      .catch(err => reject(err))
+    } else if(message.provider == 'mobile'){
+      var log = message.text || message.attachment;
+      console.log('Reply to ' + message.userId + ': ' + log);
+      TwilioService.send(message)
       .then(log => resolve(log))
       .catch(err => reject(err))
     } else {
-      reject(new TypeError('Provider ' + message.provider + ' not recognized.'))
+      reject(new Error('Provider ' + message.provider + ' not recognized.'))
     }
   })
 }
@@ -20,11 +27,15 @@ export function deliver(message){
 export function standardize(data, provider){
   return new Promise(function(resolve, reject){
     if(provider == 'messenger'){
-      Messenger.standardize(data)
-      .then(messages => resolve(messages))
+      MessengerService.standardize(data)
+      .then(message => resolve(message))
+      .catch(err => reject(err))
+    } else if(provider == 'twilio'){
+      TwilioService.standardize(data)
+      .then(message => resolve(message))
       .catch(err => reject(err))
     } else {
-      reject(new TypeError('Provider ' + provider + ' not recognized.'))
+      reject(new Error('Provider ' + provider + ' not recognized.'))
     }
   })
 }

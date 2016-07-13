@@ -6,7 +6,7 @@ var TaskSchema = new mongoose.Schema({
   name: String,
   ownerId: String,
   organizationId: String,
-  isActive: true,
+  isActive: Boolean,
   created: Date,
   lastModified: Date,
   steps: [{
@@ -42,7 +42,9 @@ var TaskSchema = new mongoose.Schema({
           'greater than'
         ]
       },
-      operand: mongoose.ObjectTypes.Mixed,
+      operand: {
+        type: mongoose.Schema.Types.Mixed
+      },
       conjunction: {
         type: String,
         enum: [

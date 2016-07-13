@@ -32,7 +32,7 @@ var QuestionSchema = new mongoose.Schema({
           'boolean'
         ]
       },
-      value: mongoose.ObjectTypes.Mixed
+      value: mongoose.Schema.Types.Mixed
     }
   }]
 });

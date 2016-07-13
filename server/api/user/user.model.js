@@ -4,11 +4,8 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
-import {BotState} from '../../components/dialog-manager';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
-
-var BotStateSchema = BotState.schema;
 
 var UserSchema = new Schema({
   firstName: String, // Need to fix name virtual return
@@ -32,6 +29,7 @@ var UserSchema = new Schema({
   created: Date,
   facebook: {},
   messenger: {},
+  mobile: {},
   state: {
     status: String,
     active: {

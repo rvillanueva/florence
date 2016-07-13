@@ -64,58 +64,48 @@ function handleError(res, statusCode) {
   };
 }
 
-function handleEachMessage(messages){
+
+function handleMessage(message){
   return new Promise(function(resolve, reject){
-    var promises = [];
-    messages.forEach(function(message, m){
-      promises.push(handleMessage(message));
-    });
-    Promise.all(promises)
+    console.log('Received:')
+    console.log(message);
+    UserService.getUserByPhoneNumber(message.mobile.number)
+    .then(user => handleReply(user))
     .then(() => resolve(true))
     .catch(err => reject(err))
   })
-
-  function handleMessage(message){
+  function handleReply(user){
     return new Promise(function(resolve, reject){
-      console.log('Received:')
-      console.log(message);
-      UserService.getUserByMessengerId(message.messenger.id)
-      .then(user => setupBotOptions(user, message))
-      .then(options => Dialog.respond(options))
-      .then(() => resolve(true))
-      .catch(err => reject(err))
+      if(user && user.active){
+        setupBotOptions(user, message)
+        .then(options => Dialog.respond(options))
+        .then(() => resolve(true))
+        .catch(err => reject(err))
+      } else {
+        resolve(true);
+      }
     })
-
-    function setupBotOptions(user, message){
-      return new Promise(function(resolve, reject){
-        var options = {
-          user: user,
-          state: user.state,
-          received: message
-        }
-        options.received.userId = user._id;
-        resolve(options);
-      })
-    }
   }
 
-}
-
-// Facebook Messenger Webhook. Should respond with the challenge
-export function webhook(req, res) {
-    if (req.query['hub.verify_token'] === process.env.FB_MESSENGER_VERIFY) {
-      return res.status(200).send(req.query['hub.challenge']);
-    } else {
-      return res.status(403).send('Incorrect validation token.');
-    }
+  function setupBotOptions(user, message){
+    return new Promise(function(resolve, reject){
+      var options = {
+        user: user,
+        state: user.state,
+        received: message
+      }
+      options.received.userId = user._id;
+      resolve(options);
+    })
+  }
 }
 
 export function receive(req, res) {
   return new Promise(function(resolve, reject){
     var timeout = setTimeout(respondOk(), 5000)
 
-    Message.standardize(req.body, 'messenger')
-    .then(messages => handleEachMessage(messages))
+    Message.standardize(req.body, 'twilio')
+    .then(message => handleMessage(message))
     .then(() => writeRes())
     .catch(err => reject(err))
 

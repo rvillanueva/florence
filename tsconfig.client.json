@@ -47,6 +47,8 @@
         "client/app/routes/programs/programs.ts",
         "client/app/routes/programs/view/view.controller.ts",
         "client/app/routes/programs/view/view.ts",
+        "client/app/routes/tasks/tasks.controller.ts",
+        "client/app/routes/tasks/tasks.ts",
         "client/components/auth/auth.module.ts",
         "client/components/auth/auth.service.ts",
         "client/components/auth/interceptor.service.ts",

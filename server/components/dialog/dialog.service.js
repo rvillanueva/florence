@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 var Message = require('../message');
-var Pattern = require('../pattern');
+var Parser = require('../parser');
 var DialogExecutionService = require('./dialog.execution');
 var maxLoops = 5;
 
@@ -70,7 +70,7 @@ export function handleExpectedResponse(bot) {
         }
       })
       resolve()
-    })
+    }
   }
 
   function handleReplyToUser() {
@@ -121,7 +121,7 @@ export function handleNextStep(bot) {
 
     function handleTaskCompletion(){
       return new Promise(function(resolve, reject){
-        if(bot.stepIndex > (bot.task.steps.length - 1){
+        if(bot.stepIndex > (bot.task.steps.length - 1)){
           bot.completeTask(bot.task._id)
           .then(bot => bot.loadNextTask())
           .then(updatedBot => {
