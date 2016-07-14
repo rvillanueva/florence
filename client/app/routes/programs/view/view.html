@@ -2,28 +2,50 @@
   <br>
   <div class="row">
     <div class="col-md-8">
+      Program
       <h3>
         {{$ctrl.program.name}}
         <button class="btn btn-sm btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
       </h3>
+      <br>
+      <textarea class="form-control" placeholder="Add description here..."></textarea>
       <br><br>
+      <!--[insert timeline here from wait and repeat]
+      <br><br>-->
       <h4>Protocols</h4>
-      <div ng-repeat="protocol in $ctrl.program.protocols" class="panel panel-default">
+      <br>
+      <div class="panel panel-default" >
         <div class="panel-body">
-          <strong>{{protocol.trigger}}</strong>
+          <strong>Wait</strong>
+          <div ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'wait'}}">
+            <br>
+            <span class="label label-default">{{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span>
+            <br><br>
+            <strong><a ui-sref="task-view({id: task._id})">{{protocol.task.name}}</a></strong>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <strong>Repeat</strong>
+          <br>
+          <div ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'repeat'}}">
+            <br>
+            <span class="label label-default">Every {{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span>
+            <br><br>
+            <strong><a ui-sref="task-view({id: task._id})">{{protocol.task.name}}</a></strong>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="pull-right"><button class="btn btn-sm btn-default"><i class="fa fa-plus"></i></button></div>
-      <h4>Tasks</h4>
-      <div ng-repeat="task in $ctrl.tasks" class="panel panel-default">
-        <div class="panel-body">
-          <strong>{{task.name}}</strong>
-          <br><br>
-          <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
-        </div>
-      </div>
+      <strong>Add Patient</strong><br>
+      <input disabled class="form-control">
+      <br><br>
+      [insert program stats here]
+      [patients enrolled]
+      [average completion rates]
     </div>
   </div>
 </div>

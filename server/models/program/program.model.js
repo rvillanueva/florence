@@ -4,6 +4,9 @@ import mongoose from 'mongoose';
 
 var ProgramSchema = new mongoose.Schema({
   name: String,
+  description: String,
+  ownerId: String,
+  organizationId: String,
   protocols: [
     {
       trigger: {

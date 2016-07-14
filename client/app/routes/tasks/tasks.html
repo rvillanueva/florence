@@ -1,20 +1,33 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h3>Tasks</h3>
+      <br>
+      <input placeholder="Search" class="pull-right">
+      <h3>Tasks
+        &nbsp;&nbsp;
+        <button class="btn btn-default btn-md" ng-click="$ctrl.addTask()"><i class="fa fa-plus"></i> Add</button>
+      </h3>
       <table class="table">
         <thead>
           <tr>
+            <th></th>
             <th>Name</th>
             <th>Description</th>
             <th>Steps</th>
+            <th>Questions</th>
+            <th>Programs</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="task in $ctrl.tasks">
+            <td></td>
             <th><a ui-sref="task-view({id: task._id})">{{task.name}}</a></th>
             <td>{{task.description}}</td>
             <td>{{task.steps.length}}</td>
+            <td></td>
+            <td></td>
+            <td><button class="btn btn-sm btn-default"><i class="fa fa-caret-down"></i></button></td>
           </tr>
         </tbody>
       </table>

@@ -18,7 +18,11 @@ var QuestionSchema = new mongoose.Schema({
       },
       expressionKey: String,
       classificationKey: String,
-      match: String,
+      matches: [
+        {
+          term: String
+        }
+      ],
       min: Number,
       max: Number
     },

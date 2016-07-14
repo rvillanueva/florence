@@ -54,7 +54,7 @@ Program.find({}).remove()
       name: 'Diabetes',
       protocols: [{
         trigger: {
-          type: 'timed',
+          type: 'wait',
           params: {
             duration: 1,
             durationUnit: 'day'
@@ -63,7 +63,7 @@ Program.find({}).remove()
         taskId: '5786a2dc517d5513c018c9f6'
       },{
         trigger: {
-          type: 'repeating'
+          type: 'repeat'
         },
         taskId: '5786a2dc517d5513c018c9f6'
       }]

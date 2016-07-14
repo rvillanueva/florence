@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Patients</h3>
+      <br>
+      <div class="panel panel-default" ng-repeat="patient in $ctrl.patients">
+        <div class="panel-body">
+          <a ui-sref="profile({id: patient._id})">{{patient.firstName}} {{patient.lastName}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
