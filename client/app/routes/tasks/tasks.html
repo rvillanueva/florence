@@ -1,36 +1,50 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <br>
-      <input placeholder="Search" class="pull-right">
-      <h3>Tasks
-        &nbsp;&nbsp;
-        <button class="btn btn-default btn-md" ng-click="$ctrl.addTask()"><i class="fa fa-plus"></i> Add</button>
-      </h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Steps</th>
-            <th>Questions</th>
-            <th>Programs</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="task in $ctrl.tasks">
-            <td></td>
-            <th><a ui-sref="task-view({id: task._id})">{{task.name}}</a></th>
-            <td>{{task.description}}</td>
-            <td>{{task.steps.length}}</td>
-            <td></td>
-            <td></td>
-            <td><button class="btn btn-sm btn-default"><i class="fa fa-caret-down"></i></button></td>
-          </tr>
-        </tbody>
-      </table>
+<div class="background-tint">
+  <div class="header-unit header-primary">
+    <div class="container">
+      <div class="header-bottom-align header-bottom-left">
+        <h2>Tasks</h2>
+      </div>
+      <div class="header-bottom-align header-bottom-right">
+        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addTask()"><i class="fa fa-plus"></i> Add</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <input placeholder="Search" class="form-control">
+            <br>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Steps</th>
+                  <th>Questions</th>
+                  <th>Programs</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="task in $ctrl.tasks">
+                  <td></td>
+                  <td><a ui-sref="task-view({id: task._id})">{{task.name}}</a></td>
+                  <td>{{task.description}}</td>
+                  <td>{{task.steps.length}}</td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <button class="btn btn-sm btn-default"><i class="fa fa-caret-down"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

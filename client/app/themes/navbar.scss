@@ -1,0 +1,77 @@
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+.navbar-styled {
+  background-color: rgb(255, 255, 255);
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 2px solid rgb(230, 230, 230);
+  height: 70px;
+  & .navbar-nav li a {
+    color: rgb(115, 115, 115);
+    padding: 25px 25px 25px 25px;
+    &:hover,  &:focus {
+      background-color: transparent;
+      color: rgb(255, 139, 44)
+    }
+    &:active {
+      background-color: transparent;
+    }
+  }
+  & .navbar-nav li.active a {
+    background-color: transparent;
+    color: rgb(255, 139, 44);
+  }
+  & .navbar-nav {
+    padding-left: 30px;
+  }
+  & .navbar-nav .nav-dropdown-btn{
+    margin: 20px;
+    padding: 5px;
+  }
+  & .navbar-text {
+    color: white;
+    margin: 25px 25px 25px 25px;
+  }
+  & .navbar-brand {
+    color: white;
+    padding: 0 0 0 0;
+    height: 70px;
+  }
+  & .navbar-brand-image {
+    height: 70px;
+    padding: 14px;
+  }
+}
+
+.dropdown-menu li a {
+  color: rgb(23, 23, 23);
+  padding: 8px 14px 8px 14px;
+  &.dropdown-menu-small {
+    padding: 4px 10px 4px 10px;
+    font-size: 0.9em;
+  }
+  &.dropdown-danger-item {
+    color: red;
+  }
+  &:hover {
+    background-color: rgb(230, 230, 230);
+  }
+}
+
+.navbar-manage {
+  background-color: rgb(226, 226, 226);
+  & a.navbar-manage-item, & .navbar-manage-item {
+    font-size: 12px;
+    margin: 10px;
+    display: inline-block;
+    color: rgb(47, 47, 47);
+    text-decoration: none;
+    &:hover,&:focus,&:active {
+      color: rgb(47, 47, 47);
+      text-decoration: underline;
+    }
+  }
+}

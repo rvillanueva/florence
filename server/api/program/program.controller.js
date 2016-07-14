@@ -15,23 +15,26 @@ var Promise = require('bluebird');
 import Program from '../../models/program/program.model';
 import Task from '../../models/task/task.model';
 
-function attachTasks(entity) {
+function attachTasks(program) {
     return new Promise(function(resolve, reject){
-      if(entity && entity.bids){
-        getTasks();
-      } else {
-        resolve(entity);
-      }
+      var taskIndex = {};
+      program.protocols = program.protocols || [];
+      getTasks();
 
       function getTasks(){
         var taskIds = [];
-          entity.bids.forEach(function(bid, b){
-            taskIds.push(bid.target.taskId)
+          program.protocols.forEach(function(protocol, p){
+            taskIds.push(protocol.taskId)
           })
           Task.find({'_id': {'$in': taskIds}}).exec()
           .then(tasks => {
-            entity.tasks = tasks;
-            resolve(entity);
+            tasks.forEach(function(task, t){
+              taskIndex[task._id] = task;
+            })
+            program.protocols.forEach(function(protocol, p){
+              protocol.task = taskIndex[protocol.taskId];
+            })
+            resolve(program);
           })
           .catch(err => reject(err))
       }

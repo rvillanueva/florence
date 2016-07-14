@@ -3,14 +3,17 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/vendor/assets/font
 @import '../bower_components/bootstrap-social/bootstrap-social.scss';
 $fa-font-path: "../bower_components/font-awesome/fonts";
 @import '../bower_components/font-awesome/scss/font-awesome';
-@import url('https://fonts.googleapis.com/css?family=Lato:400,300,700');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,200,700');
 
 /**
  * App-wide Styles
  */
 
 html, body {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: rgb(100, 100, 100);
+  background-color: rgb(245, 245, 245);
+  min-height: 100%;
 }
 
 .browserupgrade {
@@ -24,106 +27,24 @@ img {
   max-width: 100%;
 }
 
-.navbar {
-  margin-bottom: 0 !important;
+.background-tint {
+  background-color: rgb(245, 245, 245);
 }
 
-.navbar-styled {
-  background-color: rgb(34, 181, 115);
-  border: none;
-  height: 70px;
-  & .navbar-nav li a {
-    color: white;
-    padding: 25px 25px 25px 25px;
-    &:hover,  &:focus {
-      background-color: transparent;
-      color: rgb(16, 84, 53)
-    }
-    &:active {
-      background-color: transparent;
-    }
-  }
-  & .navbar-nav .nav-dropdown-btn{
-    margin: 20px;
-    padding: 5px;
-  }
-  & .navbar-text {
-    color: white;
-    margin: 25px 25px 25px 25px;
-  }
-  & .navbar-brand {
-    color: white;
-    padding: 0 0 0 0;
-    height: 70px;
-  }
-}
-
-.dropdown-menu li a {
-  color: rgb(23, 23, 23);
-  padding: 8px 14px 8px 14px;
-  &.dropdown-menu-small {
-    padding: 4px 10px 4px 10px;
-    font-size: 0.9em;
-  }
-  &.dropdown-danger-item {
-    color: red;
-  }
-  &:hover {
-    background-color: rgb(230, 230, 230);
-  }
-}
-
-.navbar-brand-image {
-  height: 70px;
-  padding: 16px;
-}
-
-.btn-messenger {
-  border-radius: 5px;
-  font-size: 14px;
-  padding: 8px 10px 7px;
-  background-color: #0084ff;
-  border: none;
-  margin-top: 16px;
-  color: white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  & img.fb-chat-symbol {
-    position: relative;
-    top: -1px;
-    padding-right: 2px;
-  }
-}
-
-.fb-messenger-container {
-  border-radius: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.7);
-  display: inline-block;
-  width: 216px;
-  height: 102px;
+.page-divider {
+  height: 1px;
+  margin: 9px 0px;
   overflow: hidden;
+  background-color: rgb(217, 217, 217);
 }
 
 .clickable {
   cursor: pointer;
 }
 
-.navbar-manage {
-  background-color: rgb(226, 226, 226);
-  & a.navbar-manage-item, & .navbar-manage-item {
-    font-size: 12px;
-    margin: 10px;
-    display: inline-block;
-    color: rgb(47, 47, 47);
-    text-decoration: none;
-    &:hover,&:focus,&:active {
-      color: rgb(47, 47, 47);
-      text-decoration: underline;
-    }
-  }
+.btn {
+  border-radius: 0;
+  border: 0px solid transparent;
 }
 
 // Component styles are injected through grunt
@@ -141,7 +62,11 @@ img {
 @import 'routes/programs/view/view.scss';
 @import 'routes/tasks/tasks.scss';
 @import 'routes/tasks/view/view.scss';
+@import 'themes/header.scss';
 @import 'themes/messaging.scss';
+@import 'themes/navbar.scss';
+@import 'themes/panels.scss';
+@import 'themes/paragraph.scss';
 @import '../components/footer/footer.scss';
 @import '../components/modal/modal.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';

@@ -1,11 +1,23 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h3>Programs</h3>
-      <br>
-      <div class="panel panel-default" ng-repeat="program in $ctrl.programs">
-        <div class="panel-body">
-          <a ui-sref="program-view({id: program._id})">{{program.name}}</a>
+<div class="background-tint">
+  <div class="header-unit header-primary">
+    <div class="container">
+      <div class="header-bottom-align header-bottom-left">
+        <h2>Programs</h2>
+      </div>
+      <div class="header-bottom-align header-bottom-right">
+        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addProgram()"><i class="fa fa-plus"></i> Add</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <input placeholder="Search" class="form-control">
+        <br>
+        <div class="panel panel-default" ng-repeat="program in $ctrl.programs">
+          <div class="panel-body">
+            <a ui-sref="program-view({id: program._id})">{{program.name}}</a>
+          </div>
         </div>
       </div>
     </div>

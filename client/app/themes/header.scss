@@ -1,0 +1,45 @@
+.header-unit{
+  position: relative;
+  padding: 0px 15px;
+  margin-bottom: 20px;
+  vertical-align: bottom;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  &.header-white {
+    background-color: rgb(255, 255, 255);
+    color: rgb(83, 83, 83);
+  }
+  &.header-primary {
+    background-color: rgb(70, 56, 112);
+    color: #F5F5F5;
+  }
+  &.header-secondary {
+    background-color: rgb(0, 57, 110);
+    color: #F5F5F5;
+  }
+  & .container {
+    min-height: 140px;
+    position: relative;
+  }
+  & .header-bottom-align {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: inherit;
+    width: 100%;
+    padding-bottom: 16px;
+    &.header-bottom-left {
+      left: 0;
+      right: auto;
+      width: 50%;
+    }
+    &.header-bottom-right {
+      left: auto;
+      right: 0;
+      width: 50%;
+    }
+  }
+  & h2, .h2 {
+    padding-top: 4px;
+  }
+}

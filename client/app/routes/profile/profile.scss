@@ -7,11 +7,7 @@
    height: 133px;
    background-size: cover;
    background-position: center;
-   -webkit-border-radius: 50%;
-   -moz-border-radius: 50%;
-   -ms-border-radius: 50%;
-   -o-border-radius: 50%;
-   border-radius: 50%;
+   border-radius: 6px;
    background-color: white;
  }
 
@@ -20,19 +16,9 @@
    width: 143px;
    height: 143px;
    padding: 5px;
-   background-color: rgb(34, 181, 115);
-   -webkit-border-radius: 50%;
-   -moz-border-radius: 50%;
-   -ms-border-radius: 50%;
-   -o-border-radius: 50%;
-   border-radius: 50%;
+   background-color: rgb(255, 139, 44);
+   border-radius: 2px;
    position: relative;
-   margin-top: -66px;
- }
- & .cover-image {
-   height: 140px;
-   background-image: url('../assets/images/cover.jpg');
-   background-position: center;
-   background-size: cover;
+   margin-top: -72px;
  }
 }

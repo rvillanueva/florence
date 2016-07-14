@@ -1,24 +1,30 @@
-<div class="container page-task-view">
-  <br>
-  <div class="row">
-    <div class="col-md-8">
-      Task
-      <h3>
-        {{$ctrl.task.name}}
+<div class="background-tint">
+  <div class="header-unit header-secondary">
+    <div class="container">
+      <div class="header-bottom-align header-bottom-left">
+        Task
+        <h2>{{$ctrl.task.name}}</h2>
+      </div>
+      <div class="header-bottom-align header-bottom-right">
         <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isSaving" ng-click="$ctrl.saveTask()">Save</button>
-      </h4>
-      <br>
-      <textarea class="form-control" ng-model="$ctrl.task.description" placeholder="Add description here..."></textarea>
-      <br>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <h4>Conversation Flow</h4>
-          <span ng-show="$ctrl.task.steps == 0"><i><br>This task is empty. Try adding a step below!</i><br><br></span>
+      </div>
+    </div>
+  </div>
+  <div class="container page-task-view">
+    <div class="row">
+      <div class="col-md-8">
+        <textarea class="form-control" ng-model="$ctrl.task.description" placeholder="Add description here..."></textarea>
+        <br>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>Conversation Flow</h4>
+            <br>
+            <span ng-show="$ctrl.task.steps == 0"><i><br>This task is empty. Try adding a step below!</i><br><br></span>
             <div ng-repeat="step in $ctrl.task.steps">
               <div class="message-container message-container-app selectable-block">
                 <div class="message-bubble message-app">
-                    <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
-                    <span ng-show="step.type == 'question'">{{step.question.text}}</span>
+                  <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
+                  <span ng-show="step.type == 'question'">{{step.question.text}}</span>
                 </div>
                 <div ng-if="step.type == 'question'" ng-repeat="choice in step.question.choices">
                   <div class="message-container message-container-user">
@@ -39,50 +45,41 @@
 
               </div>
             </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form ng-submit="$ctrl.addStep()">
+              <strong>Add New Step</strong>
+              <br>
+              <br>
+              <select ng-model="$ctrl.newStep.type">
+                <option value="speech">Say</option>
+                <option value="question">Ask</option>
+                <!--<option value="action">Do</option>-->
+              </select>
+              <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
+              <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
+              <div style="text-align: right">
+                <button class="btn btn-primary btn-sm" type="submit">Add</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      <div style="background-color: rgb(238, 238, 238); padding: 20px">
-        <form ng-submit="$ctrl.addStep()">
-          <strong>Add New Step</strong>
-          <br><br>
-        <select ng-model="$ctrl.newStep.type">
-          <option value="speech">Say</option>
-          <option value="question">Ask</option>
-          <!--<option value="action">Do</option>-->
-        </select>
-        <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
-        <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
-        <!--<div ng-show="$ctrl.newStep.type == 'question'">
-          <br>Valid Responses:
-          <div ng-repeat="choice in $ctrl.newStep.question.choices"><input ng-model="choice.stored.value"></div>
-          <div>
-            <select ng-model="$ctrl.newStepChoice.type">
-              <option value="expression">Expression</option>
-              <option value="number">Number</option>
-              <option value="match">Exact Match</option>
-            </select>
-            <select ng-model="newStepChoice.expressionId">
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-              <option value="test">Test</option>
-            </select>
-            <div ng-repeat="match in newStepChoice.pattern.matches">
-              <input ng-model="match.term">
-            </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <strong>Used In:</strong>
+            <br>(list programs here)
+            <br>
+            <br>
+            <strong>Statistics</strong>
+            <br>Unique Participants:
+            <br>Times Completed:
           </div>
-          <br>
-        </div>-->
-        <div style="text-align: right"><button class="btn btn-primary btn-sm" type="submit">Add</button></div>
-      </form>
+        </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <br>
-      [stats here]
-      [frequency]
-      [patients reviewed]
-      [frequency/patient]
-      [programs used in]
     </div>
   </div>
 </div>
