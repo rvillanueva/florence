@@ -4,13 +4,17 @@ import mongoose from 'mongoose';
 
 var ProgramSchema = new mongoose.Schema({
   name: String,
-  bids: [{
-    target: {
-      taskId: String,
-      params: {}
-    },
-    modifier: Number
-  }]
+  protocols: [
+    {
+      trigger: {
+        type: {
+          type: String
+        },
+        params: {}
+      },
+      taskId: String
+    }
+  ]
 });
 
 export default mongoose.model('Program', ProgramSchema);

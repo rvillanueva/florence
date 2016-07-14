@@ -7,19 +7,21 @@
         <button class="btn btn-sm btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
       </h3>
       <br><br>
-      <h4>Questions</h4>
-      <div ng-repeat="bid in $ctrl.program.bids" class="panel panel-default">
+      <h4>Protocols</h4>
+      <div ng-repeat="protocol in $ctrl.program.protocols" class="panel panel-default">
         <div class="panel-body">
-          <strong>{{$ctrl.taskIndex[bid.target.taskId].say}}</strong>
+          <strong>{{protocol.trigger}}</strong>
         </div>
       </div>
     </div>
     <div class="col-md-4">
       <div class="pull-right"><button class="btn btn-sm btn-default"><i class="fa fa-plus"></i></button></div>
       <h4>Tasks</h4>
-      <div ng-repeat="task in $ctrl.tasks" class="panel panel-default" ng-hide="$ctrl.taskIndex[task._id]">
+      <div ng-repeat="task in $ctrl.tasks" class="panel panel-default">
         <div class="panel-body">
-          <strong>{{task.say}}</strong>
+          <strong>{{task.name}}</strong>
+          <br><br>
+          <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
         </div>
       </div>
     </div>

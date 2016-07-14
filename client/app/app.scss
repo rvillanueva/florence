@@ -131,10 +131,6 @@ img {
 @import 'routes/account/login/verify/verify.scss';
 @import 'routes/admin/admin.scss';
 @import 'routes/main/main.scss';
-@import 'routes/manage/aspects/aspects.scss';
-@import 'routes/manage/conversations/conversations.scss';
-@import 'routes/manage/conversations/view/components/step/step.scss';
-@import 'routes/manage/conversations/view/view.scss';
 @import 'routes/manage/dashboard/dashboard.scss';
 @import 'routes/manage/intents/intents.scss';
 @import 'routes/manage/intents/view/view.scss';
@@ -143,6 +139,8 @@ img {
 @import 'routes/programs/programs.scss';
 @import 'routes/programs/view/view.scss';
 @import 'routes/tasks/tasks.scss';
+@import 'routes/tasks/view/view.scss';
+@import 'themes/messaging.scss';
 @import '../components/footer/footer.scss';
 @import '../components/modal/modal.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';

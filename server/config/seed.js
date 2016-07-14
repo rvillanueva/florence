@@ -35,22 +35,37 @@ User.find({}).remove()
 Task.find({}).remove()
   .then(() => {
       Task.create({
-
+        _id: '5786a2dc517d5513c018c9f6',
+        name: 'Patient Onboarding',
+        steps: [
+          {
+            type: 'speech',
+            speech: {
+              text: 'Test 123.'
+            }
+          }
+        ]
       })
   })
 
 Program.find({}).remove()
   .then(() => {
     Program.create({
-      name: 'Antibiotics',
-      bids: [{
-        target: {
-          taskId: '5776dfb33308891e1250e6f8'
-        }
+      name: 'Diabetes',
+      protocols: [{
+        trigger: {
+          type: 'timed',
+          params: {
+            duration: 1,
+            durationUnit: 'day'
+          }
+        },
+        taskId: '5786a2dc517d5513c018c9f6'
       },{
-        target: {
-          taskId: '5776dfb33308891e1250e6f9'
-        }
+        trigger: {
+          type: 'repeating'
+        },
+        taskId: '5786a2dc517d5513c018c9f6'
       }]
     })
   })

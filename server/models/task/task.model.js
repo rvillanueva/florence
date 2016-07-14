@@ -6,6 +6,7 @@ var TaskSchema = new mongoose.Schema({
   name: String,
   ownerId: String,
   organizationId: String,
+  description: String,
   isActive: Boolean,
   created: Date,
   lastModified: Date,

@@ -1,0 +1,51 @@
+<div class="container page-task-view">
+  <br>
+  <div class="row">
+    <div class="col-md-8">
+      <h3>
+        Task: {{$ctrl.task.name}}
+        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+      </h3>
+      <br>
+      <h4>Conversation Flow</h4>
+      <div class="panel panel-default">
+        <div class="panel-body">
+            <div ng-repeat="step in $ctrl.task.steps">
+              <div class="message-container message-container-app">
+                <div class="message-bubble message-app">
+                    <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
+                    <span ng-show="step.type == 'question'">{{step.question.text}}</span>
+                </div>
+                <div ng-if="step.type == 'question'" ng-repeat="choice in step.question.choices">
+                  <div class="message-container message-container-user">
+                    <div class="message-bubble message-user">
+                      {{choice.match}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div>
+        <form>
+        <select ng-model="$ctrl.newStep.type" class="pull-left">
+          <option value="speech">Say</option>
+          <option value="question">Ask</option>
+          <option value="action">Do</option>
+        </select>
+        <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
+        <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
+        <div ng-show="$ctrl.newStep.type == 'question'">
+          <br>And the patient might respond with:
+          <div ng-repeat="choice in $ctrl.newStep.question.choices">{{choice.stored.value}}</div>
+        </div>
+        <div style="text-align: right"><button class="btn btn-primary btn-sm">Add</button></div>
+      </form>
+      </div>
+    </div>
+    <div class="col-md-4">
+      Your Questions
+    </div>
+  </div>
+</div>

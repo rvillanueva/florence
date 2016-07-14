@@ -1,9 +1,11 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <div ui-sref="program-view({id: program._id})" class="panel panel-default" ng-repeat="program in $ctrl.programs">
+      <h3>Programs</h3>
+      <br>
+      <div class="panel panel-default" ng-repeat="program in $ctrl.programs">
         <div class="panel-body">
-          {{program.name}}
+          <a ui-sref="program-view({id: program._id})">{{program.name}}</a>
         </div>
       </div>
     </div>

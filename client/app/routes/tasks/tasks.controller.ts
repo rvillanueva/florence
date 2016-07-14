@@ -2,9 +2,8 @@
 (function(){
 
 class TasksComponent {
-  constructor() {
+  constructor($http) {
     this.$http = $http;
-    this.$state = $state;
     this.$http.get('/api/tasks').success(tasks => {
       this.tasks = tasks;
       console.log(tasks)

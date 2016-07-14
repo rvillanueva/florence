@@ -1,11 +1,23 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <div ui-sref="task-view({id: task._id})" class="panel panel-default" ng-repeat="task in $ctrl.tasks">
-        <div class="panel-body">
-          {{task.name}}
-        </div>
-      </div>
+      <h3>Tasks</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Steps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="task in $ctrl.tasks">
+            <th><a ui-sref="task-view({id: task._id})">{{task.name}}</a></th>
+            <td>{{task.description}}</td>
+            <td>{{task.steps.length}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

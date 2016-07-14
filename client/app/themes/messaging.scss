@@ -8,6 +8,9 @@ $bubble-radius: 20px;
   &.message-container-user {
     text-align: right;
   }
+  &.message-container-app {
+    text-align: left;
+  }
 }
 
 .message-block {
@@ -18,18 +21,18 @@ $bubble-radius: 20px;
   padding: 10px 14px 10px 14px;
   display: inline-block;
   max-width: 80%;
-  &.message-app{
-    text-align: left;
-    background-color: rgb(233, 233, 233);
-    color: #2d2d2d;
-    border-radius: $bubble-radius $bubble-radius $bubble-radius 2px;
-
-  }
   &.message-user{
     text-align: right;
+    background-color: rgb(233, 233, 233);
+    color: #2d2d2d;
+    border-radius: $bubble-radius $bubble-radius 2px $bubble-radius;
+
+  }
+  &.message-app{
+    text-align: left;
     background-color: rgb(39, 128, 203);
     color: #ffffff;
-    border-radius: $bubble-radius $bubble-radius 2px $bubble-radius;
+    border-radius: $bubble-radius $bubble-radius $bubble-radius 2px;
 
   }
 }
