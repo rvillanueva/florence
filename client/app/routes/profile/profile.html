@@ -2,32 +2,13 @@
   <div class="header-unit header-secondary">
     <div class="container">
       <div class="header-bottom-align">
-        <div class="row">
-          <div class="col-md-8 col-md-offset-4">
-            <h2>{{$ctrl.user.firstName}} {{$ctrl.user.lastName}}</h2>
-          </div>
-        </div>
+          <h2>{{$ctrl.user.firstName}} {{$ctrl.user.lastName}}</h2>
       </div>
     </div>
   </div>
   <div class="profile-page">
     <div class="container">
       <div class="row">
-        <div class="col-md-4">
-          <div class="profile-photo-container">
-            <div class="profile-photo-border">
-              <div class="profile-photo" ng-style="{'background-image': 'url(\'../assets/images/blank_profile_pic.png\')'}">
-              </div>
-            </div>
-          </div>
-          <br>
-          <br>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <strong>Upcoming Tasks</strong>
-            </div>
-          </div>
-        </div>
         <div class="col-md-8">
           <ul class="nav nav-pills">
             <li class="active"><a href="#">Timeline</a></li>
@@ -38,6 +19,13 @@
           <div class="panel panel-default">
             <div class="panel-body">
               <h4>Timeline</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <strong>Upcoming Tasks</strong>
             </div>
           </div>
         </div>

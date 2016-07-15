@@ -7,7 +7,7 @@
 import User from '../api/user/user.model';
 import Program from '../models/program/program.model';
 import Task from '../models/task/task.model';
-import Bid from '../models/bid/bid.model';
+import Question from '../models/question/question.model';
 
 import mongoose from 'mongoose';
 
@@ -52,6 +52,7 @@ Program.find({}).remove()
   .then(() => {
     Program.create({
       name: 'Diabetes',
+      description: 'Help newly-diagnosed diabetes patients to understand diabetes and how to effectively manage their care. Track adherence to blood sugar monitoring and insulin use.',
       protocols: [{
         trigger: {
           type: 'wait',
@@ -69,3 +70,26 @@ Program.find({}).remove()
       }]
     })
   })
+
+
+  Question.find({}).remove()
+    .then(() => {
+      Question.create({
+        text: 'In the past week, have you had a blood sugar reading over 200?',
+        choices: [
+          {
+            pattern: {
+              type: 'expression',
+              expressionKey: 'yes'
+
+            }
+          },
+          {
+            pattern: {
+              type: 'expression',
+              expressionKey: 'no'
+            }
+          }
+        ]
+      })
+    })

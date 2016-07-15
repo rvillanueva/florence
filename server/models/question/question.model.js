@@ -12,12 +12,10 @@ var QuestionSchema = new mongoose.Schema({
           'number',
           'date',
           'expression',
-          'match',
-          'classification'
+          'match'
         ]
       },
       expressionKey: String,
-      classificationKey: String,
       matches: [
         {
           term: String

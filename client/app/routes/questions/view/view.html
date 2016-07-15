@@ -1,0 +1,66 @@
+<navbar-manage></navbar-manage>
+<div class="background-tint">
+  <div class="header-unit header-secondary">
+    <div class="container">
+      <div class="header-bottom-align" style="width:70%">
+        Question
+        <h3>{{$ctrl.question.text}}</h3>
+      </div>
+      <div class="header-bottom-align" style="width:30%; right:0;left:auto;">
+        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="container page-program-view">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <button class="btn btn-sm btn-default pull-right"><i class="fa fa-plus"></i>&nbsp;Add</button>
+            <h4>Choices</h4>
+            <div class="page-divider"></div>
+            <input type="checkbox">&nbsp;&nbsp;Accept responses that don't pass validation
+            <br>
+            <br>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><i class="fa fa-question-circle-o"></i></th>
+                  <th width="50%">Pattern</th>
+                  <th width="50%">Save As</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="(c, choice) in $ctrl.question.choices">
+                  <td>
+                    {{c + 1}}
+                  </td>
+                  <td width="50%">
+                    <strong>Type:</strong>&nbsp;
+                    <select ng-model="choice.pattern.type">
+                      <option value="expression">Expression</option>
+                      <option value="number">Number</option>
+                      <option value="date">Date</option>
+                      <option value="match">Exact Match</option>
+                    </select>
+                    {{choice.pattern}}
+                  </td>
+                  <td width="50%">{{choice.stored}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <strong>Used By</strong>
+            <div class="page-divider"></div>
+            (tasks)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<navbar-manage></navbar-manage>
+<div class="background-tint">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <br>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <button ui-sref="questions" class="btn btn-default btn-sm pull-right">View All</button>
+            <br>
+            <h4>Questions</h4>
+            <div ng-repeat="question in $ctrl.questions">
+              <div class="page-divider"></div>
+              <br>
+              <a ui-sref="question-view({id: question._id})">{{question.text}}</a>
+              <br><br>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <br>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <button ui-sref="programs" class="btn btn-default btn-sm pull-right">View All</button>
+            <br>
+            <h4>Programs</h4>
+            <div ng-repeat="program in $ctrl.programs">
+              <div class="page-divider"></div>
+              <br>
+              <a ui-sref="program-view({id: program._id})">{{program.name}}</a>
+              <br><br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+<navbar-manage></navbar-manage>
 <div class="background-tint">
   <div class="header-unit header-secondary">
     <div class="container">
@@ -35,7 +36,7 @@
             <br>
             <div ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'repeat'}}">
               <span class="label label-default">Every {{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span> &nbsp;
-              <a ui-sref="task-view({id: task._id})">{{protocol.task.name}}</a>
+              <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
             </div>
           </div>
         </div>

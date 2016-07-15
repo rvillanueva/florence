@@ -42,26 +42,23 @@ img {
   cursor: pointer;
 }
 
-.btn {
-  border-radius: 0;
-  border: 0px solid transparent;
-}
-
 // Component styles are injected through grunt
 /* inject:scss */
 @import 'routes/account/login/verify/verify.scss';
 @import 'routes/admin/admin.scss';
 @import 'routes/main/main.scss';
-@import 'routes/manage/dashboard/dashboard.scss';
-@import 'routes/manage/intents/intents.scss';
-@import 'routes/manage/intents/view/view.scss';
-@import 'routes/manage/users/users.scss';
+@import 'routes/manage/manage.scss';
 @import 'routes/patients/patients.scss';
 @import 'routes/profile/profile.scss';
 @import 'routes/programs/programs.scss';
 @import 'routes/programs/view/view.scss';
+@import 'routes/questions/questions.scss';
+@import 'routes/questions/view/view.scss';
 @import 'routes/tasks/tasks.scss';
 @import 'routes/tasks/view/view.scss';
+@import 'themes/_variables.scss';
+@import 'themes/buttons.scss';
+@import 'themes/forms.scss';
 @import 'themes/header.scss';
 @import 'themes/messaging.scss';
 @import 'themes/navbar.scss';

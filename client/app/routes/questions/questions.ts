@@ -3,8 +3,8 @@
 angular.module('riverApp')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('intents', {
-        url: '/manage/intents',
-        template: '<intents></intents>'
+      .state('questions', {
+        url: '/questions',
+        template: '<questions></questions>'
       });
   });

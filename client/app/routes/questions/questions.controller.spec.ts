@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Component: UsersComponent', function () {
+describe('Component: QuestionsComponent', function () {
 
   // load the controller's module
   beforeEach(module('riverApp'));
 
-  var UsersComponent, scope;
+  var QuestionsComponent, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($componentController, $rootScope) {
     scope = $rootScope.$new();
-    UsersComponent = $componentController('UsersComponent', {
+    QuestionsComponent = $componentController('QuestionsComponent', {
       $scope: scope
     });
   }));

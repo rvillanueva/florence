@@ -1,3 +1,4 @@
+<navbar-manage></navbar-manage>
 <div class="background-tint">
   <div class="header-unit header-primary">
     <div class="container">
@@ -5,18 +6,27 @@
         <h2>Programs</h2>
       </div>
       <div class="header-bottom-align header-bottom-right">
-        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addProgram()"><i class="fa fa-plus"></i> Add</button>
+        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addProgram()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Create</button>
       </div>
     </div>
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-8">
         <input placeholder="Search" class="form-control">
         <br>
         <div class="panel panel-default" ng-repeat="program in $ctrl.programs">
           <div class="panel-body">
-            <a ui-sref="program-view({id: program._id})">{{program.name}}</a>
+            <strong><a ui-sref="program-view({id: program._id})">{{program.name}}</a></strong>
+            <br>
+            {{program.description}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <strong>Advanced Search</strong>
           </div>
         </div>
       </div>

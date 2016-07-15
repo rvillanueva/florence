@@ -3,10 +3,10 @@
   <div class="header-unit header-primary">
     <div class="container">
       <div class="header-bottom-align header-bottom-left">
-        <h2>Tasks</h2>
+        <h2>Questions</h2>
       </div>
       <div class="header-bottom-align header-bottom-right">
-        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addTask()"><i class="fa fa-plus"></i> Add Task</button>
+        <button class="btn btn-default btn-md pull-right" ng-click="$ctrl.addQuestion()"><i class="fa fa-plus"></i> Add Question</button>
       </div>
     </div>
   </div>
@@ -20,21 +20,15 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Steps</th>
-                  <th>Questions</th>
-                  <th>Programs</th>
+                  <th>Prompt</th>
+                  <th>Responses</th>
+                  <th>Respondents</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="task in $ctrl.tasks">
-                  <td></td>
-                  <td><a ui-sref="task-view({id: task._id})">{{task.name}}</a></td>
-                  <td>{{task.description}}</td>
-                  <td>{{task.steps.length}}</td>
+                <tr ng-repeat="question in $ctrl.questions">
+                  <td><a ui-sref="question-view({id:question._id})">{{question.text}}</a></td>
                   <td></td>
                   <td></td>
                   <td>

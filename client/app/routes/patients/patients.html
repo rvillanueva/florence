@@ -15,14 +15,26 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-8">
         <input placeholder="Search" class="form-control">
         <br>
-        Found: {{$ctrl.patients.length}}
-        <br><br>
         <div class="panel panel-default" ng-repeat="patient in $ctrl.patients">
           <div class="panel-body">
-            <a ui-sref="profile({id: patient._id})">{{patient.firstName}} {{patient.lastName}}</a>
+            <span class="pull-right" style="font-size:0.8em">
+              Last Activity: [insert days ago]
+            </span>
+            <a ui-sref="profile({id: patient._id})">{{patient.firstName || 'Unknown'}} {{patient.lastName}}</a>&nbsp;&nbsp;<i class="fa fa-ban" style="font-size: 0.8em" ng-show="!patient.active"></i>
+            <br>
+            {{patient.mobile.number}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Found: {{$ctrl.patients.length}}
+            <br><br>
+            <strong>Advanced Search</strong>
           </div>
         </div>
       </div>
