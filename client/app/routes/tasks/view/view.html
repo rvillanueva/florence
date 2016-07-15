@@ -27,14 +27,17 @@
                   <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
                   <span ng-show="step.type == 'question'">{{step.question.text}}</span>
                 </div>
-                <div ng-if="step.type == 'question'" ng-repeat="choice in step.question.choices">
+                <div ng-if="step.type == 'question'">
                   <div class="message-container message-container-user">
                     <div class="message-bubble message-user">
-                      {{choice.match}}
+                      <span ng-repeat="choice in step.question.choices">
+                        {{choice.pattern}}
+                        <br>
+                      </span>
                     </div>
                   </div>
                 </div>
-                <div ng-if="step.type == 'question'" ng-if="step.question.choices.length == 0">
+                <div ng-if="step.type == 'question' && step.question.choices.length == 0">
                   <div class="message-container message-container-user">
                     <div class="message-bubble message-user">
                       [patient responds]

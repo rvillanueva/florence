@@ -9,3 +9,5 @@ dist
 npm-debug.log
 coverage
 client/assets/images
+*.tmp.txt
+.tscache

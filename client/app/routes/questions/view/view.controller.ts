@@ -4,6 +4,7 @@
   class QuestionViewComponent {
     constructor($stateParams, $state, $http) {
       this.$http = $http;
+      this.editingMode = false;
       if(!$stateParams.id){
         $state.go('questions');
       } else {
@@ -18,6 +19,19 @@
           $state.go('questions');
         })
       }
+    }
+    toggleEditingModeOn(){
+      this.editingMode = true;
+    }
+    setupRecode(c){
+      console.log('recoding choice index ' + c)
+      var choice = this.question.choices[c];
+      choice = choice || {};
+      choice.stored = choice.stored || {};
+      if(!choice.stored.type){
+        choice.stored.type = 'number'
+      }
+      console.log(choice)
     }
   }
 

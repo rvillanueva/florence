@@ -21,22 +21,35 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <button class="btn btn-sm btn-default pull-right"><i class="fa fa-plus"></i>&nbsp;Add</button>
+            <br>
             <h4>Protocols</h4>
             <div class="page-divider"></div>
             <br>
             <strong>Wait</strong>
             <br>
-            <div ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'wait'}}">
-              <span class="label label-default">{{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span> &nbsp;
-              <a ui-sref="task-view({id: task._id})">{{protocol.task.name}}</a>
+            <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'wait'}}">
+              <br>
+              <div class="col-md-2">
+                <span class="label label-default">{{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span>
+              </div>
+              <div class="col-md-10">
+                <a ui-sref="task-view({id: task._id})">{{protocol.task.name}}</a>
+                <p style="font-size: 0.8em">{{protocol.task.description}}</p>
+              </div>
             </div>
             <br>
             <br>
             <strong>Repeat</strong>
             <br>
-            <div ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'repeat'}}">
-              <span class="label label-default">Every {{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span> &nbsp;
-              <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
+            <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'repeat'}}">
+              <br>
+              <div class="col-md-2">
+                <span class="label label-default">Every {{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span> &nbsp;
+              </div>
+              <div class="col-md-10">
+                <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
+                <p style="font-size: 0.8em">{{protocol.task.description}}</p>
+              </div>
             </div>
           </div>
         </div>

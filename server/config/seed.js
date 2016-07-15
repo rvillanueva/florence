@@ -18,14 +18,16 @@ User.find({}).remove()
         firstName: 'Test',
         lastName: 'User',
         email: 'test@example.com',
-        password: 'test'
+        password: 'test',
+        lastActivity: new Date()
       }, {
         provider: 'local',
         role: 'admin',
         firstName: 'Admin',
         lastName: 'User',
         email: 'admin@example.com',
-        password: 'admin'
+        password: 'admin',
+        lastActivity: new Date()
       })
       .then(() => {
         console.log('Users populated.');
@@ -36,7 +38,8 @@ Task.find({}).remove()
   .then(() => {
       Task.create({
         _id: '5786a2dc517d5513c018c9f6',
-        name: 'Patient Onboarding',
+        name: 'Onboard patient',
+        description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
         steps: [
           {
             type: 'speech',
@@ -44,6 +47,35 @@ Task.find({}).remove()
               text: 'Test 123.'
             }
           }
+        ]
+      },
+      {
+        _id: '5786a2dc517d5513c018c9f8',
+        name: 'Introduce diabetes program',
+        description: 'Explain what to expect and program goals.',
+        steps: [
+          {
+            type: 'speech',
+            speech: {
+              text: 'Hi! Hope you\'re doing well. This program is designed to help you manage your diabetes. I\'ll be checking in regularly to see how you\'re doing.'
+            }
+          }
+        ]
+      },
+      {
+        _id: '5786a2dc517d5513c018c9f7',
+        name: 'Check blood sugar monitoring adherence for the week.',
+        description: 'Check adherence to checking blood sugar as well as several warning conditions.',
+        steps: [
+          {
+            type: 'question',
+            questionId: '57891a3a678d9fcc2340954a'
+          },
+          {
+            type: 'question',
+            questionId: '57891a3a678d9fcc2340954b'
+          }
+
         ]
       })
   })
@@ -61,12 +93,12 @@ Program.find({}).remove()
             durationUnit: 'day'
           }
         },
-        taskId: '5786a2dc517d5513c018c9f6'
+        taskId: '5786a2dc517d5513c018c9f8'
       },{
         trigger: {
           type: 'repeat'
         },
-        taskId: '5786a2dc517d5513c018c9f6'
+        taskId: '5786a2dc517d5513c018c9f7'
       }]
     })
   })
@@ -74,7 +106,22 @@ Program.find({}).remove()
 
   Question.find({}).remove()
     .then(() => {
-      Question.create({
+      Question.create(
+        {
+          _id: '57891a3a678d9fcc2340954a',
+          text: 'On a scale of 1-5, how confident do you feel about checking your blood sugar before every meal?\n\n(1 = Not At All Confident and 5 = Extremely Confident)',
+          choices: [
+            {
+              pattern: {
+                type: 'integer',
+                min: 1,
+                max: 5
+              }
+            }
+          ]
+        },
+        {
+        _id: '57891a3a678d9fcc2340954b',
         text: 'In the past week, have you had a blood sugar reading over 200?',
         choices: [
           {

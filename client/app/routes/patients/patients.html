@@ -16,12 +16,12 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8">
-        <input placeholder="Search" class="form-control">
+        <input placeholder="Search by name or phone number" class="form-control">
         <br>
         <div class="panel panel-default" ng-repeat="patient in $ctrl.patients">
           <div class="panel-body">
             <span class="pull-right" style="font-size:0.8em">
-              Last Activity: [insert days ago]
+              Last Activity: {{patient.lastActivity | date:'MMM d, yyyy' || 'never'}}
             </span>
             <a ui-sref="profile({id: patient._id})">{{patient.firstName || 'Unknown'}} {{patient.lastName}}</a>&nbsp;&nbsp;<i class="fa fa-ban" style="font-size: 0.8em" ng-show="!patient.active"></i>
             <br>

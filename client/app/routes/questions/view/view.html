@@ -7,7 +7,7 @@
         <h3>{{$ctrl.question.text}}</h3>
       </div>
       <div class="header-bottom-align" style="width:30%; right:0;left:auto;">
-        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+        <button class="btn btn-md btn-primary pull-right" ng-if="$ctrl.editingMode" ng-disabled="!$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
       </div>
     </div>
   </div>
@@ -16,18 +16,22 @@
       <div class="col-md-8">
         <div class="panel panel-default">
           <div class="panel-body">
-            <button class="btn btn-sm btn-default pull-right"><i class="fa fa-plus"></i>&nbsp;Add</button>
-            <h4>Choices</h4>
-            <div class="page-divider"></div>
-            <input type="checkbox">&nbsp;&nbsp;Accept responses that don't pass validation
+            <button class="btn btn-md btn-default pull-right" ng-show="!$ctrl.editingMode" ng-click="$ctrl.toggleEditingModeOn()"><i class="fa fa-edit"></i></button>
             <br>
+            <h4>Choices</h4>
+            <br>
+            <div ng-if="$ctrl.editingMode">
+              <br>
+              <button class="btn btn-md btn-default" ng-click="$ctrl.addChoice()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Choice</button>
+            </div>
             <br>
             <table class="table">
               <thead>
                 <tr>
-                  <th><i class="fa fa-question-circle-o"></i></th>
-                  <th width="50%">Pattern</th>
-                  <th width="50%">Save As</th>
+                  <th width="26px;"><i class="fa fa-question"></i></th>
+                  <th>Pattern</th>
+                  <th ng-show="$ctrl.editingMode">Saved As</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -35,20 +39,42 @@
                   <td>
                     {{c + 1}}
                   </td>
-                  <td width="50%">
-                    <strong>Type:</strong>&nbsp;
-                    <select ng-model="choice.pattern.type">
-                      <option value="expression">Expression</option>
-                      <option value="number">Number</option>
-                      <option value="date">Date</option>
-                      <option value="match">Exact Match</option>
-                    </select>
-                    {{choice.pattern}}
+                  <td>
+                    <div ng-if="$ctrl.editingMode">
+                      <select ng-model="choice.pattern.type">
+                        <option value="expression">Expression</option>
+                        <option value="integer">Integer</option>
+                        <option value="number">Number</option>
+                        <option value="date">Date</option>
+                        <option value="match">Exact Match</option>
+                      </select>
+                    </div>
+                    <div ng-hide="$ctrl.editingMode">
+                      {{choice.pattern | choicePattern}}
+                    </div>
                   </td>
-                  <td width="50%">{{choice.stored}}</td>
+                  <td ng-show="!$ctrl.editingMode">
+                    <div ng-if="$ctrl.editingMode">
+                      <input ng-disabled="!$ctrl.editingMode" type="checkbox" ng-model="choice.recode" ng-change="$ctrl.setupRecode(c)">&nbsp;&nbsp;Recode response
+                      <br><br>
+                    </div>
+                    <div ng-show="$ctrl.editingMode && choice.recode">
+                      <select ng-model="choice.stored.type">
+                        <option value="number">Number</option>
+                        <option value="date">Date</option>
+                        <option value="string">Category</option>
+                      </select>
+                    </div>
+                    <div ng-show="!$ctrl.editingMode || choice.recode">
+                      {{choice.stored.value}}
+                    </div>
+                  </td>
+                  <td></td>
                 </tr>
               </tbody>
             </table>
+            <input ng-disabled="!$ctrl.editingMode" type="checkbox">&nbsp;&nbsp;Accept responses that don't match any designated patterns
+            <br><br>
           </div>
         </div>
       </div>

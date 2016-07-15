@@ -4,6 +4,7 @@
 
 .navbar-styled {
   background-color: rgb(255, 255, 255);
+  color: rgb(115, 115, 115);
   border-left: none;
   border-right: none;
   border-top: none;
@@ -30,9 +31,12 @@
   & .navbar-nav .nav-dropdown-btn{
     margin: 20px;
     padding: 5px;
+    & a {
+      margin: 14px;
+      padding: 0;
+    }
   }
   & .navbar-text {
-    color: white;
     margin: 25px 25px 25px 25px;
   }
   & .navbar-brand {

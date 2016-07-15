@@ -14,6 +14,7 @@ var UserSchema = new Schema({
   gender: String,
   locale: String,
   timezone: String,
+  lastActivity: Date,
   email: {
     type: String,
     lowercase: true

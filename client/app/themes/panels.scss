@@ -2,4 +2,7 @@
   border-radius: 0px;
   border: none;
   box-shadow: 1px 1px 6px -1px rgba(120, 120, 120, 1);
+  & .panel-body {
+    padding: 16px 26px;
+  }
 }

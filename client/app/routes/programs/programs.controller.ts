@@ -11,7 +11,7 @@ class ProgramsComponent {
     })
   }
   addProgram(){
-    var name = window.prompt('What\'s the name your new program?');
+    var name = window.prompt('What\'s the name of your new program?');
     var newProgram = {
       name: name
     }

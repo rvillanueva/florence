@@ -9,6 +9,7 @@ var QuestionSchema = new mongoose.Schema({
       type: {
         type: String,
         enum: [
+          'integer',
           'number',
           'date',
           'expression',
@@ -24,8 +25,9 @@ var QuestionSchema = new mongoose.Schema({
       min: Number,
       max: Number
     },
+    recode: Boolean,
     stored: {
-      valueType: {
+      type: {
         type: String,
         enum: [
           'number',

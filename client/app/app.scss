@@ -68,3 +68,26 @@ img {
 @import '../components/modal/modal.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';
 /* endinject */
+@import 'routes/admin/admin.scss';
+@import 'routes/main/main.scss';
+@import 'routes/manage/manage.scss';
+@import 'routes/patients/patients.scss';
+@import 'routes/profile/profile.scss';
+@import 'routes/programs/programs.scss';
+@import 'routes/programs/view/view.scss';
+@import 'routes/questions/questions.scss';
+@import 'routes/questions/view/view.scss';
+@import 'routes/tasks/tasks.scss';
+@import 'routes/tasks/view/view.scss';
+@import 'themes/_variables.scss';
+@import 'themes/buttons.scss';
+@import 'themes/forms.scss';
+@import 'themes/header.scss';
+@import 'themes/messaging.scss';
+@import 'themes/navbar.scss';
+@import 'themes/panels.scss';
+@import 'themes/paragraph.scss';
+@import '../components/footer/footer.scss';
+@import '../components/modal/modal.scss';
+@import '../components/oauth-buttons/oauth-buttons.scss';
+/* endinject */
