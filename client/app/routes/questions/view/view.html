@@ -20,18 +20,13 @@
             <br>
             <h4>Choices</h4>
             <br>
-            <div ng-if="$ctrl.editingMode">
-              <br>
-              <button class="btn btn-md btn-default" ng-click="$ctrl.addChoice()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Choice</button>
-            </div>
-            <br>
-            <table class="table">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <th width="26px;"><i class="fa fa-question"></i></th>
-                  <th>Pattern</th>
-                  <th ng-show="$ctrl.editingMode">Saved As</th>
-                  <th></th>
+                  <th>Choice</th>
+                  <th ng-show="$ctrl.editingMode">Patterns Matched</th>
+                  <th ng-show="$ctrl.editingMode"></th>
                 </tr>
               </thead>
               <tbody>
@@ -45,19 +40,23 @@
                         <option value="expression">Expression</option>
                         <option value="integer">Integer</option>
                         <option value="number">Number</option>
-                        <option value="date">Date</option>
                         <option value="match">Exact Match</option>
                       </select>
                     </div>
                     <div ng-hide="$ctrl.editingMode">
                       {{choice.pattern | choicePattern}}
                     </div>
-                  </td>
-                  <td ng-show="!$ctrl.editingMode">
-                    <div ng-if="$ctrl.editingMode">
-                      <input ng-disabled="!$ctrl.editingMode" type="checkbox" ng-model="choice.recode" ng-change="$ctrl.setupRecode(c)">&nbsp;&nbsp;Recode response
-                      <br><br>
+                    <div ng-show="$ctrl.editingMode">
+                      <div ng-show="choice.pattern.type == 'integer' || choice.pattern.type == 'number'">
+                        Min: <input ng-model="choice.pattern.min" type="number">
+                        <br>
+                        Max: <input ng-model="choice.pattern.max" type="number">
+                      </div>
+                      <br>
+                      <input ng-disabled="!$ctrl.editingMode" type="checkbox" ng-model="choice.recode" ng-change="$ctrl.setupRecode(c)">&nbsp;&nbsp;Recode
                     </div>
+                  </td>
+                  <td ng-show="$ctrl.editingMode">
                     <div ng-show="$ctrl.editingMode && choice.recode">
                       <select ng-model="choice.stored.type">
                         <option value="number">Number</option>
@@ -69,10 +68,14 @@
                       {{choice.stored.value}}
                     </div>
                   </td>
-                  <td></td>
+                  <td ng-show="$ctrl.editingMode"><button class="btn btn-danger btn-sm" ng-click="$ctrl.deleteChoice(c)"><i class="fa fa-trash"></i></button></td>
                 </tr>
               </tbody>
             </table>
+            <div ng-if="$ctrl.editingMode">
+              <button class="btn btn-md btn-default" ng-click="$ctrl.addChoice()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Choice</button>
+              <br><br>
+            </div>
             <input ng-disabled="!$ctrl.editingMode" type="checkbox">&nbsp;&nbsp;Accept responses that don't match any designated patterns
             <br><br>
           </div>

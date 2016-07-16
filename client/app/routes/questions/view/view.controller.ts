@@ -33,6 +33,18 @@
       }
       console.log(choice)
     }
+    addChoice(){
+      this.question.choices = this.question.choices || [];
+      var newChoice = {
+        pattern: {
+          type: 'match'
+        }
+      }
+      this.question.choices.push(newChoice);
+    }
+    deleteChoice(c){
+      this.question.choices.splice(c, 1)
+    }
   }
 
   angular.module('riverApp')

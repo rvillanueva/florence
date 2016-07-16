@@ -2,8 +2,9 @@
 (function() {
 
   class ProgramViewComponent {
-    constructor($stateParams, $state, $http) {
+    constructor($stateParams, $state, $http, Modal) {
       this.$http = $http;
+      this.Modal = Modal;
       this.$http.get('/api/tasks').success(tasks => {
         this.tasks = tasks;
       })
@@ -16,22 +17,29 @@
           }
           this.program = program;
           console.log(program)
-          this.buildTaskIndex();
         })
         .error(err => {
           $state.go('programs');
         })
       }
-    }
-
-    buildTaskIndex(){
-      this.taskIndex = {};
-      if(this.program.tasks){
-        angular.forEach(this.program.tasks, (task, t) => {
-          this.taskIndex[task._id] = task;
-        })
-      }
-      console.log(this.taskIndex)
+      var modalOptions = {
+        modal: {
+          title: 'test',
+          html: 'testing',
+          buttons:[{
+            classes: 'btn-default',
+            text: 'Cancel',
+            click: null
+          },{
+            classes: 'btn-primary',
+            text: 'Add',
+            click: null
+          }]
+        }
+      };
+      this.addProtocol = Modal.open(modalOptions, 'modal-default', function(){
+        console.log('test')
+      })
     }
   }
 

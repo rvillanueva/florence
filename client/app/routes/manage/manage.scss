@@ -1,0 +1,16 @@
+.manage-button {
+  width: 33%;
+  border: 0;
+  margin: 0;
+  height: 80px;
+  &.manage-button-1{
+    background-color: rgb(236, 176, 21)
+  }
+  &.manage-button-2{
+    background-color: rgb(238, 212, 33)
+  }
+  &.manage-button-3{
+    background-color: rgb(238, 225, 48)
+  }
+
+}

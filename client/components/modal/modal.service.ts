@@ -39,8 +39,8 @@ angular.module('riverApp')
            */
           return function() {
             var args = Array.prototype.slice.call(arguments),
-                name = args.shift(),
-                deleteModal;
+              name = args.shift(),
+              deleteModal;
 
             deleteModal = openModal({
               modal: {
@@ -54,12 +54,12 @@ angular.module('riverApp')
                     deleteModal.close(e);
                   }
                 }, {
-                  classes: 'btn-default',
-                  text: 'Cancel',
-                  click: function(e) {
-                    deleteModal.dismiss(e);
-                  }
-                }]
+                    classes: 'btn-default',
+                    text: 'Cancel',
+                    click: function(e) {
+                      deleteModal.dismiss(e);
+                    }
+                  }]
               }
             }, 'modal-danger');
 
@@ -67,6 +67,42 @@ angular.module('riverApp')
               del.apply(event, args);
             });
           };
+        }
+      },
+      open: function(options, modalClass, end = angular.noop) {
+
+        return function() {
+          var args = Array.prototype.slice.call(arguments),
+            name = args.shift(),
+            newModal;
+
+            setupButtonRoles();
+
+            newModal = openModal(options, modalClass);
+
+            newModal.result.then(function(event) {
+              end.apply(event, args);
+            });
+
+
+
+          function setupButtonRoles(){
+            options.modal = options.modal || {};
+            options.modal.buttons = options.modal.buttons || [];
+
+            if (options.modal.buttons.length > 1) {
+              options.modal.buttons[0].click = function(e) {
+                newModal.dismiss(e);
+              }
+              options.modal.buttons[1].click = function(e) {
+                newModal.close(e);
+              }
+            } else if (options.modal.buttons.length == 1) {
+              options.modal.buttons[0].click = function(e) {
+                newModal.close(e);
+              }
+            }
+          }
         }
       }
     };
