@@ -42,10 +42,16 @@ $bubble-radius: 20px;
   &:hover{
     border-left: 4px solid rgb(39, 128, 203);
     padding-left: 10px;
-    cursor: pointer;
-    background-color: rgb(197, 217, 250);
+    background-color: rgb(222, 234, 255);
+    & .hover-revealed {
+      display: inline-block;
+    }
+  }
+  & .hover-revealed {
+    display: none;
   }
 }
+
 
 .selected-block {
   border-left: 4px solid rgb(39, 128, 203);

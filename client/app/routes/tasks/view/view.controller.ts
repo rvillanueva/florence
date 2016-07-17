@@ -2,13 +2,15 @@
 (function() {
 
   class TaskViewComponent {
-    constructor($stateParams, $state, $http) {
+    constructor($stateParams, $state, $http, $scope) {
       this.$http = $http;
       this.$stateParams = $stateParams;
+      this.$scope = $scope;
+
+      this.isPristine = true;
       this.newStep = {
         type: 'speech'
       }
-      //this.isPristine = true;
       if(!$stateParams.id){
         $state.go('tasks');
       } else {
@@ -17,7 +19,7 @@
             $state.go('tasks');
           }
           this.task = task;
-          //this.isPristine = true;
+          this.setPristine();
           console.log(task)
         })
         .error(err => {
@@ -57,16 +59,33 @@
       }
     }
     saveTask(){
-      this.isSaving = true;
       this.$http.put('/api/tasks/' + this.$stateParams.id, this.task).success(task => {
-        this.isSaving = false;
+        this.task = task;
+        this.setPristine();
       })
       .error(err => {
-        this.isSaving = false;
         console.log(err)
         window.alert(err)
       })
     }
+    setPristine(){
+      console.log('Page is pristine.');
+      this.isPristine = true;
+      this.pristineWatcher = this.$scope.$watch(() => this.task, (oldVal, newVal) => {
+        if(newVal !== oldVal){
+          console.log('Dirtied.')
+          this.isPristine = false;
+          this.pristineWatcher();
+        }
+      },true);
+    }
+    deleteStep(s){
+      var confirmed = window.confirm('Are you sure you want to delete this step?')
+      if(confirmed){
+        this.task.steps.splice(s, 1);
+      }
+    }
+
   }
 
   angular.module('riverApp')

@@ -25,6 +25,8 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    entity.steps = [];
+    console.log(entity.steps)
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -144,6 +146,7 @@ export function update(req, res) {
   return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .then(task => attachQuestions(task))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

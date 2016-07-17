@@ -103,7 +103,7 @@
   });
 })();
 
-class ChoiceRowController {
+class EditBlockController {
   constructor() {
     console.log('ChoiceRow init')
     this.editing = false;
@@ -120,4 +120,4 @@ class ChoiceRowController {
 
 
 angular.module('riverApp')
-  .controller('ChoiceRowController', ChoiceRowController);
+  .controller('EditBlockController', EditBlockController);

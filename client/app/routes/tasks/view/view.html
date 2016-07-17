@@ -7,7 +7,7 @@
         <h2>{{$ctrl.task.name}}</h2>
       </div>
       <div class="header-bottom-align header-bottom-right">
-        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isSaving" ng-click="$ctrl.saveTask()">Save</button>
+        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.saveTask()">Save</button>
       </div>
     </div>
   </div>
@@ -21,21 +21,35 @@
             <h4>Conversation Flow</h4>
             <br>
             <span ng-show="$ctrl.task.steps == 0"><i><br>This task is empty. Try adding a step below!</i><br><br></span>
-            <div ng-repeat="step in $ctrl.task.steps">
+            <div ng-controller="EditBlockController as editBlock" ng-repeat="(s, step) in $ctrl.task.steps">
               <div class="message-container message-container-app selectable-block">
+                <div class="pull-right">
+                  <button ng-show="step.type == 'speech' && !editBlock.editing" class="btn btn-sm btn-default hover-revealed" ng-click="editBlock.editToggle(true)"><i class="fa fa-edit"></i></button>
+                  <button ng-show="step.type == 'question'" class="btn btn-sm btn-default hover-revealed" ui-sref="question-view({'id': step.question._id})"><i class="fa fa-edit"></i></button>
+                    &nbsp;
+                  <button class="btn btn-sm btn-danger hover-revealed" ng-click="$ctrl.deleteStep(s)"><i class="fa fa-trash"></i></button>
+                  &nbsp;
+                  <button ng-show="step.type == 'speech' && editBlock.editing" class="btn btn-sm btn-primary" ng-click="editBlock.editToggle(false)">Done</button>
+                </div>
                 <div class="message-bubble message-app">
-                  <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
+                  <span ng-show="step.type == 'speech' && !editBlock.editing">{{step.speech.text}}</span>
+                  <span ng-show="step.type == 'speech' && editBlock.editing"><input ng-model="step.speech.text" class="form-control"></span>
                   <span ng-show="step.type == 'question'">{{step.question.text}}</span>
                 </div>
-                <div ng-if="step.type == 'question'" ui-sref="question-view({'id':step.question._id})">
+                <div ng-if="step.type == 'question'">
                   <div ng-if="step.question.choices.length> 0">
                     <div class="message-container message-container-user">
                       <div class="message-bubble message-user">
                         <span ng-show="step.question.choices.length > 0">
-                        {{step.question.choices[0].value}}
-                        <span ng-show="step.question.choices.length > 1">
-                        <br>(+ {{step.question.choices.length - 1}})
+                          <span ng-show="step.question.choices[0].type == 'category'">
+                            {{step.question.choices[0].category}}
+                          </span>
+                          <span ng-show="step.question.choices[0].type == 'number'">
+                            [a number]
+                          </span>
                         </span>
+                        <span ng-show="step.question.choices.length > 1">
+                        <i>(+{{step.question.choices.length - 1}})</i>
                         </span>
                       </div>
                     </div>
@@ -45,8 +59,6 @@
                       <div class="message-bubble message-user">
                         [Patient response]
                       </div>
-                      <br>
-                      <a href="#" style="font-size: 0.8em" ui-sref="question-view({'id':step.question._id})">Add validation</a>
                     </div>
                   </div>
                 </div>
@@ -59,14 +71,14 @@
                 <strong>Add New Step</strong>
                 <br>
                 <br>
+                <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
+                <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
                 <select ng-model="$ctrl.newStep.type">
                   <option value="speech">Say</option>
                   <option value="question">Ask</option>
                   <!--<option value="action">Do</option>-->
                 </select>
-                <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
-                <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
-                <div style="text-align: right">
+                <div class="pull-right">
                   <button class="btn btn-primary btn-sm" type="submit">Add</button>
                 </div>
               </form>
