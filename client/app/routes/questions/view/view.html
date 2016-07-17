@@ -7,7 +7,7 @@
         <h3>{{$ctrl.question.text}}</h3>
       </div>
       <div class="header-bottom-align" style="width:30%; right:0;left:auto;">
-        <button class="btn btn-md btn-primary pull-right" ng-disabled="!$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.saveQuestion()">Save</button>
       </div>
     </div>
   </div>
@@ -61,8 +61,8 @@
                         </i>
                       </div>
                       <div ng-show="choice.type == 'number'">
-                        Min: <input type="number" ng-model="choice.min">
-                        Max: <input type="number" ng-model="choice.max">
+                        <span ng-show="(!choice.min && choice.min !== 0) && (!choice.min && choice.min !== 0)">Any number</span>
+                        <span ng-hide="(!choice.min && choice.min !== 0) && (!choice.min && choice.min !== 0)">A number from {{choice.min || 'any'}} to {{choice.max || 'any'}}</span>
                       </div>
                     </div>
                     <div ng-show="choiceRow.editing">
@@ -73,10 +73,9 @@
                         <br><a href="#" ng-click="$ctrl.addPattern(c)">Add term</a>
                       </div>
                       <div ng-show="choice.type == 'number'">
-                        <span ng-show="choice.min && choice.max">A number from {{choice.min}} - {{choice.max}}</span>
-                        <span ng-show="choice.min && !choice.max">A number > {{choice.min}}</span>
-                        <span ng-show="!choice.min && choice.max">< {{choice.max}}</span>
-                        <span ng-show="!choice.min && !choice.max">any number</span>
+                        Min: <input type="number" ng-model="choice.min">
+                        <br>
+                        Max: <input type="number" ng-model="choice.max">
                       </div>
                     </div>
                   </td>
@@ -118,7 +117,7 @@
               </form>
             </div>
             <div ng-show="$ctrl.question.choices.length > 0">
-              <input type="checkbox">&nbsp;&nbsp;Accept unexpected responses
+              <input type="checkbox" ng-model="$ctrl.question.acceptAllInputs">&nbsp;&nbsp;Accept unexpected responses
             </div>
             <br>
             <br>

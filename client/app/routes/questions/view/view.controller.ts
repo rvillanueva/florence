@@ -2,8 +2,12 @@
 (function() {
 
   class QuestionViewComponent {
-    constructor($stateParams, $state, $http) {
+    constructor($stateParams, $state, $scope, $http) {
       this.$http = $http;
+      this.$scope = $scope;
+      this.$stateParams = $stateParams;
+      this.isPristine = true;
+      this.pristineWatcher;
       this.editing = {
         addChoice: false
       }
@@ -14,11 +18,12 @@
       if(!$stateParams.id){
         $state.go('questions');
       } else {
-        this.$http.get('/api/questions/' + $stateParams.id).success(question => {
+        this.$http.get('/api/questions/' + this.$stateParams.id).success(question => {
           if(!question){
             $state.go('questions');
           }
           this.question = question;
+          this.setPristine();
           console.log(question);
         })
         .error(err => {
@@ -26,15 +31,24 @@
         })
       }
     }
-    setupRecode(c){
-      console.log('recoding choice index ' + c)
-      var choice = this.question.choices[c];
-      choice = choice || {};
-      choice.stored = choice.stored || {};
-      if(!choice.stored.type){
-        choice.stored.type = 'number'
-      }
-      console.log(choice)
+    saveQuestion(){
+      this.$http.put('/api/questions/' + this.$stateParams.id, this.question).success(question => {
+        this.setPristine();
+      })
+      .error(err => {
+        window.alert(err)
+      })
+    }
+    setPristine(){
+      console.log('Page is pristine.');
+      this.isPristine = true;
+      this.pristineWatcher = this.$scope.$watch(() => this.question, (oldVal, newVal) => {
+        if(newVal !== oldVal){
+          console.log('Dirtied.')
+          this.isPristine = false;
+          this.pristineWatcher();
+        }
+      },true);
     }
     addChoice(){
       this.question.choices = this.question.choices || [];
@@ -44,7 +58,7 @@
       if(pushed.type == 'category'){
         pushed.category = this.newChoice.term;
         pushed.patterns = [{
-          type: 'term'
+          type: 'term',
           term: this.newChoice.term.toLowerCase()
         }]
         console.log(pushed)
@@ -53,7 +67,9 @@
         pushed.max = this.newChoice.max;
       }
       this.question.choices.push(pushed);
-      this.newChoice.term = '';
+      this.newChoice.term = null;
+      this.newChoice.min = null;
+      this.newChoice.max = null;
     }
     deleteChoice(c){
       this.question.choices.splice(c, 1)
@@ -61,7 +77,7 @@
     addPattern(c){
       this.question.choices[c].patterns = this.question.choices[c].patterns || []
       this.question.choices[c].patterns.push({
-        type: 'term'
+        type: 'term',
         term: ''
       })
     }

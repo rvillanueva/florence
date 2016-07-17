@@ -27,28 +27,33 @@
                   <span ng-show="step.type == 'speech'">{{step.speech.text}}</span>
                   <span ng-show="step.type == 'question'">{{step.question.text}}</span>
                 </div>
-                <div ng-if="step.type == 'question'">
-                  <div class="message-container message-container-user">
-                    <div class="message-bubble message-user">
-                      <span ng-repeat="choice in step.question.choices">
-                        {{choice.pattern}}
-                        <br>
-                      </span>
+                <div ng-if="step.type == 'question'" ui-sref="question-view({'id':step.question._id})">
+                  <div ng-if="step.question.choices.length> 0">
+                    <div class="message-container message-container-user">
+                      <div class="message-bubble message-user">
+                        <span ng-show="step.question.choices.length > 0">
+                        {{step.question.choices[0].value}}
+                        <span ng-show="step.question.choices.length > 1">
+                        <br>(+ {{step.question.choices.length - 1}})
+                        </span>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div ng-if="step.type == 'question' && step.question.choices.length == 0">
-                  <div class="message-container message-container-user">
-                    <div class="message-bubble message-user">
-                      [patient responds]
+                  <div ng-if="step.question.choices.length == 0">
+                    <div class="message-container message-container-user">
+                      <div class="message-bubble message-user">
+                        [Patient response]
+                      </div>
+                      <br>
+                      <a href="#" style="font-size: 0.8em" ui-sref="question-view({'id':step.question._id})">Add validation</a>
                     </div>
-                    <br>
-                    <a href="#" style="font-size: 0.8em">Add validation</a>
                   </div>
                 </div>
               </div>
             </div>
-            <br><br>
+            <br>
+            <br>
             <div style="background-color:rgb(240, 240, 240); padding: 14px">
               <form ng-submit="$ctrl.addStep()">
                 <strong>Add New Step</strong>

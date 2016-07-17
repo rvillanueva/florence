@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 var QuestionSchema = new mongoose.Schema({
   text: String,
   nickname: String,
+  acceptAllInputs: Boolean,
   choices: [{
     type: {
       type: String,
