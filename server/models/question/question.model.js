@@ -4,40 +4,36 @@ import mongoose from 'mongoose';
 
 var QuestionSchema = new mongoose.Schema({
   text: String,
+  nickname: String,
   choices: [{
-    pattern: {
-      type: {
-        type: String,
-        enum: [
-          'integer',
-          'number',
-          'date',
-          'expression',
-          'match'
-        ]
-      },
-      expressionKey: String,
-      matches: [
-        {
-          term: String
-        }
-      ],
-      min: Number,
-      max: Number
+    type: {
+      type: String,
+      enum: [
+        'number',
+        'integer',
+        'date',
+        'category'
+      ]
     },
-    recode: Boolean,
-    stored: {
-      type: {
-        type: String,
-        enum: [
-          'number',
-          'date',
-          'string',
-          'boolean'
-        ]
-      },
-      value: mongoose.Schema.Types.Mixed
-    }
+    min: Number,
+    max: Number,
+    category: String,
+    hidden: Boolean,
+    patterns: [
+      {
+        type: {
+          type: String,
+          enum: [
+            'expression',
+            'term'
+          ]
+        },
+        expressionKey: String,
+        term: String,
+        min: Number,
+        max: Number
+      }
+    ]
   }]
 });
 

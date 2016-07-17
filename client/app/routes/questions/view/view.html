@@ -7,7 +7,7 @@
         <h3>{{$ctrl.question.text}}</h3>
       </div>
       <div class="header-bottom-align" style="width:30%; right:0;left:auto;">
-        <button class="btn btn-md btn-primary pull-right" ng-if="$ctrl.editingMode" ng-disabled="!$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+        <button class="btn btn-md btn-primary pull-right" ng-disabled="!$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
       </div>
     </div>
   </div>
@@ -16,68 +16,112 @@
       <div class="col-md-8">
         <div class="panel panel-default">
           <div class="panel-body">
-            <button class="btn btn-md btn-default pull-right" ng-show="!$ctrl.editingMode" ng-click="$ctrl.toggleEditingModeOn()"><i class="fa fa-edit"></i></button>
             <br>
             <h4>Choices</h4>
             <br>
-            <table class="table table-striped">
+            <div ng-hide="$ctrl.question.choices.length > 0"><i>No choices have been added yet, so all responses to this question will be accepted. Add a choice below to validate and categorize your user inputs.</i>
+            <br><br>
+          </div>
+            <table class="table table-striped" ng-show="$ctrl.question.choices.length > 0">
               <thead>
                 <tr>
-                  <th width="26px;"><i class="fa fa-question"></i></th>
-                  <th>Choice</th>
-                  <th ng-show="$ctrl.editingMode">Patterns Matched</th>
-                  <th ng-show="$ctrl.editingMode"></th>
+                  <th width="26px;"></th>
+                  <th>Saved as</th>
+                  <th>If user input is...</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="(c, choice) in $ctrl.question.choices">
+                <tr ng-controller="ChoiceRowController as choiceRow" ng-repeat="(c, choice) in $ctrl.question.choices">
                   <td>
                     {{c + 1}}
                   </td>
                   <td>
-                    <div ng-if="$ctrl.editingMode">
-                      <select ng-model="choice.pattern.type">
-                        <option value="expression">Expression</option>
-                        <option value="integer">Integer</option>
-                        <option value="number">Number</option>
-                        <option value="match">Exact Match</option>
-                      </select>
-                    </div>
-                    <div ng-hide="$ctrl.editingMode">
-                      {{choice.pattern | choicePattern}}
-                    </div>
-                    <div ng-show="$ctrl.editingMode">
-                      <div ng-show="choice.pattern.type == 'integer' || choice.pattern.type == 'number'">
-                        Min: <input ng-model="choice.pattern.min" type="number">
-                        <br>
-                        Max: <input ng-model="choice.pattern.max" type="number">
+                    <div ng-switch="choice.type">
+                      <div ng-switch-when="category" ng-show="!choiceRow.editing">{{choice.category}}</div>
+                      <div ng-switch-when="category" ng-show="choiceRow.editing">
+                        <input ng-model="choice.category">
                       </div>
-                      <br>
-                      <input ng-disabled="!$ctrl.editingMode" type="checkbox" ng-model="choice.recode" ng-change="$ctrl.setupRecode(c)">&nbsp;&nbsp;Recode
+                      <div ng-switch-when="number">
+                        <i>(Number)</i>
+                      </div>
                     </div>
                   </td>
-                  <td ng-show="$ctrl.editingMode">
-                    <div ng-show="$ctrl.editingMode && choice.recode">
-                      <select ng-model="choice.stored.type">
-                        <option value="number">Number</option>
-                        <option value="date">Date</option>
-                        <option value="string">Category</option>
-                      </select>
+                  <td>
+                    <div ng-show="!choiceRow.editing">
+                      <div ng-show="choice.type == 'category'">
+                        {{choice.patterns[0].term}}
+                        <i>
+                          <span ng-show="choice.patterns.length == 2">
+                            &nbsp;(+1 term)
+                          </span>
+                          <span ng-show="choice.patterns.length > 2">
+                            &nbsp;(+{{choice.patterns.length + 1}} terms)
+                          </span>
+                        </i>
+                      </div>
+                      <div ng-show="choice.type == 'number'">
+                        Min: <input type="number" ng-model="choice.min">
+                        Max: <input type="number" ng-model="choice.max">
+                      </div>
                     </div>
-                    <div ng-show="!$ctrl.editingMode || choice.recode">
-                      {{choice.stored.value}}
+                    <div ng-show="choiceRow.editing">
+                      <div ng-show="choice.type == 'category'">
+                        <div ng-repeat="(p, pattern) in choice.patterns">
+                          <input ng-model="pattern.term">
+                        </div>
+                        <br><a href="#" ng-click="$ctrl.addPattern(c)">Add term</a>
+                      </div>
+                      <div ng-show="choice.type == 'number'">
+                        <span ng-show="choice.min && choice.max">A number from {{choice.min}} - {{choice.max}}</span>
+                        <span ng-show="choice.min && !choice.max">A number > {{choice.min}}</span>
+                        <span ng-show="!choice.min && choice.max">< {{choice.max}}</span>
+                        <span ng-show="!choice.min && !choice.max">any number</span>
+                      </div>
                     </div>
                   </td>
-                  <td ng-show="$ctrl.editingMode"><button class="btn btn-danger btn-sm" ng-click="$ctrl.deleteChoice(c)"><i class="fa fa-trash"></i></button></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" ng-click="choiceRow.editToggle(false);$ctrl.cleanChoice(c)" ng-show="choiceRow.editing">Done</button>
+                    &nbsp;&nbsp;
+                    <span class="nav-dropdown-btn" uib-dropdown is-open="status.isopen">
+                      <a href="#" class="btn btn-default btn-sm" uib-dropdown-toggle ng-disabled="disabled">
+                        <span class="fa fa-chevron-down"></span>
+                    </a>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                      <li role="menuitem"><a href="#" ng-click="choiceRow.editToggle(true)">Edit</a></li>
+                      <li role="menuitem"><a href="#" ng-click="$ctrl.deleteChoice(c)">Delete</a></li>
+                    </ul>
+                    </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
-            <div ng-if="$ctrl.editingMode">
-              <button class="btn btn-md btn-default" ng-click="$ctrl.addChoice()"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Choice</button>
-              <br><br>
+            <a href="#" ng-hide="$ctrl.editing.addChoice" ng-click="$ctrl.editing.addChoice = true">Add choice</a>
+            <div ng-if="$ctrl.editing.addChoice">
+              <form ng-submit="$ctrl.addChoice()">
+                <select ng-model="$ctrl.newChoice.type">
+                  <option value="category">Category</option>
+                  <option value="number">Number</option>
+                </select>
+                <div ng-show="$ctrl.newChoice.type == 'category'">
+                  <input class="form-control" ng-model="$ctrl.newChoice.term">
+                </div>
+                <div ng-show="$ctrl.newChoice.type == 'number'">
+                  Min:
+                  <input type="number" class="form-control" ng-model="$ctrl.newChoice.min">
+                  <br> Max:
+                  <input type="number" class="form-control" ng-model="$ctrl.newChoice.max">
+                </div>
+                <button type="submit" class="btn btn-md btn-default pull-right"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add</button>
+                <br>
+                <br>
+              </form>
             </div>
-            <input ng-disabled="!$ctrl.editingMode" type="checkbox">&nbsp;&nbsp;Accept responses that don't match any designated patterns
-            <br><br>
+            <div ng-show="$ctrl.question.choices.length > 0">
+              <input type="checkbox">&nbsp;&nbsp;Accept unexpected responses
+            </div>
+            <br>
+            <br>
           </div>
         </div>
       </div>

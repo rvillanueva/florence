@@ -110,15 +110,7 @@ Program.find({}).remove()
         {
           _id: '57891a3a678d9fcc2340954a',
           text: 'On a scale of 1-5, how confident do you feel about checking your blood sugar before every meal?\n\n(1 = Not At All Confident and 5 = Extremely Confident)',
-          choices: [
-            {
-              pattern: {
-                type: 'integer',
-                min: 1,
-                max: 5
-              }
-            }
-          ]
+          choices: []
         },
         {
         _id: '57891a3a678d9fcc2340954b',
