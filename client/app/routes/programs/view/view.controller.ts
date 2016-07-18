@@ -2,9 +2,13 @@
 (function() {
 
   class ProgramViewComponent {
-    constructor($stateParams, $state, $http, Modal) {
+    constructor($stateParams, $state, $http, ModalService) {
       this.$http = $http;
-      this.Modal = Modal;
+      this.ModalService = ModalService;
+      this.protocolTypes = [
+        'timed',
+        'recurring'
+      ];
       this.$http.get('/api/tasks').success(tasks => {
         this.tasks = tasks;
       })
@@ -22,24 +26,22 @@
           $state.go('programs');
         })
       }
-      var modalOptions = {
-        modal: {
-          title: 'test',
-          html: 'testing',
-          buttons:[{
-            classes: 'btn-default',
-            text: 'Cancel',
-            click: null
-          },{
-            classes: 'btn-primary',
-            text: 'Add',
-            click: null
-          }]
+    }
+    openProtocolModal(protocolType){
+      this.ModalService.open({
+        templateUrl: '../../components/modals/addProtocol/addProtocol.html',
+        controller: 'AddProtocolModalController as vm',
+        params: {
+          protocolType: protocolType
         }
-      };
-      this.addProtocol = Modal.open(modalOptions, 'modal-default', function(){
-        console.log('test')
       })
+      .then(newProtocol => {
+        this.addProtocol(newProtocol);
+      })
+    }
+    addProtocol(protocol){
+      this.program.protocols = this.program.protocols || [];
+      this.program.protocols.push(protocol);
     }
   }
 

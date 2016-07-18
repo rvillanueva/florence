@@ -26,36 +26,33 @@
       <br><br>-->
         <div class="panel panel-default">
           <div class="panel-body">
-            <button class="btn btn-sm btn-default pull-right" ng-click="$ctrl.addProtocol()"><i class="fa fa-plus"></i>&nbsp;Add</button>
+            <span class="nav-dropdown-btn pull-right" uib-dropdown is-open="status.isopen">
+              <a href="#" class="btn btn-default btn-sm" uib-dropdown-toggle>
+                Add&nbsp;<i class="fa fa-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+              <li role="menuitem" ng-repeat="type in $ctrl.protocolTypes"><a href="#" ng-click="$ctrl.openProtocolModal(type)">{{type | capitalize}}</a></li>
+            </ul>
+            </span>
             <br>
             <h4>Protocols</h4>
             <div class="page-divider"></div>
             <br>
-            <strong>Timed</strong>
-            <br>
-            <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'wait'}}">
+            <div ng-repeat="protocolType in $ctrl.protocolTypes">
+              <strong>{{protocolType | uppercase}}</strong>
               <br>
-              <div class="col-md-2">
-                <span class="label label-default">{{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span>
+              <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:protocolType}}">
+                <br>
+                <div class="col-md-2">
+                  <span class="label label-default">{{protocol.trigger | triggerLabel}}</span>
+                </div>
+                <div class="col-md-10">
+                  <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
+                  <p style="font-size: 0.8em">{{protocol.task.description}}</p>
+                </div>
               </div>
-              <div class="col-md-10">
-                <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
-                <p style="font-size: 0.8em">{{protocol.task.description}}</p>
-              </div>
-            </div>
-            <br>
-            <br>
-            <strong>Repeat</strong>
-            <br>
-            <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'repeat'}}">
               <br>
-              <div class="col-md-2">
-                <span class="label label-default">Every {{protocol.trigger.params.duration}} {{protocol.trigger.params.durationUnit}}</span> &nbsp;
-              </div>
-              <div class="col-md-10">
-                <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>
-                <p style="font-size: 0.8em">{{protocol.task.description}}</p>
-              </div>
+              <br>
             </div>
           </div>
         </div>
