@@ -30,7 +30,8 @@ function saveUpdates(updates) {
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
-        return updated;
+        var leanObject = updated.toObject();
+        return leanObject;
       });
   };
 }
@@ -70,10 +71,12 @@ function attachQuestions(task){
     var questionIndex = {};
     task.steps = task.steps || [];
     createQuestionIdArray()
+    console.log(questionIdArray)
     Question.find({'_id': {'$in': questionIdArray} })
     .then(questions => {
       createQuestionIndex(questions);
       attachQuestionsFromIndex();
+      console.log(task)
       resolve(task);
     })
     .catch(err => reject(err))

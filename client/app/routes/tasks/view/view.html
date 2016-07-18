@@ -79,7 +79,15 @@
                 <br>
                 <br>
                 <input ng-show="$ctrl.newStep.type == 'speech'" class="form-control" ng-model="$ctrl.newStep.speech.text" placeholder="Enter text here...">
-                <input ng-show="$ctrl.newStep.type == 'question'" class="form-control" ng-model="$ctrl.newStep.question.text" placeholder="Enter question here...">
+                <input
+                  ng-show="$ctrl.newStep.type == 'question'"
+                  class="form-control"
+                  ng-model="$ctrl.newStep.question.text"
+                  placeholder="Enter question here..."
+                  uib-typeahead="question as question.text for question in $ctrl.queryQuestions($viewValue)"
+                  typeahead-on-select="$ctrl.addSelectedQuestion($item)"
+                  typeahead-wait-ms="300"
+                >
                 <select ng-model="$ctrl.newStep.type">
                   <option value="speech">Say</option>
                   <option value="question">Ask</option>

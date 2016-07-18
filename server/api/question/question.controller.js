@@ -59,14 +59,13 @@ function handleError(res, statusCode) {
   };
 }
 
-function handleQuery(res) {
-  return function(query) {
+function handleQuery(query) {
     console.log(query)
     console.log(typeof query)
     var term = query.term || '';
     term = term.toLowerCase();
-    return Question.find({text: new RegExp('^'+term+'$', "i")}).limit(5);
-  };
+    var pattern = new RegExp(term, "i")
+    return Question.find({text: { '$regex':pattern}}).limit(5).exec();
 }
 
 // Gets a list of Questions
@@ -77,7 +76,7 @@ export function index(req, res) {
 }
 
 export function query(req, res){
-  return handleQuery(req.body)
+  return handleQuery(req.query)
   .then(respondWithResult(res))
   .catch(handleError(res))
 }

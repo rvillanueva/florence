@@ -2,8 +2,9 @@
 (function() {
 
   class TaskViewComponent {
-    constructor($stateParams, $state, $http, $scope) {
+    constructor($stateParams, $state, $http, $scope, $q) {
       this.$http = $http;
+      this.$q = $q;
       this.$stateParams = $stateParams;
       this.$scope = $scope;
 
@@ -84,6 +85,27 @@
       if(confirmed){
         this.task.steps.splice(s, 1);
       }
+    }
+    queryQuestions(term){
+      console.log(term)
+      var deferred = this.$q.defer();
+      this.$http.get('/api/questions/query?term=' + term).success(results => {
+        console.log(results)
+        deferred.resolve(results)
+      })
+      .error(err => {
+        console.log(err)
+        deferred.reject(err)
+      })
+      return deferred.promise;
+    }
+    addSelectedQuestion(question){
+      console.log(question)
+      this.task.steps.push({
+        type: 'question',
+        question: question
+      })
+      this.newStep.question.text = ''
     }
 
   }
