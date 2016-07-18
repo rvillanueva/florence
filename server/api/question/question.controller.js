@@ -59,11 +59,27 @@ function handleError(res, statusCode) {
   };
 }
 
+function handleQuery(res) {
+  return function(query) {
+    console.log(query)
+    console.log(typeof query)
+    var term = query.term || '';
+    term = term.toLowerCase();
+    return Question.find({text: new RegExp('^'+term+'$', "i")}).limit(5);
+  };
+}
+
 // Gets a list of Questions
 export function index(req, res) {
   return Question.find().exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
+}
+
+export function query(req, res){
+  return handleQuery(req.body)
+  .then(respondWithResult(res))
+  .catch(handleError(res))
 }
 
 // Gets a single Question from the DB

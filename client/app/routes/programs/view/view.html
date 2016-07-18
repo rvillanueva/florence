@@ -14,8 +14,14 @@
   <div class="container page-program-view">
     <div class="row">
       <div class="col-md-8">
-        <textarea class="form-control" placeholder="Add description here..."></textarea>
-        <br>
+        <div ng-controller="EditBlockController as editBlock" class="editable-block" style="padding: 20px 0px;">
+          <div ng-show="!editBlock.editing">
+            {{$ctrl.program.description || 'Add description here...'}}
+          </div>
+          <textarea ng-show="editBlock.editing" class="form-control" ng-model="$ctrl.program.description" placeholder="Add description here..."></textarea>
+          <a href="#" class="hover-revealed" ng-hide="editBlock.editing" ng-click="editBlock.editToggle(true)">Edit description</a>
+          <button class="btn btn-primary btn-sm" ng-show="editBlock.editing" ng-click="editBlock.editToggle(false)">Done</button>
+        </div>
         <!--[insert timeline here from wait and repeat]
       <br><br>-->
         <div class="panel panel-default">
@@ -25,7 +31,7 @@
             <h4>Protocols</h4>
             <div class="page-divider"></div>
             <br>
-            <strong>Wait</strong>
+            <strong>Timed</strong>
             <br>
             <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:'wait'}}">
               <br>

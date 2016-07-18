@@ -1,0 +1,11 @@
+.editable-block {
+  & .hover-revealed {
+    visibility: hidden;
+  }
+  &:hover {
+    background-color: rgb(255, 247, 233);
+    & .hover-revealed {
+      visibility: visible;
+    }
+  }
+}

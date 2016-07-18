@@ -14,7 +14,14 @@
   <div class="container page-task-view">
     <div class="row">
       <div class="col-md-8">
-        <textarea class="form-control" ng-model="$ctrl.task.description" placeholder="Add description here..."></textarea>
+        <div ng-controller="EditBlockController as editBlock" class="editable-block" style="padding: 20px 0px;">
+          <div ng-show="!editBlock.editing">
+            {{$ctrl.task.description || 'Add description here...'}}
+          </div>
+          <textarea ng-show="editBlock.editing" class="form-control" ng-model="$ctrl.task.description" placeholder="Add description here..."></textarea>
+          <a href="#" class="hover-revealed" ng-hide="editBlock.editing" ng-click="editBlock.editToggle(true)">Edit description</a>
+          <button class="btn btn-primary btn-sm" ng-show="editBlock.editing" ng-click="editBlock.editToggle(false)">Done</button>
+        </div>
         <br>
         <div class="panel panel-default">
           <div class="panel-body">
