@@ -6,8 +6,9 @@
       this.$http = $http;
       this.$q = $q;
       this.protocol = {
-        trigger: {
-          type: params.protocolType
+        type: params.protocolType,
+        params: {
+          durationInDays: null
         }
       }
       this.$uibModalInstance = $uibModalInstance;

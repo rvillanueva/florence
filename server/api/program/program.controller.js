@@ -41,6 +41,17 @@ function attachTasks(program) {
     })
 }
 
+function convertToTaskIds(program){
+  return new Promise(function(resolve, reject){
+    program.protocols = program.protocols || [];
+    program.protocols.forEach(function(protocol, p){
+      protocol.taskId = protocol.task._id;
+      delete protocol.task;
+    })
+    resolve(program);
+  })
+}
+
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
@@ -51,10 +62,12 @@ function respondWithResult(res, statusCode) {
 }
 
 function saveUpdates(updates) {
-  return function(entity) {
+  return function(program) {
+    program.protocols = [];
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
+        updated = updated.toObject()
         return updated;
       });
   };
@@ -118,7 +131,9 @@ export function update(req, res) {
   }
   return Program.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
+    .then(program => convertToTaskIds(program))
+    .then(program => saveUpdates(program))
+    .then(program => attachTasks(program))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

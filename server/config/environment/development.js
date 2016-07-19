@@ -2,14 +2,18 @@
 
 // Development specific configuration
 // ==================================
-module.exports = {
-
+var config = {
   // MongoDB connection options
   mongo: {
     uri: 'mongodb://localhost/river-dev'
   },
+}
+// Seed database on startup
 
-  // Seed database on startup
-  seedDB: true
+if(process.env.SEED_DB){
+  config.seedDB = true
+} else {
+  config.seedDB = false;
+}
 
-};
+module.exports = config;

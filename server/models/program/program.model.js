@@ -9,16 +9,14 @@ var ProgramSchema = new mongoose.Schema({
   organizationId: String,
   protocols: [
     {
-      trigger: {
-        type: {
-          type: String,
-          enum: [
-            'timed',
-            'recurring'
-          ]
-        },
-        params: {}
+      type: {
+        type: String,
+        enum: [
+          'timed',
+          'recurring'
+        ]
       },
+      params: {},
       taskId: String
     }
   ]

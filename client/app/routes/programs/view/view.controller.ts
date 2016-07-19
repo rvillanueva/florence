@@ -40,8 +40,6 @@
       })
     }
     addProtocol(protocol){
-      console.log('Adding protocol...')
-      console.log(protocol)
       this.program.protocols = this.program.protocols || [];
       this.program.protocols.push(protocol);
       console.log(this.program)

@@ -2,14 +2,14 @@
 
 angular.module('riverApp')
   .filter('triggerLabel', function () {
-    return function (trigger) {
-      if(trigger.type == 'timed'){
-        var str = trigger.params.duration + ' ' + trigger.params.durationUnit;
-        if(trigger.params.duration > 1){
+    return function (protocol) {
+      if(protocol.type == 'timed'){
+        var str = protocol.params.durationInDays + ' day';
+        if(protocol.params.duration > 1){
           str += 's'
         }
         return str;
-      } else if (trigger.type == 'recurring'){
+      } else if (protocol.type == 'recurring'){
         return 'every __ units';
       }
     };

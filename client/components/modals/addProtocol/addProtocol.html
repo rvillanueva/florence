@@ -1,19 +1,38 @@
 <div class="modal-header">
   <button type="button" ng-click="$dismiss()" class="close">&times;</button>
-  <h4 class="modal-title">New {{vm.protocol.trigger.type | capitalize}} Protocol</h4>
+  <h4 class="modal-title">New {{vm.protocol.type | capitalize}} Protocol</h4>
 </div>
 <div class="modal-body">
-  <div ng-show="vm.protocol.trigger.type == 'timed'">
-    <strong>Duration: </strong><input type="number" ng-model="vm.protocol.trigger.params.duration">
-    <select ng-model="vm.protocol.trigger.params.durationUnit">
-      <option value="day">days</option>
-      <option value="week">weeks</option>
+  <div ng-show="vm.protocol.type == 'timed'">
+    <strong>Duration: </strong><input type="number" ng-model="vm.protocol.params.durationInDays"> days
+  </div>
+  <div ng-show="vm.protocol.type == 'recurring'">
+    <span>
+      <input type="checkbox"> Monday
+      <input type="checkbox"> Tuesday
+      <input type="checkbox"> Wednesday
+      <input type="checkbox"> Thursday
+      <input type="checkbox"> Friday
+      <input type="checkbox"> Saturday
+      <input type="checkbox"> Sunday
+    </span>
+    <br><br>
+    @
+    <br>
+    (timezone here)
+    <br>
+    <select>
+      <option>9:00am</option>
+      <option>10:00am</option>
     </select>
+    &nbsp;
+    <button class="btn btn-default btn-sm">Add</button>
   </div>
   <br>
   <div>
     <strong>Task:</strong> <input ng-show="!vm.protocol.task" ng-model="vm.addedTask" uib-typeahead="task as task.name for task in vm.searchTasks($viewValue)" typeahead-on-select="vm.addTask($item)">
     {{vm.protocol.task.name}} <a href="#" ng-show="vm.protocol.task" ng-click="vm.protocol.task = null">&times;</a>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>

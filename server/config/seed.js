@@ -86,20 +86,15 @@ Program.find({}).remove()
       name: 'Diabetes',
       description: 'Help newly-diagnosed diabetes patients to understand diabetes and how to effectively manage their care. Track adherence to blood sugar monitoring and insulin use.',
       protocols: [{
-        trigger: {
-          type: 'timed',
-          params: {
-            duration: 1,
-            durationUnit: 'day'
-          }
+        type: 'timed',
+        params: {
+          durationInDays: 1
         },
         taskId: '5786a2dc517d5513c018c9f8'
       },{
-        trigger: {
-          type: 'recurring',
-          params: {
+        type: 'recurring',
+        params: {
 
-          }
         },
         taskId: '5786a2dc517d5513c018c9f7'
       }]

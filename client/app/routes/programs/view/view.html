@@ -41,10 +41,10 @@
             <div ng-repeat="protocolType in $ctrl.protocolTypes">
               <strong>{{protocolType | uppercase}}</strong>
               <br>
-              <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{trigger:{type:protocolType}}">
+              <div class="row" ng-repeat="protocol in $ctrl.program.protocols | filter:{'type':protocolType}">
                 <br>
                 <div class="col-md-2">
-                  <span class="label label-default">{{protocol.trigger | triggerLabel}}</span>
+                  <span class="label label-default">{{protocol | triggerLabel}}</span>
                 </div>
                 <div class="col-md-10">
                   <a ui-sref="task-view({id: protocol.task._id})">{{protocol.task.name}}</a>

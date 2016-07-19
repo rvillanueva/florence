@@ -2,7 +2,7 @@
 
 // Production specific configuration
 // =================================
-module.exports = {
+var config = {
   // Server IP
   ip:     process.env.OPENSHIFT_NODEJS_IP ||
           process.env.IP ||
@@ -20,5 +20,13 @@ module.exports = {
           process.env.OPENSHIFT_MONGODB_DB_URL +
           process.env.OPENSHIFT_APP_NAME ||
           'mongodb://localhost/river'
-  }
-};
+  },
+}
+
+if(process.env.SEED_DB){
+  config.seedDB = true
+} else {
+  config.seedDB = false;
+}
+
+module.exports = config;
