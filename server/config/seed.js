@@ -37,6 +37,17 @@ User.find({}).remove()
 Task.find({}).remove()
   .then(() => {
       Task.create({
+        _id: '5786a2dc517d5513c018c9e0',
+        name: 'Initiate',
+        objective: 'initiate',
+        description: 'The greeting to initiate a patient interaction.',
+        steps: [
+          {
+            type: 'question',
+            questionId: '57891a3a678d9fcc2340955a'
+          }
+        ]
+      },{
         _id: '5786a2dc517d5513c018c9f6',
         name: 'Onboard patient',
         description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
@@ -108,6 +119,11 @@ Program.find({}).remove()
         {
           _id: '57891a3a678d9fcc2340954a',
           text: 'On a scale of 1-5, how confident do you feel about checking your blood sugar before every meal?\n\n(1 = Not At All Confident and 5 = Extremely Confident)',
+          choices: []
+        },
+        {
+          _id: '57891a3a678d9fcc2340955a',
+          text: 'Hey there! Do you have a second?',
           choices: []
         },
         {

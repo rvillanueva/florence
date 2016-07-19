@@ -175,3 +175,15 @@ export function handleNextStep(bot) {
 
   })
 }
+
+export function handleNotification(bot){
+  return new Promise(function(resolve, reject) {
+    bot.state.active = {
+      taskId: '5786a2dc517d5513c018c9e0'
+    }
+    executeStep(bot)
+    .then(bot => bot.update())
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
+  })
+}

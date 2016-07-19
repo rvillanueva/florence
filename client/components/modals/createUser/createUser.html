@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <button type="button" ng-click="$dismiss()" class="close">&times;</button>
+  <h4 class="modal-title">New {{vm.protocol.type | capitalize}} Protocol</h4>
+</div>
+<div class="modal-body">
+  First name: <input>
+  Last name: <input>
+  Mobile phone number: <input>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>
+  <button class="btn btn-primary btn-md" ng-click="vm.done()">Add</button>
+</div>

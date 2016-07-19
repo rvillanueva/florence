@@ -1,13 +1,16 @@
 <navbar-manage></navbar-manage>
 <div class="background-tint">
   <div class="header-unit header-secondary">
-    <div class="container">
+    <div class="container header-container">
       <div class="header-bottom-align">
         Program
         <h2>{{$ctrl.program.name}}</h2>
       </div>
       <div class="header-bottom-align">
-        <button class="btn btn-md btn-primary pull-right" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+        <div class="pull-right">
+          <input disabled placeholder="Add Patient...">
+          <button class="btn btn-md btn-primary" ng-disabled="$ctrl.isPristine" ng-click="$ctrl.save()">Save</button>
+        </div>
       </div>
     </div>
   </div>
@@ -60,14 +63,7 @@
       <div class="col-md-4">
         <div class="panel panel-default">
           <div class="panel-body">
-            <strong>Add Patient</strong>
-            <br>
-            <input disabled class="form-control">
-            <br>
-            <br>
-            <strong>Overview</strong>
-            <br>Patients Enrolled:
-            <br>Average Completion Rate:
+            <strong>Tasks:</strong>
           </div>
         </div>
       </div>

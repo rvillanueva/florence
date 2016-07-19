@@ -18,13 +18,12 @@ export function respond(data){
   })
 }
 
-/*export function initiate(userId){
+export function initiate(userId){
   return new Promise(function(resolve, reject){
     var bot = new Bot(userId);
     bot.init()
     .then(bot => DialogService.handleNotification(bot))
-    .then(bot => DialogService.handleNextStep(bot))
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })
-}*/
+}

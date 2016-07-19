@@ -24,7 +24,27 @@ function handleError(res, statusCode) {
  * restriction: 'admin'
  */
 export function index(req, res) {
-  return User.find({}, '-salt -password').exec()
+  req.query = req.query || {};
+  var query = {};
+  var conditions = []
+  if(req.query.lastName){
+    conditions.push({
+      lastName:  new Regex(req.query.lastName)
+    })
+  }
+  if(req.query.phone){
+    conditions.push({
+      'mobile.number':  new Regex(req.query.phone)
+    })
+  }
+
+  if(conditions.length > 0){
+    query = {
+      '$and': conditions
+    }
+  }
+
+  return User.find(query, '-salt -password').exec()
     .then(users => {
       res.status(200).json(users);
     })
