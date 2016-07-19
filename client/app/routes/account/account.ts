@@ -9,6 +9,12 @@ angular.module('riverApp')
         controller: 'LoginController',
         controllerAs: 'vm'
       })
+      .state('signup', {
+        url: '/signup',
+        templateUrl: 'app/routes/account/signup/signup.html',
+        controller: 'SignupController',
+        controllerAs: 'vm'
+      })
       .state('logout', {
         url: '/logout?referrer',
         referrer: 'main',

@@ -15,17 +15,21 @@ User.find({}).remove()
   .then(() => {
     User.create({
         provider: 'local',
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'test@example.com',
+        identity: {
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'test@example.com',
+        },
         password: 'test',
         lastActivity: new Date()
       }, {
         provider: 'local',
+        identity: {
+          firstName: 'Admin',
+          lastName: 'User',
+          email: 'admin@example.com',
+        },
         role: 'admin',
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@example.com',
         password: 'admin',
         lastActivity: new Date()
       })

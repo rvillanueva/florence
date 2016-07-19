@@ -29,12 +29,12 @@ export function index(req, res) {
   var conditions = []
   if(req.query.lastName){
     conditions.push({
-      lastName:  new Regex(req.query.lastName)
+      'identity.lastName':  new Regex(req.query.lastName)
     })
   }
   if(req.query.phone){
     conditions.push({
-      'mobile.number':  new Regex(req.query.phone)
+      'identity.mobile':  new Regex(req.query.phone)
     })
   }
 
@@ -55,7 +55,21 @@ export function index(req, res) {
  * Creates a new user
  */
 export function create(req, res, next) {
-  var newUser = new User(req.body);
+  var newUserData = {
+    provider: 'local',
+    role: 'user',
+    identity: {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      mobile: {
+        number: req.body.mobile
+      }
+    },
+    password: req.body.password,
+    salt: req.body.salt
+  }
+  var newUser = new User(newUserData);
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.save()

@@ -5,14 +5,14 @@ var Router = require('./message.router');
 export function send(message){
   console.log('Bot says: ' + message.text);
   console.log(message)
-    return Queue.add(message)
+  return Queue.add(message)
 }
 
 // Receive and log standard message from any messaging interface
 export function receive(message){
   return new Promise(function(resolve, reject){
     // Add messaging logging here;
-    console.log(message.userId + ' says: ' + (message.text || '[button: ' + message.button + ']'));
+    console.log(message.userId + ' says: ' + message.content.text);
     resolve(message)
   })
 }

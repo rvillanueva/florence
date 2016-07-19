@@ -23,9 +23,9 @@
             <span class="pull-right" style="font-size:0.8em">
               Last Activity: {{patient.lastActivity | date:'MMM d, yyyy' || 'never'}}
             </span>
-            <a ui-sref="profile({id: patient._id})">{{patient.firstName || 'Unknown'}} {{patient.lastName}}</a>&nbsp;&nbsp;<i class="fa fa-ban" style="font-size: 0.8em" ng-show="!patient.active"></i>
+            <a ui-sref="profile({id: patient._id})">{{patient.identity.firstName || 'Unknown'}} {{patient.identity.lastName}}</a>&nbsp;&nbsp;<i class="fa fa-ban" style="font-size: 0.8em" ng-show="!patient.active"></i>
             <br>
-            {{patient.mobile.number}}
+            {{patient.mobile}}
           </div>
         </div>
       </div>

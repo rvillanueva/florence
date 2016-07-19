@@ -69,7 +69,7 @@ function handleMessage(message){
   return new Promise(function(resolve, reject){
     console.log('Received:')
     console.log(message);
-    UserService.getUserByPhoneNumber(message.mobile.number)
+    UserService.getUserByPhoneNumber(message.mobile)
     .then(user => handleReply(user))
     .then(() => resolve(true))
     .catch(err => reject(err))
@@ -104,7 +104,7 @@ export function receive(req, res) {
   return new Promise(function(resolve, reject){
     var timeout = setTimeout(respondOk(), 5000)
 
-    Message.standardize(req.body, 'twilio')
+    Message.standardize(req.body, 'twilioSMS')
     .then(message => handleMessage(message))
     .then(() => writeRes())
     .catch(err => reject(err))

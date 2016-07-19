@@ -6,9 +6,9 @@ var twilio = require('twilio')(process.env.TWILIO_ID, process.env.TWILIO_SECRET)
 export function sendToApi(message) {
   return new Promise(function(resolve, reject) {
     twilio.sendMessage({
-      to: message.mobile.number,
+      to: message.mobile,
       from: process.env.TWILIO_PHONE,
-      body: message.text
+      body: message.content.text
     }, function(err, responseData) {
       if (!err) {
         console.log('Sent!')

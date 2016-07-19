@@ -13,7 +13,6 @@ export default function(app) {
   app.use('/api/sms', require('./api/sms'));
   app.use('/api/tasks', require('./api/task'));
   app.use('/api/programs', require('./api/program'));
-  app.use('/api/messenger', require('./api/messenger'));
   app.use('/api/users', require('./api/user'));
 
   app.use('/auth', require('./auth').default);

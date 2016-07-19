@@ -17,31 +17,9 @@ export function getUserByPhoneNumber(phoneNumber) {
       }
     }
     User.findOne({
-        'mobile.number': phoneNumber
+        'identity.mobile': phoneNumber
       }).exec()
       .then(user => handleUserCreation(user, options))
-      .then(user => resolve(user))
-      .catch(err => reject(err))
-      .catch(err => reject(err))
-  })
-
-}
-
-export function getUserByMessengerId(messengerId) {
-  return new Promise((resolve, reject) => {
-    var options = {
-      user: {
-        provider: 'messenger',
-        messenger: {
-          id: messengerId
-        }
-      }
-    }
-    User.findOne({
-        'messenger.id': messengerId
-      }).exec()
-      .then(user => handleUserCreation(user, options))
-      .then(user => updateFbProfile(user))
       .then(user => resolve(user))
       .catch(err => reject(err))
       .catch(err => reject(err))
@@ -123,7 +101,7 @@ function createInactiveUser(user){
 function queueOnboardingTask(user){
   return new Promise(function(resolve, reject){
     user.queue = user.queue || [];
-    Queue.addTodo(user.queue, 'test123')
+    Queue.addTask(user.queue, 'test123')
     .then(queue => {
       user.queue = queue;
       resolve(user)

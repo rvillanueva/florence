@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird');
 
-export function addTodo(queue, taskId, options) {
+export function addTask(queue, taskId, options) {
 
   return new Promise(function(resolve, reject) {
     if (!taskId) {
@@ -36,7 +36,7 @@ export function addTodo(queue, taskId, options) {
   })
 }
 
-export function completeTodo(queue, taskId){
+export function completeTask(queue, taskId){
   return new Promise((resolve, reject) => {
     var found = false;
     this.queue.forEach((queued, q) => {

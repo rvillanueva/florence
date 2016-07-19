@@ -4,25 +4,28 @@ import mongoose from 'mongoose';
 
 var MessageSchema = new mongoose.Schema({
   userId: String,
+  timestamp: Date,
   author: {
     type: String,
     enum: [
       'user',
-      'system'
+      'system',
+      'manager'
     ]
   },
-  date: Date,
-  text: String,
   provider: String,
-  mobile: {
-    number: String,
-    sid: String,
+  to: {
+    mobile: String
   },
-  attachments: Array,
-  messenger: {
-    id: String,
-    mid: String,
-    seq: Number
+  from: {
+    mobile: String
+  },
+  content: {
+    text: String,
+    attachments: Array,
+  },
+  meta: {
+    twilio: {},
   },
 });
 

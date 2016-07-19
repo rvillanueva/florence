@@ -8,16 +8,21 @@ import {Schema} from 'mongoose';
 const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
 
 var UserSchema = new Schema({
-  firstName: String, // Need to fix name virtual return
-  lastName: String,
-  picture: String,
-  gender: String,
-  locale: String,
-  timezone: String,
-  lastActivity: Date,
-  email: {
-    type: String,
-    lowercase: true
+  identity: {
+    pictureUrl: String,
+    firstName: String,
+    lastName: String,
+    email: {
+      type: String,
+      lowercase: true
+    },
+    mobile: String,
+  },
+  settings: {
+    timezone: String,
+  },
+  demographics: {
+    gender: String,
   },
   role: {
     type: String,
@@ -28,9 +33,18 @@ var UserSchema = new Schema({
   provider: String,
   salt: String,
   created: Date,
-  facebook: {},
-  messenger: {},
-  mobile: {},
+  lastActivity: Date,
+  programs: [
+    {
+      programId: String
+    }
+  ],
+  queue: [{
+    taskId: String,
+    forced: Boolean,
+    started: Date,
+    added: Date
+  }],
   state: {
     status: String,
     active: {
@@ -40,13 +54,7 @@ var UserSchema = new Schema({
     },
     stored: {},
     lastModified: Date
-  },
-  queue: [{
-    taskId: String,
-    forced: Boolean,
-    started: Date,
-    added: Date
-  }]
+  }
 });
 
 /**
@@ -60,10 +68,7 @@ UserSchema
     var user = this;
     return {
       '_id': this._id,
-      'name': this.firstName + ' ' + this.lastName,
-      'firstName': this.firstName,
-      'lastName': this.lastName,
-      'picture': this.picture,
+      'identity': this.identity,
       'role': this.role
     };
   });
@@ -91,7 +96,7 @@ UserSchema
 
 // Validate empty email
 UserSchema
-  .path('email')
+  .path('identity.email')
   .validate(function(email) {
     if (authTypes.indexOf(this.provider) !== -1) {
       return true;
@@ -111,10 +116,10 @@ UserSchema
 
 // Validate email is not taken
 UserSchema
-  .path('email')
+  .path('identity.email')
   .validate(function(value, respond) {
     var self = this;
-    return this.constructor.findOne({ email: value }).exec()
+    return this.constructor.findOne({ 'identity.email': value }).exec()
       .then(function(user) {
         if (user) {
           if (self.id === user.id) {

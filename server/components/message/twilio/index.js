@@ -12,11 +12,11 @@ export function send(message) {
 export function standardize(data){
   return new Promise(function(resolve, reject){
     var message = {
-      text: data.Body,
-      mobile: {
-        number: data.From,
-        messageSid: data.MessageSid,
-        accountSid: data.AccountSid
+      content: {
+        text: data.Body
+      },
+      meta: {
+        twilio: data
       }
     }
     resolve(message)
