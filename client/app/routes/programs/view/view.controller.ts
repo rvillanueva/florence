@@ -29,7 +29,7 @@
     }
     openProtocolModal(protocolType){
       this.ModalService.open({
-        templateUrl: '../../components/modals/addProtocol/addProtocol.html',
+        templateUrl: 'components/modals/addProtocol/addProtocol.html',
         controller: 'AddProtocolModalController as vm',
         params: {
           protocolType: protocolType
@@ -40,8 +40,11 @@
       })
     }
     addProtocol(protocol){
+      console.log('Adding protocol...')
+      console.log(protocol)
       this.program.protocols = this.program.protocols || [];
       this.program.protocols.push(protocol);
+      console.log(this.program)
     }
   }
 

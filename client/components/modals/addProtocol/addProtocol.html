@@ -1,10 +1,21 @@
 <div class="modal-header">
   <button type="button" ng-click="$dismiss()" class="close">&times;</button>
-  <h4 class="modal-title">New {{vm.protocolType}} Protocol</h4>
+  <h4 class="modal-title">New {{vm.protocol.trigger.type | capitalize}} Protocol</h4>
 </div>
 <div class="modal-body">
-  {{vm.protocolType}}
+  <div ng-show="vm.protocol.trigger.type == 'timed'">
+    <strong>Duration: </strong><input type="number" ng-model="vm.protocol.trigger.params.duration">
+    <select ng-model="vm.protocol.trigger.params.durationUnit">
+      <option value="day">days</option>
+      <option value="week">weeks</option>
+    </select>
+  </div>
+  <br>
+  <div>
+    <strong>Task:</strong> <input ng-show="!vm.protocol.task" ng-model="vm.addedTask" uib-typeahead="task as task.name for task in vm.searchTasks($viewValue)" typeahead-on-select="vm.addTask($item)">
+    {{vm.protocol.task.name}} <a href="#" ng-show="vm.protocol.task" ng-click="vm.protocol.task = null">&times;</a>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary btn-md" ng-click="vm.done()">Done</button>
+  <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>
+  <button class="btn btn-primary btn-md" ng-click="vm.done()">Add</button>
 </div>

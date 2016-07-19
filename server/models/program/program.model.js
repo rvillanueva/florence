@@ -11,7 +11,11 @@ var ProgramSchema = new mongoose.Schema({
     {
       trigger: {
         type: {
-          type: String
+          type: String,
+          enum: [
+            'timed',
+            'recurring'
+          ]
         },
         params: {}
       },

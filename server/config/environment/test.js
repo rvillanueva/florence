@@ -5,16 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/river-test'
-  },
-  sequelize: {
-    uri: 'sqlite://',
-    options: {
-      logging: false,
-      storage: 'test.sqlite',
-      define: {
-        timestamps: false
-      }
-    }
+    uri: 'mongodb://localhost/river-dev'
   }
+
 };

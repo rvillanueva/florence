@@ -391,6 +391,7 @@ module.exports = function (grunt) {
             'bower_components/**/*',
             'assets/images/{,*/}*.{webp}',
             'assets/fonts/**/*',
+            //'components/**/*', // Copies components since modal template references are broken during process
             'index.html'
           ]
         }, {
