@@ -53,6 +53,9 @@ User.find({}).remove()
         queue: [
           {
             taskId: '5786a2dc517d5513c018c9f6'
+          },
+          {
+            taskId: '5786a2dc517d5513c018c9e0'
           }
         ],
         lastActivity: new Date()

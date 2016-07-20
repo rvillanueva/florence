@@ -15,6 +15,9 @@ export function run(bot){
     }
     if(bot.task.steps[bot.stepIndex].question){
       text = bot.task.steps[bot.stepIndex].question.text
+      bot.state.status = 'waiting';
+      bot.state.active.taskId = bot.task._id;
+      bot.state.active.stepId = bot.task.steps[bot.stepIndex]._id;
     }
     console.log(text)
     bot.send({

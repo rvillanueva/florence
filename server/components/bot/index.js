@@ -3,8 +3,8 @@
 var Promise = require('bluebird');
 
 import User from '../../models/user/user.model';
-import Task from '../../models/task/task.model';
 var Queue = require('../queue');
+var TaskService = require('../task');
 var Message = require('../message');
 
 /*
@@ -45,15 +45,18 @@ export default function(options){
 
   this.update = function(){
     return new Promise((resolve, reject) => {
+      console.log('updating...')
       this.state.lastModified = new Date();
       User.findById(this.user._id)
       .then(user => {
+        console.log('user found...')
         user.state = this.state;
         user.queue = this.queue;
-        return User.update(this.user._id, user)
+        return User.findOneAndUpdate({'_id': this.user._id}, user)
       })
       .then(user => {
         this.user = user;
+        console.log('State saved!')
         resolve(this)
       })
       .catch(err => reject(err))
@@ -96,7 +99,7 @@ export default function(options){
       console.log('loading next task from queue:')
       console.log(this.queue)
       if(this.queue.length > 0){
-        this.state.active.taskId = todo.taskId;
+        this.state.active.taskId = this.queue[0].taskId;
         this.setupActiveState()
         .then(() => resolve(this))
         .catch(err => reject(err))
@@ -137,7 +140,7 @@ export default function(options){
       var taskId = this.state.active.taskId || queued.taskId || false;
       console.log(taskId)
       if(typeof taskId === 'string'){
-        Task.findById(taskId).lean().exec()
+        TaskService.getById(taskId)
         .then(task => {
           this.task = task || false;
           resolve()
