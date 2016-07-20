@@ -16,7 +16,7 @@ export function getById(taskId){
 }
 
 
-function attachQuestions(task){
+export function attachQuestions(task){
   return new Promise(function(resolve, reject){
     console.log('attaching questions')
     var questionIdArray = [];

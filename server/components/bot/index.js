@@ -34,17 +34,21 @@ export default function(options){
   // METHODS
 
   this.send = function(sendable){
-    var sent = {
-      userId: this.user._id,
-      content: {
-        text: sendable.text
-      },
-      to: {
-        provider: this.user.providers.messaging,
-        mobile: this.user.identity.mobile
+    return new Promise((resolve, reject) => {
+      var sent = {
+        userId: this.user._id,
+        content: {
+          text: sendable.text
+        },
+        to: {
+          provider: this.user.providers.messaging,
+          mobile: this.user.identity.mobile
+        }
       }
-    }
-    return Message.send(sent)
+      Message.send(sent)
+      .then(() => resolve(this))
+      .catch(err => reject(err))
+    })
   }
 
   this.update = function(){
@@ -78,9 +82,9 @@ export default function(options){
     })
   }
 
-  this.completeTask = function(taskId){
+  this.completeTask = function(){
     return new Promise((resolve, reject) => {
-      Queue.completeTodo(this.queue, taskId)
+      Queue.completeTodo(this.queue, this.state.active.taskId)
       .then(queue => {
         console.log(queue)
         this.queue = queue;
@@ -125,19 +129,20 @@ export default function(options){
         .catch(err => reject(err))
       } else {
         this.loaded.task = false
-        resolve()
+        resolve(this)
       }
     })
   }
 
   this.loadActiveStep = function(){
     return new Promise((resolve, reject) => {
-      console.log('Finding step index...')
       if(!this.loaded.task || !this.loaded.task.steps || this.loaded.task.steps.length == 0){
+        console.log('No task loaded, loading next taks from queue...')
         this.loadNextTask()
         .then(() => resolve())
         .catch(err => reject(err))
       } else {
+        console.log('Finding step index...')
         if (!this.state.active.stepId){
           this.state.active.stepId = this.loaded.task.steps[0]._id;
         }
@@ -154,8 +159,8 @@ export default function(options){
         }
 
         this.loaded.step = this.loaded.task.steps[this.loaded.stepIndex];
-        
-        resolve()
+
+        resolve(this)
       }
     })
   }
@@ -164,14 +169,15 @@ export default function(options){
     return new Promise((resolve, reject) => {
       this.loaded.stepIndex ++;
       if(this.loaded.stepIndex > (this.loaded.task.steps.length - 1)){
-        this.loadNextTask()
-        .then(() => resolve())
+        this.completeTask()
+        .then(() => this.loadNextTask())
+        .then(() => resolve(this))
         .catch(err => reject(err))
       } else {
         this.loaded.step = this.loaded.task.steps[this.loaded.stepIndex];
         this.state.active.stepId = this.loaded.step._id;
         this.loadActiveStep()
-        .then(() => resolve())
+        .then(() => resolve(this))
         .catch(err => reject(err))
       }
     })
@@ -183,7 +189,7 @@ export default function(options){
         this.state.active.taskId = this.queue[0].taskId;
         this.state.active.stepId = null;
         this.loadActive()
-        .then(() => resolve())
+        .then(() => resolve(this))
         .catch(err => reject(err))
       } else {
         this.state.active = {

@@ -103,7 +103,7 @@ export function update(req, res) {
   return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
-    .then(task => attachQuestions(task))
+    .then(task => TaskService.attachQuestions(task))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

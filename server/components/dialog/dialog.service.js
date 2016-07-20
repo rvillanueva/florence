@@ -12,7 +12,7 @@ export function handleExpectedResponse(bot) {
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
-      if(step.type == 'question'){
+      if (step.type == 'question') {
         console.log('STEP IS:')
         console.log(step)
         matchChoiceToInput()
@@ -33,14 +33,14 @@ export function handleExpectedResponse(bot) {
   function matchChoiceToInput() {
     return new Promise(function(resolve, reject) {
       setupPatternQuery()
-      .then(query => Parser.searchPatterns(query))
-      .then(matches => resolveAssociatedChoice(matches))
-      .then(choice => resolve(choice))
-      .catch(err => reject(err))
+        .then(query => Parser.searchPatterns(query))
+        .then(matches => resolveAssociatedChoice(matches))
+        .then(choice => resolve(choice))
+        .catch(err => reject(err))
     })
 
-    function setupPatternQuery(){
-      return new Promise(function(resolve, reject){
+    function setupPatternQuery() {
+      return new Promise(function(resolve, reject) {
         console.log('setting up pattern query')
 
         var query = {
@@ -48,8 +48,8 @@ export function handleExpectedResponse(bot) {
           patterns: []
         }
         step.choices = step.choices || [];
-        step.choices.forEach(function(choice, c){
-          choice.patterns.forEach(function(pattern, p){
+        step.choices.forEach(function(choice, c) {
+          choice.patterns.forEach(function(pattern, p) {
             pattern = pattern.toObject();
             pattern.meta = {
               choice: choice
@@ -61,11 +61,11 @@ export function handleExpectedResponse(bot) {
       })
     }
 
-    function resolveAssociatedChoice(matches){
-      return new Promise(function(resolve, reject){
+    function resolveAssociatedChoice(matches) {
+      return new Promise(function(resolve, reject) {
         console.log('resolving matches from')
         console.log(matches)
-        if(matches.length > 0){
+        if (matches.length > 0) {
           resolve(matches[0].meta.choice);
         } else {
           resolve(false);
@@ -80,19 +80,19 @@ export function handleExpectedResponse(bot) {
       console.log(choice)
       choice = true;
       if (choice) {
-        bot.loaded.stepIndex ++;
-        bot.send({
+        var sendable = {
           text: 'Got it.'
-        })
-        .then(() => resolve(choice))
-        .catch(err => reject(err))
+        };
+        bot.send(sendable)
+          .then(() => resolve(choice))
+          .catch(err => reject(err))
       } else {
         bot.state.status = 'waiting';
         bot.send({
-          text: 'Sorry, I didn\'t quite get that. Can you try again?'
-        })
-        .then(() => resolve(choice))
-        .catch(err => reject(err))
+            text: 'Sorry, I didn\'t quite get that. Can you try again?'
+          })
+          .then(() => resolve(choice))
+          .catch(err => reject(err))
       }
 
     })
@@ -117,25 +117,37 @@ export function handleNextStep(bot) {
   return new Promise(function(resolve, reject) {
     console.log('Handling next step...')
     if (bot.state.status == 'responding') {
-        handleTaskCompletion()
+      console.log('Loading next step')
+      loadNextStep()
+        .then(() => handleEmptyQueue())
         .then(() => executeStep())
-        .then(() => incrementStepIndex())
         .then(() => handleNextStep(bot))
-        .then(bot => resolve(bot))
+        .then(() => resolve(bot))
         .catch(err => reject(err))
     } else {
+      console.log('Ending response...')
       resolve(bot)
     }
 
-    function handleTaskCompletion(){
-      return new Promise(function(resolve, reject){
-        console.log('handling task completion')
-        if(bot.loaded.stepIndex > (bot.loaded.task.steps.length - 1)){
-          bot.completeTask(bot.loaded.task._id)
-          .then(bot => bot.loadActive())
-          .then(updatedBot => {
-            bot = updatedBot;
-            return handleEmptyQueue()
+    function loadNextStep() {
+      return new Promise((resolve, reject) => {
+        bot.loadNextStep()
+          .then(updated => {
+            bot = updated;
+            resolve()
+          })
+          .catch(err => reject(err))
+      })
+
+    }
+
+    function handleEmptyQueue() {
+      return new Promise(function(resolve, reject) {
+        console.log('handling empty queue')
+        if (!bot.loaded.task) {
+          bot.state.status = 'waiting';
+          bot.send({
+            text: 'Done!'
           })
           .then(() => resolve())
           .catch(err => reject(err))
@@ -143,36 +155,15 @@ export function handleNextStep(bot) {
           resolve()
         }
       })
-
-      function handleEmptyQueue(){
-        return new Promise(function(resolve, reject){
-          console.log('handling empty queue')
-          if(!bot.loaded.task){
-            bot.state.status == 'waiting';
-            bot.send({
-              text: 'Done!'
-            })
-            .then(updatedBot => {
-              bot = updatedBot;
-              resolve(bot)
-            })
-            .catch(err => reject(err))
-          } else {
-            resolve(bot)
-          }
-        })
-      }
     }
-
-
 
     function executeStep() {
       return new Promise(function(resolve, reject) {
         console.log('executing step')
-        if(bot.state.status == 'responding'){
+        if (bot.state.status == 'responding') {
           DialogExecutionService.run(bot)
-            .then(updatedBot => {
-              bot = updatedBot;
+            .then(updated => {
+              bot = updated;
               resolve()
             })
             .catch(err => reject(err))
@@ -183,27 +174,17 @@ export function handleNextStep(bot) {
 
     }
 
-    function incrementStepIndex(){
-      console.log('incrementing stepindex')
-      return new Promise(function(resolve, reject) {
-        if(bot.state.status == 'responding'){
-          bot.loaded.stepIndex ++;
-        }
-        resolve()
-      })
-    }
-
   })
 }
 
-export function handleNotification(bot){
+export function handleNotification(bot) {
   return new Promise(function(resolve, reject) {
     bot.state.active = {
       taskId: '5786a2dc517d5513c018c9e0'
     }
     executeStep(bot)
-    .then(bot => bot.update())
-    .then(bot => resolve(bot))
-    .catch(err => reject(err))
+      .then(bot => bot.update())
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
   })
 }

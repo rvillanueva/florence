@@ -123,11 +123,9 @@ function handleMessage(message){
 
 export function receive(req, res) {
   return new Promise(function(resolve, reject){
-    var timeout = setTimeout(respondOk(), 5000)
-
     Message.standardize(req.body, 'twilioSMS')
     .then(message => handleMessage(message))
-    .then(() => writeRes())
+    .then(() => respondOk())
     .catch(err => reject(err))
 
     function respondOk(){
