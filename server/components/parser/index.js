@@ -4,7 +4,10 @@ var Promise = require('bluebird');
 
 export function searchPatterns(query){
   return new Promise(function(resolve, reject){
+    console.log('searching with query:')
+    console.log(query)
     var matched = [];
+    query.patterns = query.patterns || [];
     query.patterns.forEach(function(pattern, p){
       // TODO implement other pattern types
       if(pattern.type == 'match'){
@@ -12,6 +15,7 @@ export function searchPatterns(query){
           matched.push(pattern)
         }
       } else {
+        console.log('Unrecognized pattern ' + pattern.type)
         reject(new Error('Pattern type ' + pattern.type + ' not recognized.'))
       }
     })
@@ -23,11 +27,10 @@ export function searchPatterns(query){
 
   function checkMatch(text, pattern){
       var rules = pattern.match.split('\n');
-      var lowercased = text.toLowerCase();
       for(var i = 0; i < rules.length; i++){
         var string = rules[i];
         // TODO Create custom REGEX
-        if(lowercased == string.toLowerCase()){
+        if(text.toLowerCase() == string.toLowerCase()){
           return true;
         }
       }

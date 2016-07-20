@@ -17,10 +17,13 @@ export function handleExpectedResponse(bot) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
       if(step.type == 'question'){
+        console.log('STEP IS:')
+        console.log(step)
         matchChoiceToInput()
           .then(choice => handleReplyToUser(choice))
-          .then(handleResponseStorage(choice))
+          .then(choice => handleResponseStorage(choice))
           .then(() => resolve(bot))
+          .catch(err => reject(err))
       } else {
         bot.state.status = 'responding';
         console.log('Step not a question so ignoring user input...') // FIXME
@@ -36,15 +39,19 @@ export function handleExpectedResponse(bot) {
       setupPatternQuery()
       .then(query => Parser.searchPatterns(query))
       .then(matches => resolveAssociatedChoice(matches))
+      .then(choice => resolve(choice))
       .catch(err => reject(err))
     })
 
     function setupPatternQuery(){
       return new Promise(function(resolve, reject){
+        console.log('setting up pattern query')
+
         var query = {
           text: bot.received.text,
           patterns: []
         }
+        step.choices = step.choices || [];
         step.choices.forEach(function(choice, c){
           choice.patterns.forEach(function(pattern, p){
             pattern = pattern.toObject();
@@ -60,6 +67,8 @@ export function handleExpectedResponse(bot) {
 
     function resolveAssociatedChoice(matches){
       return new Promise(function(resolve, reject){
+        console.log('resolving matches from')
+        console.log(matches)
         if(matches.length > 0){
           resolve(matches[0].meta.choice);
         } else {
@@ -71,13 +80,18 @@ export function handleExpectedResponse(bot) {
 
   function handleReplyToUser(choice) {
     return new Promise(function(resolve, reject) {
+      console.log('Handling reply to user from ')
+      console.log(choice)
+      choice = true;
       if (choice) {
+        bot.stepIndex ++;
         bot.send({
           text: 'Got it.'
         })
         .then(() => resolve(choice))
         .catch(err => reject(err))
       } else {
+        bot.state.status = 'waiting';
         bot.send({
           text: 'Sorry, I didn\'t quite get that. Can you try again?'
         })
@@ -90,6 +104,7 @@ export function handleExpectedResponse(bot) {
 
   function handleResponseStorage(choice) {
     return new Promise(function(resolve, reject) {
+      console.log('Storing response...')
       if (choice) {
         // TODO Build response storage
         resolve(true)
