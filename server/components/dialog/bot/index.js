@@ -159,8 +159,9 @@ export default function(options){
 
       this.state.status = this.state.status || 'waiting';
       this.state.stored = this.state.stored || {};
-
-      resolve(this)
+      this.setupActiveState()
+      .then(resolve(this))
+      .catch(err => reject(err))
     })
   }
 

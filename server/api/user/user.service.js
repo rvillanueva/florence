@@ -11,8 +11,8 @@ export function getUserByPhoneNumber(phoneNumber) {
     var options = {
       user: {
         provider: 'mobile',
-        mobile: {
-          number: phoneNumber
+        identity: {
+          mobile: phoneNumber
         }
       }
     }
@@ -101,7 +101,7 @@ function createInactiveUser(user){
 function queueOnboardingTask(user){
   return new Promise(function(resolve, reject){
     user.queue = user.queue || [];
-    Queue.addTask(user.queue, 'test123')
+    Queue.addTodo(user.queue, 'test123')
     .then(queue => {
       user.queue = queue;
       resolve(user)

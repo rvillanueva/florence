@@ -32,6 +32,18 @@ User.find({}).remove()
         role: 'admin',
         password: 'admin',
         lastActivity: new Date()
+      },{
+        provider: 'local',
+        messaging: 'mobile',
+        identity: {
+          firstName: 'Ryan',
+          lastName: 'Villanueva',
+          email: 'ryan@florence.ai',
+          mobile: '+14154123689'
+        },
+        role: 'admin',
+        password: 'admin',
+        lastActivity: new Date()
       })
       .then(() => {
         console.log('Users populated.');

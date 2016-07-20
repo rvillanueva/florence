@@ -6,9 +6,6 @@ var Promise = require('bluebird');
 // OUTPUT: received.entities, received.attributes
 export function handleNextStep(bot){
   return new Promise(function(resolve, reject){
-    Message.receive(bot.received)
-    .then(() => resolve(bot))
-    .catch(err => reject(err))
   })
 }
 

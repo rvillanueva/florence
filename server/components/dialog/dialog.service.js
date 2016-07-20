@@ -6,17 +6,6 @@ var Parser = require('../parser');
 var DialogExecutionService = require('./dialog.execution');
 var maxLoops = 5;
 
-// INPUT: received.text
-// OUTPUT: received.entities, received.attributes
-export function logMessage(bot) {
-  return new Promise(function(resolve, reject) {
-    Message.receive(bot.received)
-      .then(() => resolve(bot))
-      .catch(err => reject(err))
-  })
-}
-
-
 export function handleExpectedResponse(bot) {
   var step = bot.task.steps[bot.stepIndex];
   var choice = false;
@@ -24,8 +13,8 @@ export function handleExpectedResponse(bot) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
       if(step.type == 'question'){
-        checkChoiceMatch()
-          .then(handleReplyToUser(choice))
+        matchChoiceToInput()
+          .then(choice => handleReplyToUser(choice))
           .then(handleResponseStorage(choice))
           .then(() => resolve(bot))
       } else {
@@ -41,51 +30,57 @@ export function handleExpectedResponse(bot) {
     }
   })
 
-  function checkChoiceMatch() {
+  function matchChoiceToInput() {
     return new Promise(function(resolve, reject) {
-      setupPatternArray()
-      .then(patterns => Parser.checkForPatterns(bot.received.text, patterns))
-      .then(pattern => resolveAssociatedChoice(pattern))
+      setupPatternQuery()
+      .then(query => Parser.searchPatterns(query))
+      .then(matches => resolveAssociatedChoice(matches))
       .catch(err => reject(err))
     })
 
-    function setupPatternArray(){
+    function setupPatternQuery(){
       return new Promise(function(resolve, reject){
-        var patterns = [];
+        var query = {
+          text: bot.received.text,
+          patterns: []
+        }
         step.choices.forEach(function(choice, c){
-          var pushed = choice.pattern;
-          pushed.choiceId = choice._id;
-          patterns.push(pushed);
+          choice.patterns.forEach(function(pattern, p){
+            pattern = pattern.toObject();
+            pattern.meta = {
+              choice: choice
+            }
+            query.patterns.push(pattern);
+          })
         })
-        resolve(patterns);
+        resolve(query);
       })
     }
 
-    function resolveAssociatedChoice(pattern){
-      var found = false;
-      step.choices.forEach(function(stepChoice, s){
-        if(!found && pattern.choiceId == choice._id){
-          choice = stepChoice;
-          resolve();
+    function resolveAssociatedChoice(matches){
+      return new Promise(function(resolve, reject){
+        if(matches.length > 0){
+          resolve(matches[0].meta.choice);
+        } else {
+          resolve(false);
         }
       })
-      resolve()
     }
   }
 
-  function handleReplyToUser() {
+  function handleReplyToUser(choice) {
     return new Promise(function(resolve, reject) {
       if (choice) {
         bot.send({
           text: 'Got it.'
         })
-        .then(() => resolve())
+        .then(() => resolve(choice))
         .catch(err => reject(err))
       } else {
         bot.send({
           text: 'Sorry, I didn\'t quite get that. Can you try again?'
         })
-        .then(() => resolve())
+        .then(() => resolve(choice))
         .catch(err => reject(err))
       }
 
@@ -96,7 +91,7 @@ export function handleExpectedResponse(bot) {
     return new Promise(function(resolve, reject) {
       if (choice) {
         // TODO Build response storage
-        resolve(false)
+        resolve(true)
       } else {
         resolve(false)
       }
@@ -112,8 +107,8 @@ export function handleNextStep(bot) {
         handleTaskCompletion()
         .then(executeStep())
         .then(incrementStepIndex())
-        .then(handleNextStep())
-        .then(resolve(bot))
+        .then(handleNextStep(bot))
+        .then(bot => resolve(bot))
         .catch(err => reject(err))
     } else {
       resolve(bot)
@@ -134,41 +129,49 @@ export function handleNextStep(bot) {
           resolve()
         }
       })
+
+      function handleEmptyQueue(){
+        return new Promise(function(resolve, reject){
+          if(!bot.task){
+            bot.state.status == 'waiting';
+            bot.send({
+              text: 'Done!'
+            })
+            .then(updatedBot => {
+              bot = updatedBot;
+              resolve(bot)
+            })
+            .catch(err => reject(err))
+          } else {
+            resolve(bot)
+          }
+        })
+      }
     }
 
-    function handleEmptyQueue(){
-      return new Promise(function(resolve, reject){
-        if(!bot.task){
-          bot.state.status == 'waiting';
-          bot.send({
-            text: 'Done!'
-          })
-          .then(updatedBot => {
-            bot = updatedBot;
-            resolve(bot)
-          })
-          .catch(err => reject(err))
-        } else {
-          resolve(bot)
-        }
-      })
-    }
+
 
     function executeStep() {
       return new Promise(function(resolve, reject) {
-        DialogExecutionService.run(bot)
-          .then(updatedBot => {
-            bot = updatedBot;
-            resolve()
-          })
-          .catch(err => reject(err))
+        if(bot.state.status == 'responding'){
+          DialogExecutionService.run(bot)
+            .then(updatedBot => {
+              bot = updatedBot;
+              resolve()
+            })
+            .catch(err => reject(err))
+        } else {
+          resolve()
+        }
       })
 
     }
 
     function incrementStepIndex(){
       return new Promise(function(resolve, reject) {
-        bot.stepIndex ++;
+        if(bot.state.status == 'responding'){
+          bot.stepIndex ++;
+        }
         resolve()
       })
     }

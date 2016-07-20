@@ -31,6 +31,7 @@ var UserSchema = new Schema({
   active: Boolean,
   password: String,
   provider: String,
+  delivery: String,
   salt: String,
   created: Date,
   lastActivity: Date,

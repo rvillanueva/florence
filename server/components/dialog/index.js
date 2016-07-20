@@ -8,8 +8,6 @@ export function respond(data){
   return new Promise(function(resolve, reject){
     var bot = new Bot(data);
     bot.init()
-    .then(bot => DialogService.logMessage(bot))
-    .then(bot => bot.setupActiveState(bot))
     .then(bot => DialogService.handleExpectedResponse(bot))
     .then(bot => DialogService.handleNextStep(bot))
     .then(bot => bot.update())

@@ -2,18 +2,22 @@
 
 var Promise = require('bluebird');
 
-export function checkForPatterns(text, patterns){
+export function searchPatterns(query){
   return new Promise(function(resolve, reject){
-    patterns.forEach(function(pattern, p){
+    var matched = [];
+    query.patterns.forEach(function(pattern, p){
       // TODO implement other pattern types
       if(pattern.type == 'match'){
-        if(checkMatch(text, pattern)){
-          resolve(pattern);
+        if(checkMatch(query.text, pattern)){
+          matched.push(pattern)
         }
       } else {
         reject(new Error('Pattern type ' + pattern.type + ' not recognized.'))
       }
     })
+
+    resolve(matched);
+
   })
 
 

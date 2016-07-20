@@ -3,7 +3,6 @@
 var Promise = require('bluebird');
 
 export function addTask(queue, taskId, options) {
-
   return new Promise(function(resolve, reject) {
     if (!taskId) {
       reject('Missing taskId.')
@@ -36,7 +35,7 @@ export function addTask(queue, taskId, options) {
   })
 }
 
-export function completeTask(queue, taskId){
+export function completeTodo(queue, taskId){
   return new Promise((resolve, reject) => {
     var found = false;
     this.queue.forEach((queued, q) => {
@@ -57,7 +56,7 @@ export function completeTask(queue, taskId){
 
 
 
-function isTaskAlreadyQueued(queue, todo) {
+function isTaskAlreadyQueued(queue, todo){
   queue.forEach(function(queued, q) {
     if (queued.taskId == todo.taskId) {
       return q;

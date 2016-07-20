@@ -23,11 +23,6 @@ module.exports = function(config) {
       'client/bower_components/angular-ui-router/release/angular-ui-router.js',
       'client/bower_components/angular-validation-match/dist/angular-validation-match.min.js',
       'client/bower_components/moment/moment.js',
-      'client/bower_components/backbone/backbone.js',
-      'client/bower_components/graphlib/dist/graphlib.core.js',
-      'client/bower_components/dagre/dist/dagre.core.js',
-      'client/bower_components/dagre/dist/dagre.core.min.js',
-      'client/bower_components/jointjs/dist/joint.js',
       'client/bower_components/angular-xeditable/dist/js/xeditable.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
