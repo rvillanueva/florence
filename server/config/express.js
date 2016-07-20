@@ -19,7 +19,6 @@ import passport from 'passport';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import mongoose from 'mongoose';
-import * as request from 'request';
 var MongoStore = connectMongo(session);
 
 export default function(app) {
@@ -85,17 +84,4 @@ export default function(app) {
     app.use(morgan('dev'));
     app.use(errorHandler()); // Error handler - has to be last
   }
-  var options = {
-    uri: 'https://graph.facebook.com/v2.6/me/subscribed_apps',
-    qs: {
-      access_token: process.env.FB_PAGE_TOKEN
-    }
-  }
-  request.post(options, function(err, response, body){
-    if(err){
-      console.log(err)
-    } else {
-      console.log('Subscribed to Facebook webhook.');
-    }
-  })
 }
