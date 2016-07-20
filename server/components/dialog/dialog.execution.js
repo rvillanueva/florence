@@ -12,11 +12,11 @@ var stepRouter = {
 export function run(bot){
   return new Promise(function(resolve, reject){
     var text;
+    var step = bot.loaded.step
     console.log('running')
-    console.log(bot.task)
-    console.log(bot.stepIndex)
-    if(typeof stepRouter[bot.task.steps[bot.stepIndex].type] === 'function'){
-      stepRouter[bot.task.steps[bot.stepIndex].type](bot)
+    console.log(bot.loaded.task)
+    if(typeof stepRouter[step.type] === 'function'){
+      stepRouter[step.type](bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
@@ -27,10 +27,8 @@ export function run(bot){
 
 export function handleQuestion(bot){
   return new Promise(function(resolve, reject){
-    var text = bot.task.steps[bot.stepIndex].question.text
+    var text = bot.loaded.step.question.text;
     bot.state.status = 'waiting';
-    bot.state.active.taskId = bot.task._id;
-    bot.state.active.stepId = bot.task.steps[bot.stepIndex]._id;
     bot.send({
       text: text
     })
@@ -41,7 +39,7 @@ export function handleQuestion(bot){
 
 export function handleSpeech(bot){
   return new Promise(function(resolve, reject){
-    var text = bot.task.steps[bot.stepIndex].speech.text;
+    var text = bot.loaded.task.steps[bot.loaded.stepIndex].speech.text;
     bot.send({
       text: text
     })

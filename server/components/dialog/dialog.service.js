@@ -8,11 +8,7 @@ var maxLoops = 5;
 
 export function handleExpectedResponse(bot) {
   console.log('Handling expected response...')
-  var step = false;
-  if(bot.task){
-    step = bot.task.steps[bot.stepIndex];
-  }
-  var choice = false;
+  var step = bot.loaded.step;
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
@@ -84,7 +80,7 @@ export function handleExpectedResponse(bot) {
       console.log(choice)
       choice = true;
       if (choice) {
-        bot.stepIndex ++;
+        bot.loaded.stepIndex ++;
         bot.send({
           text: 'Got it.'
         })
@@ -134,9 +130,9 @@ export function handleNextStep(bot) {
     function handleTaskCompletion(){
       return new Promise(function(resolve, reject){
         console.log('handling task completion')
-        if(bot.stepIndex > (bot.task.steps.length - 1)){
-          bot.completeTask(bot.task._id)
-          .then(bot => bot.setupActiveState())
+        if(bot.loaded.stepIndex > (bot.loaded.task.steps.length - 1)){
+          bot.completeTask(bot.loaded.task._id)
+          .then(bot => bot.loadActive())
           .then(updatedBot => {
             bot = updatedBot;
             return handleEmptyQueue()
@@ -151,7 +147,7 @@ export function handleNextStep(bot) {
       function handleEmptyQueue(){
         return new Promise(function(resolve, reject){
           console.log('handling empty queue')
-          if(!bot.task){
+          if(!bot.loaded.task){
             bot.state.status == 'waiting';
             bot.send({
               text: 'Done!'
@@ -191,7 +187,7 @@ export function handleNextStep(bot) {
       console.log('incrementing stepindex')
       return new Promise(function(resolve, reject) {
         if(bot.state.status == 'responding'){
-          bot.stepIndex ++;
+          bot.loaded.stepIndex ++;
         }
         resolve()
       })

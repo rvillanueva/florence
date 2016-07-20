@@ -84,8 +84,10 @@ export default function(options){
       .then(queue => {
         console.log(queue)
         this.queue = queue;
-        this.task = null;
-        this.stepIndex = null;
+        this.loaded = {
+          task: null,
+          stepIndex: null
+        }
         this.state.active = {
           taskId: null,
           stepId: null
@@ -97,53 +99,104 @@ export default function(options){
     })
   }
 
-  this.setupActiveState = function(){
+
+
+  // LOADING
+
+  this.loadActive = function(){
     return new Promise((resolve, reject) => {
       console.log('Setting up active state...')
-      this.getActiveTask()
-      .then(() => this.findStepIndex())
+      this.loadActiveTask()
+      .then(() => this.loadActiveStep())
       .then(() => resolve(this))
       .catch(err => reject(err))
     })
   }
 
-  this.getActiveTask = function(){
+  this.loadActiveTask = function(){
     return new Promise((resolve, reject) => {
-      var queued = false;
-      if(this.queue.length > 0){
-        queued = this.queue[0];
-      }
-      var taskId = this.state.active.taskId || queued.taskId || false;
+      var taskId = this.state.active.taskId;
       if(typeof taskId === 'string'){
         TaskService.getById(taskId)
         .then(task => {
-          this.task = task || false;
+          this.loaded.task = task || false;
           resolve()
         })
         .catch(err => reject(err))
       } else {
-        this.task = false
+        this.loaded.task = false
         resolve()
       }
     })
   }
 
-  this.findStepIndex = function(){
+  this.loadActiveStep = function(){
     return new Promise((resolve, reject) => {
       console.log('Finding step index...')
-      this.stepIndex = null;
-      if(this.task && this.task.steps && this.state.active.stepId){
-        console.log(this.task)
-        this.task.steps.forEach((step, s) => {
+      if(!this.loaded.task || !this.loaded.task.steps || this.loaded.task.steps.length == 0){
+        this.loadNextTask()
+        .then(() => resolve())
+        .catch(err => reject(err))
+      } else {
+        if (!this.state.active.stepId){
+          this.state.active.stepId = this.loaded.task.steps[0]._id;
+        }
+
+        this.loaded.task.steps.forEach((step, s) => {
           if(step._id === this.state.active.stepId){
-            this.stepIndex = s;
+            this.loaded.stepIndex = s;
           }
         })
-        if(!this.stepIndex){
-          this.stepIndex = 0;
+
+        if(!this.loaded.stepIndex){
+          this.loaded.stepIndex = 0;
+          this.state.active.stepId = this.loaded.task.steps[0]._id;
         }
+
+        this.loaded.step = this.loaded.task.steps[this.loaded.stepIndex];
+        
+        resolve()
       }
-      resolve()
+    })
+  }
+
+  this.loadNextStep = function(){
+    return new Promise((resolve, reject) => {
+      this.loaded.stepIndex ++;
+      if(this.loaded.stepIndex > (this.loaded.task.steps.length - 1)){
+        this.loadNextTask()
+        .then(() => resolve())
+        .catch(err => reject(err))
+      } else {
+        this.loaded.step = this.loaded.task.steps[this.loaded.stepIndex];
+        this.state.active.stepId = this.loaded.step._id;
+        this.loadActiveStep()
+        .then(() => resolve())
+        .catch(err => reject(err))
+      }
+    })
+  }
+
+  this.loadNextTask = function(){
+    return new Promise((resolve, reject) => {
+      if(this.queue.length > 0){
+        this.state.active.taskId = this.queue[0].taskId;
+        this.state.active.stepId = null;
+        this.loadActive()
+        .then(() => resolve())
+        .catch(err => reject(err))
+      } else {
+        this.state.active = {
+          taskId: null,
+          stepId: null
+        }
+        this.loaded = {
+          task: false,
+          step: false,
+          stepIndex: false
+        }
+        resolve();
+      }
     })
   }
 
@@ -157,7 +210,7 @@ export default function(options){
 
       this.state.status = this.state.status || 'waiting';
       this.state.active = this.state.active || {};
-      this.setupActiveState()
+      this.loadActive()
       .then(() => resolve(this))
       .catch(err => reject(err))
     })
