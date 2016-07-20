@@ -136,7 +136,7 @@ export function handleNextStep(bot) {
         console.log('handling task completion')
         if(bot.stepIndex > (bot.task.steps.length - 1)){
           bot.completeTask(bot.task._id)
-          .then(bot => bot.loadNextTask())
+          .then(bot => bot.setupActiveState())
           .then(updatedBot => {
             bot = updatedBot;
             return handleEmptyQueue()

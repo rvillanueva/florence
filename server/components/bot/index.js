@@ -24,7 +24,11 @@ export default function(options){
   this.state = options.user.state || {};
   this.queue = options.user.queue || [];
   this.received = options.received;
-
+  this.loaded = {
+    task: null,
+    stepIndex: null,
+    step: null
+  }
   this.loops = 0;
 
   // METHODS
@@ -76,7 +80,6 @@ export default function(options){
 
   this.completeTask = function(taskId){
     return new Promise((resolve, reject) => {
-      console.log('completing task')
       Queue.completeTodo(this.queue, taskId)
       .then(queue => {
         console.log(queue)
@@ -94,35 +97,10 @@ export default function(options){
     })
   }
 
-  this.loadNextTask = function(taskId){
-    return new Promise((resolve, reject) => {
-      console.log('loading next task from queue:')
-      console.log(this.queue)
-      if(this.queue.length > 0){
-        this.state.active.taskId = this.queue[0].taskId;
-        this.setupActiveState()
-        .then(() => resolve(this))
-        .catch(err => reject(err))
-      } else {
-        this.task = null;
-        this.stepIndex = null;
-        resolve(this)
-      }
-
-      function handleEmptyQueue(){
-        this.state.status = 'waiting';
-        return this.send({
-          text: 'Done!'
-        })
-      }
-    })
-  }
-
   this.setupActiveState = function(){
     return new Promise((resolve, reject) => {
       console.log('Setting up active state...')
       this.getActiveTask()
-      .then(() => this.handleNoActiveStep())
       .then(() => this.findStepIndex())
       .then(() => resolve(this))
       .catch(err => reject(err))
@@ -131,14 +109,11 @@ export default function(options){
 
   this.getActiveTask = function(){
     return new Promise((resolve, reject) => {
-      console.log('ANONYMOUS FUNC CHECK')
-      console.log(this.queue)
       var queued = false;
       if(this.queue.length > 0){
         queued = this.queue[0];
       }
       var taskId = this.state.active.taskId || queued.taskId || false;
-      console.log(taskId)
       if(typeof taskId === 'string'){
         TaskService.getById(taskId)
         .then(task => {
@@ -153,21 +128,11 @@ export default function(options){
     })
   }
 
-  this.handleNoActiveStep = function(){
-    return new Promise((resolve, reject) => {
-      console.log('checking if active step')
-      if(!this.state.active.stepId && this.task && this.task.steps.length > 0){
-        this.state.active.stepId = this.task.steps[0]._id;
-      }
-      resolve()
-    })
-  }
-
   this.findStepIndex = function(){
     return new Promise((resolve, reject) => {
       console.log('Finding step index...')
       this.stepIndex = null;
-      if(this.task && this.task.steps){
+      if(this.task && this.task.steps && this.state.active.stepId){
         console.log(this.task)
         this.task.steps.forEach((step, s) => {
           if(step._id === this.state.active.stepId){
