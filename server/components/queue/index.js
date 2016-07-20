@@ -38,18 +38,18 @@ export function addTask(queue, taskId, options) {
 export function completeTodo(queue, taskId){
   return new Promise((resolve, reject) => {
     var found = false;
-    this.queue.forEach((queued, q) => {
+    queue = queue || [];
+    queue.forEach((queued, q) => {
       if(queued.taskId == taskId){
         // TODO log completion before deletion
-        queued.splice(q,1);
+        queue.splice(q,1);
         found = true;
       }
     })
-
     if(found){
-      resolve(queued)
+      resolve(queue)
     } else {
-      reject('Task with id ' + taskId + ' not found in queue.')
+      reject(new Error('Task with id ' + taskId + ' not found in queue.'))
     }
   })
 }

@@ -7,7 +7,11 @@ var DialogExecutionService = require('./dialog.execution');
 var maxLoops = 5;
 
 export function handleExpectedResponse(bot) {
-  var step = bot.task.steps[bot.stepIndex];
+  console.log('Handling expected response...')
+  var step = false;
+  if(bot.task){
+    step = bot.task.steps[bot.stepIndex];
+  }
   var choice = false;
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
@@ -18,11 +22,8 @@ export function handleExpectedResponse(bot) {
           .then(handleResponseStorage(choice))
           .then(() => resolve(bot))
       } else {
-        console.log('ERROR: Waiting step is not a question. Resetting active state.');
-        bot.state.active = {
-          taskId: null,
-          stepId: null
-        }
+        bot.state.status = 'responding';
+        console.log('Step not a question so ignoring user input...') // FIXME
         resolve(bot)
       }
     } else {
@@ -103,11 +104,12 @@ export function handleExpectedResponse(bot) {
 
 export function handleNextStep(bot) {
   return new Promise(function(resolve, reject) {
-    if (bot.state.status == 'ready') {
+    console.log('Handling next step...')
+    if (bot.state.status == 'responding') {
         handleTaskCompletion()
-        .then(executeStep())
-        .then(incrementStepIndex())
-        .then(handleNextStep(bot))
+        .then(() => executeStep())
+        .then(() => incrementStepIndex())
+        .then(() => handleNextStep(bot))
         .then(bot => resolve(bot))
         .catch(err => reject(err))
     } else {
@@ -116,6 +118,7 @@ export function handleNextStep(bot) {
 
     function handleTaskCompletion(){
       return new Promise(function(resolve, reject){
+        console.log('handling task completion')
         if(bot.stepIndex > (bot.task.steps.length - 1)){
           bot.completeTask(bot.task._id)
           .then(bot => bot.loadNextTask())
@@ -132,6 +135,7 @@ export function handleNextStep(bot) {
 
       function handleEmptyQueue(){
         return new Promise(function(resolve, reject){
+          console.log('handling empty queue')
           if(!bot.task){
             bot.state.status == 'waiting';
             bot.send({
@@ -153,6 +157,7 @@ export function handleNextStep(bot) {
 
     function executeStep() {
       return new Promise(function(resolve, reject) {
+        console.log('executing step')
         if(bot.state.status == 'responding'){
           DialogExecutionService.run(bot)
             .then(updatedBot => {
@@ -168,6 +173,7 @@ export function handleNextStep(bot) {
     }
 
     function incrementStepIndex(){
+      console.log('incrementing stepindex')
       return new Promise(function(resolve, reject) {
         if(bot.state.status == 'responding'){
           bot.stepIndex ++;

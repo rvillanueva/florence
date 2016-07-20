@@ -4,8 +4,24 @@ var Promise = require('bluebird');
 
 // INPUT: received.text
 // OUTPUT: received.entities, received.attributes
-export function handleNextStep(bot){
+export function run(bot){
   return new Promise(function(resolve, reject){
+    var text;
+    console.log('running')
+    console.log(bot.task)
+    console.log(bot.stepIndex)
+    if(bot.task.steps[bot.stepIndex].speech){
+      text = bot.task.steps[bot.stepIndex].speech.text
+    }
+    if(bot.task.steps[bot.stepIndex].question){
+      text = bot.task.steps[bot.stepIndex].question.text
+    }
+    console.log(text)
+    bot.send({
+      text: text
+    })
+    .then(() => resolve(bot))
+    .catch(err => reject(err))
   })
 }
 

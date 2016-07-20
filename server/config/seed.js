@@ -50,6 +50,11 @@ User.find({}).remove()
         active: true,
         role: 'admin',
         password: 'admin',
+        queue: [
+          {
+            taskId: '5786a2dc517d5513c018c9f6'
+          }
+        ],
         lastActivity: new Date()
       })
       .then(() => {
