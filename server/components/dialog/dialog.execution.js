@@ -2,6 +2,11 @@
 
 var Promise = require('bluebird');
 
+var stepRouter = {
+  question: handleQuestion,
+  speech: handleSpeech
+}
+
 // INPUT: received.text
 // OUTPUT: received.entities, received.attributes
 export function run(bot){
@@ -10,16 +15,22 @@ export function run(bot){
     console.log('running')
     console.log(bot.task)
     console.log(bot.stepIndex)
-    if(bot.task.steps[bot.stepIndex].speech){
-      text = bot.task.steps[bot.stepIndex].speech.text
+    if(typeof stepRouter[bot.task.steps[bot.stepIndex].type] === 'function'){
+      stepRouter[bot.task.steps[bot.stepIndex].type](bot)
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
+    } else {
+      reject(new Error('Unrecognized step type ' + ' for step '))
     }
-    if(bot.task.steps[bot.stepIndex].question){
-      text = bot.task.steps[bot.stepIndex].question.text
-      bot.state.status = 'waiting';
-      bot.state.active.taskId = bot.task._id;
-      bot.state.active.stepId = bot.task.steps[bot.stepIndex]._id;
-    }
-    console.log(text)
+  })
+}
+
+export function handleQuestion(bot){
+  return new Promise(function(resolve, reject){
+    var text = bot.task.steps[bot.stepIndex].question.text
+    bot.state.status = 'waiting';
+    bot.state.active.taskId = bot.task._id;
+    bot.state.active.stepId = bot.task.steps[bot.stepIndex]._id;
     bot.send({
       text: text
     })
@@ -28,23 +39,19 @@ export function run(bot){
   })
 }
 
-export function loadNextStep(bot){
-  return new Promise(function(resolve, reject){
-
-  })
-}
-
-export function handleQuestion(bot){
-  return new Promise(function(resolve, reject){
-  })
-}
-
-export function handleAction(bot){
-  return new Promise(function(resolve, reject){
-  })
-}
-
 export function handleSpeech(bot){
+  return new Promise(function(resolve, reject){
+    var text = bot.task.steps[bot.stepIndex].speech.text;
+    bot.send({
+      text: text
+    })
+    .then(() => resolve(bot))
+    .catch(err => reject(err))
+  })
+}
+
+/*
+export function handleAction(bot){
   return new Promise(function(resolve, reject){
   })
 }
@@ -52,4 +59,4 @@ export function handleSpeech(bot){
 export function handleEnd(bot){
   return new Promise(function(resolve, reject){
   })
-}
+}*/
