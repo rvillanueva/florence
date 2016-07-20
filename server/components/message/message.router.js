@@ -4,8 +4,8 @@ var TwilioService = require('./twilio');
 
 export function deliver(message){
   return new Promise(function(resolve, reject){
-    if(message.provider == 'mobile'){
-      var log = message.text || message.attachment;
+    if(message.to.provider == 'sms'){
+      var log = message.content.text || message.content.attachments;
       console.log('Reply to ' + message.userId + ': ' + log);
       TwilioService.send(message)
       .then(log => resolve(log))

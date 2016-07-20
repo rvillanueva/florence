@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-import Bot from './bot';
+import Bot from '../bot';
 var DialogService = require('./dialog.service');
 
 export function respond(data){

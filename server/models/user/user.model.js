@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
 
-const authTypes = ['github', 'twitter', 'facebook', 'google', 'messenger'];
+const authTypes = ['mobile'];
 
 var UserSchema = new Schema({
   identity: {
@@ -17,6 +17,23 @@ var UserSchema = new Schema({
       lowercase: true
     },
     mobile: String,
+  },
+  permissions: {
+    smsNotify: {
+      active: Boolean
+    },
+    smsPHI: {
+      active: Boolean,
+      waiverId: String
+    },
+    emailPHI: {
+      active: Boolean,
+      waiverId: String
+    }
+  },
+  providers: {
+    auth: String,
+    messaging: String
   },
   settings: {
     timezone: String,
@@ -30,19 +47,15 @@ var UserSchema = new Schema({
   },
   active: Boolean,
   password: String,
-  provider: String,
-  delivery: String,
   salt: String,
   created: Date,
   lastActivity: Date,
-  programs: [
-    {
-      programId: String
-    }
-  ],
+  programs: [{
+    programId: String
+  }],
   queue: [{
     taskId: String,
-    forced: Boolean,
+    immediate: Boolean,
     started: Date,
     added: Date
   }],
@@ -84,13 +97,6 @@ UserSchema
     };
   });
 
-
-UserSchema
-  .virtual('name')
-  .get(function () {
-    return this.firstName + ' ' + this.lastName;
-  });
-
 /**
  * Validations
  */
@@ -99,7 +105,7 @@ UserSchema
 UserSchema
   .path('identity.email')
   .validate(function(email) {
-    if (authTypes.indexOf(this.provider) !== -1) {
+    if (authTypes.indexOf(this.providers.auth) !== -1) {
       return true;
     }
     return email.length;
@@ -109,7 +115,7 @@ UserSchema
 UserSchema
   .path('password')
   .validate(function(password) {
-    if (authTypes.indexOf(this.provider) !== -1) {
+    if (authTypes.indexOf(this.providers.auth) !== -1) {
       return true;
     }
     return password.length;
@@ -149,7 +155,7 @@ UserSchema
       return next();
     }
 
-    if (!validatePresenceOf(this.password) && authTypes.indexOf(this.provider) === -1) {
+    if (!validatePresenceOf(this.password) && authTypes.indexOf(this.providers.auth) === -1) {
       return next(new Error('Invalid password'));
     }
 

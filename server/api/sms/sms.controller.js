@@ -14,8 +14,7 @@ import _ from 'lodash';
 var Promise = require('bluebird');
 var Message = require('../../components/message');
 var Dialog = require('../../components/dialog');
-import User from '../user/user.model';
-var UserService = require('../user/user.service');
+var UserService = require('../../components/user');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -69,7 +68,7 @@ function handleMessage(message){
   return new Promise(function(resolve, reject){
     console.log('Received:')
     console.log(message);
-    UserService.getUserByPhoneNumber(message.mobile)
+    UserService.getUserByPhoneNumber(message.from.mobile)
     .then(user => handleReply(user))
     .then(() => resolve(true))
     .catch(err => reject(err))
@@ -82,7 +81,9 @@ function handleMessage(message){
         .then(() => resolve(true))
         .catch(err => reject(err))
       } else {
-        resolve(true);
+        replyToInactiveUser(user)
+        .then(() => resolve(true))
+        .catch(err => reject(err))
       }
     })
   }
@@ -98,6 +99,26 @@ function handleMessage(message){
       resolve(options);
     })
   }
+
+  function replyToInactiveUser(user){
+    return new Promise(function(resolve, reject){
+      console.log('Sending inactive user reply...')
+      var sendable = {
+        userId: user._id,
+        to: {
+          provider: 'sms',
+          mobile: user.identity.mobile,
+        },
+        content: {
+          text: 'Sorry, it looks like this number has not yet been activated in our system. If you think this is in error, talk with your referring care provider.'
+        }
+      }
+      Message.send(sendable)
+      .then(() => resolve(user))
+      .catch(err => reject(err))
+    })
+  }
+
 }
 
 export function receive(req, res) {

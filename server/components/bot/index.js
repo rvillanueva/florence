@@ -2,9 +2,9 @@
 
 var Promise = require('bluebird');
 
-import User from '../../../api/user';
+import User from '../../models/user/user.model';
 var Queue = require('../queue');
-var Message = require('../../message');
+var Message = require('../message');
 
 /*
 USER DATA REQUIRED:

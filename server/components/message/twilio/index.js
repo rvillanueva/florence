@@ -15,8 +15,15 @@ export function standardize(data){
       content: {
         text: data.Body
       },
+      to: {
+        mobile: data.To
+      },
+      from: {
+        provider: 'twilioSms',
+        mobile: data.From
+      },
       meta: {
-        twilio: data
+        twilioSms: data
       }
     }
     resolve(message)

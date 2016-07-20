@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 var CheckIn = require('../services/checkin');
 var Bot = require('../bot');
-import User from '../api/user/user.model';
+import User from '../models/user/user.model';
 import config from '../config/environment';
 var Agenda = require('agenda');
 var agenda = new Agenda({db: {address: config.mongo.uri}});

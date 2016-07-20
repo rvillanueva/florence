@@ -4,7 +4,7 @@
  */
 
 'use strict';
-import User from '../api/user/user.model';
+import User from '../models/user/user.model';
 import Program from '../models/program/program.model';
 import Task from '../models/task/task.model';
 import Question from '../models/question/question.model';
@@ -14,7 +14,9 @@ import mongoose from 'mongoose';
 User.find({}).remove()
   .then(() => {
     User.create({
-        provider: 'local',
+        providers: {
+          auth: 'local'
+        },
         identity: {
           firstName: 'Test',
           lastName: 'User',
@@ -23,7 +25,9 @@ User.find({}).remove()
         password: 'test',
         lastActivity: new Date()
       }, {
-        provider: 'local',
+        providers: {
+          auth: 'local'
+        },
         identity: {
           firstName: 'Admin',
           lastName: 'User',
@@ -33,14 +37,17 @@ User.find({}).remove()
         password: 'admin',
         lastActivity: new Date()
       },{
-        provider: 'local',
-        messaging: 'mobile',
+        providers: {
+          auth: 'local',
+          messaging: 'sms'
+        },
         identity: {
           firstName: 'Ryan',
           lastName: 'Villanueva',
           email: 'ryan@florence.ai',
           mobile: '+14154123689'
         },
+        active: true,
         role: 'admin',
         password: 'admin',
         lastActivity: new Date()
