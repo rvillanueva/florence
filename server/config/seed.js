@@ -74,6 +74,18 @@ Task.find({}).remove()
         description: 'The greeting to initiate a patient interaction.',
         steps: [
           {
+            type: 'speech',
+            speech: {
+              text: 'Hi 1'
+            }
+          },
+          {
+            type: 'speech',
+            speech: {
+              text: 'Hi 2'
+            }
+          },
+          {
             type: 'question',
             questionId: '57891a3a678d9fcc2340955a'
           }
