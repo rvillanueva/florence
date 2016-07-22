@@ -4,21 +4,42 @@ var Promise = require('bluebird');
 var Queue = require('../queue');
 var TaskService = require('../task');
 
-export function loadActive(){
+export function loadNextStep(){
   return new Promise((resolve, reject) => {
-    console.log('Setting up active state...')
-    this.handleNoTask()
-    .then(() => this.loadActiveTask())
-    .then(() => this.handleSteplessTask())
-    .then(() => this.loadActiveStep())
-    .then(() => resolve(this))
-    .catch(err => reject(err))
-  })
+    this.loaded.stepIndex ++;
+    if(this.loaded.task && this.loaded.task.steps && this.loaded.task.steps.length > 0){
+      if(this.loaded.stepIndex > (this.loaded.task.steps.length - 1)){
+        this.completeTask()
+        .then(() => resolve(this))
+        .catch(err => reject(err))
+      } else {
+        this.state.active.stepId = this.loaded.task.steps[this.loaded.stepIndex]._id;
+        this.loadActiveStep()
+        .then(() => resolve(this))
+        .catch(err => reject(err))
+      }
+    } else {
+      resolve(this)
+    }
 
+  })
 }
 
-export function handleNoTask(){
+
+// HIDDEN METHODS
+
+export function initLoaderMethods(){
+  this.handleNoTask = handleNoTask;
+  this.loadActiveTask = loadActiveTask;
+  this.handleSteplessTask = handleSteplessTask;
+  this.loadActiveStep = loadActiveStep;
+  this.loadNextTask = loadNextTask;
+  this.setNextTask = setNextTask;
+}
+
+function handleNoTask(){
   return new Promise((resolve, reject) => {
+    console.log(this)
     if(!this.state.active.taskId){
       console.log('No task loaded, loading next task from queue...')
       this.setNextTask()
@@ -30,7 +51,7 @@ export function handleNoTask(){
   })
 }
 
-export function handleSteplessTask(){
+function handleSteplessTask(){
   return new Promise((resolve, reject) => {
     console.log('Active load is:')
     console.log(this.loaded.task)
@@ -46,7 +67,7 @@ export function handleSteplessTask(){
   })
 }
 
-export function loadActiveTask(){
+function loadActiveTask(){
   return new Promise((resolve, reject) => {
     var taskId = this.state.active.taskId;
     if(typeof taskId === 'string'){
@@ -69,7 +90,7 @@ export function loadActiveTask(){
   })
 }
 
-export function loadActiveStep(){
+function loadActiveStep(){
   return new Promise((resolve, reject) => {
       console.log('Finding step index...')
       console.log(this.state.active)
@@ -101,7 +122,7 @@ export function loadActiveStep(){
   })
 }
 
-export function loadNextTask(){
+function loadNextTask(){
   return new Promise((resolve, reject) => {
     this.setNextTask()
     .then(() => this.loadActive())
@@ -110,28 +131,7 @@ export function loadNextTask(){
   })
 }
 
-export function loadNextStep(){
-  return new Promise((resolve, reject) => {
-    this.loaded.stepIndex ++;
-    if(this.loaded.task && this.loaded.task.steps && this.loaded.task.steps.length > 0){
-      if(this.loaded.stepIndex > (this.loaded.task.steps.length - 1)){
-        this.completeTask()
-        .then(() => resolve(this))
-        .catch(err => reject(err))
-      } else {
-        this.state.active.stepId = this.loaded.task.steps[this.loaded.stepIndex]._id;
-        this.loadActiveStep()
-        .then(() => resolve(this))
-        .catch(err => reject(err))
-      }
-    } else {
-      resolve(this)
-    }
-
-  })
-}
-
-export function setNextTask(){
+function setNextTask(){
   return new Promise((resolve, reject) => {
     this.loaded = {
       task: false,

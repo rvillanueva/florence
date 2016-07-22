@@ -110,15 +110,19 @@ export default function(options){
 
   // LOADING
 
-  this.loadActive = BotLoaderService.loadActive;
-  this.handleNoTask = BotLoaderService.handleNoTask; // should be hidden
-  this.loadActiveTask = BotLoaderService.loadActiveTask; // hide
-  this.handleSteplessTask = BotLoaderService.handleSteplessTask; // hide
-  this.loadActiveStep = BotLoaderService.loadActiveStep; //hide
-  this.loadNextTask = BotLoaderService.loadNextTask; // hide???
-  this.setNextTask = BotLoaderService.setNextTask; // hide
+  this.loadActive = function(){
+    return new Promise((resolve, reject) => {
+      console.log('Setting up active state...')
+      this.handleNoTask()
+      .then(() => this.loadActiveTask())
+      .then(() => this.handleSteplessTask())
+      .then(() => this.loadActiveStep())
+      .then(() => resolve(this))
+      .catch(err => reject(err))
+    })
+  }
   this.loadNextStep = BotLoaderService.loadNextStep;
-
+  this.initLoaderMethods = BotLoaderService.initLoaderMethods;
 
 
 
@@ -129,6 +133,7 @@ export default function(options){
 
       this.state.status = this.state.status || 'waiting';
       this.state.active = this.state.active || {};
+      this.initLoaderMethods();
       this.loadActive()
       .then(() => resolve(this))
       .catch(err => reject(err))
