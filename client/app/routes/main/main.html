@@ -5,15 +5,29 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-body">
-            <form>
-              <div class="row form-group">
-                <div class="col-md-2">Patient: </div>
-                <div class="col-md-8"><input class="form-control" placeholder="Find patient by last name or phone number..."> </div>
+            <div class="row form-group" style="height: 360px;">
+              <div class="col-md-4">
+                <div>
+                  <form ng-submit="$ctrl.searchPatients()">
+                    <input class="form-control" placeholder="Find patient..." ng-model="$ctrl.patientSearchQuery">
+                    <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+                  </form>
+                </div>
+                <br>
+                <div ng-repeat="(p, patient) in $ctrl.commandCenter.patients">
+                  <a ui-sref="profile({id:patient._id})"><strong>{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</strong></a>&nbsp;<a href="#" ng-click="$ctrl.removePatient(p)">&times;</a>
+                </div>
               </div>
-              <div class="row form-group">
-                <div class="col-md-2">Action: </div>
-                <div class="col-md-8"><input class="form-control" placeholder="Choose action..."> </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-4">
+                <select class="form-control">
+                  <option>Add to program</option>
+                </select>
               </div>
+              <div class="col-md-8">
+                <input class="form-control" placeholder="Choose program..."> </div>
+            </div>
             <!--
             Who has adherence problems?
             Single button press to act on adherence failures

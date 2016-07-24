@@ -17,6 +17,7 @@ import Task from '../../models/task/task.model';
 
 function attachTasks(program) {
     return new Promise(function(resolve, reject){
+      console.log('attaching tasks...')
       var taskIndex = {};
       program.protocols = program.protocols || [];
       getTasks();
@@ -34,6 +35,8 @@ function attachTasks(program) {
             program.protocols.forEach(function(protocol, p){
               protocol.task = taskIndex[protocol.taskId];
             })
+            console.log('resolving after attaching...')
+            console.log(program)
             resolve(program);
           })
           .catch(err => reject(err))
@@ -42,14 +45,13 @@ function attachTasks(program) {
 }
 
 function convertToTaskIds(program){
-  return new Promise(function(resolve, reject){
     program.protocols = program.protocols || [];
     program.protocols.forEach(function(protocol, p){
       protocol.taskId = protocol.task._id;
       delete protocol.task;
     })
-    resolve(program);
-  })
+    console.log(program)
+    return program;
 }
 
 function respondWithResult(res, statusCode) {
@@ -62,13 +64,15 @@ function respondWithResult(res, statusCode) {
 }
 
 function saveUpdates(updates) {
-  return function(program) {
-    program.protocols = [];
+  return function(entity) {
+    entity.protocols = [];
+    console.log('saving updates')
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
-        updated = updated.toObject()
-        return updated;
+        var leanObject = updated.toObject();
+        console.log(leanObject)
+        return leanObject;
       });
   };
 }
@@ -129,10 +133,11 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
+  var program = req.body;
+  convertToTaskIds(req.body);
   return Program.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(program => convertToTaskIds(program))
-    .then(program => saveUpdates(program))
+    .then(saveUpdates(req.body))
     .then(program => attachTasks(program))
     .then(respondWithResult(res))
     .catch(handleError(res));

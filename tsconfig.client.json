@@ -54,6 +54,7 @@
         "client/components/modal/modal.service.ts",
         "client/components/modals/addProtocol/addProtocol.controller.ts",
         "client/components/modals/createUser/createUser.controller.ts",
+        "client/components/modals/searchPatients/searchPatients.controller.ts",
         "client/components/mongoose-error/mongoose-error.directive.ts",
         "client/components/navbar-manage/navbar-manage.controller.ts",
         "client/components/navbar-manage/navbar-manage.directive.ts",
