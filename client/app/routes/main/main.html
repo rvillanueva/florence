@@ -1,35 +1,35 @@
 <navbar style="position:absolute; top: 0;left:0; right:0;"></navbar>
 <div class="main-page fill-height">
   <div class="command-center fill-height">
-    <div class="fill-height">
-      <div class="command-sidebar fill-height">
-        <div class="navbar-spacer"></div>
-         <div>
-          <form ng-submit="$ctrl.searchPatients()">
-            <input class="form-control" placeholder="Find patient..." ng-model="$ctrl.patientSearchQuery">
-            <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
-          </form>
-        </div>
-        <br>
-        <ul class="list-group">
-          <li class="list-group-item" ng-repeat="(p, patient) in $ctrl.commandCenter.patients">
-            <a ui-sref="profile({id:patient._id})"><strong>{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</strong></a>&nbsp;<a href="#" ng-click="$ctrl.removePatient(p)">&times;</a>
-          </li>
-        </ul>
+    <div class="command-sidebar-left navbar-spaced">
+      <div class="user-searchbar">
+        <form ng-submit="$ctrl.createPatient()">
+          <input class="form-control" placeholder="Find patient..." ng-model="$ctrl.patientSearchQuery">
+          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+        </form>
       </div>
-      <div class="command-messagebox fill-height">
-        <div class="navbar-spacer"></div>
-        <message-box messages="$ctrl.commandCenter.messages"></message-box>
+      <div class="user-list">
+        <div class="user-list-item" ng-class="{'user-list-item-selected': patient._id == $ctrl.selected.patient._id}" ng-repeat="(p, patient) in $ctrl.patients" ng-click="$ctrl.selectPatient(patient._id)">
+          <p class="user-name-text">{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</p>
+        </div>
       </div>
     </div>
-    <div class="command-inputbar">
-      <div class="command-inputbar-left">
-        <select class="form-control">
-          <option>Add to program</option>
-        </select>
-      </div>
-      <div class="command-inputbar-right">
-        <input class="form-control" placeholder="Choose program...">
+    <div class="command-messagebox navbar-spaced">
+        <message-box messages="$ctrl.selected.messages"></message-box>
+        <div class="command-inputbar">
+          <input class="form-control" placeholder="Type message here...">
+        </div>
+    </div>
+    <div class="command-sidebar-right navbar-spaced">
+      <div class="command-sidebar-right-content">
+        <p class="user-name-text">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</p>
+        <br><br>
+        Upcoming Tasks
+        <div class="list-group">
+          <div class="list-group-item" ng-repeat="todo in $ctrl.selected.patient.queue">
+            {{todo.task.name}}
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -1,15 +1,46 @@
 'use strict';
 
 import User from '../../models/user/user.model';
+import Task from '../../models/task/task.model';
 import passport from 'passport';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
-
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
     res.status(statusCode).json(err);
   }
+}
+
+function attachTasks(user){
+      return new Promise(function(resolve, reject){
+        console.log('attaching tasks...')
+        var taskIndex = {};
+        if(!user){
+          resolve(false)
+        } else {
+          user.queue = user.queue || [];
+          getTasks();
+        }
+
+        function getTasks(){
+          var taskIds = [];
+            user.queue.forEach(function(todo, t){
+              taskIds.push(todo.taskId)
+            })
+            Task.find({'_id': {'$in': taskIds}}).exec()
+            .then(tasks => {
+              tasks.forEach(function(task, t){
+                taskIndex[task._id] = task;
+              })
+              user.queue.forEach(function(todo, t){
+                todo.task = taskIndex[todo.taskId];
+              })
+              resolve(user);
+            })
+            .catch(err => reject(err))
+        }
+      })
 }
 
 function handleError(res, statusCode) {
@@ -44,7 +75,7 @@ export function index(req, res) {
     }
   }
 
-  return User.find(query, '-salt -password').exec()
+  return User.find(query, 'identity').exec()
     .then(users => {
       res.status(200).json(users);
     })
@@ -88,12 +119,13 @@ export function create(req, res, next) {
 export function show(req, res, next) {
   var userId = req.params.id;
 
-  return User.findById(userId).exec()
+  return User.findById(userId, '-salt -password').lean().exec()
+    .then(user => attachTasks(user))
     .then(user => {
       if (!user) {
         return res.status(404).end();
       }
-      res.json(user.profile);
+      res.json(user);
     })
     .catch(err => next(err));
 }

@@ -1,7 +1,9 @@
-$divider-color: rgb(199, 199, 199);
+$divider-color: rgb(208, 208, 208);
 
 .command-center {
   background-color: white;
+  display: flex;
+  flex-direction: row;
 }
 
 .main-page {
@@ -28,23 +30,76 @@ $divider-color: rgb(199, 199, 199);
     padding: 10px;
     overflow: auto;
   }
+  & input, input:focus{
+    border: none;
+    outline: none;
+  }
 }
 
-.command-sidebar {
-  width: 30%;
-  max-width: 340px;
-  padding: 10px;
-  margin-left: -1px;
+.command-sidebar-left, .command-sidebar-right {
   border-style: solid;
-  border-width: 0 1px 0 0;
-  border-color: $divider-color;
-  float: left;
   background-color: white;
+  border-color: $divider-color;
+  overflow-y: scroll;
 }
+
+.command-sidebar-left {
+  border-width: 0 1px 0 0;
+  order: -1;
+  flex: 0 0 20em;
+}
+
+.command-sidebar-right {
+  border-width: 0 0 0 1px;
+  flex: 0 0 24em;
+  & .command-sidebar-right-content {
+    padding: 20px;
+  }
+}
+
+
 
 .command-messagebox {
-  overflow: auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  display: flex;
+  flex: 1;
   background-color: white;
+  position:relative;
+}
+
+.user-list {
+  width: 100%;
+}
+
+.user-list-item {
+  border: 0;
+  border-bottom: 1px rgb(227, 227, 227);
+  border-style: solid;
+  height: 70px;
+  padding: 14px 20px;
+  cursor: pointer;
+  &:first-child {
+    border-top: 1px rgb(227, 227, 227);
+  }
+  &.user-list-item-selected {
+    background-color: rgb(63, 110, 230);
+    color: white;
+  }
+}
+
+.user-searchbar{
+  padding: 14px;
+  & input, input:focus {
+    background-color: rgb(237, 237, 237);
+    box-shadow: none;
+    padding: 12px;
+    font-size: 0.9em;
+    line-height: 0.9em;
+    outline: none;
+    border: none;
+    border-radius: 8px;
+  }
+}
+
+.user-name-text {
+  font-size: 1.05em;
 }

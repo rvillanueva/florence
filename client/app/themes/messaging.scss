@@ -5,6 +5,7 @@ $bubble-radius: 20px;
   display: inline-block;
   padding-top: 8px;
   padding-bottom: 8px;
+  box-sizing: content-box;
   &.message-container-user {
     text-align: left;
   }
@@ -21,6 +22,7 @@ $bubble-radius: 20px;
   padding: 10px 14px 10px 14px;
   display: inline-block;
   max-width: 80%;
+  box-sizing: content-box;
   &.message-user{
     text-align: left;
     background-color: rgb(233, 233, 233);

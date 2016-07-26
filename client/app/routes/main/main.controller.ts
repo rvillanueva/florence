@@ -4,10 +4,12 @@
 
 class MainController {
 
-  constructor(ModalService) {
+  constructor(ModalService, $http, $q) {
     this.ModalService = ModalService;
-    this.commandCenter = {
-      patients: [],
+    this.$http = $http;
+    this.$q = $q;
+    this.selected = {
+      patient: [],
       messages: [{
         from: {
           userId: 'me'
@@ -18,6 +20,11 @@ class MainController {
       }]
     }
     this.patientSearchQuery = '';
+    this.$http.get('/api/users').success(patients => {
+      console.log(patients)
+      this.patients = patients;
+      this.selected.patient = patients[0]
+    })
   }
   searchPatients(){
     console.log('Searching patients...')
@@ -32,8 +39,39 @@ class MainController {
       this.commandCenter.patients.push(patient);
     })
   }
+  createPatient(){
+    this.ModalService.open({
+      templateUrl: 'components/modals/createUser/createUser.html',
+      controller: 'CreateUserModalController as vm',
+      params: {
+      }
+    })
+    .then(patient => {
+      this.patients.splice(0,0,patient);
+    })
+  }
   removePatient(index){
     this.commandCenter.patients.splice(index, 1);
+  }
+  selectPatient(patientId){
+    this.getPatientById(patientId)
+    .then(patient => {
+      this.selected.patient = patient;
+      console.log(patient)
+    })
+    .catch(err => {
+      window.alert(err)
+    })
+  }
+  getPatientById(patientId){
+    var deferred = this.$q.defer();
+    this.$http.get('/api/users/' + patientId).success(patient => {
+      deferred.resolve(patient)
+    })
+    .error(err => {
+      deferred.reject(err)
+    })
+    return deferred.promise;
   }
 }
 

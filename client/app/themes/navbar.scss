@@ -8,6 +8,10 @@ $navbar-height: 45px;
   height: $navbar-height;
 }
 
+.navbar-spaced {
+  padding-top: $navbar-height;
+}
+
 .navbar-styled {
   background-color: rgb(255, 255, 255);
   color: rgb(115, 115, 115);
