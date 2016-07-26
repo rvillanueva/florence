@@ -18,6 +18,7 @@ export function handleExpectedResponse(bot) {
         matchChoiceToInput()
           .then(choice => handleReplyToUser(choice))
           .then(choice => handleResponseStorage(choice))
+          .then(completed => handleTodoCompletion(completed))
           .then(() => resolve(bot))
           .catch(err => reject(err))
       } else {
@@ -111,6 +112,23 @@ export function handleExpectedResponse(bot) {
     })
   }
 
+  function handleTodoCompletion(completed) {
+    return new Promise(function(resolve, reject) {
+      console.log('Removing task from queue...')
+      if (completed) {
+        bot.completeTask()
+        .then(updated => {
+          bot = updated
+          resolve()
+        })
+        .catch(err => reject(err))
+      } else {
+        resolve()
+      }
+
+    })
+  }
+
 }
 
 export function handleNextStep(bot) {
@@ -118,9 +136,10 @@ export function handleNextStep(bot) {
     console.log('Handling next step...')
     if (bot.state.status == 'responding') {
       console.log('Loading next step')
-      loadNextStep()
+      handleNoActiveTask()
         .then(() => handleEmptyQueue())
         .then(() => executeStep())
+        .then(() => loadNextStep())
         .then(() => handleNextStep(bot))
         .then(() => resolve(bot))
         .catch(err => reject(err))
@@ -128,15 +147,34 @@ export function handleNextStep(bot) {
       console.log('Ending response...')
       resolve(bot)
     }
+    function handleNoActiveTask() {
+      return new Promise((resolve, reject) => {
+        if(!bot.loaded.task){
+          bot.loadNextTask()
+            .then(updated => {
+              bot = updated;
+              resolve()
+            })
+            .catch(err => reject(err))
+        } else {
+          resolve()
+        }
+      })
+
+    }
 
     function loadNextStep() {
       return new Promise((resolve, reject) => {
-        bot.loadNextStep()
-          .then(updated => {
-            bot = updated;
-            resolve()
-          })
-          .catch(err => reject(err))
+        if(bot.state.status == 'responding'){
+          bot.loadNextStep()
+            .then(updated => {
+              bot = updated;
+              resolve()
+            })
+            .catch(err => reject(err))
+        } else {
+          resolve()
+        }
       })
 
     }
@@ -179,16 +217,17 @@ export function handleNextStep(bot) {
 
 export function handleNotification(bot) {
   return new Promise(function(resolve, reject) {
+    var taskId = '5786a2dc517d5513c018c9e0';
     bot.state.status = 'responding';
     bot.queue.splice(0,0, {
-      taskId: '5786a2dc517d5513c018c9e0'
+      taskId: taskId
     })
+    bot.state.active = {
+      taskId: taskId
+    }
     console.log('Popping notification task')
     console.log('Queue is now...')
     console.log(bot.queue)
-      handleNextStep(bot)
-      .then(bot => bot.update())
-      .then(bot => resolve(bot))
-      .catch(err => reject(err))
+    resolve(bot)
   })
 }

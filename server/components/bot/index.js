@@ -114,7 +114,6 @@ export default function(options){
     return new Promise((resolve, reject) => {
       console.log('Setting up active state...')
       this.loadActiveTask()
-      .then(() => this.handleSteplessTask())
       .then(() => this.loadActiveStep())
       .then(() => resolve(this))
       .catch(err => reject(err))

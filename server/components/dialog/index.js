@@ -21,6 +21,8 @@ export function notify(userId){
     var bot = new Bot(userId);
     bot.init()
     .then(bot => DialogService.handleNotification(bot))
+    .then(bot => DialogService.handleNextStep(bot))
+    .then(bot => bot.update())
     .then(bot => resolve(bot))
     .catch(err => reject(err))
   })

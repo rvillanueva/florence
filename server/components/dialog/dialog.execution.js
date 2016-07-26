@@ -15,7 +15,9 @@ export function run(bot){
     var step = bot.loaded.step
     console.log('running')
     console.log(bot.loaded.task)
-    if(typeof stepRouter[step.type] === 'function'){
+    if(!step){
+      reject(new Error('No step provided to run.'));
+    } else if(typeof stepRouter[step.type] === 'function'){
       stepRouter[step.type](bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
