@@ -77,7 +77,9 @@ export default function(options){
     return new Promise((resolve, reject) => {
       Queue.addTodo(this.queue, todo)
       .then(queue => {
-        this.queue = queue;
+        if(queue){
+          this.queue = queue;
+        }
         resolve(this)
       })
       .catch(err => reject(err))

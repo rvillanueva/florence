@@ -219,15 +219,14 @@ export function handleNotification(bot) {
   return new Promise(function(resolve, reject) {
     var taskId = '5786a2dc517d5513c018c9e0';
     bot.state.status = 'responding';
-    bot.queue.splice(0,0, {
-      taskId: taskId
-    })
     bot.state.active = {
       taskId: taskId
     }
-    console.log('Popping notification task')
-    console.log('Queue is now...')
-    console.log(bot.queue)
-    resolve(bot)
+    bot.addTodo({
+      taskId: taskId,
+      immediate: true
+    })
+    .then(bot => resolve(bot))
+    .catch(err => reject(err))
   })
 }

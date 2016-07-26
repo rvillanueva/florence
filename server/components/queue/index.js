@@ -2,35 +2,42 @@
 
 var Promise = require('bluebird');
 
-export function addTask(queue, taskId, options) {
+export function addTodo(queue, todo) {
   return new Promise(function(resolve, reject) {
-    if (!taskId) {
+    if (!todo.taskId) {
       reject('Missing taskId.')
     }
+    console.log('queue received:')
+    console.log(queue)
     queue = queue || [];
-    options = options || {};
+    todo.added = new Date();
     var isQueued;
-    var todo = {
-      taskId: taskId,
-      added: new Date()
-    }
-
-    if(options.forced){
-      todo.forced = true;
-    }
 
     isQueued = isTaskAlreadyQueued(queue, todo);
-
-    if (isQueued === false) {
-      if(options.forced){
+    console.log('Is task already queued? ' + isQueued)
+    if (!isQueued) {
+      if(todo.immediate){
         queue.splice(0,0,todo)
       } else {
         queue.push(todo);
       }
       resolve(queue)
     } else {
-      // Handle popping existing task
-      resolve(false);
+      if(todo.immediate){
+        queue.splice(0,0,todo)
+        for(var i=1;i < queue.length;i++){
+          var queued = queue[i];
+          if(todo.taskId == queued.taskId){
+            queue.splice(i, 1);
+            i--;
+          }
+        }
+        console.log('QUEUE IS NOW:')
+        console.log(queue)
+        resolve(queue);
+      } else {
+        resolve(false)
+      }
     }
   })
 }
@@ -67,10 +74,14 @@ export function completeTodo(queue, taskId){
 
 
 function isTaskAlreadyQueued(queue, todo){
-  queue.forEach(function(queued, q) {
+  console.log('CHECKING QUEUE')
+  var found = false;
+  queue.forEach(function(queued, q){
     if (queued.taskId == todo.taskId) {
-      return q;
+      console.log(queued)
+      console.log(todo)
+      found = true;
     }
   })
-  return false;
+  return found;
 }
