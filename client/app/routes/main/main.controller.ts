@@ -73,8 +73,8 @@ class MainController {
     return deferred.promise;
   }
   notify(patientId){
-    this.$http.post('/api/users/' + patientId + '/notify').success(patient => {
-      window.alert('Done!')
+    this.$http.post('/api/users/' + patientId + '/notify').success(queue => {
+      this.selected.patient.queue = queue;
     })
     .error(err => {
       window.alert(err)

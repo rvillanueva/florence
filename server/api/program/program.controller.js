@@ -16,32 +16,14 @@ import Program from '../../models/program/program.model';
 import Task from '../../models/task/task.model';
 
 function attachTasks(program) {
-    return new Promise(function(resolve, reject){
-      console.log('attaching tasks...')
-      var taskIndex = {};
-      program.protocols = program.protocols || [];
-      getTasks();
-
-      function getTasks(){
-        var taskIds = [];
-          program.protocols.forEach(function(protocol, p){
-            taskIds.push(protocol.taskId)
-          })
-          Task.find({'_id': {'$in': taskIds}}).exec()
-          .then(tasks => {
-            tasks.forEach(function(task, t){
-              taskIndex[task._id] = task;
-            })
-            program.protocols.forEach(function(protocol, p){
-              protocol.task = taskIndex[protocol.taskId];
-            })
-            console.log('resolving after attaching...')
-            console.log(program)
-            resolve(program);
-          })
-          .catch(err => reject(err))
-      }
-    })
+  return new Promise(function(resolve, reject) {
+    TaskService.attach(program.protocols)
+      .then(protocols => {
+        program.protocols = protocols;
+        resolve(program);
+      })
+      .catch(err => reject(err))
+  })
 }
 
 function convertToTaskIds(program){

@@ -9,43 +9,13 @@ import jwt from 'jsonwebtoken';
 
 var Promise = require('bluebird');
 var Dialog = require('../../components/dialog');
+var TaskService = require('../../models/task');
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
     res.status(statusCode).json(err);
   }
-}
-
-function attachTasks(user){
-      return new Promise(function(resolve, reject){
-        console.log('attaching tasks...')
-        var taskIndex = {};
-        if(!user){
-          resolve(false)
-        } else {
-          user.queue = user.queue || [];
-          getTasks();
-        }
-
-        function getTasks(){
-          var taskIds = [];
-            user.queue.forEach(function(todo, t){
-              taskIds.push(todo.taskId)
-            })
-            Task.find({'_id': {'$in': taskIds}}).exec()
-            .then(tasks => {
-              tasks.forEach(function(task, t){
-                taskIndex[task._id] = task;
-              })
-              user.queue.forEach(function(todo, t){
-                todo.task = taskIndex[todo.taskId];
-              })
-              resolve(user);
-            })
-            .catch(err => reject(err))
-        }
-      })
 }
 
 function handleError(res, statusCode) {
@@ -63,18 +33,18 @@ export function index(req, res) {
   req.query = req.query || {};
   var query = {};
   var conditions = []
-  if(req.query.lastName){
+  if (req.query.lastName) {
     conditions.push({
-      'identity.lastName':  new Regex(req.query.lastName)
+      'identity.lastName': new Regex(req.query.lastName)
     })
   }
-  if(req.query.phone){
+  if (req.query.phone) {
     conditions.push({
-      'identity.mobile':  new Regex(req.query.phone)
+      'identity.mobile': new Regex(req.query.phone)
     })
   }
 
-  if(conditions.length > 0){
+  if (conditions.length > 0) {
     query = {
       '$and': conditions
     }
@@ -110,10 +80,14 @@ export function create(req, res, next) {
   newUser.role = 'user';
   newUser.save()
     .then(function(user) {
-      var token = jwt.sign({ _id: user._id }, config.secrets.session, {
+      var token = jwt.sign({
+        _id: user._id
+      }, config.secrets.session, {
         expiresIn: 60 * 60 * 5
       });
-      res.json({ token });
+      res.json({
+        token
+      });
     })
     .catch(validationError(res));
 }
@@ -133,6 +107,18 @@ export function show(req, res, next) {
       res.json(user);
     })
     .catch(err => next(err));
+
+    function attachTasks(user) {
+      return new Promise(function(resolve, reject) {
+        TaskService.attach(user.queue)
+          .then(queue => {
+            user.queue = queue;
+            resolve(user);
+          })
+          .catch(err => reject(err))
+      })
+    }
+
 }
 
 /**
@@ -176,7 +162,9 @@ export function changePassword(req, res, next) {
 export function me(req, res, next) {
   var userId = req.user._id;
 
-  return User.findOne({ _id: userId }, '-salt -password').exec()
+  return User.findOne({
+      _id: userId
+    }, '-salt -password').exec()
     .then(user => { // don't ever give out the password or salt
       if (!user) {
         return res.status(401).end();
@@ -195,30 +183,34 @@ export function authCallback(req, res, next) {
 
 
 export function notify(req, res, next) {
-  return User.findById(req.params.id).exec()
-  .then(user => {
-    if(!user){
-      return res.status(404).end()
-    }
-    return setupBotOptions(user, null)
-  })
-  .then(options => Dialog.notify(options))
-  .then(() => {
-    return res.status(200).end();
-  })
-  .catch(err => next(err))
+  return User.findById(req.params.id, '-salt -password').exec()
+    .then(user => {
+      if (!user) {
+        return res.status(404).end()
+      }
+      return setupBotOptions(user, null)
+    })
+    .then(options => Dialog.notify(options))
+    .then(bot => {
+      var queue = bot.queue.toObject();
+      return TaskService.attach(queue)
+    })
+    .then(queue => {
+      return res.json(queue);
+    })
+    .catch(err => next(err))
 
 
-function setupBotOptions(user, message){
-  return new Promise(function(resolve, reject){
-    var options = {
-      user: user,
-      state: user.state,
-      received: message
-    }
-    resolve(options);
-  })
-}
+  function setupBotOptions(user, message) {
+    return new Promise(function(resolve, reject) {
+      var options = {
+        user: user,
+        state: user.state,
+        received: message
+      }
+      resolve(options);
+    })
+  }
 
 }
 
@@ -232,28 +224,30 @@ export function addProgram(req, res, next) {
   var programId = String(req.body.programId);
 
   return User.findById(userId).exec()
-  .then(user => pushProgram(user, programId))
+    .then(user => pushProgram(user, programId))
     .then(user => {
-      if (!user){
+      if (!user) {
         return res.status(401).end();
       } else {
-        User.findOneAndUpdate({'_id':userId}, user)
-        .then(user => {
-          return res.json(user)
-        })
-        .catch(handleError(res))
+        User.findOneAndUpdate({
+            '_id': userId
+          }, user)
+          .then(user => {
+            return res.json(user)
+          })
+          .catch(handleError(res))
       }
     });
 }
 
-function pushProgram(user, programId){
-  return new Promise(function(resolve, reject){
-    if(!user){
+function pushProgram(user, programId) {
+  return new Promise(function(resolve, reject) {
+    if (!user) {
       resolve(false)
     }
     user.programs = user.programs || [];
-    user.programs.forEach(function(program, p){
-      if(program.programId == programId){
+    user.programs.forEach(function(program, p) {
+      if (program.programId == programId) {
         return res.status(409).end('Program already present.')
       }
     })
