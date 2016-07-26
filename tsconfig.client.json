@@ -51,6 +51,8 @@
         "client/components/auth/router.decorator.ts",
         "client/components/auth/user.service.ts",
         "client/components/footer/footer.directive.ts",
+        "client/components/message-box/message-box.controller.ts",
+        "client/components/message-box/message-box.directive.ts",
         "client/components/modal/modal.service.ts",
         "client/components/modals/addProtocol/addProtocol.controller.ts",
         "client/components/modals/createUser/createUser.controller.ts",

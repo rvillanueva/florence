@@ -1,5 +1,11 @@
+$navbar-height: 45px;
+
 .navbar {
   margin-bottom: 0 !important;
+}
+
+.navbar-spacer {
+  height: $navbar-height;
 }
 
 .navbar-styled {
@@ -8,11 +14,13 @@
   border-left: none;
   border-right: none;
   border-top: none;
-  border-bottom: 2px solid rgb(230, 230, 230);
-  height: 70px;
+  border-bottom: 1px solid rgb(230, 230, 230);
+  height: $navbar-height;
+  min-height: $navbar-height;
   & .navbar-nav li a {
     color: rgb(115, 115, 115);
-    padding: 25px 25px 25px 25px;
+    padding: 14px 14px;
+    font-size: 12px;
     &:hover,  &:focus {
       background-color: transparent;
       color: rgb(255, 139, 44)
@@ -29,24 +37,25 @@
     padding-left: 30px;
   }
   & .navbar-nav .nav-dropdown-btn{
-    margin: 20px;
-    padding: 5px;
+    margin: 10px;
+    padding: 3px;
     & a {
       margin: 14px;
       padding: 0;
     }
   }
   & .navbar-text {
-    margin: 25px 25px 25px 25px;
+    margin: 14px 14px;
+    font-size: 12px;
   }
   & .navbar-brand {
     color: white;
     padding: 0 0 0 0;
-    height: 70px;
+    height: $navbar-height;
   }
   & .navbar-brand-image {
-    height: 70px;
-    padding: 14px;
+    height: $navbar-height;
+    padding: 8px;
   }
 }
 

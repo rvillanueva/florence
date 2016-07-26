@@ -8,7 +8,14 @@ class MainController {
     this.ModalService = ModalService;
     this.commandCenter = {
       patients: [],
-      messages: []
+      messages: [{
+        from: {
+          userId: 'me'
+        },
+        content: {
+          text: 'Hi!'
+        }
+      }]
     }
     this.patientSearchQuery = '';
   }
@@ -18,7 +25,7 @@ class MainController {
       templateUrl: 'components/modals/searchPatients/searchPatients.html',
       controller: 'SearchPatientsModalController as vm',
       params: {
-        query: this.patientSearchQuery;
+        query: this.patientSearchQuery
       }
     })
     .then(patient => {

@@ -14,6 +14,12 @@ html, body {
   color: rgb(100, 100, 100);
   background-color: rgb(245, 245, 245);
   min-height: 100%;
+  height: 100%;
+}
+
+.fill-height, main {
+  min-height: 100%;
+  height: 100%;
 }
 
 .browserupgrade {
@@ -66,6 +72,7 @@ img {
 @import 'themes/panels.scss';
 @import 'themes/paragraph.scss';
 @import '../components/footer/footer.scss';
+@import '../components/message-box/message-box.scss';
 @import '../components/modal/modal.scss';
 @import '../components/oauth-buttons/oauth-buttons.scss';
 /* endinject */

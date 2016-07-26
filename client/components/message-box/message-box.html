@@ -1,0 +1,12 @@
+<div ng-repeat="message in messages">
+  <div class="message-container message-container-user" ng-show="message.from.userId">
+    <div class="message-bubble message-user">
+      {{message.content.text}}
+    </div>
+  </div>
+  <div class="message-container message-container-app" ng-show="message.from.system">
+    <div class="message-bubble message-app">
+      {{message.content.text}}
+    </div>
+  </div>
+</div>
