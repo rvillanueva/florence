@@ -33,7 +33,6 @@ export function initLoaderMethods(){
   this.loadActiveTask = loadActiveTask;
   this.handleSteplessTask = handleSteplessTask;
   this.loadActiveStep = loadActiveStep;
-  this.loadNextTask = loadNextTask;
   this.setNextTask = setNextTask;
 }
 
@@ -122,7 +121,7 @@ function loadActiveStep(){
   })
 }
 
-function loadNextTask(){
+export function loadNextTask(){
   return new Promise((resolve, reject) => {
     this.setNextTask()
     .then(() => this.loadActive())

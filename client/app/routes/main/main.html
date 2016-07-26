@@ -20,11 +20,11 @@
           <input class="form-control" placeholder="Type message here...">
         </div>
     </div>
-    <div class="command-sidebar-right navbar-spaced">
+    <div class="command-sidebar-right navbar-spaced" ng-show="$ctrl.selected.patient">
       <div class="command-sidebar-right-content">
         <p class="user-name-text">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</p>
         <br><br>
-        Upcoming Tasks
+        Upcoming Tasks&nbsp;<a href="#" ng-click="$ctrl.notify($ctrl.selected.patient._id)">notify</a>
         <div class="list-group">
           <div class="list-group-item" ng-repeat="todo in $ctrl.selected.patient.queue">
             {{todo.task.name}}

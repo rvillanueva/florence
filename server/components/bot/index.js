@@ -113,8 +113,7 @@ export default function(options){
   this.loadActive = function(){
     return new Promise((resolve, reject) => {
       console.log('Setting up active state...')
-      this.handleNoTask()
-      .then(() => this.loadActiveTask())
+      this.loadActiveTask()
       .then(() => this.handleSteplessTask())
       .then(() => this.loadActiveStep())
       .then(() => resolve(this))
@@ -122,6 +121,7 @@ export default function(options){
     })
   }
   this.loadNextStep = BotLoaderService.loadNextStep;
+  this.loadNextTask = BotLoaderService.loadNextTask;
   this.initLoaderMethods = BotLoaderService.initLoaderMethods;
 
 

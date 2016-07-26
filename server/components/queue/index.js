@@ -37,16 +37,26 @@ export function addTask(queue, taskId, options) {
 
 export function completeTodo(queue, taskId){
   return new Promise((resolve, reject) => {
+    console.log('Removing taskId: ' + taskId)
+    console.log('Queue was:')
+    console.log(queue)
     var found = false;
     queue = queue || [];
-    queue.forEach((queued, q) => {
+    for(var i=0; i < queue.length; i++){
+      var queued = queue[i];
       if(queued.taskId == taskId){
+        console.log('found taskId at position ' + i)
         // TODO log completion before deletion
-        queue.splice(q,1);
+        queue.splice(i,1);
         found = true;
+        console.log('spliced, now')
+        console.log(queue)
+        i--;
       }
-    })
+    }
     if(found){
+      console.log('Found and removed todo, queue is now:')
+      console.log(queue)
       resolve(queue)
     } else {
       reject(new Error('Task with id ' + taskId + ' not found in queue.'))

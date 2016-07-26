@@ -9,7 +9,7 @@ class MainController {
     this.$http = $http;
     this.$q = $q;
     this.selected = {
-      patient: [],
+      patient: false,
       messages: [{
         from: {
           userId: 'me'
@@ -23,7 +23,6 @@ class MainController {
     this.$http.get('/api/users').success(patients => {
       console.log(patients)
       this.patients = patients;
-      this.selected.patient = patients[0]
     })
   }
   searchPatients(){
@@ -72,6 +71,15 @@ class MainController {
       deferred.reject(err)
     })
     return deferred.promise;
+  }
+  notify(patientId){
+    this.$http.post('/api/users/' + patientId + '/notify').success(patient => {
+      window.alert('Done!')
+    })
+    .error(err => {
+      window.alert(err)
+    })
+
   }
 }
 

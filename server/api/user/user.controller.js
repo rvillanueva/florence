@@ -2,9 +2,14 @@
 
 import User from '../../models/user/user.model';
 import Task from '../../models/task/task.model';
+import Program from '../../models/program/program.model';
 import passport from 'passport';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
+
+var Promise = require('bluebird');
+var Dialog = require('../../components/dialog');
+
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
@@ -77,7 +82,7 @@ export function index(req, res) {
 
   return User.find(query, 'identity').exec()
     .then(users => {
-      res.status(200).json(users);
+      return res.status(200).json(users);
     })
     .catch(handleError(res));
 }
@@ -186,4 +191,76 @@ export function me(req, res, next) {
  */
 export function authCallback(req, res, next) {
   res.redirect('/');
+}
+
+
+export function notify(req, res, next) {
+  return User.findById(req.params.id).exec()
+  .then(user => {
+    if(!user){
+      return res.status(404).end()
+    }
+    return setupBotOptions(user, null)
+  })
+  .then(options => Dialog.notify(options))
+  .then(() => {
+    return res.status(200).end();
+  })
+  .catch(err => next(err))
+
+
+function setupBotOptions(user, message){
+  return new Promise(function(resolve, reject){
+    var options = {
+      user: user,
+      state: user.state,
+      received: message
+    }
+    resolve(options);
+  })
+}
+
+}
+
+
+
+/**
+ * Add a program to user profile
+ */
+export function addProgram(req, res, next) {
+  var userId = req.params.id;
+  var programId = String(req.body.programId);
+
+  return User.findById(userId).exec()
+  .then(user => pushProgram(user, programId))
+    .then(user => {
+      if (!user){
+        return res.status(401).end();
+      } else {
+        User.findOneAndUpdate({'_id':userId}, user)
+        .then(user => {
+          return res.json(user)
+        })
+        .catch(handleError(res))
+      }
+    });
+}
+
+function pushProgram(user, programId){
+  return new Promise(function(resolve, reject){
+    if(!user){
+      resolve(false)
+    }
+    user.programs = user.programs || [];
+    user.programs.forEach(function(program, p){
+      if(program.programId == programId){
+        return res.status(409).end('Program already present.')
+      }
+    })
+    var newProgram = {
+      programId: programId
+    }
+    user.programs.push(newProgram)
+    resolve(user);
+  })
 }

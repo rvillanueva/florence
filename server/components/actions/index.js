@@ -2,6 +2,6 @@
 
 var ActionService = require('./action.service')
 
-export function execute(bot){
-  return ActionService.execute(bot);
+export function execute(action){
+  return ActionService.execute(action);
 }

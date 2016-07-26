@@ -16,7 +16,7 @@ export function respond(options){
   })
 }
 
-export function initiate(userId){
+export function notify(userId){
   return new Promise(function(resolve, reject){
     var bot = new Bot(userId);
     bot.init()

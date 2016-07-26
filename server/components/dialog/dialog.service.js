@@ -179,10 +179,14 @@ export function handleNextStep(bot) {
 
 export function handleNotification(bot) {
   return new Promise(function(resolve, reject) {
-    bot.state.active = {
+    bot.state.status = 'responding';
+    bot.queue.splice(0,0, {
       taskId: '5786a2dc517d5513c018c9e0'
-    }
-    executeStep(bot)
+    })
+    console.log('Popping notification task')
+    console.log('Queue is now...')
+    console.log(bot.queue)
+      handleNextStep(bot)
       .then(bot => bot.update())
       .then(bot => resolve(bot))
       .catch(err => reject(err))
