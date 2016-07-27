@@ -1,40 +1,16 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/programs              ->  index
- * POST    /api/programs              ->  create
- * GET     /api/programs/:id          ->  show
- * PUT     /api/programs/:id          ->  update
- * DELETE  /api/programs/:id          ->  destroy
+ * GET     /api/messages              ->  index
+ * POST    /api/messages              ->  create
+ * GET     /api/messages/:id          ->  show
+ * PUT     /api/messages/:id          ->  update
+ * DELETE  /api/messages/:id          ->  destroy
  */
 
 'use strict';
 
 import _ from 'lodash';
-var Promise = require('bluebird');
-
-import Program from '../../models/program/program.model';
-var TaskService = require('../../models/task');
-
-function attachTasks(program) {
-  return new Promise(function(resolve, reject) {
-    TaskService.attach(program.protocols)
-      .then(protocols => {
-        program.protocols = protocols;
-        resolve(program);
-      })
-      .catch(err => reject(err))
-  })
-}
-
-function convertToTaskIds(program){
-    program.protocols = program.protocols || [];
-    program.protocols.forEach(function(protocol, p){
-      protocol.taskId = protocol.task._id;
-      delete protocol.task;
-    })
-    console.log(program)
-    return program;
-}
+import Message from '../../models/message/message.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -47,14 +23,10 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
-    entity.protocols = [];
-    console.log('saving updates')
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
-        var leanObject = updated.toObject();
-        console.log(leanObject)
-        return leanObject;
+        return updated;
       });
   };
 }
@@ -87,47 +59,43 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Programs
+// Gets a list of Messages
 export function index(req, res) {
-  return Program.find().exec()
+  return Message.find().exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Gets a single Program from the DB
+// Gets a single Message from the DB
 export function show(req, res) {
-  return Program.findById(req.params.id).lean().exec()
-    .then(entity => attachTasks(entity))
+  return Message.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Creates a new Program in the DB
+// Creates a new Message in the DB
 export function create(req, res) {
-  return Program.create(req.body)
+  return Message.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Updates an existing Program in the DB
+// Updates an existing Message in the DB
 export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  var program = req.body;
-  convertToTaskIds(req.body);
-  return Program.findById(req.params.id).exec()
+  return Message.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
-    .then(program => attachTasks(program))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Deletes a Program from the DB
+// Deletes a Message from the DB
 export function destroy(req, res) {
-  return Program.findById(req.params.id).exec()
+  return Message.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));

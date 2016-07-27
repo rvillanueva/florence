@@ -4,7 +4,8 @@ import mongoose from 'mongoose';
 
 var MessageSchema = new mongoose.Schema({
   userId: String,
-  timestamp: Date,
+  created: Date,
+  delivered: Date,
   author: {
     type: String,
     enum: [
@@ -15,9 +16,11 @@ var MessageSchema = new mongoose.Schema({
   },
   provider: String,
   to: {
+    userId: String,
     mobile: String
   },
   from: {
+    userId: String,
     mobile: String
   },
   content: {

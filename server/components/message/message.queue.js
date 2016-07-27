@@ -1,6 +1,6 @@
 'use strict';
 var Router = require('./message.router');
-
+var MessageLoggingService = require('./message.logging');
 // TODO Should really be doing this with a db item
 
 var delay = 2500;
@@ -20,7 +20,7 @@ function clearTimer(userId){
 var sendNext = function(userId){
   if(storage[userId].queue.length > 0){
     var message = storage[userId].queue[0];
-    Router.deliver(message);
+    deliver(message);
     storage[userId].queue.splice(0, 1);
     setTimer(userId);
   } else {
@@ -60,4 +60,12 @@ export function add(message){
     addToQueue(message);
     resolve(message);
   });
+}
+
+function deliver(message){
+  Router.deliver(message)
+  .then(message => {
+    message.delivered = new Date();
+    MessageLoggingService.create(message);
+  })
 }

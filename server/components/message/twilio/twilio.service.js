@@ -12,7 +12,12 @@ export function sendToApi(message) {
     }, function(err, responseData) {
       if (!err) {
         console.log('Sent!')
-        resolve(responseData)
+        message.meta = {
+          twilioSms: {
+            delivery: responseData
+          }
+        }
+        resolve(message)
       } else {
         console.log('TWILIO ERROR:')
         console.log(err)

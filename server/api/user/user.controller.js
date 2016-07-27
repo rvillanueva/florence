@@ -1,7 +1,6 @@
 'use strict';
 
 import User from '../../models/user/user.model';
-import Task from '../../models/task/task.model';
 import Program from '../../models/program/program.model';
 import passport from 'passport';
 import config from '../../config/environment';
