@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 var Promise = require('bluebird');
 var Dialog = require('../../components/dialog');
 var TaskService = require('../../models/task');
+var UserService = require('./user.service');
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -59,7 +60,7 @@ export function index(req, res) {
 /**
  * Creates a new user
  */
-export function create(req, res, next) {
+export function signup(req, res, next) {
   var newUserData = {
     provider: 'local',
     role: 'user',
@@ -67,9 +68,7 @@ export function create(req, res, next) {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
-      mobile: {
-        number: req.body.mobile
-      }
+      mobile: req.body.mobile
     },
     password: req.body.password,
     salt: req.body.salt
@@ -77,7 +76,8 @@ export function create(req, res, next) {
   var newUser = new User(newUserData);
   newUser.provider = 'local';
   newUser.role = 'user';
-  newUser.save()
+  UserService.queueOnboardingTask(newUser)
+    .then(user => user.save())
     .then(function(user) {
       var token = jwt.sign({
         _id: user._id
@@ -88,6 +88,29 @@ export function create(req, res, next) {
         token
       });
     })
+    .catch(validationError(res));
+}
+
+/**
+ * Creates a new user
+ */
+export function create(req, res, next) {
+  var newUserData = {
+    provider: 'local',
+    role: 'user',
+    identity: {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      mobile: req.body.mobile
+    }
+  }
+  var newUser = new User(newUserData);
+  newUser.provider = 'local';
+  newUser.role = 'user';
+  UserService.queueOnboardingTask(newUser)
+    .then(user => user.save())
+    .then(user => res.json(user))
     .catch(validationError(res));
 }
 

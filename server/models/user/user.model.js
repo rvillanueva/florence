@@ -111,6 +111,17 @@ UserSchema
     return email.length;
   }, 'Email cannot be blank');
 
+  // Validate empty email
+  UserSchema
+    .path('identity.mobile')
+    .validate(function(mobile) {
+      if (authTypes.indexOf(this.providers.auth) !== -1) {
+        return true;
+      }
+      return mobile.length;
+    }, 'Phone number cannot be blank');
+
+
 // Validate empty password
 UserSchema
   .path('password')
@@ -140,6 +151,27 @@ UserSchema
         throw err;
       });
   }, 'The specified email address is already in use.');
+
+// Validate mobile phone number isn't taken
+  UserSchema
+    .path('identity.mobile')
+    .validate(function(value, respond) {
+      var self = this;
+      return this.constructor.findOne({ 'identity.mobile': value }).exec()
+        .then(function(user) {
+          if (user) {
+            if (self.id === user.id) {
+              return respond(true);
+            }
+            return respond(false);
+          }
+          return respond(true);
+        })
+        .catch(function(err) {
+          throw err;
+        });
+    }, 'The specified phone number is already in use.');
+
 
 var validatePresenceOf = function(value) {
   return value && value.length;

@@ -51,19 +51,41 @@ $divider-color: rgb(208, 208, 208);
 
 .command-sidebar-right {
   border-width: 0 0 0 1px;
-  flex: 0 0 24em;
+  flex: 0 0 20em;
   & .command-sidebar-right-content {
     padding: 20px;
   }
 }
 
-
-
-.command-messagebox {
+.command-centerbox {
   display: flex;
   flex: 1;
   background-color: white;
   position:relative;
+  padding-top: 92px;
+  & .command-centerbox-header{
+    position: absolute;
+    color: rgb(54, 54, 54);
+    height: 46px;
+    left: 0;
+    right: 0;
+    top:46px;
+    border-bottom: 1px solid $divider-color;
+    & .command-centerbox-header-left {
+      float: left;
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+    & .command-centerbox-header-right {
+      float: right;
+      padding-right: 14px;
+      font-size: 14px;
+    }
+    & .header-icon {
+      font-size: 18px;
+      margin: 14px;
+    }
+  }
 }
 
 .user-list {

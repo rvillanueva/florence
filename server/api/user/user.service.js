@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 var request = require('request');
 
 import User from '../../models/user/user.model';
-var Queue = require('../../components/dialog/queue');
+var QueueService = require('../../components/queue');
 var Message = require('../../components/message');
 
 export function getUserByPhoneNumber(phoneNumber) {
@@ -98,57 +98,17 @@ function createInactiveUser(user){
 }
 
 
-function queueOnboardingTask(user){
+export function queueOnboardingTask(user){
   return new Promise(function(resolve, reject){
     user.queue = user.queue || [];
-    Queue.addTodo(user.queue, 'test123')
+    QueueService.addTodo(user.queue, {
+      taskId: '5786a2dc517d5513c018c9f6'
+    })
     .then(queue => {
       user.queue = queue;
+      console.log(user.queue)
       resolve(user)
     })
     .catch(err => reject(err))
-  })
-}
-
-export function updateFbProfile(user) {
-  return new Promise(function(resolve, reject) {
-    console.log(user)
-    if(!user || !user.messenger || !user.messenger.id){
-      reject(new ReferenceError('Need user with messenger id.'))
-    }
-    var options = {
-      url: 'https://graph.facebook.com/v2.6/' + user.messenger.id,
-      qs: {
-        fields: 'first_name,last_name,profile_pic,locale,timezone,gender',
-        access_token: process.env.FB_PAGE_TOKEN
-      }
-    }
-    request.get(options, (err, response, body) => {
-      if(err){
-        reject(err);
-      }
-      var fbProfile = JSON.parse(body);
-      if(fbProfile.first_name){
-        user.firstName = fbProfile.first_name;
-      }
-      if(fbProfile.last_name){
-        user.lastName = fbProfile.last_name;
-      }
-      if(fbProfile.profile_pic){
-        user.picture = fbProfile.profile_pic;
-      }
-      if(fbProfile.locale){
-        user.locale = fbProfile.locale;
-      }
-      if(fbProfile.gender){
-        user.gender = fbProfile.gender;
-      }
-      if(fbProfile.timezone){
-        user.timezone = fbProfile.timezone;
-      }
-      User.update({'_id': user._id}, user)
-      .then(() => resolve(user))
-      .catch(err => reject(err))
-    })
   })
 }

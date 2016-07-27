@@ -3,9 +3,10 @@
   <h4 class="modal-title">New {{vm.protocol.type | capitalize}} Protocol</h4>
 </div>
 <div class="modal-body">
-  First name: <input>
-  Last name: <input>
-  Mobile phone number: <input>
+  First name: <input ng-model="vm.user.firstName">
+  Last name: <input ng-model="vm.user.lastName">
+  Email: <input ng-model="vm.user.email">
+  Mobile phone number: <input ng-model="vm.user.mobile">
 </div>
 <div class="modal-footer">
   <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>

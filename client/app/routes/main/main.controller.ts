@@ -8,6 +8,9 @@ class MainController {
     this.ModalService = ModalService;
     this.$http = $http;
     this.$q = $q;
+    this.view = {
+      main: 'messages'
+    }
     this.selected = {
       patient: false,
       messages: [{
@@ -17,7 +20,8 @@ class MainController {
         content: {
           text: 'Hi!'
         }
-      }]
+      }],
+      responses: [];
     }
     this.patientSearchQuery = '';
     this.$http.get('/api/users').success(patients => {
@@ -35,7 +39,7 @@ class MainController {
       }
     })
     .then(patient => {
-      this.commandCenter.patients.push(patient);
+      this.patients.push(patient);
     })
   }
   createPatient(){
@@ -55,7 +59,12 @@ class MainController {
   selectPatient(patientId){
     this.getPatientById(patientId)
     .then(patient => {
-      this.selected.patient = patient;
+      this.view.main = 'messages';
+      this.selected = {
+        patient: patient,
+        messages: [],
+        responses: []
+      };
       console.log(patient)
     })
     .catch(err => {
@@ -75,6 +84,19 @@ class MainController {
   notify(patientId){
     this.$http.post('/api/users/' + patientId + '/notify').success(queue => {
       this.selected.patient.queue = queue;
+    })
+    .error(err => {
+      window.alert(err)
+    })
+
+  }
+  viewPatientResponses(){
+    this.view.main = 'data';
+    this.getPatientResponses();
+  }
+  getPatientResponses(){
+    this.$http.get('/api/user/' + this.selected.patient._id + '/responses').success(responses => {
+      this.selected.responses = responses;
     })
     .error(err => {
       window.alert(err)
