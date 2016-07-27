@@ -2,20 +2,20 @@
 
 var Promise = require('bluebird');
 
-import Response from '../../models/response/response.model';
+import Entry from './entry.model';
 
 export function create(data){
-  var response = data;
-  response.meta = {
+  var entry = data;
+  entry.meta = {
     created: new Date()
   }
-  return Response.create(response);
+  return Entry.create(response);
 }
 
 export function getByUserId(userId){
   return new Promise(function(resolve, reject){
-    Response.find({'userId':userId})
-    .then(responses => resolve(responses))
+    Entry.find({'userId':userId})
+    .then(entries => resolve(entries))
     .catch(err => reject(err))
   })
 }

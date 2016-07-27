@@ -95,9 +95,9 @@ class MainController {
     this.getPatientResponses();
   }
   getPatientResponses(){
-    this.$http.get('/api/users/' + this.selected.patient._id + '/responses').success(responses => {
-      this.selected.responses = responses;
-      console.log(responses);
+    this.$http.get('/api/users/' + this.selected.patient._id + '/entries').success(entries => {
+      this.selected.entries = entries;
+      console.log(entries);
     })
     .error(err => {
       window.alert(err)
