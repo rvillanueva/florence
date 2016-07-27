@@ -52,7 +52,10 @@ User.find({}).remove()
         password: 'admin',
         queue: [
           {
-            taskId: '5786a2dc517d5513c018c9f6'
+            taskId: '5786a2dc517d5513c018c9f8'
+          },
+          {
+            taskId: '5786a2dc517d5513c018c9f7'
           }
         ],
         lastActivity: new Date()

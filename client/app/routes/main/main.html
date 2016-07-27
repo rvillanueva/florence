@@ -25,10 +25,10 @@
           <message-box messages="$ctrl.selected.messages"></message-box>
         </div>
         <div ng-show="$ctrl.view.main == 'data'">
-
+          {{$ctrl.selected.responses}}
         </div>
         <div class="command-inputbar">
-          <input class="form-control" placeholder="Enter task name here...">
+          <input class="form-control" placeholder="Enter task here...">
         </div>
       </div>
     </div>
@@ -37,6 +37,8 @@
         <p class="user-name-text">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</p>
         <br>
         <br> Programs
+        <br>
+        <span ng-repeat="program in $ctrl.selected.patient.programs">{{program.name}}</span>
         <br>
         <br> Upcoming Tasks&nbsp;<a href="#" class="btn btn-primary btn-sm" ng-click="$ctrl.notify($ctrl.selected.patient._id)">Notify</a>
         <div class="list-group">

@@ -36,7 +36,8 @@ export function handleExpectedResponse(bot) {
       setupPatternQuery()
         .then(query => Parser.searchPatterns(query))
         .then(matches => resolveAssociatedChoice(matches))
-        .then(choice => resolve(choice))
+        .then(choice => convertChoiceToValue(value))
+        .then(value => resolve(value))
         .catch(err => reject(err))
     })
 
@@ -73,6 +74,22 @@ export function handleExpectedResponse(bot) {
         }
       })
     }
+
+    function convertChoiceToValue(choice) {
+      return new Promise(function(resolve, reject) {
+        var value;
+        if(choice.type == 'number'){
+          value = {
+            number: 0
+          }
+        }
+        if (true) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      })
+    }
   }
 
   function handleReplyToUser(choice) {
@@ -99,12 +116,25 @@ export function handleExpectedResponse(bot) {
     })
   }
 
-  function handleResponseStorage(choice) {
+  function handleResponseStorage(value) {
     return new Promise(function(resolve, reject) {
       console.log('Storing response...')
-      if (choice) {
-        // TODO Build response storage
-        resolve(true)
+      if (value) {
+        var response = {
+          userId: bot.user._id,
+          value: value,
+          question: {
+            questionId: step.question._id,
+            text: step.question.text
+          },
+          response: {
+            messageId: bot.received._id,
+            text: bot.received.text
+          }
+        }
+        ResponseService.create(response)
+        .then(() => resolve(true))
+        .catch(err => reject(err))
       } else {
         resolve(false)
       }

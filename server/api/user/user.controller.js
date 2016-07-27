@@ -10,6 +10,7 @@ var Promise = require('bluebird');
 var Dialog = require('../../components/dialog');
 var TaskService = require('../../models/task');
 var UserService = require('./user.service');
+var ResponseService = require('../../models/response');
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -234,6 +235,15 @@ export function notify(req, res, next) {
     })
   }
 
+}
+
+export function responses(req, res){
+  var userId = req.params.id;
+  return ResponseService.getByUserId(userId)
+  .then(responses => {
+    return res.json(responses);
+  })
+  .catch(handleError(res));
 }
 
 
