@@ -12,6 +12,10 @@ export function create(data){
   return Entry.create(response);
 }
 
+export function search(query){
+  return null;
+}
+
 export function getByUserId(userId){
   return new Promise(function(resolve, reject){
     Entry.find({'userId':userId})
