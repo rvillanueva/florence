@@ -10,7 +10,9 @@
       </div>
       <div class="user-list">
         <div class="user-list-item" ng-class="{'user-list-item-selected': patient._id == $ctrl.selected.patient._id}" ng-repeat="(p, patient) in $ctrl.patients" ng-click="$ctrl.selectPatient(patient._id)">
-          <p class="user-name-text">{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</p>
+          <span class="user-name-text">{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</span>
+          <br>
+          <span style="font-size:0.8em">{{patient.identity.mobile}}</span>
         </div>
       </div>
     </div>

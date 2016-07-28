@@ -181,6 +181,7 @@ export function handleNextTask(bot) {
       handleNoActiveTask()
         .then(() => handleEmptyQueue())
         .then(() => executeTask())
+        .then(() => completeTodo(bot))
         .then(() => handleNextTask(bot))
         .then(() => resolve(bot))
         .catch(err => reject(err))
@@ -205,10 +206,10 @@ export function handleNextTask(bot) {
 
     }
 
-    function loadNextTask() {
+    function completeTodo() {
       return new Promise((resolve, reject) => {
         if (bot.state.status == 'responding') {
-          bot.loadNextTask()
+          bot.completeTask()
             .then(updated => {
               bot = updated;
               resolve()
