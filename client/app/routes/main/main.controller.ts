@@ -9,7 +9,7 @@ class MainController {
     this.$http = $http;
     this.$q = $q;
     this.view = {
-      main: 'messages'
+      main: 'instructions'
     }
     this.selected = {
       patient: false,
@@ -21,7 +21,7 @@ class MainController {
           text: 'Hi!'
         }
       }],
-      responses: [];
+      instructions: []
     }
     this.patientSearchQuery = '';
     this.$http.get('/api/users').success(patients => {
@@ -59,11 +59,11 @@ class MainController {
   selectPatient(patientId){
     this.getPatientById(patientId)
     .then(patient => {
-      this.view.main = 'messages';
+      this.view.main = 'instructions';
       this.selected = {
         patient: patient,
         messages: [],
-        responses: []
+        instructions: []
       };
       console.log(patient)
     })
@@ -102,7 +102,19 @@ class MainController {
     .error(err => {
       window.alert(err)
     })
-
+  }
+  addInstruction(){
+    if(this.instructionInput.text.length > 0){
+      this.$http.get('/api/instructions?q=' + this.instructionInput.text).success(instruction => {
+        console.log(instruction);
+        this.selected.instructions.push(instruction);
+        console.log(this.selected.instructions)
+      })
+      .error(err => {
+        window.alert(err)
+      })
+      this.instructionInput.text = '';
+    }
   }
 }
 

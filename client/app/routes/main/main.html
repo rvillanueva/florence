@@ -15,20 +15,28 @@
       </div>
     </div>
     <div class="command-centerbox">
-      <div ng-show="$ctrl.selected.patient">
+      <div ng-show="$ctrl.selected.patient" style="width:100%;">
         <div class="command-centerbox-header">
           <div class="command-centerbox-header-left">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</div>
           <div class="command-centerbox-header-right">
-            <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="header-icon fa fa-comment"></i></a>&nbsp;<a href="#" ng-click="$ctrl.view.main = 'data';$ctrl.getPatientResponses()"><i class="header-icon fa fa-bar-chart"></i></a></div>
+            <a href="#" ng-click="$ctrl.view.main = 'instructions'"><i class="header-icon fa fa-list"></i></a>
+            <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="header-icon fa fa-comment"></i></a></div>
         </div>
         <div ng-show="$ctrl.view.main == 'messages'">
           <message-box messages="$ctrl.selected.messages"></message-box>
         </div>
-        <div ng-show="$ctrl.view.main == 'data'">
-          {{$ctrl.selected.entries}}
+        <div ng-show="$ctrl.view.main == 'instructions'" style="width:100%;">
+          <div class="list-group" style="width: 100%;">
+            <div class="list-group-item" ng-repeat="(i, instruction) in $ctrl.selected.instructions">
+              {{instruction.text}}&nbsp;{{instruction.action.timing.once.comparator}}&nbsp;{{instruction.action.timing.once.date | date:'MMMM d, yy'}}<span class="pull-right">70%</span>
+            </div>
+          </div>
         </div>
         <div class="command-inputbar">
-          <input class="form-control" placeholder="Enter task here...">
+          <form ng-submit="$ctrl.addInstruction()">
+            <input class="form-control" placeholder="Enter patient instruction here..." ng-model="$ctrl.instructionInput.text">
+            <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+          </form>
         </div>
       </div>
     </div>

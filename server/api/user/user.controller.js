@@ -11,6 +11,7 @@ var Dialog = require('../../components/dialog');
 var TaskService = require('../../models/task');
 var UserService = require('./user.service');
 var EntryService = require('../../models/entry');
+var InstructionService = require('../../models/instruction');
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -244,49 +245,4 @@ export function entries(req, res){
     return res.json(entries);
   })
   .catch(handleError(res));
-}
-
-
-
-/**
- * Add a program to user profile
- */
-export function addProgram(req, res, next) {
-  var userId = req.params.id;
-  var programId = String(req.body.programId);
-
-  return User.findById(userId).exec()
-    .then(user => pushProgram(user, programId))
-    .then(user => {
-      if (!user) {
-        return res.status(401).end();
-      } else {
-        User.findOneAndUpdate({
-            '_id': userId
-          }, user)
-          .then(user => {
-            return res.json(user)
-          })
-          .catch(handleError(res))
-      }
-    });
-}
-
-function pushProgram(user, programId) {
-  return new Promise(function(resolve, reject) {
-    if (!user) {
-      resolve(false)
-    }
-    user.programs = user.programs || [];
-    user.programs.forEach(function(program, p) {
-      if (program.programId == programId) {
-        return res.status(409).end('Program already present.')
-      }
-    })
-    var newProgram = {
-      programId: programId
-    }
-    user.programs.push(newProgram)
-    resolve(user);
-  })
 }

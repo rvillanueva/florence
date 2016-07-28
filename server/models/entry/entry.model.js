@@ -2,19 +2,19 @@
 
 import mongoose from 'mongoose';
 
-var ResponseSchema = new mongoose.Schema({
+var EntrySchema = new mongoose.Schema({
+  userId: String,
   meta: {
     created: Date,
     updated: Date,
   },
-  userId: String,
+  params: {},
   value: {
     number: Number,
     date: Date,
     string: String
   },
   question: {
-    questionId: String,
     text: String
   },
   response: {
@@ -23,4 +23,4 @@ var ResponseSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model('Response', ResponseSchema);
+export default mongoose.model('Entry', EntrySchema);

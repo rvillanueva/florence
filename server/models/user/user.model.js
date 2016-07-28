@@ -50,11 +50,9 @@ var UserSchema = new Schema({
   salt: String,
   created: Date,
   lastActivity: Date,
-  programs: [{
-    programId: String
-  }],
   queue: [{
     taskId: String,
+    params: {},
     immediate: Boolean,
     started: Date,
     added: Date
@@ -68,7 +66,60 @@ var UserSchema = new Schema({
     },
     stored: {},
     lastModified: Date
-  }
+  },
+  instructions: [
+    {
+      text: String,
+      measurement: {
+        type: String, //confidence/propensity/completedFrequency/missedFrequency/taskCompletion
+        frequency: {
+          type: String,
+          enum: [
+            'daily',
+            'weekly'
+          ]
+        }
+      },
+      action: {
+        phrase: String,
+        type: {
+          type: String
+        },
+        params: {},
+        timing: {
+          type: {
+            type: String,
+            enum: [
+              'once',
+              'recurring',
+              'general'
+            ]
+          },
+          once: {
+            comparator: {
+              type: String,
+              enum: [
+                'on',
+                'before',
+                'after'
+              ]
+            },
+            date: Date
+          },
+          recurring: {
+            times: Number,
+            every: {
+              type: String,
+              enum: [
+                'day',
+                'week'
+              ]
+            }
+          },
+        }
+      }
+    }
+  ]
 });
 
 /**

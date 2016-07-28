@@ -27,8 +27,7 @@ export default function(options){
   this.received = options.received;
   this.loaded = {
     task: null,
-    stepIndex: null,
-    step: null
+    params: null
   }
   this.loops = 0;
 
@@ -94,11 +93,11 @@ export default function(options){
         this.queue = queue;
         this.loaded = {
           task: null,
-          stepIndex: null
+          params: null
         }
         this.state.active = {
           taskId: null,
-          stepId: null
+          params: null
         }
         console.log('task complete')
         return this.loadNextTask();
@@ -116,12 +115,10 @@ export default function(options){
     return new Promise((resolve, reject) => {
       console.log('Setting up active state...')
       this.loadActiveTask()
-      .then(() => this.loadActiveStep())
       .then(() => resolve(this))
       .catch(err => reject(err))
     })
   }
-  this.loadNextStep = BotLoaderService.loadNextStep;
   this.loadNextTask = BotLoaderService.loadNextTask;
   this.initLoaderMethods = BotLoaderService.initLoaderMethods;
 

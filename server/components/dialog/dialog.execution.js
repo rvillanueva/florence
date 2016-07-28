@@ -2,9 +2,9 @@
 
 var Promise = require('bluebird');
 
-var stepRouter = {
-  question: handleQuestion,
-  speech: handleSpeech
+var taskRouter = {
+  ask: handleQuestion,
+  say: handleSpeech
 }
 
 // INPUT: received.text
@@ -12,24 +12,26 @@ var stepRouter = {
 export function run(bot){
   return new Promise(function(resolve, reject){
     var text;
-    var step = bot.loaded.step
+    var task = bot.loaded.task
     console.log('running')
     console.log(bot.loaded.task)
-    if(!step){
-      reject(new Error('No step provided to run.'));
-    } else if(typeof stepRouter[step.type] === 'function'){
-      stepRouter[step.type](bot)
+    if(!task){
+      reject(new Error('No task provided to run.'));
+    } else if(typeof taskRouter[task.type] === 'function'){
+      taskRouter[task.type](bot)
       .then(bot => resolve(bot))
       .catch(err => reject(err))
     } else {
-      reject(new Error('Unrecognized step type ' + ' for step '))
+      reject(new Error('Unrecognized task type ' + ' for task '))
     }
   })
 }
 
 export function handleQuestion(bot){
   return new Promise(function(resolve, reject){
-    var text = bot.loaded.step.question.text;
+    var text = bot.loaded.task.text;
+    text = replceParams(text, bot.loaded.params);
+    bot.loaded.text = text;
     bot.state.status = 'waiting';
     bot.send({
       text: text
@@ -41,13 +43,27 @@ export function handleQuestion(bot){
 
 export function handleSpeech(bot){
   return new Promise(function(resolve, reject){
-    var text = bot.loaded.task.steps[bot.loaded.stepIndex].speech.text;
+    var text = bot.loaded.task.text;
+    text = replceParams(text, bot.loaded.params);
+    bot.loaded.text = text;
     bot.send({
       text: text
     })
     .then(() => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+function replaceParams(text, params){
+  for(param in params){
+    while(text.indexOf('<<' + param + '>>') > -1){
+      var location = text.indexOf('<<' + param + '>>');
+      var start = text.slice(0, location,(param.length + 4));
+      var end = text.slice(4 + param.length, text.length);
+      text = start + params[param] + end;
+    }
+  }
+  return text;
 }
 
 /*
