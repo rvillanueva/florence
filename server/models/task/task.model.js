@@ -12,19 +12,18 @@ var TaskSchema = new mongoose.Schema({
       'say'
     ]
   },
-  text: String,
   objective: String,
   attributes: {},
   params: {},
+  text: String,
   choices: [{
-    input: {
+    match: {
       type: {
         type: String,
         enum: [
           'number',
-          'integer',
           'date',
-          'string'
+          'expression'
         ]
       },
       min: Number,
@@ -32,14 +31,15 @@ var TaskSchema = new mongoose.Schema({
       expression: String
     },
     entry: {
-      recode: Boolean,
       value: {
         number: Number,
         string: String
       }
     },
     fallback: Boolean,
-    responses: [String],
+    responses: [{
+      text: String
+    }],
     actions: [{
       type: String,
       params: {}

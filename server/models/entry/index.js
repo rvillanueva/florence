@@ -9,7 +9,9 @@ export function create(data){
   entry.meta = {
     created: new Date()
   }
-  return Entry.create(response);
+  console.log('NEW ENTRY:')
+  console.log(entry)
+  return Entry.create(entry);
 }
 
 export function search(query){

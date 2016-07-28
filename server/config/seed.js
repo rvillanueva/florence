@@ -52,10 +52,7 @@ User.find({}).remove()
         password: 'admin',
         queue: [
           {
-            taskId: '5786a2dc517d5513c018c9f8'
-          },
-          {
-            taskId: '5786a2dc517d5513c018c9f7'
+            taskId: '5786a2dc517d5513c018c9f6'
           }
         ],
         lastActivity: new Date()
@@ -72,53 +69,35 @@ Task.find({}).remove()
         name: 'Initiate',
         objective: 'initiate',
         description: 'The greeting to initiate a patient interaction.',
-        steps: [
-          {
-            type: 'question',
-            questionId: '57891a3a678d9fcc2340955a'
-          }
-        ]
+        type: 'ask',
+        text: 'Hi! Do you have a second?',
+        choices: [{
+          match: {
+            type: 'expression',
+            expression: 'yes'
+          },
+          responses: [
+            {
+              text: 'Yes oh yes!'
+            }
+          ]
+        },{
+          match: {
+            type: 'expression',
+            expression: 'no'
+          },
+          responses: [
+            {
+              text: 'No way, Jose!'
+            }
+          ]
+        }]
       },{
         _id: '5786a2dc517d5513c018c9f6',
         name: 'Onboard patient',
         description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
-        steps: [
-          {
-            type: 'speech',
-            speech: {
-              text: 'Test 123.'
-            }
-          }
-        ]
-      },
-      {
-        _id: '5786a2dc517d5513c018c9f8',
-        name: 'Introduce diabetes program',
-        description: 'Explain what to expect and program goals.',
-        steps: [
-          {
-            type: 'speech',
-            speech: {
-              text: 'Hi! Hope you\'re doing well. This program is designed to help you manage your diabetes. I\'ll be checking in regularly to see how you\'re doing.'
-            }
-          }
-        ]
-      },
-      {
-        _id: '5786a2dc517d5513c018c9f7',
-        name: 'Check blood sugar monitoring adherence for the week.',
-        description: 'Check adherence to checking blood sugar as well as several warning conditions.',
-        steps: [
-          {
-            type: 'question',
-            questionId: '57891a3a678d9fcc2340954a'
-          },
-          {
-            type: 'question',
-            questionId: '57891a3a678d9fcc2340954b'
-          }
-
-        ]
+        type: 'say',
+        text: 'Test123.'
       })
   })
 

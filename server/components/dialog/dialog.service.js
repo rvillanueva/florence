@@ -3,19 +3,22 @@
 var Promise = require('bluebird');
 var Message = require('../message');
 var Parser = require('../parser');
+var EntryService = require('../../models/entry');
 var DialogExecutionService = require('./dialog.execution');
 var maxLoops = 5;
 
 export function handleExpectedResponse(bot) {
   console.log('Handling expected response...')
   var task = bot.loaded.task;
+  var value = false;
   return new Promise(function(resolve, reject) {
     if (bot.state.status == 'waiting') {
       bot.state.status = 'responding';
       if (task.type == 'ask') {
         console.log('TASK IS:')
         console.log(task)
-        matchChoiceToInput()
+        parseResponse()
+          .then(parsed => selectValidChoice(parsed))
           .then(choice => handleReplyToUser(choice))
           .then(choice => handleResponseStorage(choice))
           .then(completed => handleTodoCompletion(completed))
@@ -31,59 +34,85 @@ export function handleExpectedResponse(bot) {
     }
   })
 
-  function matchChoiceToInput() {
+  function parseResponse() {
     return new Promise(function(resolve, reject) {
-      setupPatternQuery()
-        .then(query => Parser.searchPatterns(query))
-        .then(matches => resolveAssociatedChoice(matches))
-        .then(value => resolve(value))
+      var query = {
+        text: bot.received.content.text
+      };
+      Parser.classify(query)
+        .then(parsed => resolve(parsed))
         .catch(err => reject(err))
     })
+  }
 
-    function setupPatternQuery() {
-      return new Promise(function(resolve, reject) {
-        console.log('setting up pattern query')
-
-        var query = {
-          text: bot.received.text,
-          patterns: []
+  function selectValidChoice(parsed) {
+    return new Promise(function(resolve, reject) {
+      var selected = false;
+      bot.loaded.task.choices.forEach(function(choice, c) {
+        if(!selected){
+          value = convertToValue(choice);
+          if(value){
+            selected = choice;
+          }
         }
-        task.choices = task.choices || [];
-        task.choices.forEach(function(choice, c) {
-          choice.patterns.forEach(function(pattern, p) {
-            pattern = pattern.toObject();
-            pattern.meta = {
-              choice: choice
-            }
-            query.patterns.push(pattern);
-          })
-        })
-        resolve(query);
       })
+      resolve(selected);
+    })
+
+    function convertToValue(choice) {
+      if (choice.match.type == 'number') {
+        return checkNumber(choice);
+      } else if (choice.match.type == 'expression') {
+        return checkExpression(choice);
+      } else {
+        return false;
+      }
     }
 
-    function resolveAssociatedChoice(matches) {
-      return new Promise(function(resolve, reject) {
-        console.log('resolving matches from')
-        console.log(matches)
-        if (matches.length > 0) {
-          resolve(matches[0].meta.choice);
-        } else {
-          resolve(false);
+    function checkNumber(choice) {
+      var matched = false;
+      parsed.entities.number = parsed.entities.number || []
+      parsed.entities.number.forEach(function(number, n) {
+        var minMax = true;
+        if (typeof choice.match.min == 'number' && number.value < choice.match.min) {
+          minMax = false;
+        }
+        if (typeof choice.match.max == 'number' && number.value > choice.match.min) {
+          minMax = false;
+        }
+        if(minMax){
+          var returnedValue = {
+            number: number.value
+          };
+          matched = matched || returnedValue;
         }
       })
+      return matched;
+    }
+
+    function checkExpression(choice) {
+      var matched = false;
+      parsed.entities.expression = parsed.entities.expression || []
+      parsed.entities.expression.forEach(function(expression, e) {
+        if (expression.value == choice.match.expression) {
+          matched = matched || {
+            string: choice.match.expression
+          };
+        }
+      })
+      return matched;
     }
   }
+
 
   function handleReplyToUser(choice) {
     return new Promise(function(resolve, reject) {
       console.log('Handling reply to user from ')
       console.log(choice)
-      choice = true;
-      if (choice) {
-        var sendable = {
-          text: 'Got it.'
-        };
+      if (choice && choice.responses && choice.responses.length > 0) {
+
+        var sendable;
+        sendable = choice.responses[Math.floor(Math.random() * choice.responses.length)]
         bot.send(sendable)
           .then(() => resolve(choice))
           .catch(err => reject(err))
@@ -99,46 +128,29 @@ export function handleExpectedResponse(bot) {
     })
   }
 
-  function convertChoiceToValue(choice) {
-    return new Promise(function(resolve, reject) {
-      var value;
-      if(choice.type == 'number'){
-        value = {
-          number: 0
-        }
-      }
-      if (true) {
-        resolve(true);
-      } else {
-        resolve(false);
-      }
-    })
-  }
-
   function handleResponseStorage(choice) {
     return new Promise(function(resolve, reject) {
       console.log('Storing response...')
       if (choice) {
         var entry = {
           userId: bot.user._id,
-          params: bot.loaded.params,
-          value: choice.store,
+          value: value,
           question: {
-            taskId: bot.loaded.taskId,
+            taskId: bot.loaded.task._id,
+            params: bot.loaded.params,
             text: bot.loaded.text,
           },
           response: {
             messageId: bot.received._id,
-            text: bot.received.text
+            content: bot.received.content
           }
         }
         EntryService.create(entry)
-        .then(() => resolve(true))
-        .catch(err => reject(err))
+          .then(() => resolve(true))
+          .catch(err => reject(err))
       } else {
         resolve(false)
       }
-
     })
   }
 
@@ -147,11 +159,11 @@ export function handleExpectedResponse(bot) {
       console.log('Removing task from queue...')
       if (completed) {
         bot.completeTask()
-        .then(updated => {
-          bot = updated
-          resolve()
-        })
-        .catch(err => reject(err))
+          .then(updated => {
+            bot = updated
+            resolve()
+          })
+          .catch(err => reject(err))
       } else {
         resolve()
       }
@@ -176,9 +188,10 @@ export function handleNextTask(bot) {
       console.log('Ending response...')
       resolve(bot)
     }
+
     function handleNoActiveTask() {
       return new Promise((resolve, reject) => {
-        if(!bot.loaded.task){
+        if (!bot.loaded.task) {
           bot.loadNextTask()
             .then(updated => {
               bot = updated;
@@ -194,7 +207,7 @@ export function handleNextTask(bot) {
 
     function loadNextTask() {
       return new Promise((resolve, reject) => {
-        if(bot.state.status == 'responding'){
+        if (bot.state.status == 'responding') {
           bot.loadNextTask()
             .then(updated => {
               bot = updated;
@@ -214,10 +227,10 @@ export function handleNextTask(bot) {
         if (!bot.loaded.task) {
           bot.state.status = 'waiting';
           bot.send({
-            text: 'Done!'
-          })
-          .then(() => resolve())
-          .catch(err => reject(err))
+              text: 'Done!'
+            })
+            .then(() => resolve())
+            .catch(err => reject(err))
         } else {
           resolve()
         }
@@ -252,11 +265,11 @@ export function handleNotification(bot) {
       taskId: taskId
     }
     bot.addTodo({
-      taskId: taskId,
-      params: {},
-      immediate: true
-    })
-    .then(bot => resolve(bot))
-    .catch(err => reject(err))
+        taskId: taskId,
+        params: {},
+        immediate: true
+      })
+      .then(bot => resolve(bot))
+      .catch(err => reject(err))
   })
 }

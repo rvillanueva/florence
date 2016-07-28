@@ -111,16 +111,11 @@ export default function(options){
 
   // LOADING
 
-  this.loadActive = function(){
-    return new Promise((resolve, reject) => {
-      console.log('Setting up active state...')
-      this.loadActiveTask()
-      .then(() => resolve(this))
-      .catch(err => reject(err))
-    })
-  }
+  this.loadActive = BotLoaderService.loadActive;
+  this.loadActive = BotLoaderService.loadActiveTask;
   this.loadNextTask = BotLoaderService.loadNextTask;
-  this.initLoaderMethods = BotLoaderService.initLoaderMethods;
+  this.setNextTask = BotLoaderService.setNextTask;
+  this.handleNoTask = BotLoaderService.handleNoTask;
 
 
 
@@ -128,10 +123,8 @@ export default function(options){
 
   this.init = function(){
     return new Promise((resolve, reject) => {
-
       this.state.status = this.state.status || 'waiting';
       this.state.active = this.state.active || {};
-      this.initLoaderMethods();
       this.loadActive()
       .then(() => resolve(this))
       .catch(err => reject(err))

@@ -92,18 +92,10 @@ export function update(req, res) {
     delete req.body._id;
   }
   var task = req.body;
-  task.steps = task.steps || [];
-  task.steps.forEach(function(step, s){
-    if(step.type == 'question'){
-      step.questionId = step.question._id;
-      delete step.question;
-    }
-  })
   console.log(task)
   return Task.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
-    .then(task => TaskService.attachQuestions(task))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

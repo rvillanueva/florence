@@ -30,7 +30,7 @@ export function run(bot){
 export function handleQuestion(bot){
   return new Promise(function(resolve, reject){
     var text = bot.loaded.task.text;
-    text = replceParams(text, bot.loaded.params);
+    text = replaceParams(text, bot.loaded.params);
     bot.loaded.text = text;
     bot.state.status = 'waiting';
     bot.send({
@@ -44,7 +44,7 @@ export function handleQuestion(bot){
 export function handleSpeech(bot){
   return new Promise(function(resolve, reject){
     var text = bot.loaded.task.text;
-    text = replceParams(text, bot.loaded.params);
+    text = replaceParams(text, bot.loaded.params);
     bot.loaded.text = text;
     bot.send({
       text: text

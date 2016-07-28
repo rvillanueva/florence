@@ -8,14 +8,15 @@ var EntrySchema = new mongoose.Schema({
     created: Date,
     updated: Date,
   },
-  params: {},
   value: {
     number: Number,
     date: Date,
     string: String
   },
   question: {
-    text: String
+    taskId: String,
+    params: {},
+    text: String,
   },
   response: {
     messageId: String,
