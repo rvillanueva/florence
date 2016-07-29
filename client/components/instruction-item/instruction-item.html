@@ -1,0 +1,9 @@
+<div class="instruction-list-item" ng-click="toggleSelection()">
+  <div class="instruction-list-item-content">
+    {{instruction.text}}&nbsp;{{instruction.action.timing.once.comparator}}&nbsp;{{instruction.action.timing.once.date | date:'MMMM d, yy'}}
+    <span class="pull-right">70%</span>
+  </div>
+  <div class="instruction-progress-bar" ng-style="{'width': '70%'}"></div>
+</div>
+<div ng-show="selected" class="instruction-databox">
+</div>

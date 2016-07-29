@@ -23,7 +23,7 @@ $navbar-height: 45px;
   min-height: $navbar-height;
   & .navbar-nav li a {
     color: rgb(115, 115, 115);
-    padding: 14px 14px;
+    padding: 12px 12px;
     font-size: 12px;
     &:hover,  &:focus {
       background-color: transparent;
@@ -49,7 +49,7 @@ $navbar-height: 45px;
     }
   }
   & .navbar-text {
-    margin: 14px 14px;
+    margin: 12px 12px;
     font-size: 12px;
   }
   & .navbar-brand {

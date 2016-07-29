@@ -71,7 +71,17 @@ var UserSchema = new Schema({
     {
       text: String,
       measurement: {
-        type: String, //confidence/propensity/completedFrequency/missedFrequency/taskCompletion
+        type: {
+          type: String,
+          enum: [
+            'confidence',
+            'propensity',
+            'completedFrequency',
+            'missedFrequency',
+            'taskCompletion',
+            'custom'
+          ]
+        },
         frequency: {
           type: String,
           enum: [
@@ -91,31 +101,24 @@ var UserSchema = new Schema({
             type: String,
             enum: [
               'once',
-              'recurring',
+              'repeating',
               'general'
             ]
           },
-          once: {
-            comparator: {
-              type: String,
-              enum: [
-                'on',
-                'before',
-                'after'
-              ]
-            },
-            date: Date
+          timeframe: {
+            on: Date,
+            from: Date,
+            to: Date
           },
-          recurring: {
-            times: Number,
-            every: {
-              type: String,
-              enum: [
-                'day',
-                'week'
-              ]
-            }
-          },
+          times: Number,
+          every: {
+            type: String,
+            enum: [
+              'day',
+              'week',
+              'dayOfWeek'
+            ]
+          }
         }
       }
     }

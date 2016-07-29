@@ -21,7 +21,8 @@ class MainController {
           text: 'Hi!'
         }
       }],
-      instructions: []
+      instructions: [],
+      instruction: false
     }
     this.patientSearchQuery = '';
     this.$http.get('/api/users').success(patients => {
@@ -63,7 +64,19 @@ class MainController {
       this.selected = {
         patient: patient,
         messages: [],
-        instructions: []
+        instructions: [{
+          text: 'Pick up your inhaler next week',
+          action: {
+            phrase: 'Pick up your inhaler',
+            timing: {
+              type: 'once',
+              timeframe: {
+                to: new Date(),
+                from: new Date(),
+              }
+            }
+          }
+        }]
       };
       console.log(patient)
     })
@@ -107,7 +120,9 @@ class MainController {
     if(this.instructionInput.text.length > 0){
       this.$http.get('/api/instructions?q=' + this.instructionInput.text).success(instruction => {
         console.log(instruction);
+        instruction = this.updateMeasurementType(instruction)
         this.selected.instructions.push(instruction);
+        this.selected.instruction = instruction;
         console.log(this.selected.instructions)
       })
       .error(err => {
@@ -115,6 +130,22 @@ class MainController {
       })
       this.instructionInput.text = '';
     }
+  }
+  updateMeasurementType(instruction){
+    var timingType;
+    instruction.action = instruction.action || {};
+    instruction.action.timing = instruction.action.timing || {};
+    instruction.measurement = instruction.measurement || {};
+    timingType = instruction.action.timing.type;
+
+    if(timingType == 'once'){
+      instruction.measurement.type = 'completion';
+    } else if(timingType == 'repeating'){
+      instruction.measurement.type = 'missedFrequency';
+    } else if (timingType == 'general'){
+      instruction.measurement.type = 'propensity';
+    }
+    return instruction;
   }
 }
 

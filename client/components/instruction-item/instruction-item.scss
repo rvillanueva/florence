@@ -1,0 +1,38 @@
+.instruction-list {
+  width: 100%;
+  & .instruction-list-item {
+    position: relative;
+    min-height: 46px;
+    cursor: pointer;
+    &.instruction-list-item-selected {
+      background-color: rgb(63, 110, 230);
+      color: white;
+    }
+    & .instruction-list-item-content {
+      padding: 14px 20px;
+      width: 100%;
+      min-height: 100%;
+      position:relative;
+      z-index: 50;
+    }
+    & .instruction-progress-bar {
+      z-index: 10;
+      background-color: rgb(226, 233, 255);
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+  }
+  & .instruction-databox {
+    position:relative;
+    z-index: 40;
+    background-color: white;
+    height: 200px;
+  }
+
+}

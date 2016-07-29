@@ -10,6 +10,8 @@
 'use strict';
 
 import _ from 'lodash';
+var Parser = require('../../components/parser');
+var Promise = require('bluebird');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -60,25 +62,88 @@ function handleError(res, statusCode) {
 
 // Gets a list of Instructions
 export function query(req, res) {
-  var query = req.query;
-  var term = query.q;
-  var instruction = {
-    text: term,
-    measurement: {
-      type: 'confidence'
-    },
-    action: {
-      phrase: term,
-      timing: {
-        type: 'once',
-        once: {
-          comparator: 'on',
-          date: new Date()
+  var text = req.query.q;
+  var query = {
+    text: text
+  }
+  Parser.classify(query)
+  .then(parsed => buildInstruction(parsed))
+  .then(respondWithResult(res, 200))
+  .catch(handleError(res))
+
+  function buildInstruction(parsed){
+    return new Promise(function(resolve, reject){
+      var instruction = {
+        text: query.text,
+        action: {}
+      }
+      console.log(JSON.stringify(parsed))
+
+      attachActionPhrase();
+      attachTimingType();
+      attachTimingTimes();
+      attachTimingEvery();
+      resolve(instruction);
+
+      ///
+
+      function attachActionPhrase(){
+        if(parsed.entities.action_phrase && parsed.entities.action_phrase.length > 0){
+          instruction.action.phrase = parsed.entities.action_phrase[0].value;
+        } else {
+          instruction.action.phrase = text;
         }
       }
-    }
+
+      function attachTimingType(){
+        var timingType;
+        if(parsed.entities.timing_type && parsed.entities.timing_type.length > 0){
+          timingType = parsed.entities.timing_type[0].value;
+        }
+        if(timingType !== 'once' && timingType !== 'repeating'){
+          timingType = 'general';
+        }
+        instruction.action.timing = {
+          type: timingType
+        }
+      }
+
+      function attachTimingTimeframe(){
+        if(parsed.entities.datetime && parsed.entities.datetime.length > 0){
+          if(parsed.entities.datetime[0].type == 'interval'){
+            instruction.action.timeframe = {
+              from: parsed.entities.datetime[0].value.from,
+              to: parsed.entities.datetime[0].value.to
+            }
+          } else if (parsed.entities.datetime[0].type == 'value'){
+            instruction.action.timeframe = {
+              from: parsed.entities.datetime[0].value,
+              to: parsed.entities.datetime[0].value
+            }
+          }
+        }
+      }
+
+      function attachTimingTimes(){
+        if(parsed.entities.repeating_times && parsed.entities.repeating_times.length > 0){
+          instruction.action.timing.times = parsed.entities.repeating_times[0].value
+        }
+        if(parsed.entities.repeating_times_synonym && parsed.entities.repeating_times_synonym.length > 0){
+          instruction.action.timing.times = instruction.action.timing.times || Number(parsed.entities.repeating_times_synonym[0].value)
+        }
+        if(parsed.entities.number && parsed.entities.number.length > 0 && instruction.action.timing.type == 'repeating'){
+          instruction.action.timing.times = instruction.action.timing.times || Number(parsed.entities.number[0].value)
+        }
+
+      }
+
+      function attachTimingEvery(){
+        if(parsed.entities.repeating_every && parsed.entities.repeating_every.length > 0){
+          instruction.action.timing.every = parsed.entities.repeating_every[0].value
+        }
+      }
+
+    })
   }
-  console.log(typeof instruction)
-  console.log(instruction)
-  res.json(instruction);
+
 }
