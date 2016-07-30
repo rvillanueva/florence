@@ -3,7 +3,14 @@
 import mongoose from 'mongoose';
 
 var InstructionSchema = new mongoose.Schema({
+  meta: {
+    created: {
+      type: Date,
+      default: Date.now
+    }
+  },
   text: String,
+  archived: Boolean,
   measurement: {
     type: {
       type: String,

@@ -35,8 +35,14 @@ var UserSchema = new Schema({
     default: 'user'
   },
   active: Boolean,
-  password: String,
-  salt: String,
+  password: {
+    type: String,
+    select: false
+  },
+  salt: {
+    type: String,
+    select: false
+  },
   created: Date,
   lastActivity: Date,
   queue: [{

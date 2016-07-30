@@ -203,3 +203,40 @@ function addTasksForEach(users){
     })
   }
 }
+
+export function update(req, res){
+  var instructionId = req.params.id;
+  var updates = req.body;
+  return User.findOneAndUpdate({'instructions._id': instructionId}, {
+      "$set": {
+          "instructions.$.measurement": updates.measurement,
+          "instructions.$.archived": updates.archived,
+      }
+  }).exec()
+  .then(handleEntityNotFound(res))
+  .then(respondWithResult(res))
+  .catch(handleError(res));
+}
+
+
+export function create(req, res){
+  var userId = req.query.userId;
+  var instruction = req.body;
+  console.log(instruction)
+  return User.findOne({'_id': userId}, '-salt -password').exec()
+  .then(user => {
+    return new Promise(function(resolve, reject){
+      if(!user){
+        resolve(null)
+      }
+      user.instructions = user.instructions || [];
+      user.instructions.push(instruction);
+      user.save()
+      .then(user => resolve(user))
+      .catch(err => reject(err))
+    })
+  })
+  .then(handleEntityNotFound(res))
+  .then(respondWithResult(res))
+  .catch(handleError(res));
+}

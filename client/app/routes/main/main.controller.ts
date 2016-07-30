@@ -88,7 +88,6 @@ class MainController {
     .error(err => {
       window.alert(err)
     })
-
   }
   viewPatientResponses(){
     this.view.main = 'data';
@@ -108,7 +107,7 @@ class MainController {
       this.$http.get('/api/instructions?q=' + this.instructionInput.text).success(instruction => {
         console.log(instruction);
         instruction = this.updateMeasurementType(instruction)
-        this.stagedInstructions.push(instruction);
+        this.confirmAddedInstruction(instruction);
         console.log(this.selected.instructions)
       })
       .error(err => {
@@ -116,6 +115,32 @@ class MainController {
       })
       this.instructionInput.text = '';
     }
+  }
+  confirmAddedInstruction(instruction){
+    this.ModalService.open({
+      templateUrl: 'components/modals/editInstruction/editInstruction.html',
+      controller: 'EditInstructionModalController as vm',
+      params: {
+        instruction: instruction
+      }
+    })
+    .then(instruction => {
+      // TODO add proper saving here
+      this.saveInstruction(instruction);
+    })
+  }
+  saveInstruction(instruction){
+    var deferred = this.$q.defer();
+    this.$http.post('/api/instructions?userId=' + this.selected.patient._id, instruction)
+    .success(user => {
+      console.log(user)
+      this.selected.patient = user;
+      deferred.resolve(user)
+    })
+    .error(err => {
+      window.alert(err);
+    })
+    return deferred.promise;
   }
   updateMeasurementType(instruction){
     var timingType;

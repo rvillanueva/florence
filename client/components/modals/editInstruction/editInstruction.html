@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <button type="button" ng-click="$dismiss()" class="close">&times;</button>
+  <h4 class="modal-title">Edit Instruction</h4>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="form-group">
+      <label class="col-md-2">Instruction</label>
+      <div class="col-md-10">
+        <input class="form-control" ng-model="vm.instruction.text">
+      </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+      <label class="col-md-2">Action Type</label>
+      <div class="col-md-10">
+        <select class="form-control" ng-model="vm.instruction.action.timing.type">
+          <option value="once">single task</option>
+          <option value="repeating">repeating action</option>
+          <option value="general">general behavior change</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="form-group" ng-show="vm.instruction.action.timing.type == 'once'">
+      <label class="col-md-2">Timeframe</label>
+      <div class="col-md-10">
+        {{vm.instruction.action.timing.timeframe | timeframe}}
+      </div>
+    </div>
+    <br>
+    <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
+      <label class="col-md-2">Repeats</label>
+      <div class="col-md-10">
+        <input type="number" ng-model="vm.instruction.action.timing.times"> times every
+        <select ng-model="vm.instruction.action.timing.every">
+          <option value="day">day</option>
+          <option value="week">week</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="form-group">
+      <label class="col-md-2">Measurement Type</label>
+      <div class="col-md-10">
+        <select ng-model="vm.instruction.measurement.type">
+          <option value="confidence">Confidence</option>
+          <option value="propensity">Propensity</option>
+          <option value="completedFrequency">Completed Frequency</option>
+          <option value="missedFrequency">Missed Frequency</option>
+          <option value="taskCompletion">Task Completion</option>
+        </select>
+        <br> {{vm.instruction.action.phrase}}&nbsp;
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success btn-md" ng-click="vm.done()">Confirm</button>
+</div>

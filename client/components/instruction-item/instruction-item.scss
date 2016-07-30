@@ -4,6 +4,7 @@
     position: relative;
     min-height: 46px;
     cursor: pointer;
+    background-color: white;
     &.instruction-list-item-selected {
       background-color: rgb(63, 110, 230);
       color: white;
@@ -17,7 +18,7 @@
     }
     & .instruction-progress-bar {
       z-index: 10;
-      background-color: rgb(226, 233, 255);
+      background-color:rgb(212, 225, 242);
       height: 100%;
       width: 100%;
       position: absolute;
@@ -34,5 +35,16 @@
     background-color: white;
     height: 200px;
   }
+
+  & .expanded-icon-open {
+    width: 20px;
+    margin-left: -2px;
+    margin-right: 2px;
+  }
+
+  & .expanded-icon-closed {
+    width: 20px;
+  }
+
 
 }

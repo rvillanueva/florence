@@ -18,11 +18,13 @@
     </div>
     <div class="command-centerbox">
       <div ng-show="$ctrl.selected.patient" style="width:100%;">
-        <div class="command-centerbox-header">
-          <div class="command-centerbox-header-left"><strong>{{$ctrl.view.main | uppercase}}</strong></div>
-          <div class="command-centerbox-header-right">
-            <a href="#" ng-click="$ctrl.view.main = 'instructions'"><i class="header-icon fa fa-list"></i></a>
-            <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="header-icon fa fa-comment"></i></a></div>
+        <div class="command-centerbox-heading">
+          <div class="command-centerbox-heading-left"><strong>{{$ctrl.view.main | uppercase}}</strong></div>
+          <div class="command-centerbox-heading-right">
+            <a href="#" ng-click="$ctrl.view.main = 'instructions'"><i class="heading-icon fa fa-list"></i></a>
+            <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="heading-icon fa fa-comment"></i></a>
+            <a href="#" ng-click="$ctrl.view.main = 'patient'"><i class="heading-icon fa fa-user"></i></a>
+          </div>
         </div>
         <div ng-show="$ctrl.view.main == 'messages'">
           <message-box messages="$ctrl.selected.messages"></message-box>
@@ -31,8 +33,9 @@
           <div class="instruction-list" style="width: 100%;">
             <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
           </div>
+          <br>
         </div>
-        <div ng-show="!$ctrl.view.main == 'patient'">
+        <div ng-show="$ctrl.view.main == 'patient'" style="padding: 20px">
           <p class="user-name-text">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</p>
           <br>
           <br> Programs
@@ -50,55 +53,18 @@
           <form ng-submit="$ctrl.addInstruction()">
             <input class="form-control" placeholder="Enter patient instruction here..." ng-model="$ctrl.instructionInput.text">
             <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+            <br><br>
           </form>
         </div>
       </div>
     </div>
-    <div class="command-sidebar-right navbar-spaced" ng-show="$ctrl.selected.instruction">
+    <!--<div class="command-sidebar-right navbar-spaced" ng-show="$ctrl.selected.instruction">
       <div class="command-sidebar-right-content">
         <div>
           <a href="#" ng-click="$ctrl.selected.instruction = false">&times;</a>
           <br><br>
         </div>
-        {{$ctrl.selected.instruction.text}}&nbsp;<a href="#"><i class="fa fa-edit"></i></a>
-        <br>
-        <br>
-        <br> This is a
-        <br>
-        <select ng-model="$ctrl.selected.instruction.action.timing.type">
-          <option value="once">single task</option>
-          <option value="repeating">repeating action</option>
-          <option value="general">general behavior change</option>
-        </select>
-        <br>
-        <br>
-        <div ng-show="$ctrl.selected.instruction.action.timing.type == 'once'">
-          <strong>Timeframe</strong>
-          <br>
-          {{$ctrl.selected.instruction.action.timing.timeframe | timeframe}}
-        </div>
-        <div ng-show="$ctrl.selected.instruction.action.timing.type == 'repeating'">
-          <input type="number" ng-model="$ctrl.selected.instruction.action.timing.times"> times every
-          <select ng-model="$ctrl.selected.instruction.action.timing.every">
-            <option value="day">day</option>
-            <option value="week">week</option>
-          </select>
-        </div>
-        <br><br>
-        <div>
-          <strong>Measurement Type</strong>
-          <br>
-          <select ng-model="$ctrl.selected.instruction.measurement.type">
-            <option value="confidence">Confidence</option>
-            <option value="propensity">Propensity</option>
-            <option value="completedFrequency">Completed Frequency</option>
-            <option value="missedFrequency">Missed Frequency</option>
-            <option value="completion">Task Completion</option>
-          </select>
-          <br> {{$ctrl.selected.instruction.action.phrase}}&nbsp;
-          <a href="#"><i class="fa fa-edit"></i></a>
-        </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </div>

@@ -1,9 +1,17 @@
-<div class="instruction-list-item" ng-click="toggleSelection()">
+<div class="instruction-list-item" ng-click="toggleExpansion()">
   <div class="instruction-list-item-content">
+    <i ng-show="!expanded" class="fa fa-caret-right expanded-icon-closed"></i><i ng-show="expanded" class="fa fa-caret-down expanded-icon-open"></i>
     {{instruction.text}}&nbsp;{{instruction.action.timing.once.comparator}}&nbsp;{{instruction.action.timing.once.date | date:'MMMM d, yy'}}
-    <span class="pull-right">70%</span>
+    <div class="pull-right" uib-dropdown is-open="status.isopen">
+      <a href="#" uib-dropdown-toggle ng-disabled="disabled">
+        <span style="width: 30px; text-align: center; margin-right: -12px;" class="fa fa-ellipsis-v"></span>
+      </a>
+      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+        <li role="menuitem"><a href="$" class="nav-dropdown-btn" ng-click="edit()">Edit</a></li>
+      </ul>
+    </div>
   </div>
-  <div class="instruction-progress-bar" ng-style="{'width': '70%'}"></div>
+  <div class="instruction-progress-bar" ng-style="{'width': '20%'}"></div>
 </div>
-<div ng-show="selected" class="instruction-databox">
+<div ng-show="expanded" class="instruction-databox">
 </div>

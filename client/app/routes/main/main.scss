@@ -1,5 +1,5 @@
 $divider-color: rgb(208, 208, 208);
-
+$inputbox-height: 44px;
 .command-center {
   background-color: white;
   display: flex;
@@ -16,6 +16,7 @@ $divider-color: rgb(208, 208, 208);
   bottom: 0;
   left: 0;
   right: 0;
+  height: $inputbox-height;
   border-style: solid;
   border-width: 1px 0 0 0;
   border-color: $divider-color;
@@ -30,9 +31,32 @@ $divider-color: rgb(208, 208, 208);
     padding: 10px;
     overflow: auto;
   }
-  & input, input:focus{
+  & input {
     border: none;
-    outline: none;
+    padding: 22px 14px;
+  }
+}
+
+.command-queuebox {
+  position: absolute;
+  right: 10px;
+  bottom: $inputbox-height;
+  width: 260px;
+  & .command-queuebox-heading {
+    background-color: rgb(91, 122, 255);
+    color: white;
+    height: 30px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+  }
+  & .command-queuebox-body {
+    border-width: 0 1px 0 1px;
+    border-style: solid;
+    border-color: $divider-color;
+    background-color: white;
+    color: rgb(54, 54, 54);
+    padding: 20px 12px;
+    font-size: 0.9em;
   }
 }
 
@@ -60,28 +84,28 @@ $divider-color: rgb(208, 208, 208);
 .command-centerbox {
   display: flex;
   flex: 1;
-  background-color: white;
   position:relative;
   padding-top: 92px;
-  & .command-centerbox-header{
+  & .command-centerbox-heading{
     position: absolute;
     color: rgb(54, 54, 54);
+    background-color: white;
     height: 46px;
     left: 0;
     right: 0;
     top:46px;
     border-bottom: 1px solid $divider-color;
-    & .command-centerbox-header-left {
+    & .command-centerbox-heading-left {
       float: left;
       padding: 12px 20px;
       font-size: 14px;
     }
-    & .command-centerbox-header-right {
+    & .command-centerbox-heading-right {
       float: right;
       padding-right: 14px;
       font-size: 14px;
     }
-    & .header-icon {
+    & .heading-icon {
       font-size: 18px;
       margin: 14px;
     }
@@ -101,7 +125,7 @@ $divider-color: rgb(208, 208, 208);
       border-top: 1px rgb(227, 227, 227);
     }
     &.user-list-item-selected {
-      background-color: rgb(63, 110, 230);
+      background-color: rgb(89, 128, 228);
       color: white;
     }
   }
