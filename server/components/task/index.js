@@ -19,6 +19,8 @@ export function query(query) {
     if (!query.objective) {
       reject(new Error('Need to define objective in query.'))
     }
+    console.log('\n\nQUERY IS:')
+    console.log(query);
     Task.find({
         'objective': query.objective
       })
@@ -28,8 +30,6 @@ export function query(query) {
       .catch(err => reject(err))
 
     function filterByParams(tasks) {
-      console.log('Searching among tasks:');
-      console.log(tasks);
       return new Promise(function(resolve, reject) {
         tasks = tasks || [];
         for (var i = 0; i < tasks.length; i++) {

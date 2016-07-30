@@ -8,7 +8,7 @@ var InstructionSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: [
-        'confidence',
+        'futureConfidence',
         'propensity',
         'completedFrequency',
         'missedFrequency',
@@ -21,6 +21,13 @@ var InstructionSchema = new mongoose.Schema({
       enum: [
         'daily',
         'weekly'
+      ]
+    },
+    period: {
+      type: String,
+      enum: [
+        'day',
+        'week'
       ]
     },
     lastEntry: Date

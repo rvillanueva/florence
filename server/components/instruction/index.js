@@ -86,7 +86,14 @@ export function queueTasks(user) {
         params: instruction.action.params || {}
       }
       taskQuery.params.measurementType = instruction.measurement.type;
-      taskQuery.params.measurementFreq = instruction.measurement.frequency;
+      taskQuery.params.measurementPeriod = instruction.measurement.period;
+      // TODO update to explicitly set measurement period instead of inferring from measurement frequency
+      if(instruction.measurement.frequency == 'daily'){
+        taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'day'
+      } else if (instruction.measurement.frequency == 'weekly'){
+        taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'week'
+
+      }
       taskQuery.params.actionPhrase = instruction.action.phrase;
 
       if (instruction.action.timing) {

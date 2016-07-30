@@ -54,7 +54,13 @@ User.find({}).remove()
         password: 'admin',
         queue: [
           {
-            taskId: '5786a2dc517d5513c018c9f6'
+            taskId: '5786a2dc517d5513c018c9f6',
+            params: {
+              providerName: 'Ryan'
+            }
+          },
+          {
+            taskId: '5786a2dc517d5513c018c9f3',
           }
         ],
         notifications:{
@@ -68,7 +74,7 @@ User.find({}).remove()
               frequency: 'daily'
             },
             action: {
-              phrase: 'Take your amoxciillin',
+              phrase: 'Take your amoxicillin',
               timing: {
                 type: 'repeating',
                 times: 3,
@@ -100,7 +106,7 @@ Task.find({}).remove()
           },
           responses: [
             {
-              text: 'Yes oh yes!'
+              text: 'Great!'
             }
           ]
         },{
@@ -110,7 +116,7 @@ Task.find({}).remove()
           },
           responses: [
             {
-              text: 'No way, Jose!'
+              text: 'No problem. [ERROR: Haven\'t handled this path yet.]'
             }
           ]
         }]
@@ -119,16 +125,167 @@ Task.find({}).remove()
         name: 'Onboard patient',
         description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
         type: 'say',
-        text: 'Test123.'
+        text: 'Hey! My name is Florence, and I work with <<providerName>>. I\'m also a bot, which means I\'m always available, but be patient with me if I don\'t understand everything!',
+        params: {
+          providerName: true
+        }
+      },
+      {
+        _id: '5786a2dc517d5513c018c9f3',
+        name: 'Start check-in',
+        description: 'Introduce check in.',
+        type: 'say',
+        text: 'So, I have a few questions for you that will help me keep track of your health.'
+      },
+      {
+        name: 'Measure daily propensity',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'Today, on a scale of 1-5, how often do you feel like you have been able to <<actionPhrase>>? (1 = Never, 5 = Always)',
+        attributes: {
+          measurementType: 'propensity',
+          measurementPeriod: 'day'
+        },
+        params: {
+          actionPhrase: true
+        },
+        choices: [
+          {
+            match: {
+              type: 'number',
+              min: 1,
+              max: 1
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 2,
+              max: 2
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 3,
+              max: 3
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 4,
+              max: 4
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 5,
+              max: 5
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          }
+        ]
       },
       {
         name: 'Measure weekly propensity',
         objective: 'measureInstruction',
         type: 'ask',
-        text: 'How often do you feel like you <<actionPhrase>>? (Never, rarely, sometimes, usually, always)',
+        text: 'This week, on a scale of 1-5, how often do you feel like you have been able to <<actionPhrase>>? (1 = Never, 5 = Always)',
         attributes: {
           measurementType: 'propensity',
-          measurementFreq: 'daily'
+          measurementPeriod: 'week'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure general propensity',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'On a scale of 1-5, how often do you feel like you <<actionPhrase>>? (1 = Never, 5 = Always)',
+        attributes: {
+          measurementType: 'propensity'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure missed frequency this week',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'This week, how many times did you miss a scheduled time to <<actionPhrase>>?',
+        attributes: {
+          measurementType: 'missedFrequency',
+          measurementPeriod: 'week'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure missed frequency today',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'Today, how many times did you miss a scheduled time to <<actionPhrase>>?',
+        attributes: {
+          measurementType: 'missedFrequency',
+          measurementPeriod: 'day'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure completed frequency this week',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'This week, how many times did you <<actionPhrase>>?',
+        attributes: {
+          measurementType: 'completedFrequency',
+          measurementPeriod: 'week'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure completed frequency today',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'Today, how many times did you <<actionPhrase>>?',
+        attributes: {
+          measurementType: 'completedFrequency',
+          measurementPeriod: 'day'
+        },
+        params: {
+          actionPhrase: true
+        }
+      },
+      {
+        name: 'Measure future confidence',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'On a scale of 1-5, how confident are you that you will be able to <<actionPhrase>>? (1 = Not at all confident, 5 = Extremely confident)',
+        attributes: {
+          measurementType: 'futureConfidence',
         },
         params: {
           actionPhrase: true

@@ -63,12 +63,21 @@ function replaceParams(text, params){
         var location = text.indexOf('<<' + param + '>>');
         var start = text.slice(0, location);
         var end = text.slice((location + param.length + 4), text.length);
-        console.log('start ' + start)
-        console.log('end ' + end)
-        console.log('param ' + term)
-        var lowercasedTerm = uncapitalize(term);
-        text = start + lowercasedTerm + end;
+        var transformedTerm;
+
+        // TODO - make generalizable framework to turn lowercase instead of manually defining params
+
+        if(param == 'actionPhrase'){
+          transformedTerm = uncapitalize(term);
+        } else {
+          transformedTerm = term;
+        }
+        text = start + transformedTerm + end;
         loops ++;
+        if(loops == 5){
+          // You screwed up
+          console.log('ERROR: LOOPING TO REPLACE PARAMS OVERFLOWED FOR TERM ' + term)
+        }
       }
     }
   }
