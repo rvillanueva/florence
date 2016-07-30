@@ -68,7 +68,7 @@ User.find({}).remove()
         },
         instructions: [
           {
-            text: String,
+            text: 'Take your amoxicillin three times a day',
             measurement: {
               type: 'propensity',
               frequency: 'daily'
@@ -213,7 +213,59 @@ Task.find({}).remove()
         },
         params: {
           actionPhrase: true
-        }
+        },
+        choices: [
+          {
+            match: {
+              type: 'number',
+              min: 1,
+              max: 1
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 2,
+              max: 2
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 3,
+              max: 3
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 4,
+              max: 4
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 5,
+              max: 5
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          }
+        ]
       },
       {
         name: 'Measure general propensity',
@@ -225,7 +277,59 @@ Task.find({}).remove()
         },
         params: {
           actionPhrase: true
-        }
+        },
+        choices: [
+          {
+            match: {
+              type: 'number',
+              min: 1,
+              max: 1
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 2,
+              max: 2
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 3,
+              max: 3
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 4,
+              max: 4
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+              min: 5,
+              max: 5
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          }
+        ]
       },
       {
         name: 'Measure missed frequency this week',
@@ -238,7 +342,36 @@ Task.find({}).remove()
         },
         params: {
           actionPhrase: true
-        }
+        },
+        choices: [
+          {
+            match: {
+              type: 'number',
+              min: 0,
+              max: 0
+            },
+            responses: [{
+              text: 'Great!'
+            }]
+          },
+          {
+            match: {
+              type: 'number',
+            },
+            responses: [{
+              text: 'Okay, good to know.'
+            }]
+          },
+          {
+            match: {
+              type: 'expression',
+              expression: 'none'
+            },
+            responses: [{
+              text: 'Great!'
+            }]
+          }
+        ]
       },
       {
         name: 'Measure missed frequency today',
@@ -290,6 +423,38 @@ Task.find({}).remove()
         params: {
           actionPhrase: true
         }
+      },
+      {
+        name: 'Measure task completion',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'Were you able to <<actionPhrase>>?',
+        attributes: {
+          measurementType: 'taskCompletion',
+        },
+        params: {
+          actionPhrase: true
+        },
+        choices: [
+          {
+            match: {
+              type: 'expression',
+              expression: 'yes'
+            },
+            responses: [{
+              text: 'Great!'
+            }]
+          },
+          {
+            match: {
+              type: 'expression',
+              expression: 'no'
+            },
+            responses: [{
+              text: 'Okay, good to know, thanks.'
+            }]
+          }
+        ]
       })
   })
 
@@ -336,7 +501,6 @@ Program.find({}).remove()
             pattern: {
               type: 'expression',
               expressionKey: 'yes'
-
             }
           },
           {

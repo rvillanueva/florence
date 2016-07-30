@@ -21,9 +21,9 @@ class MainController {
           text: 'Hi!'
         }
       }],
-      instructions: [],
       instruction: false
     }
+    this.stagedInstructions = [];
     this.patientSearchQuery = '';
     this.$http.get('/api/users').success(patients => {
       console.log(patients)
@@ -60,25 +60,12 @@ class MainController {
   selectPatient(patientId){
     this.getPatientById(patientId)
     .then(patient => {
+      console.log(patient);
       this.view.main = 'instructions';
       this.selected = {
         patient: patient,
-        messages: [],
-        instructions: [{
-          text: 'Pick up your inhaler next week',
-          action: {
-            phrase: 'Pick up your inhaler',
-            timing: {
-              type: 'once',
-              timeframe: {
-                to: new Date(),
-                from: new Date(),
-              }
-            }
-          }
-        }]
+        messages: []
       };
-      console.log(patient)
     })
     .catch(err => {
       window.alert(err)
@@ -121,8 +108,7 @@ class MainController {
       this.$http.get('/api/instructions?q=' + this.instructionInput.text).success(instruction => {
         console.log(instruction);
         instruction = this.updateMeasurementType(instruction)
-        this.selected.instructions.push(instruction);
-        this.selected.instruction = instruction;
+        this.stagedInstructions.push(instruction);
         console.log(this.selected.instructions)
       })
       .error(err => {
@@ -139,7 +125,7 @@ class MainController {
     timingType = instruction.action.timing.type;
 
     if(timingType == 'once'){
-      instruction.measurement.type = 'completion';
+      instruction.measurement.type = 'taskCompletion';
     } else if(timingType == 'repeating'){
       instruction.measurement.type = 'missedFrequency';
     } else if (timingType == 'general'){
