@@ -2,10 +2,13 @@
 
 var Promise = require('bluebird');
 var moment = require('moment');
+var TaskService = require('../task');
 
 export function queueTasks(user) {
   return new Promise(function(resolve, reject){
     var promises = [];
+
+    console.log('Instruction service executing for user: ' + user.identity.firstName + ' ' + user.identity.lastName);
 
     user.queue = user.queue || [];
     user.instructions = user.instructions || [];
@@ -20,28 +23,30 @@ export function queueTasks(user) {
     .catch(err => reject(err))
 
     function lastEntryIsOutdated(instruction){
+      console.log('Checking if last entry outdated....')
       instruction.measurement = instruction.measurement || {};
       var lastEntryDate = moment(instruction.lastEntry);
       var measurementFreq = instruction.measurement.frequency || 'weekly';
       var now = moment();
       if(!lastEntryDate){
         return true;
-      } else if (measurementFreq == 'daily' && lastEntryDate.subtract(20, 'hours') > now) {
+      } else if (measurementFreq == 'daily' && lastEntryDate.subtract(20, 'hours') < now) {
         return true;
-      } else if (measurementFreq == 'weekly' && lastEntryDate.subtract(6, 'days') > now) {
+      } else if (measurementFreq == 'weekly' && lastEntryDate.subtract(6, 'days') < now) {
         return true;
       } else {
-        console.log('ERROR: No measurement on instruction ' + instruction._id)
         return false;
       }
     }
 
     function addIfNotQueued(instruction) {
       return new Promise(function(resolve, reject){
-        if (!isInstructionQueued(instruction) && instruction.measurement) {
+        console.log('Adding if not queued...')
+        if (!isInstructionTaskQueued(instruction) && instruction.measurement) {
+          console.log('Instruction isn\'t queued...');
           // find appropriate task, attach params and queue it;
           var taskQuery = buildTaskQuery(instruction);
-          TaskService.search(taskQuery)
+          TaskService.query(taskQuery)
           .then(task => addToQueue(task, taskQuery, instruction))
           .then(() => resolve())
           .catch(err => reject(err))
@@ -50,15 +55,22 @@ export function queueTasks(user) {
     }
 
     function addToQueue(task, query, instruction){
-      var todo = {
-        taskId: task._id,
-        instructionId: instruction._id,
-        params: query.params
+      if(task && instruction){
+        var todo = {
+          taskId: task._id,
+          instructionId: instruction._id,
+          params: query.params
+        }
+        user.queue.push(todo);
+        console.log('Todo was added:')
+        console.log(todo);
+      } else {
+        console.log('No task added.')
       }
-      user.queue.push(todo);
     }
 
     function isInstructionTaskQueued(instruction) {
+      console.log('Checking if instruction is queued...')
       var found = false;
       user.queue.forEach(function(queued, q) {
         if (queued.instructionId == instruction._id) {

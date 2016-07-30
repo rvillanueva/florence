@@ -2,71 +2,45 @@
 
 var Promise = require('bluebird');
 var DialogService = require('../dialog');
-var InstructionsService = require('../instructions');
-var Bot = require('../bot')
-import User from '../../models/user/user.model';
+var moment = require('moment');
 
-export function notifyReadyUsers(user){
+export function notifyReadyUsers(users){
   return new Promise(function(resolve, reject){
-    var promises = [];
-    User.find({'notifications.nextContact':{ '$lt': new Date() }})
-    .then(users => addTasksForEach(users))
-    .then(users => filterUsersWithEmptyQueue(users))
+    filterUsersWithEmptyQueue(users)
     .then(users => notifyUsers(users))
     .then(() => resolve(true))
     .catch(err => reject(err))
   })
 
-  function addTasksForEach(users){
-    var promises = [];
-    var updatedUsers = [];
-
-    return new Promise(function(resolve, reject){
-      users = users || [];
-      users.forEach(function(user, u){
-        promises.push(queueTasks(user));
-      })
-
-      Promise.all(promises)
-      .then(() => resolve(updatedUsers))
-      .catch(err => reject(err))
-    })
-
-    function queueTasks(user){
-      return new Promise(function(resolve, reject){
-        Instructions.queueTasks(user)
-        .then(user => {
-          updatedUsers.push(user)
-          resolve()
-        })
-        .catch(err => reject(err))
-      })
-    }
-  }
-
   function filterUsersWithEmptyQueue(users){
     return new Promise(function(resolve, reject){
-      var filteredUsers = [];
-      users = users || [];
+      console.log('Filtering users...');
+        var filteredUsers = [];
+        users = users || [];
 
-      users.forEach(function(user, u){
-        if(users.queue.length > 0){
-          filteredUsers.push(user)
-        }
-      })
-      return filteredUsers;
+        users.forEach(function(user, u){
+          if(user.queue.length > 0){
+            filteredUsers.push(user)
+          }
+        })
+        resolve(filteredUsers);
     })
   }
 
+
   function notifyUsers(users){
-    var promises = [];
-    users = users || [];
-    users.forEach(function(user, u){
-      promises.push(notifyOne(user))
+    return new Promise(function(resolve, reject){
+      console.log('Notifying users:');
+      console.log(users)
+      var promises = [];
+      users = users || [];
+      users.forEach(function(user, u){
+        promises.push(notifyOne(user))
+      })
+      Promise.all(promises)
+      .then(() => resolve(true))
+      .catch(err => reject(err))
     })
-    Promise.all(promises)
-    .then(() => resolve(true))
-    .catch(err => reject(err))
   }
 
 
@@ -78,7 +52,7 @@ export function notifyReadyUsers(user){
         user: user,
         received: false
       }
-      Dialog.notify(botOptions)
+      DialogService.notify(botOptions)
       .then(() => resolve(true))
       .catch(err => reject(err))
     })

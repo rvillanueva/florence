@@ -6,6 +6,6 @@ var controller = require('./instruction.controller');
 var router = express.Router();
 
 router.get('/', controller.query);
-router.post('/', controller.notify);
+router.post('/notify', controller.notify);
 
 module.exports = router;

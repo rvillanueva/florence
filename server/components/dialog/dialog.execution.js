@@ -55,15 +55,34 @@ export function handleSpeech(bot){
 }
 
 function replaceParams(text, params){
-  for(param in params){
-    while(text.indexOf('<<' + param + '>>') > -1){
-      var location = text.indexOf('<<' + param + '>>');
-      var start = text.slice(0, location,(param.length + 4));
-      var end = text.slice(4 + param.length, text.length);
-      text = start + params[param] + end;
+  var loops = 0;
+  for(var param in params){
+    if (params.hasOwnProperty(param) && typeof params[param] == 'string') {
+      while(text.indexOf('<<' + param + '>>') > -1 && loops < 5){
+        var term = params[param];
+        var location = text.indexOf('<<' + param + '>>');
+        var start = text.slice(0, location);
+        var end = text.slice((location + param.length + 4), text.length);
+        console.log('start ' + start)
+        console.log('end ' + end)
+        console.log('param ' + term)
+        var lowercasedTerm = uncapitalize(term);
+        text = start + lowercasedTerm + end;
+        loops ++;
+      }
     }
   }
   return text;
+}
+
+function uncapitalize(string){
+  if(typeof string == 'string' && string.length > 0){
+    var firstLetter = string.slice(0,1);
+    var lastPart = string.slice(1,string.length);
+    return firstLetter.toLowerCase() + lastPart;
+  } else {
+    return string;
+  }
 }
 
 /*

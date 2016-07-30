@@ -14,7 +14,7 @@ export function getById(taskId) {
 }
 
 
-export function search(query) {
+export function query(query) {
   return new Promise(function(resolve, reject) {
     if (!query.objective) {
       reject(new Error('Need to define objective in query.'))
@@ -28,35 +28,42 @@ export function search(query) {
       .catch(err => reject(err))
 
     function filterByParams(tasks) {
+      console.log('Searching among tasks:');
+      console.log(tasks);
       return new Promise(function(resolve, reject) {
         tasks = tasks || [];
         for (var i = 0; i < tasks.length; i++) {
-          if (queryIsMissingParams(task) || queryIsMissingAttribute(task)) {
+          var task = tasks[i];
+          if (queryIsMissingParams(task) || queryIsMissingAttributes(task)) {
             tasks.splice(i, 1);
             i--;
           }
         }
+        console.log('Filtered:');
+        console.log(tasks);
         resolve(tasks)
       })
     }
 
     function queryIsMissingParams(task) {
       var response = false;
-      for (param in task.params) {
-        //if hasownproperty
-        if (!query.params[param]) {
-          response = true;
+      for (var param in task.params) {
+        if (task.params.hasOwnProperty(param)) {
+          if(!query.params[param]){
+            response = true;
+          }
         }
       }
       return response;
     }
 
-    function queryIsMissingAttribute(task) {
+    function queryIsMissingAttributes(task) {
       var response = false;
-      for (attribute in task.attributes) {
-        //if hasownproperty
-        if (!query.params[attribute] || query.params[attribute] !== task.attributes[attribute]) {
-          response = true;
+      for (var attribute in task.attributes) {
+        if (task.attributes.hasOwnProperty(attribute)) {
+          if (!query.params[attribute] || query.params[attribute] !== task.attributes[attribute]) {
+            response = true;
+          }
         }
       }
       return response;
@@ -71,7 +78,13 @@ export function search(query) {
             selected = task;
           }
         })
-        resolve(task);
+        if(selected){
+          console.log('Best task selected:')
+          console.log(selected);
+        } else {
+          console.log('No task found.')
+        }
+        resolve(selected);
       })
     }
   })

@@ -9,6 +9,8 @@ import Program from '../models/program/program.model';
 import Task from '../models/task/task.model';
 import Question from '../models/question/question.model';
 
+var moment = require('moment');
+
 import mongoose from 'mongoose';
 
 User.find({}).remove()
@@ -55,6 +57,26 @@ User.find({}).remove()
             taskId: '5786a2dc517d5513c018c9f6'
           }
         ],
+        notifications:{
+          nextContact: moment().subtract(10, 'days').toDate()
+        },
+        instructions: [
+          {
+            text: String,
+            measurement: {
+              type: 'propensity',
+              frequency: 'daily'
+            },
+            action: {
+              phrase: 'Take your amoxciillin',
+              timing: {
+                type: 'repeating',
+                times: 3,
+                every: 'day'
+              }
+            }
+          }
+        ],
         lastActivity: new Date()
       })
       .then(() => {
@@ -98,6 +120,19 @@ Task.find({}).remove()
         description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
         type: 'say',
         text: 'Test123.'
+      },
+      {
+        name: 'Measure weekly propensity',
+        objective: 'measureInstruction',
+        type: 'ask',
+        text: 'How often do you feel like you <<actionPhrase>>? (Never, rarely, sometimes, usually, always)',
+        attributes: {
+          measurementType: 'propensity',
+          measurementFreq: 'daily'
+        },
+        params: {
+          actionPhrase: true
+        }
       })
   })
 
