@@ -5,14 +5,25 @@ import mongoose from 'mongoose';
 var InstructionSchema = new mongoose.Schema({
   text: String,
   measurement: {
-    type: String, //confidence/propensity/completedFrequency/missedFrequency/taskCompletion
+    type: {
+      type: String,
+      enum: [
+        'confidence',
+        'propensity',
+        'completedFrequency',
+        'missedFrequency',
+        'taskCompletion',
+        'custom'
+      ]
+    },
     frequency: {
       type: String,
       enum: [
         'daily',
         'weekly'
       ]
-    }
+    },
+    lastEntry: Date
   },
   action: {
     phrase: String,
@@ -25,31 +36,23 @@ var InstructionSchema = new mongoose.Schema({
         type: String,
         enum: [
           'once',
-          'recurring',
+          'repeating',
           'general'
         ]
       },
-      once: {
-        comparator: {
-          type: String,
-          enum: [
-            'on',
-            'by',
-            'after'
-          ]
-        },
-        date: Date
+      timeframe: {
+        from: Date,
+        to: Date
       },
-      recurring: {
-        times: Number,
-        every: {
-          type: String,
-          enum: [
-            'day',
-            'week'
-          ]
-        }
-      },
+      times: Number,
+      every: {
+        type: String,
+        enum: [
+          'day',
+          'week',
+          'dayOfWeek'
+        ]
+      }
     }
   }
 });

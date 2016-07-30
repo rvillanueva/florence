@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
+import Instruction from '../instruction/instruction.model';
 
 const authTypes = ['mobile'];
 
@@ -18,19 +19,7 @@ var UserSchema = new Schema({
     },
     mobile: String,
   },
-  permissions: {
-    smsNotify: {
-      active: Boolean
-    },
-    smsPHI: {
-      active: Boolean,
-      waiverId: String
-    },
-    emailPHI: {
-      active: Boolean,
-      waiverId: String
-    }
-  },
+  permissions: {},
   providers: {
     auth: String,
     messaging: String
@@ -61,68 +50,20 @@ var UserSchema = new Schema({
     status: String,
     active: {
       taskId: String,
-      stepId: String,
-      responseId: String
+      params: {}
     },
-    stored: {},
-    lastModified: Date
+    updated: Date
   },
-  instructions: [
-    {
-      text: String,
-      measurement: {
-        type: {
-          type: String,
-          enum: [
-            'confidence',
-            'propensity',
-            'completedFrequency',
-            'missedFrequency',
-            'taskCompletion',
-            'custom'
-          ]
-        },
-        frequency: {
-          type: String,
-          enum: [
-            'daily',
-            'weekly'
-          ]
-        }
-      },
-      action: {
-        phrase: String,
-        type: {
-          type: String
-        },
-        params: {},
-        timing: {
-          type: {
-            type: String,
-            enum: [
-              'once',
-              'repeating',
-              'general'
-            ]
-          },
-          timeframe: {
-            on: Date,
-            from: Date,
-            to: Date
-          },
-          times: Number,
-          every: {
-            type: String,
-            enum: [
-              'day',
-              'week',
-              'dayOfWeek'
-            ]
-          }
-        }
-      }
+  notifications: {
+    lastContact: Date,
+    nextContact: Date,
+    attempts: Number,
+    target: {
+      hour: Number,
+      dayOfWeek:Number
     }
-  ]
+  },
+  instructions: [Instruction.schema]
 });
 
 /**

@@ -11,6 +11,7 @@
 
 import _ from 'lodash';
 var Parser = require('../../components/parser');
+var NotificationService = require('../../components/notifications');
 var Promise = require('bluebird');
 
 function respondWithResult(res, statusCode) {
@@ -146,4 +147,10 @@ export function query(req, res) {
     })
   }
 
+}
+
+export function notify(req, res){
+  NotificationService.notifyReadyUsers()
+  .then(() => res.status(200).end())
+  .catch(handleError(res))
 }

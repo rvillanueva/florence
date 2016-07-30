@@ -53,11 +53,10 @@ export default function(options){
 
   this.update = function(){
     return new Promise((resolve, reject) => {
-      console.log('updating...')
-      this.state.lastModified = new Date();
+      console.log('Updating...')
+      this.state.updated = new Date();
       User.findById(this.user._id)
       .then(user => {
-        console.log('user found...')
         user.state = this.state;
         user.queue = this.queue;
         console.log(user.state);

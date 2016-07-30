@@ -16,9 +16,9 @@ export function respond(options){
   })
 }
 
-export function notify(userId){
+export function notify(options){
   return new Promise(function(resolve, reject){
-    var bot = new Bot(userId);
+    var bot = new Bot(options);
     bot.init()
     .then(bot => DialogService.handleNotification(bot))
     .then(bot => DialogService.handleNextTask(bot))

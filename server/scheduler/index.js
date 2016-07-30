@@ -19,7 +19,7 @@ agenda.define('runCheckInsJob', function(job, done) {
 export function init() {
   agenda.on('ready', function() {
     console.log('Scheduler ready.')
-    agenda.every('30 minutes', 'runCheckInsJob');
+    agenda.every('1 hour', 'runCheckInsJob');
     agenda.start();
   });
 }

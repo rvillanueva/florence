@@ -229,7 +229,6 @@ export function notify(req, res, next) {
     return new Promise(function(resolve, reject) {
       var options = {
         user: user,
-        state: user.state,
         received: message
       }
       resolve(options);
