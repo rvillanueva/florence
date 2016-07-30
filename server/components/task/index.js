@@ -25,7 +25,7 @@ export function query(query) {
         'objective': query.objective
       })
       .then(tasks => filterByParams(tasks))
-      .then(tasks => selectBestTask(tasks))
+      .then(tasks => selectMostSpecificTask(tasks))
       .then(task => resolve(task))
       .catch(err => reject(err))
 
@@ -69,12 +69,13 @@ export function query(query) {
       return response;
     }
 
-    function selectBestTask(tasks){
+    function selectMostSpecificTask(tasks){
       return new Promise(function(resolve, reject) {
         var selected = false;
         tasks.forEach(function(task, t){
+          task.attributes = task.attributes || {};
           task.params = task.params || {};
-          if(!selected || Object.keys(task.params).length > Object.keys(selected.params).length){
+          if(!selected || isMoreSpecific(task, selected)){
             selected = task;
           }
         })
@@ -86,6 +87,17 @@ export function query(query) {
         }
         resolve(selected);
       })
+
+      function isMoreSpecific(newTask, oldTask){
+        if(
+          (Object.keys(newTask.attributes).length + Object.keys(newTask.params).length) >
+          (Object.keys(oldTask.attributes).length + Object.keys(oldTask.params).length)
+        ){
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
   })
 }

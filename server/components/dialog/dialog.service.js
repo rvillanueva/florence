@@ -71,23 +71,30 @@ export function handleExpectedResponse(bot) {
 
     function checkNumber(choice) {
       var matched = false;
-      parsed.entities.number = parsed.entities.number || []
-      parsed.entities.number.forEach(function(number, n) {
-        var minMax = true;
-        if (typeof choice.match.min == 'number' && number.value < choice.match.min) {
-          minMax = false;
+      var textToNum = Number(parsed._text);
+      if(typeof textToNum == 'number' && isWithinChoiceRange(textToNum, choice.match)){
+        matched = {
+          number: textToNum
         }
-        if (typeof choice.match.max == 'number' && number.value > choice.match.min) {
-          minMax = false;
-        }
-        if(minMax){
-          var returnedValue = {
-            number: number.value
-          };
-          matched = matched || returnedValue;
-        }
-      })
+      } else {
+        parsed.entities.number = parsed.entities.number || []
+        parsed.entities.number.forEach(function(number, n) {
+          if(isWithinChoiceRange(number.value, choice.match)){
+            matched = {
+              number: number.value
+            }
+          }
+        })
+      }
       return matched;
+
+      function isWithinChoiceRange(number, match){
+        if ((typeof match.min == 'number' && number >= match.min) && (typeof match.max == 'number' && number <= match.max)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
 
     function checkExpression(choice) {
@@ -110,7 +117,6 @@ export function handleExpectedResponse(bot) {
       console.log('Handling reply to user from ')
       console.log(choice)
       if (choice && choice.responses && choice.responses.length > 0) {
-
         var sendable;
         sendable = choice.responses[Math.floor(Math.random() * choice.responses.length)]
         bot.send(sendable)
