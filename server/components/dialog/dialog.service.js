@@ -138,12 +138,13 @@ export function handleExpectedResponse(bot) {
     return new Promise(function(resolve, reject) {
       console.log('Storing response...')
       if (choice) {
+        bot.loaded.task.content = bot.loaded.task.content || {};
         var entry = {
           userId: bot.user._id,
           meta: {
             taskId: bot.loaded.task._id,
             params: bot.loaded.params,
-            prompt: bot.loaded.prompt,
+            prompt: bot.loaded.text,
           },
           value: value,
           response: {

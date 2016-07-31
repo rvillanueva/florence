@@ -18,7 +18,7 @@
     }
     & .instruction-progress-bar {
       z-index: 10;
-      background-color:rgb(212, 225, 242);
+      background-color: #EAF1F5;
       height: 100%;
       width: 100%;
       position: absolute;
@@ -34,6 +34,13 @@
     z-index: 40;
     background-color: white;
     height: 200px;
+    & .instruction-databox-container {
+      padding: 20px;
+      position: relative;
+      & .chart-container {
+        height: 200px;
+      }
+    }
   }
 
   & .expanded-icon-open {

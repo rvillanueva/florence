@@ -13,6 +13,15 @@
   </div>
   <div class="instruction-progress-bar" ng-style="{'width': '20%'}"></div>
 </div>
-<div ng-show="expanded" class="instruction-databox">
-  {{entries}}
+<div ng-if="expanded" class="instruction-databox">
+  <div class="instruction-databox-container">
+    <div class="chart-container">
+      <p style="font-weight: 300; padding-left: 30px;">{{chartTitle}}</p>
+      <div>
+      <canvas id="line" class="chart chart-line" chart-data="chart.data"
+        chart-labels="chart.labels" chart-series="chart.series" chart-options="chart.options">
+      </canvas>
+    </div>
+    </div>
+  </div>
 </div>

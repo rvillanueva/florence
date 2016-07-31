@@ -28,9 +28,46 @@ Entry.find({}).remove()
           measurementPeriod: 'day',
           measurementType: 'propensity',
           instructionId: '579d4ba1e724a92ab1a864a1' },
-       prompt: 'Test',
-       created: new Date },
+       prompt: 'On a scale of 1-5, how often do you take your amoxicillin?',
+       created: new Date()
+     },
     value: { number: 1 },
+    response: { content: { text: '1' } }
+  },
+  {
+    userId: '5786a2dc517d5513c018c9d0',
+    meta:
+     { taskId: '579d4ba1e724a92ab1a8646e',
+       params:
+        { timingEvery: 'day',
+          timingTimes: 3,
+          timingType: 'repeating',
+          actionPhrase: 'Take your amoxicillin',
+          measurementPeriod: 'day',
+          measurementType: 'propensity',
+          instructionId: '579d4ba1e724a92ab1a864a1' },
+       prompt: 'On a scale of 1-5, how often do you take your amoxicillin?',
+       created: moment().subtract(1, 'day')
+     },
+    value: { number: 4 },
+    response: { content: { text: '1' } }
+  },
+  {
+    userId: '5786a2dc517d5513c018c9d0',
+    meta:
+     { taskId: '579d4ba1e724a92ab1a8646e',
+       params:
+        { timingEvery: 'day',
+          timingTimes: 3,
+          timingType: 'repeating',
+          actionPhrase: 'Take your amoxicillin',
+          measurementPeriod: 'day',
+          measurementType: 'propensity',
+          instructionId: '579d4ba1e724a92ab1a864a1' },
+       prompt: 'On a scale of 1-5, how often do you take your amoxicillin?',
+       created: moment().subtract(2, 'days')
+     },
+    value: { number: 3 },
     response: { content: { text: '1' } }
   })
 })

@@ -31,7 +31,7 @@ export function handleQuestion(bot){
   return new Promise(function(resolve, reject){
     var text = bot.loaded.task.text;
     text = replaceParams(text, bot.loaded.params);
-    bot.loaded.prompt = text;
+    bot.loaded.text = text;
     bot.state.status = 'waiting';
     bot.send({
       text: text

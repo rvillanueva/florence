@@ -69,7 +69,9 @@ module.exports = function (grunt) {
       injectJS: {
         files: [
           '<%= yeoman.client %>/{app,components}/**/!(*.spec|*.mock).ts',
-          '!<%= yeoman.client %>/app/app.js'
+          '!<%= yeoman.client %>/app/app.js',
+          '!<%= yeoman.client %>/app/scripts'
+
         ],
         tasks: ['injector:scripts']
       },
