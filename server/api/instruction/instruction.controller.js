@@ -11,7 +11,7 @@
 
 import _ from 'lodash';
 var Parser = require('../../components/parser');
-var NotificationService = require('../../components/notifications');
+var NotificationService = require('../../components/notification');
 var Promise = require('bluebird');
 var InstructionService = require('../../components/instruction');
 import User from '../../models/user/user.model';
@@ -154,55 +154,18 @@ export function query(req, res) {
 
 export function notify(req, res){
   console.log('Notifying.')
-  console.log('Service running...')
-  User.find({'$or':[{
-    'notifications.nextContact':{ '$lt': new Date() }
-  },
-  {
-    'notifications.nextContact': null
-  }]}, '-salt -password')
-  .then(users => addTasksForEach(users))
-  .then(users => NotificationService.notifyReadyUsers(users))
-  .then(() => {
-    console.log('Done')
-    res.status(200).end()
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).send(err);
-  })
+  InstructionService.runCheckIns()
+    .then(() => {
+      console.log('Done')
+      res.status(200).end()
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    })
 }
 
 
-function addTasksForEach(users){
-  console.log('Adding tasks...')
-  var promises = [];
-  var updatedUsers = [];
-
-  return new Promise(function(resolve, reject){
-    users = users || [];
-    console.log(users)
-    users.forEach(function(user, u){
-      promises.push(queueTasks(user));
-    })
-
-    Promise.all(promises)
-    .then(() => resolve(updatedUsers))
-    .catch(err => reject(err))
-  })
-
-  function queueTasks(user){
-    console.log('Queueing tasks...');
-    return new Promise(function(resolve, reject){
-      InstructionService.queueTasks(user)
-      .then(user => {
-        updatedUsers.push(user)
-        resolve()
-      })
-      .catch(err => reject(err))
-    })
-  }
-}
 
 export function update(req, res){
   var instructionId = req.params.id;

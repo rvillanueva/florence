@@ -1,8 +1,45 @@
 'use strict';
 
+import User from '../../models/user/user.model';
+
 var Promise = require('bluebird');
 var moment = require('moment');
 var TaskService = require('../task');
+var NotificationService = require('../notification');
+
+export function runCheckIns(users){
+  return new Promise(function(resolve, reject){
+    User.find({'$or':[{
+      'notifications.nextContact':{ '$lt': new Date() }
+    },
+    {
+      'notifications.nextContact': null
+    }]}, '-salt -password')
+    .then(users => addTasksForEach(users))
+    .then(users => NotificationService.notifyReadyUsers(users))
+    .then(users => resolve(users))
+    .catch(err => reject(err))
+  })
+
+  function addTasksForEach(users){
+    console.log('Adding tasks...')
+    var promises = [];
+    var updatedUsers = [];
+
+    return new Promise(function(resolve, reject){
+      users = users || [];
+      console.log(users)
+      users.forEach(function(user, u){
+        promises.push(queueTasks(user));
+      })
+
+      Promise.all(promises)
+      .then(() => resolve(updatedUsers))
+      .catch(err => reject(err))
+    })
+
+  }
+}
 
 export function queueTasks(user) {
   return new Promise(function(resolve, reject){
