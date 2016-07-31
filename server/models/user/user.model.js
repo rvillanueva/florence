@@ -47,7 +47,6 @@ var UserSchema = new Schema({
   lastActivity: Date,
   queue: [{
     taskId: String,
-    instructionId: String,
     params: {},
     immediate: Boolean,
     started: Date,

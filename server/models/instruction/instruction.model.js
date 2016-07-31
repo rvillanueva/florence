@@ -7,7 +7,10 @@ var InstructionSchema = new mongoose.Schema({
     created: {
       type: Date,
       default: Date.now
-    }
+    },
+    params: String,
+    taskId: String,
+    prompt: String
   },
   text: String,
   archived: Boolean,

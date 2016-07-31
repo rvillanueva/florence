@@ -7,16 +7,14 @@ var EntrySchema = new mongoose.Schema({
   meta: {
     created: Date,
     updated: Date,
+    taskId: String,
+    params: {},
+    prompt: String,
   },
   value: {
     number: Number,
     date: Date,
     string: String
-  },
-  question: {
-    taskId: String,
-    params: {},
-    text: String,
   },
   response: {
     messageId: String,

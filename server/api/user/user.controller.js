@@ -13,6 +13,15 @@ var UserService = require('./user.service');
 var EntryService = require('../../models/entry');
 var InstructionService = require('../../models/instruction');
 
+function respondWithResult(res, statusCode) {
+  statusCode = statusCode || 200;
+  return function(entity) {
+    if (entity) {
+      res.status(statusCode).json(entity);
+    }
+  };
+}
+
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
   return function(err) {
@@ -26,6 +35,17 @@ function handleError(res, statusCode) {
     res.status(statusCode).send(err);
   };
 }
+
+function handleEntityNotFound(res) {
+  return function(entity) {
+    if (!entity) {
+      res.status(404).end();
+      return null;
+    }
+    return entity;
+  };
+}
+
 
 /**
  * Get list of users
@@ -239,9 +259,15 @@ export function notify(req, res, next) {
 
 export function entries(req, res){
   var userId = req.params.id;
-  return EntryService.getByUserId(userId)
-  .then(entries => {
-    return res.json(entries);
-  })
+  var query = {
+    userId: userId
+  }
+
+  if(req.query){
+    query.params = req.query;
+  }
+
+  return EntryService.get(query)
+  .then(respondWithResult(res))
   .catch(handleError(res));
 }

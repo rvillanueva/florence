@@ -58,7 +58,6 @@ export function queueTasks(user) {
       if(task && instruction){
         var todo = {
           taskId: task._id,
-          instructionId: instruction._id,
           params: query.params
         }
         user.queue.push(todo);
@@ -73,7 +72,8 @@ export function queueTasks(user) {
       console.log('Checking if instruction is queued...')
       var found = false;
       user.queue.forEach(function(queued, q) {
-        if (queued.instructionId == instruction._id) {
+        queued.params = queued.params || {};
+        if (queued.params.instructionId === instruction._id) {
           found = true;
         }
       })
@@ -85,6 +85,7 @@ export function queueTasks(user) {
         objective: 'measureInstruction',
         params: instruction.action.params || {}
       }
+      taskQuery.params.instructionId = instruction._id;
       taskQuery.params.measurementType = instruction.measurement.type;
       taskQuery.params.measurementPeriod = instruction.measurement.period;
       // TODO update to explicitly set measurement period instead of inferring from measurement frequency

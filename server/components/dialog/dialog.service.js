@@ -140,12 +140,12 @@ export function handleExpectedResponse(bot) {
       if (choice) {
         var entry = {
           userId: bot.user._id,
-          value: value,
-          question: {
+          meta: {
             taskId: bot.loaded.task._id,
             params: bot.loaded.params,
-            text: bot.loaded.text,
+            prompt: bot.loaded.prompt,
           },
+          value: value,
           response: {
             messageId: bot.received._id,
             content: bot.received.content

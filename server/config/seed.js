@@ -8,10 +8,33 @@ import User from '../models/user/user.model';
 import Program from '../models/program/program.model';
 import Task from '../models/task/task.model';
 import Question from '../models/question/question.model';
+import Entry from '../models/entry/entry.model';
 
 var moment = require('moment');
 
 import mongoose from 'mongoose';
+
+Entry.find({}).remove()
+.then(() => {
+  Entry.create({
+    userId: '5786a2dc517d5513c018c9d0',
+    meta:
+     { taskId: '579d4ba1e724a92ab1a8646e',
+       params:
+        { timingEvery: 'day',
+          timingTimes: 3,
+          timingType: 'repeating',
+          actionPhrase: 'Take your amoxicillin',
+          measurementPeriod: 'day',
+          measurementType: 'propensity',
+          instructionId: '579d4ba1e724a92ab1a864a1' },
+       prompt: 'Test',
+       created: new Date },
+    value: { number: 1 },
+    response: { content: { text: '1' } }
+  })
+})
+
 
 User.find({}).remove()
   .then(() => {
@@ -39,6 +62,7 @@ User.find({}).remove()
         password: 'admin',
         lastActivity: new Date()
       },{
+        _id: '5786a2dc517d5513c018c9d0',
         providers: {
           auth: 'local',
           messaging: 'sms'

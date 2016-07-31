@@ -33,10 +33,12 @@ export function isAuthenticated() {
             return res.status(401).end();
           }
           req.user = user;
-          return next();
+          next();
+          return null;
         })
         .catch(err => {
-          return next(err)
+          next(err);
+          return null;
         });
     });
 }
