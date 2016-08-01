@@ -29,5 +29,5 @@ class LoginController {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('LoginController', LoginController);

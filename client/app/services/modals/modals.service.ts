@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .factory('ModalService', function ($uibModal, $q) {
 
     var openModal = function(options){

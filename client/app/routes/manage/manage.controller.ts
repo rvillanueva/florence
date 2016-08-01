@@ -15,7 +15,7 @@ class ManageComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('manage', {
     templateUrl: 'app/routes/manage/manage.html',
     controller: ManageComponent

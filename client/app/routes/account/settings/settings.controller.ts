@@ -6,5 +6,5 @@ class SettingsController {
 
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('SettingsController', SettingsController);

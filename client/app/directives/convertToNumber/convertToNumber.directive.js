@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('convertToNumber', function () {
     return {
       require: 'ngModel',

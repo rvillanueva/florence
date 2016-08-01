@@ -41,5 +41,5 @@ class SignupController {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('SignupController', SignupController);

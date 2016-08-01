@@ -59,7 +59,7 @@ function UtilService($window) {
   return Util;
 }
 
-angular.module('riverApp.util')
+angular.module('florenceApp.util')
   .factory('Util', UtilService);
 
 })();

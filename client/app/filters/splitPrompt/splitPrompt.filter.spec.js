@@ -3,7 +3,7 @@
 describe('Filter: splitPrompt', function () {
 
   // load the filter's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   // initialize a new instance of the filter before each test
   var capitalize;

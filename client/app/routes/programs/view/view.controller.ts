@@ -58,7 +58,7 @@
     }
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .component('programView', {
     templateUrl: 'app/routes/programs/view/view.html',
     controller: ProgramViewComponent

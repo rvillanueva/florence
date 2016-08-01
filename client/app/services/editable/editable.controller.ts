@@ -14,5 +14,5 @@ class EditBlockController {
 }
 
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('EditBlockController', EditBlockController);

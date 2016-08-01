@@ -21,7 +21,7 @@ function UserResource($resource) {
   });
 }
 
-angular.module('riverApp.auth')
+angular.module('florenceApp.auth')
   .factory('User', UserResource);
 
 })();

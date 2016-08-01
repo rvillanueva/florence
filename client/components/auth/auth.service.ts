@@ -183,7 +183,7 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
   return Auth;
 }
 
-angular.module('riverApp.auth')
+angular.module('florenceApp.auth')
   .factory('Auth', AuthService);
 
 })();

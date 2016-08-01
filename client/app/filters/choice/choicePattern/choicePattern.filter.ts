@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('choicePattern', function () {
     return function (pattern) {
       if(pattern.type == 'integer'){

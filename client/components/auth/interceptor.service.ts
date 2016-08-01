@@ -26,7 +26,7 @@ function authInterceptor($rootScope, $q, $cookies, $injector, Util) {
   };
 }
 
-angular.module('riverApp.auth')
+angular.module('florenceApp.auth')
   .factory('authInterceptor', authInterceptor);
 
 })();

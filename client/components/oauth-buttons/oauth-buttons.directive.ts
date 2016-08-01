@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('oauthButtons', function() {
     return {
       templateUrl: 'components/oauth-buttons/oauth-buttons.html',

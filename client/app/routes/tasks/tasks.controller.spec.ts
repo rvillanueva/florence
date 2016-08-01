@@ -3,7 +3,7 @@
 describe('Component: TasksComponent', function () {
 
   // load the controller's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   var TasksComponent, scope;
 

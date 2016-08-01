@@ -24,7 +24,7 @@ class ProgramsComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('programs', {
     templateUrl: 'app/routes/programs/programs.html',
     controller: ProgramsComponent

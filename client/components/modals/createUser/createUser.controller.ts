@@ -27,6 +27,6 @@
     }
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .controller('CreateUserModalController', CreateUserModalComponent);
 })();

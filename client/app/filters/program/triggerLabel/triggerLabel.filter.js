@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('triggerLabel', function () {
     return function (protocol) {
       if(protocol.type == 'timed'){

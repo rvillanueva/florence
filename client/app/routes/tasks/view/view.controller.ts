@@ -110,7 +110,7 @@
 
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .component('taskView', {
     templateUrl: 'app/routes/tasks/view/view.html',
     controller: TaskViewComponent

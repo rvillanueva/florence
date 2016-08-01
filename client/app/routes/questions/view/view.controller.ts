@@ -96,7 +96,7 @@
 
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .component('questionView', {
     templateUrl: 'app/routes/questions/view/view.html',
     controller: QuestionViewComponent

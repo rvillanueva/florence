@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('riverApp.util', []);
+angular.module('florenceApp.util', []);

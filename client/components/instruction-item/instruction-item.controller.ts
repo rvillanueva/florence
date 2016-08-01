@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('InstructionItemController', function($scope, ModalService, $http, $window) {
     $scope.selected = false;
     $scope.userId = $scope.$parent.$ctrl.selected.patient._id;

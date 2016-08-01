@@ -62,7 +62,7 @@ class ProfileComponent {
 
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('profile', {
     templateUrl: 'app/routes/profile/profile.html',
     controller: ProfileComponent

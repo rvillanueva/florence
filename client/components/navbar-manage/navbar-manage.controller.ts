@@ -12,5 +12,5 @@ class NavbarManageController {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('NavbarManageController', NavbarManageController);

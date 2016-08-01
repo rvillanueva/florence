@@ -13,7 +13,7 @@ class VerifyComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('verify', {
     templateUrl: 'app/routes/account/login/verify/verify.html',
     controller: VerifyComponent

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('timeframe', function (dateFilter) {
     return function (timeframe) {
       timeframe = timeframe || {};

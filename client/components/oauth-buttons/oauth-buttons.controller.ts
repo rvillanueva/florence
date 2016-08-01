@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .controller('OauthButtonsCtrl', function($window) {
     this.loginOauth = function(provider, state) {
       var url = '/auth/' + provider;

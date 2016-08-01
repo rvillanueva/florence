@@ -3,7 +3,7 @@
 describe('Component: PatientsComponent', function () {
 
   // load the controller's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   var PatientsComponent, scope;
 

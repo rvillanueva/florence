@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('footer', function() {
     return {
       templateUrl: 'components/footer/footer.html',

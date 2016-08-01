@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('responseShortname', function () {
     return function (response) {
       if(response.type == 'entity'){

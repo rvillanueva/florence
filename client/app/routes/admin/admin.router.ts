@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp.admin')
+angular.module('florenceApp.admin')
   .config(function($stateProvider) {
     $stateProvider
       .state('admin', {

@@ -3,7 +3,7 @@
 describe('Component: ViewComponent', function () {
 
   // load the controller's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   var ViewComponent, scope;
 

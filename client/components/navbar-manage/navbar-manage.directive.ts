@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('navbarManage', () => ({
     templateUrl: 'components/navbar-manage/navbar-manage.html',
     restrict: 'E',

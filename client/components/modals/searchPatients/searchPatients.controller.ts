@@ -15,6 +15,6 @@
     }
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .controller('SearchPatientsModalController', SearchPatientsModalComponent);
 })();

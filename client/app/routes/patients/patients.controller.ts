@@ -10,7 +10,7 @@ class PatientsComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('patients', {
     templateUrl: 'app/routes/patients/patients.html',
     controller: PatientsComponent

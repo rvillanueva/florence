@@ -23,7 +23,7 @@ class QuestionsComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('questions', {
     templateUrl: 'app/routes/questions/questions.html',
     controller: QuestionsComponent

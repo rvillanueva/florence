@@ -160,7 +160,7 @@ class MainController {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('main', {
     templateUrl: 'app/routes/main/main.html',
     controller: MainController

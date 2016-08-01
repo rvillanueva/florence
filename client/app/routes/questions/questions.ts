@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('questions', {

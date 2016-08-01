@@ -3,7 +3,7 @@
 describe('Service: Modals', function () {
 
   // load the service's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   // instantiate service
   var Modals;

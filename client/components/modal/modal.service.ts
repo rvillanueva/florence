@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .factory('Modal', function($rootScope, $uibModal) {
     /**
      * Opens a modal

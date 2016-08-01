@@ -27,7 +27,7 @@
     };
   }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('ngAlias', ngAlias);
 
 

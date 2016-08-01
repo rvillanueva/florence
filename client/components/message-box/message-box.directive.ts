@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('messageBox', function() {
     return {
       templateUrl: 'components/message-box/message-box.html',

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp.admin', [
-  'riverApp.auth',
+angular.module('florenceApp.admin', [
+  'florenceApp.auth',
   'ui.router'
 ]);

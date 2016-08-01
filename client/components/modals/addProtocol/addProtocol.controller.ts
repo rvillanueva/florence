@@ -33,6 +33,6 @@
     }
   }
 
-  angular.module('riverApp')
+  angular.module('florenceApp')
     .controller('AddProtocolModalController', AddProtocolModalComponent);
 })();

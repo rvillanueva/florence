@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('responseExample', function () {
     return function (pattern) {
       if(pattern.type == 'entity'){

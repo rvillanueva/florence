@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .filter('splitPrompt', function (dateFilter) {
     return function (rawText, param, segmentNum) {
       if(typeof rawText !== 'string' || typeof param !== 'string' || (typeof segmentNum !== 'number' && typeof segmentNum !== 'undefined')){

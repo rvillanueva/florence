@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .directive('instructionItem', function() {
     return {
       templateUrl: 'components/instruction-item/instruction-item.html',

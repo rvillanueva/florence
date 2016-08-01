@@ -3,7 +3,7 @@
 describe('Directive: convertToNumber', function () {
 
   // load the directive's module
-  beforeEach(module('riverApp'));
+  beforeEach(module('florenceApp'));
 
   var element,
     scope;

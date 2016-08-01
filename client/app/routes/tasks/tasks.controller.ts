@@ -25,7 +25,7 @@ class TasksComponent {
   }
 }
 
-angular.module('riverApp')
+angular.module('florenceApp')
   .component('tasks', {
     templateUrl: 'app/routes/tasks/tasks.html',
     controller: TasksComponent

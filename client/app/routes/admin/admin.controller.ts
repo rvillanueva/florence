@@ -17,7 +17,7 @@ class AdminController {
   }
 }
 
-angular.module('riverApp.admin')
+angular.module('florenceApp.admin')
   .controller('AdminController', AdminController);
 
 })();

@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('riverApp', [
-  'riverApp.auth',
-  'riverApp.admin',
-  'riverApp.constants',
+angular.module('florenceApp', [
+  'florenceApp.auth',
+  'florenceApp.admin',
+  'florenceApp.constants',
   'ngCookies',
   'ngResource',
   'ngSanitize',
