@@ -82,8 +82,8 @@ export function queueTasks(user) {
         if (!isInstructionTaskQueued(instruction) && instruction.measurement) {
           console.log('Instruction isn\'t queued...');
           // find appropriate task, attach params and queue it;
-          var taskQuery = buildTaskQuery(instruction);
-          TaskService.query(taskQuery)
+          buildTaskQuery(instruction)
+          .then(taskQuery => TaskService.query(taskQuery))
           .then(task => addToQueue(task, taskQuery, instruction))
           .then(() => resolve())
           .catch(err => reject(err))
@@ -116,35 +116,37 @@ export function queueTasks(user) {
       })
       return found;
     }
+  })
+}
 
-    function buildTaskQuery(instruction){
-      var taskQuery = {
-        objective: 'measureInstruction',
-        params: instruction.action.params || {}
-      }
-      taskQuery.params.instructionId = instruction._id;
-      taskQuery.params.measurementType = instruction.measurement.type;
-      taskQuery.params.measurementPeriod = instruction.measurement.period;
-      // TODO update to explicitly set measurement period instead of inferring from measurement frequency
-      if(instruction.measurement.frequency == 'daily'){
-        taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'day'
-      } else if (instruction.measurement.frequency == 'weekly'){
-        taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'week'
-
-      }
-      taskQuery.params.actionPhrase = instruction.action.phrase;
-
-      if (instruction.action.timing) {
-        taskQuery.params.timingType = instruction.action.timing.type;
-        taskQuery.params.timingTimes = instruction.action.timing.times;
-        taskQuery.params.timingEvery = instruction.action.timing.every;
-        if(instruction.action.timing.timeframe){
-          taskQuery.params.timingTimeframeFrom = instruction.action.timing.timeframe.from;
-          taskQuery.params.timingTimeframeTo = instruction.action.timing.timeframe.to;
-        }
-      }
-      return taskQuery;
+export function buildTaskQuery(instruction){
+  return new Promise(function(resolve, reject){
+    var taskQuery = {
+      objective: 'measureInstruction',
+      params: instruction.action.params || {}
     }
+    taskQuery.params.instructionId = instruction._id;
+    taskQuery.params.measurementType = instruction.measurement.type;
+    taskQuery.params.measurementPeriod = instruction.measurement.period;
+    // TODO update to explicitly set measurement period instead of inferring from measurement frequency
+    if(instruction.measurement.frequency == 'daily'){
+      taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'day'
+    } else if (instruction.measurement.frequency == 'weekly'){
+      taskQuery.params.measurementPeriod = taskQuery.params.measurementPeriod || 'week'
+
+    }
+    taskQuery.params.actionPhrase = instruction.action.phrase;
+
+    if (instruction.action.timing) {
+      taskQuery.params.timingType = instruction.action.timing.type;
+      taskQuery.params.timingTimes = instruction.action.timing.times;
+      taskQuery.params.timingEvery = instruction.action.timing.every;
+      if(instruction.action.timing.timeframe){
+        taskQuery.params.timingTimeframeFrom = instruction.action.timing.timeframe.from;
+        taskQuery.params.timingTimeframeTo = instruction.action.timing.timeframe.to;
+      }
+    }
+    resolve(taskQuery);
 
   })
 }

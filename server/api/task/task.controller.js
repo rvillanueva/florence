@@ -13,6 +13,7 @@ var Promise = require('bluebird');
 import _ from 'lodash';
 import Task from '../../models/task/task.model';
 var TaskService = require('../../components/task');
+var InstructionService = require('../../components/instruction');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -106,4 +107,13 @@ export function destroy(req, res) {
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));
+}
+
+export function getFromInstruction(req, res) {
+  var instruction = req.body;
+  return InstructionService.buildTaskQuery(instruction)
+  .then(taskQuery => TaskService.query(taskQuery))
+  .then(handleEntityNotFound(res))
+  .then(respondWithResult(res))
+  .catch(handleError(res));
 }

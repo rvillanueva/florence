@@ -6,11 +6,19 @@ $bubble-radius: 20px;
   padding-top: 8px;
   padding-bottom: 8px;
   box-sizing: content-box;
-  &.message-container-user {
+  &.message-container-left {
     text-align: left;
+    & .message-bubble {
+      text-align: left;
+      border-radius: $bubble-radius $bubble-radius $bubble-radius 2px;
+    }
   }
-  &.message-container-app {
+  &.message-container-right {
     text-align: right;
+    & .message-bubble {
+      text-align: right;
+      border-radius: $bubble-radius $bubble-radius 2px $bubble-radius;
+    }
   }
 }
 
@@ -23,17 +31,16 @@ $bubble-radius: 20px;
   display: inline-block;
   max-width: 80%;
   box-sizing: content-box;
-  &.message-user{
-    text-align: left;
+  &.message-bubble-grey{
     background-color: rgb(233, 233, 233);
     color: #2d2d2d;
-    border-radius: $bubble-radius $bubble-radius $bubble-radius 2px;
   }
-  &.message-app{
-    text-align: right;
+  &.message-bubble-blue{
     background-color: rgb(39, 128, 203);
     color: #ffffff;
-    border-radius: $bubble-radius $bubble-radius 2px $bubble-radius;
+    & input {
+      color: rgb(47, 47, 47);
+    }
   }
 }
 

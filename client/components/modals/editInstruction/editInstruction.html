@@ -1,60 +1,76 @@
 <div class="modal-header">
   <button type="button" ng-click="$dismiss()" class="close">&times;</button>
-  <h4 class="modal-title">Edit Instruction</h4>
+  <input ng-show="vm.isNew" class="form-control" ng-model="vm.instruction.text">
+  <h4 ng-show="!vm.isNew">
+    {{vm.instruction.text}}
+  </h4>
 </div>
 <div class="modal-body">
   <div class="row">
-    <div class="form-group">
-      <label class="col-md-2">Instruction</label>
-      <div class="col-md-10">
-        <input class="form-control" ng-model="vm.instruction.text">
+    <div class="col-md-6">
+      <div class="form-group">
+        Timing
+        <br>
+        <br>
+        <div ng-show="vm.isNew">
+          <button class="btn btn-default btn-md" ng-class="{'btn-primary': vm.instruction.action.timing.type == 'once'}" ng-click="vm.instruction.action.timing.type = 'once'">Once</button>
+          <button class="btn btn-default btn-md" ng-class="{'btn-primary': vm.instruction.action.timing.type == 'repeating'}" ng-click="vm.instruction.action.timing.type = 'repeating'">Repeat</button>
+          <button class="btn btn-default btn-md" ng-class="{'btn-primary': vm.instruction.action.timing.type == 'general'}" ng-click="vm.instruction.action.timing.type = 'general'">In General</button>
+        </div>
+        <div ng-show="!vm.isNew">
+          {{vm.instruction.action.timing.type}}
+        </div>
+      </div>
+      <br>
+      <div class="form-group" ng-show="vm.instruction.action.timing.type == 'once'">
+        <strong>Timeframe</strong>
+        <br> {{vm.instruction.action.timing.timeframe | timeframe}}
+      </div>
+      <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
+        <strong>Repeats</strong>
+        <div ng-show="vm.isNew">
+          <input type="number" ng-model="vm.instruction.action.timing.times"> times every
+          <select ng-model="vm.instruction.action.timing.every">
+            <option value="day">day</option>
+            <option value="week">week</option>
+          </select>
+        </div>
+        <div ng-show="!vm.isNew">
+          {{vm.instruction.action.timing.times}} times every {{vm.instruction.action.timing.every}}
+        </div>
+      </div>
+      <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
+        Measurement Period
+        <div ng-show="vm.isNew">
+          <select ng-model="vm.instruction.measurement.period">
+            <option value="day">day</option>
+            <option value="week">week</option>
+          </select>
+        </div>
       </div>
     </div>
-    <br><br>
-    <div class="form-group">
-      <label class="col-md-2">Action Type</label>
-      <div class="col-md-10">
-        <select class="form-control" ng-model="vm.instruction.action.timing.type">
-          <option value="once">single task</option>
-          <option value="repeating">repeating action</option>
-          <option value="general">general behavior change</option>
-        </select>
-      </div>
-    </div>
-    <br>
-    <div class="form-group" ng-show="vm.instruction.action.timing.type == 'once'">
-      <label class="col-md-2">Timeframe</label>
-      <div class="col-md-10">
-        {{vm.instruction.action.timing.timeframe | timeframe}}
-      </div>
-    </div>
-    <br>
-    <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
-      <label class="col-md-2">Repeats</label>
-      <div class="col-md-10">
-        <input type="number" ng-model="vm.instruction.action.timing.times"> times every
-        <select ng-model="vm.instruction.action.timing.every">
-          <option value="day">day</option>
-          <option value="week">week</option>
-        </select>
-      </div>
-    </div>
-    <br>
-    <div class="form-group">
-      <label class="col-md-2">Measurement Type</label>
-      <div class="col-md-10">
-        <select ng-model="vm.instruction.measurement.type">
-          <option value="confidence">Confidence</option>
-          <option value="propensity">Propensity</option>
-          <option value="completedFrequency">Completed Frequency</option>
-          <option value="missedFrequency">Missed Frequency</option>
-          <option value="taskCompletion">Task Completion</option>
-        </select>
-        <br> {{vm.instruction.action.phrase}}&nbsp;
+    <div class="col-md-6">
+      <div class="form-group">
+          <strong>Measurement</strong>
+          <br>
+          <select ng-model="vm.instruction.measurement.type" ng-change="vm.getTask()">
+            <option value="confidence">Confidence</option>
+            <option value="propensity">Propensity</option>
+            <option value="completedFrequency">Completed Frequency</option>
+            <option value="missedFrequency">Missed Frequency</option>
+            <option value="taskCompletion">Task Completion</option>
+          </select>
+          <br>
+          <br>
+          <div class="message-container message-container-left">
+            <div class="message-bubble message-bubble-blue message-bubble-left">
+              {{vm.task.raw | splitPrompt:'actionPhrase':0}}
+              <input ng-model="vm.instruction.action.phrase"> {{vm.task.raw | splitPrompt:'actionPhrase':1}}
+            </div>
+          </div>
       </div>
     </div>
   </div>
-</div>
-<div class="modal-footer">
-  <button class="btn btn-success btn-md" ng-click="vm.done()">Confirm</button>
-</div>
+  <div class="modal-footer">
+    <button class="btn btn-success btn-md" ng-click="vm.done()">Confirm</button>
+  </div>

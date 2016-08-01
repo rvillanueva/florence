@@ -97,6 +97,18 @@ export function query(req, res) {
         } else {
           instruction.action.phrase = text;
         }
+        instruction.action.phrase = uncapitalize(instruction.action.phrase);
+
+        function uncapitalize(string){
+          if(typeof string == 'string' && string.length > 0){
+            var firstLetter = string.slice(0,1);
+            var lastPart = string.slice(1,string.length);
+            return firstLetter.toLowerCase() + lastPart;
+          } else {
+            return string;
+          }
+        }
+
       }
 
       function attachTimingType(){

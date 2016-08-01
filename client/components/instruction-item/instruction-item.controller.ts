@@ -55,12 +55,12 @@ angular.module('riverApp')
     }
 
     $scope.buildChart = function(entries) {
+      $scope.chart.data = [[]];
       angular.forEach(entries, (entry, e) => {
         var datapoint = {
           x: new Date(entry.meta.created),
           y: entry.value.number
         }
-
         $scope.chart.data[0].push(datapoint)
         $scope.chart.title = entry.meta.prompt;
       })
