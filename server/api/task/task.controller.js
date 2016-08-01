@@ -12,8 +12,8 @@
 var Promise = require('bluebird');
 import _ from 'lodash';
 import Task from '../../models/task/task.model';
-var TaskService = require('../../components/task');
-var InstructionService = require('../../components/instruction');
+var TaskService = require('../../services/task');
+var InstructionService = require('../../services/instruction');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

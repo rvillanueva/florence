@@ -11,7 +11,7 @@
 
 import _ from 'lodash';
 
-var ParserService = require('../../components/parser')
+var ParserService = require('../../services/parser')
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

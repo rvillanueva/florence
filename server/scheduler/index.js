@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 import User from '../models/user/user.model';
 import config from '../config/environment';
 var CronJob = require('cron').CronJob;
-var InstructionService = require('../components/instruction');
+var InstructionService = require('../services/instruction');
 
 var hourly = '0 0 13-18 * * *';
 var halfMinute = '*/30 * 12-18 * * *';

@@ -12,9 +12,9 @@
 import _ from 'lodash';
 
 var Promise = require('bluebird');
-var Message = require('../../components/message');
-var Dialog = require('../../components/dialog');
-var UserService = require('../../components/user');
+var Message = require('../../services/message');
+var Dialog = require('../../services/dialog');
+var UserService = require('../../services/user');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

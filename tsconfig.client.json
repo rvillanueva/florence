@@ -16,8 +16,6 @@
         "client/app/filters/responseShortname/responseShortname.filter.ts",
         "client/app/routes/account/account.ts",
         "client/app/routes/account/login/login.controller.ts",
-        "client/app/routes/account/login/verify/verify.controller.ts",
-        "client/app/routes/account/login/verify/verify.ts",
         "client/app/routes/account/settings/settings.controller.ts",
         "client/app/routes/account/signup/signup.controller.ts",
         "client/app/routes/admin/admin.controller.ts",

@@ -7,7 +7,7 @@ import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
 var Promise = require('bluebird');
-var Dialog = require('../../components/dialog');
+var Dialog = require('../../services/dialog');
 var TaskService = require('../../models/task');
 var UserService = require('./user.service');
 var EntryService = require('../../models/entry');

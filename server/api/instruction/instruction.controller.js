@@ -10,10 +10,10 @@
 'use strict';
 
 import _ from 'lodash';
-var Parser = require('../../components/parser');
-var NotificationService = require('../../components/notification');
+var Parser = require('../../services/parser');
+var NotificationService = require('../../services/notification');
 var Promise = require('bluebird');
-var InstructionService = require('../../components/instruction');
+var InstructionService = require('../../services/instruction');
 import User from '../../models/user/user.model';
 
 

@@ -3,8 +3,8 @@ var Promise = require('bluebird');
 var request = require('request');
 
 import User from '../../models/user/user.model';
-var QueueService = require('../../components/queue');
-var Message = require('../../components/message');
+var QueueService = require('../../services/queue');
+var Message = require('../../services/message');
 
 export function getUserByPhoneNumber(phoneNumber) {
   return new Promise((resolve, reject) => {
