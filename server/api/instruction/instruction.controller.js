@@ -85,6 +85,7 @@ export function query(req, res) {
 
       attachActionPhrase();
       attachTimingType();
+      attachTimingTimeframe();
       attachTimingTimes();
       attachTimingEvery();
       resolve(instruction);
@@ -126,18 +127,21 @@ export function query(req, res) {
 
       function attachTimingTimeframe(){
         if(parsed.entities.datetime && parsed.entities.datetime.length > 0){
-          if(parsed.entities.datetime[0].type == 'interval'){
-            instruction.action.timeframe = {
-              from: parsed.entities.datetime[0].value.from,
-              to: parsed.entities.datetime[0].value.to
+          var result = parsed.entities.datetime[0];
+          if(result.type == 'interval'){
+            instruction.action.timing.timeframe = {
+              from: result.from.value,
+              to: result.to.value
             }
-          } else if (parsed.entities.datetime[0].type == 'value'){
-            instruction.action.timeframe = {
-              from: parsed.entities.datetime[0].value,
-              to: parsed.entities.datetime[0].value
+          } else if (result.type == 'value'){
+            instruction.action.timing.timeframe = {
+              from: result.value,
+              to: result.value
             }
           }
         }
+        console.log(result);
+        console.log(instruction.action.timeframe);
       }
 
       function attachTimingTimes(){

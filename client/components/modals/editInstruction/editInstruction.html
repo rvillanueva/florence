@@ -25,6 +25,11 @@
       <div class="form-group" ng-show="vm.instruction.action.timing.type == 'once'">
         <strong>Timeframe</strong>
         <br> {{vm.instruction.action.timing.timeframe | timeframe}}
+        <form ng-submit="vm.updateTimeframe()">
+          Update:&nbsp;
+          <input ng-model="vm.timeframeQuery" placeholder="e.g. by Thursday" type="text">
+          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+        </form>
       </div>
       <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
         <strong>Repeats</strong>

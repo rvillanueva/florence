@@ -6,13 +6,13 @@ angular.module('riverApp')
       timeframe = timeframe || {};
       console.log(timeframe);
       if(!timeframe.to && timeframe.from){
-        return 'before ' + dateFilter(timeframe.from)
-      } else if (timeframe.to && !timeframe.from){
-        return 'after ' + dateFilter(timeframe.to)
+        return 'after ' + dateFilter(timeframe.from)
+      } else if (timeframe.from && !timeframe.to){
+        return 'before ' + dateFilter(timeframe.to)
       } else if(timeframe.to && timeframe.from){
-        return 'from ' + dateFilter(timeframe.to) + ' to ' + dateFilter(timeframe.from);
+        return 'from ' + dateFilter(timeframe.from) + ' to ' + dateFilter(timeframe.to);
       } else {
-        return 'error';
+        return null;
       }
     };
   });
