@@ -6,7 +6,7 @@ import config from '../config/environment';
 var CronJob = require('cron').CronJob;
 var InstructionService = require('../components/instruction');
 
-var cronHourlyPattern = '0 0 12-18 * * *';
+var cronHourlyPattern = '0 0 1-18 * * *';
 var cronHalfMinutePattern = '*/30 * 12-18 * * *'
 var assignedInterval = cronHourlyPattern;
 
