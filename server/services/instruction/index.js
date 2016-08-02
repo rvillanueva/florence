@@ -82,9 +82,13 @@ export function queueTasks(user) {
         if (!isInstructionTaskQueued(instruction) && instruction.measurement) {
           console.log('Instruction isn\'t queued...');
           // find appropriate task, attach params and queue it;
+          var taskQuery;
           buildTaskQuery(instruction)
-          .then(taskQuery => TaskService.query(taskQuery))
-          .then(task => addToQueue(task, taskQuery, instruction))
+          .then(query => {
+            taskQuery = query;
+            return TaskService.query(taskQuery)
+          })
+          .then(task => addToQueue(task, query, instruction))
           .then(() => resolve())
           .catch(err => reject(err))
         }

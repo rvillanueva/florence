@@ -9,6 +9,7 @@ angular.module('florenceApp')
     $scope.chart = {
       title: '',
       data: [[]],
+      labels: [],
       series: ["Response"],
       options: {
         responsive: true,
@@ -56,6 +57,9 @@ angular.module('florenceApp')
 
     $scope.buildChart = function(entries) {
       $scope.chart.data = [[]];
+      $scope.chart.labels = [];
+      $scope.chart.labels.push(moment().subtract('1', 'month'));
+      $scope.chart.labels.push(moment());
       angular.forEach(entries, (entry, e) => {
         var datapoint = {
           x: new Date(entry.meta.created),

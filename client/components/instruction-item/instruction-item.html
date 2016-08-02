@@ -1,10 +1,10 @@
-<div class="instruction-list-item" ng-click="toggleExpansion()">
-  <div class="instruction-list-item-content">
+<div class="instruction-list-item" >
+  <div class="instruction-list-item-content hoverable" ng-click="toggleExpansion()">
     <i ng-show="!expanded" class="fa fa-caret-right expanded-icon-closed"></i><i ng-show="expanded" class="fa fa-caret-down expanded-icon-open"></i>
     {{instruction.text}}&nbsp;{{instruction.action.timing.once.comparator}}&nbsp;{{instruction.action.timing.once.date | date:'MMMM d, yy'}}
-    <div class="pull-right" uib-dropdown is-open="status.isopen">
-      <a href="#" uib-dropdown-toggle ng-disabled="disabled">
-        <span style="width: 30px; text-align: center; margin-right: -12px;" class="fa fa-ellipsis-v"></span>
+    <div class="pull-right hoverable-item" uib-dropdown is-open="status.isopen">
+      <a href="#" uib-dropdown-toggle ng-disabled="disabled" ng-click="$event.stopPropagation();">
+        <span class="fa fa-cog"></span>
       </a>
       <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
         <li role="menuitem"><a href="$" class="nav-dropdown-btn" ng-click="edit()">Edit</a></li>
@@ -16,7 +16,7 @@
 <div ng-if="expanded" class="instruction-databox">
   <div class="instruction-databox-container">
     <div class="chart-container">
-      <p style="font-weight: 300; padding-left: 30px;">{{chartTitle}}</p>
+      <p style="font-weight: 300; padding-left: 30px;">{{chart.title}}</p>
       <div>
       <canvas id="line" class="chart chart-line" chart-data="chart.data"
         chart-labels="chart.labels" chart-series="chart.series" chart-options="chart.options">

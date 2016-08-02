@@ -11,7 +11,8 @@ angular.module('florenceApp', [
   'ui.router',
   'ui.bootstrap',
   'validation.match',
-  'chart.js'
+  'chart.js',
+  'xeditable'
 ])
   .config(function($urlRouterProvider, $locationProvider) {
     $urlRouterProvider

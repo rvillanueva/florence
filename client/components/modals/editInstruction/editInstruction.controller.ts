@@ -34,22 +34,25 @@
         this.$http.get('/api/parse?text=' + this.timeframeQuery)
         .success(parsed => {
           console.log(parsed);
-          if(parsed.entities && parsed.entities.datetime && parsed.entities.datetime.length > 0){
-            var result = parsed.entities.datetime[0];
-            if(result.type == 'value'){
-              this.instruction.action.timing.timeframe.to = result.value;
-              this.instruction.action.timing.timeframe.from = result.value;
-            } else if (result.type == 'interval'){
-              this.instruction.action.timing.timeframe.to = result.to.value;
-              this.instruction.action.timing.timeframe.from = result.from.value;
-            }
-            console.log(this.instruction.action.timing);
-          }
+          this.setTimeframe(parsed);
         })
         .error(err => {
           window.alert(err);
         })
         this.timeframeQuery = '';
+      }
+    }
+    setTimeframe(parsed){
+      if(parsed.entities && parsed.entities.datetime && parsed.entities.datetime.length > 0){
+        var result = parsed.entities.datetime[0];
+        if(result.type == 'value'){
+          this.instruction.action.timing.timeframe.to = result.value;
+          this.instruction.action.timing.timeframe.from = result.value;
+        } else if (result.type == 'interval'){
+          this.instruction.action.timing.timeframe.to = result.to.value;
+          this.instruction.action.timing.timeframe.from = result.from.value;
+        }
+        console.log(this.instruction.action.timing);
       }
     }
   }

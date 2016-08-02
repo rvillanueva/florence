@@ -49,6 +49,15 @@ img {
   cursor: pointer;
 }
 
+.hoverable {
+  & .hoverable-item {
+    display: none;
+  }
+  &:hover .hoverable-item {
+    display: inline-block;
+  }
+}
+
 // Component styles are injected through grunt
 /* inject:scss */
 @import 'routes/admin/admin.scss';

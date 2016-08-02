@@ -44,22 +44,13 @@
           {{vm.instruction.action.timing.times}} times every {{vm.instruction.action.timing.every}}
         </div>
       </div>
-      <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
-        Measurement Period
-        <div ng-show="vm.isNew">
-          <select ng-model="vm.instruction.measurement.period">
-            <option value="day">day</option>
-            <option value="week">week</option>
-          </select>
-        </div>
-      </div>
     </div>
     <div class="col-md-6">
       <div class="form-group">
           <strong>Measurement</strong>
           <br>
           <select ng-model="vm.instruction.measurement.type" ng-change="vm.getTask()">
-            <option value="confidence">Confidence</option>
+            <option value="futureConfidence">Confidence</option>
             <option value="propensity">Propensity</option>
             <option value="completedFrequency">Completed Frequency</option>
             <option value="missedFrequency">Missed Frequency</option>
@@ -67,10 +58,21 @@
           </select>
           <br>
           <br>
+          <div class="form-group" ng-show="vm.instruction.action.timing.type == 'repeating'">
+            Measurement Period
+            <br>
+              <select ng-model="vm.instruction.measurement.period">
+                <option value="day">day</option>
+                <option value="week">week</option>
+              </select>
+          </div>
+          <br>
+          <br>
           <div class="message-container message-container-left">
-            <div class="message-bubble message-bubble-blue message-bubble-left">
+            <div class="message-bubble message-bubble-grey message-bubble-left">
               {{vm.task.raw | splitPrompt:'actionPhrase':0}}
-              <input ng-model="vm.instruction.action.phrase"> {{vm.task.raw | splitPrompt:'actionPhrase':1}}
+              <a href="#" editable-text="vm.instruction.action.phrase">{{vm.instruction.action.phrase || '[insert action here]'}}</a>
+              {{vm.task.raw | splitPrompt:'actionPhrase':1}}
             </div>
           </div>
       </div>
