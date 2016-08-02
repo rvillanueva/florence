@@ -26,10 +26,9 @@ export function get(query){
         }
       }
     }
-    modelQuery = {};
     console.log('Querying entries:')
     console.log(modelQuery)
-    Entry.find(modelQuery).exec()
+    Entry.find(modelQuery).sort({'meta.created': -1}).exec()
     .then(entries => {
       console.log(entries)
       resolve(entries)

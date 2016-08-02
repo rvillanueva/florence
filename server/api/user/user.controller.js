@@ -10,7 +10,7 @@ var Promise = require('bluebird');
 var Dialog = require('../../services/dialog');
 var TaskService = require('../../models/task');
 var UserService = require('./user.service');
-var EntryService = require('../../models/entry');
+var EntryInterface = require('../../models/entry');
 var InstructionService = require('../../models/instruction');
 
 function respondWithResult(res, statusCode) {
@@ -267,7 +267,7 @@ export function entries(req, res){
     query.params = req.query;
   }
 
-  return EntryService.get(query)
+  return EntryInterface.get(query)
   .then(respondWithResult(res))
   .catch(handleError(res));
 }

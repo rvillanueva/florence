@@ -19,6 +19,7 @@ export function notifyReadyUsers(users){
         users = users || [];
 
         users.forEach(function(user, u){
+          console.log(user.queue)
           if(user.queue.length > 0){
             filteredUsers.push(user)
           }

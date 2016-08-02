@@ -201,7 +201,14 @@ export function update(req, res){
 export function create(req, res){
   var userId = req.query.userId;
   var instruction = req.body;
+  instruction.adherence = {
+    score: 0
+  }
   console.log(instruction)
+  if(!userId){
+    res.status(400).end('Needs userId.')
+    return null;
+  }
   return User.findOne({'_id': userId}, '-salt -password').exec()
   .then(user => {
     return new Promise(function(resolve, reject){

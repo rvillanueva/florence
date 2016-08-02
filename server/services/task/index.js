@@ -105,6 +105,7 @@ export function query(query) {
 
     function replaceParams(task){
       return new Promise(function(resolve, reject){
+        console.log('Replacing params...');
         task.raw = task.text;
         task.text = transformText(task.text, query.params)
         resolve(task)
@@ -113,6 +114,7 @@ export function query(query) {
 
     function transformText(text, params){
       var loops = 0;
+      console.log('Transforming text...')
       for(var param in params){
         if (params.hasOwnProperty(param) && typeof params[param] == 'string') {
           while(text.indexOf('<<' + param + '>>') > -1 && loops < 5){

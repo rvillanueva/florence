@@ -3,8 +3,9 @@
 var Promise = require('bluebird');
 var Message = require('../message');
 var Parser = require('../parser');
-var EntryService = require('../../models/entry');
 var DialogExecutionService = require('./dialog.execution');
+var EntryService = require('../entry');
+
 var maxLoops = 5;
 
 export function handleExpectedResponse(bot) {
@@ -152,7 +153,7 @@ export function handleExpectedResponse(bot) {
             content: bot.received.content
           }
         }
-        EntryService.create(entry)
+        EntryService.processNewEntry(entry)
           .then(() => resolve(true))
           .catch(err => reject(err))
       } else {

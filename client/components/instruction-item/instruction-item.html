@@ -11,7 +11,7 @@
       </ul>
     </div>
   </div>
-  <div class="instruction-progress-bar" ng-style="{'width': '20%'}"></div>
+  <div class="instruction-progress-bar" ng-style="{'width': (instruction.adherence.score || 0) * 100 + '%'}"></div>
 </div>
 <div ng-if="expanded" class="instruction-databox">
   <div class="instruction-databox-container">

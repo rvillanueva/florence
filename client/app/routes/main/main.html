@@ -31,7 +31,7 @@
         </div>
         <div ng-show="$ctrl.view.main == 'instructions'" style="width:100%;">
           <div class="instruction-list" style="width: 100%;">
-            <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
+            <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions | orderBy:'adherence.score'" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
           </div>
           <br>
         </div>

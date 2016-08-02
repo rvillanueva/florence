@@ -24,12 +24,12 @@ Entry.find({}).remove()
         { timingEvery: 'day',
           timingTimes: 3,
           timingType: 'repeating',
-          actionPhrase: 'Take your amoxicillin',
+          actionPhrase: 'take your amoxicillin',
           measurementPeriod: 'day',
           measurementType: 'propensity',
           instructionId: '579d4ba1e724a92ab1a864a1' },
        prompt: 'On a scale of 1-5, how often do you take your amoxicillin?',
-       created: new Date()
+       created: moment().subtract(5, 'days')
      },
     value: { number: 1 },
     response: { content: { text: '1' } }
@@ -129,6 +129,7 @@ User.find({}).remove()
         },
         instructions: [
           {
+            _id: '579d4ba1e724a92ab1a864a1',
             text: 'Take your amoxicillin three times a day',
             measurement: {
               type: 'propensity',

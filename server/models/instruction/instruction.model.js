@@ -14,6 +14,10 @@ var InstructionSchema = new mongoose.Schema({
   },
   text: String,
   archived: Boolean,
+  adherence: {
+    score: Number,
+    updated: Date
+  },
   measurement: {
     type: {
       type: String,

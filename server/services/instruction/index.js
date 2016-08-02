@@ -6,6 +6,8 @@ var Promise = require('bluebird');
 var moment = require('moment');
 var TaskService = require('../task');
 var NotificationService = require('../notification');
+var EntryInterface = require('../../models/entry');
+var moment = require('moment');
 
 export function runCheckIns(users){
   return new Promise(function(resolve, reject){
@@ -24,7 +26,6 @@ export function runCheckIns(users){
   function addTasksForEach(users){
     console.log('Adding tasks...')
     var promises = [];
-    var updatedUsers = [];
 
     return new Promise(function(resolve, reject){
       users = users || [];
@@ -34,7 +35,7 @@ export function runCheckIns(users){
       })
 
       Promise.all(promises)
-      .then(() => resolve(updatedUsers))
+      .then(users => resolve(users))
       .catch(err => reject(err))
     })
 
@@ -88,7 +89,7 @@ export function queueTasks(user) {
             taskQuery = query;
             return TaskService.query(taskQuery)
           })
-          .then(task => addToQueue(task, query, instruction))
+          .then(task => addToQueue(task, taskQuery, instruction))
           .then(() => resolve())
           .catch(err => reject(err))
         }
@@ -129,7 +130,7 @@ export function buildTaskQuery(instruction){
       objective: 'measureInstruction',
       params: instruction.action.params || {}
     }
-    taskQuery.params.instructionId = instruction._id;
+    taskQuery.params.instructionId = String(instruction._id);
     taskQuery.params.measurementType = instruction.measurement.type;
     taskQuery.params.measurementPeriod = instruction.measurement.period;
     // TODO update to explicitly set measurement period instead of inferring from measurement frequency
@@ -153,4 +154,105 @@ export function buildTaskQuery(instruction){
     resolve(taskQuery);
 
   })
+}
+
+export function updateAdherenceScore(instructionId){
+  console.log('Updating adherence score...')
+  var entryQuery = {
+    params: {
+      instructionId: instructionId
+    }
+  }
+  return new Promise(function(resolve, reject){
+    EntryInterface.get(entryQuery)
+    .then(entries => calculateInstructionScore(entries))
+    .then(score => {
+      return User.findOneAndUpdate({'instructions._id': instructionId}, {
+          "$set": {
+              "instructions.$.adherence.score": score
+          }
+      }).exec()
+    })
+    .then(() => resolve(true))
+    .catch(err => reject(err))
+  })
+
+  function calculateInstructionScore(entries){
+    return new Promise(function(resolve, reject){
+      entries = entries || [];
+      var taggedArray = [];
+      var weightsTotal = 0;
+      var weightedScoreTotal = 0;
+      var instructionScore = false;
+      entries.forEach(function(entry, e){
+        var score = calculateEntryScore(entry);
+        var weight = calculateEntryWeight(entry);
+        if(typeof score == 'number' && typeof weight == 'number'){
+          weightedScoreTotal += score * weight;
+          weightsTotal += weight;
+        }
+      })
+      instructionScore = weightedScoreTotal/weightsTotal;
+      if(instructionScore > 1 || instructionScore < 0){
+        reject(new Error('Instruction score for instruction _id: ' + instructionId + ' is invalid.'))
+      } else {
+        resolve(instructionScore);
+      }
+    })
+  }
+
+  function calculateEntryScore(entry){
+    entry.meta = entry.meta || {};
+    entry.meta.params = entry.meta.params || {};
+    entry.value = entry.value || {};
+    var measurementType = entry.meta.params.measurementType;
+    var timingTimes = entry.meta.params.timingTimes;
+    if(measurementType == 'futureConfidence' && isOneToFive(entry.value.number)){
+      return entry.value.number/5;
+    } else if (measurementType == 'propensity' && isOneToFive(entry.value.number)) {
+      return entry.value.number/5;
+    } else if (measurementType == 'completedFrequency' && isNumber(entry.value.number)) {
+      return entry.value.number/timingTimes;
+    } else if (measurementType == 'missedFrequency' && isNumber(entry.value.number)) {
+      return (timingTimes - entry.value.number)/timingTimes;
+    } else if (measurementType == 'taskCompletion' && isString(entry.value.string)){
+      if(entry.value.string == 'yes'){
+        return 1;
+      } else {
+        return 0;
+      }
+    } else {
+      return false;
+    }
+
+    function isNumber(number){
+      return (typeof number == 'number');
+    }
+
+    function isString(string){
+      return (typeof string == 'string');
+    }
+
+    function isOneToFive(number){
+      if(typeof number == 'number' && number >= 1 && number <= 5){
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  function calculateEntryWeight(entry){
+    // TODO default use month, but need to parametrize
+    var now = moment();
+    var limit = 24*30; // 24 hours x 30 days;
+    var creation = moment(entry.meta.created);
+    var duration = moment.duration(creation.diff(now));
+    var hours = duration.asHours();
+    if(hours > limit || hours == 0){
+      return 0;
+    } else {
+      return limit/hours - 1;
+    }
+  }
 }
