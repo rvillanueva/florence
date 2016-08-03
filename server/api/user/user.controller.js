@@ -72,11 +72,44 @@ export function index(req, res) {
     }
   }
 
-  return User.find(query, 'identity').exec()
+  return User.find(query, 'identity instructions').lean().exec()
     .then(users => {
+      users = attachEngagementScores(users);
+      users = removeInstructions(users);
       return res.status(200).json(users);
     })
     .catch(handleError(res));
+
+  function attachEngagementScores(patients){
+    patients = patients || [];
+    patients.forEach((patient, p) => {
+      var finalScore;
+      var totalScore = 0;
+      var totalQuantity = 0;
+      patient.instructions = patient.instructions || [];
+      patient.instructions.forEach((instruction, i) => {
+        if(instruction.adherence && instruction.adherence.score){
+          totalScore += instruction.adherence.score;
+          totalQuantity ++;
+        }
+      })
+      if(totalQuantity){
+        finalScore = totalScore/totalQuantity;
+      }
+
+      patient.adherence = {
+        score: finalScore || 0
+      }
+    })
+    return patients;
+  }
+
+  function removeInstructions(patients){
+    patients.forEach((patient, p) => {
+      delete patient.instructions;
+    })
+    return patients;
+  }
 }
 
 /**

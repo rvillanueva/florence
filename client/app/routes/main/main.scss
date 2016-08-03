@@ -117,19 +117,50 @@ $inputbox-height: 44px;
 .user-list {
   width: 100%;
   & .user-list-item {
+    position: relative;
     border: 0;
-    border-bottom: 1px rgb(227, 227, 227);
+    border-bottom: 1px rgb(235, 235, 235);
     border-style: solid;
-    height: 70px;
-    padding: 14px 20px;
     cursor: pointer;
+    &:hover {
+      background-color: rgb(237, 237, 237);
+      & .user-progress-bar {
+        background-color: #dfe9ee;
+      }
+    }
     &:first-child {
-      border-top: 1px rgb(227, 227, 227);
+      border-top: 1px rgb(235, 235, 235);
       border-style: solid;
     }
+    & .user-list-item-content {
+      position: relative;
+      height: 70px;
+      padding: 14px 20px;
+      z-index: 50;
+    }
+    & .user-progress-bar {
+      z-index: 10;
+      background-color: #EAF1F5;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    & .user-highlightable {
+      display: none;
+    }
     &.user-list-item-selected {
-      background-color: rgb(78, 161, 204);
+      background-color: rgb(97, 163, 198);
       color: white;
+      & .user-progress-bar {
+        background-color: rgba(120, 181, 213, 0.2);
+      }
+      & .user-highlightable {
+        display: block;
+      }
     }
   }
 }

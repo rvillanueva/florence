@@ -5,6 +5,12 @@
     min-height: 46px;
     cursor: pointer;
     background-color: white;
+    &:hover {
+      background-color: #f5f5f5;
+      & .instruction-progress-bar {
+        background-color: #dcebf5;
+      }
+    }
     &.instruction-list-item-selected {
       background-color: rgb(63, 110, 230);
       color: white;
