@@ -19,7 +19,19 @@ var UserSchema = new Schema({
     },
     mobile: String,
   },
-  permissions: {},
+  permissions: {
+    mobile: {
+
+    },
+    documentation: [
+      {
+        permission: String,
+        created: Date,
+        userId: String,
+        initials: String
+      }
+    ]
+  },
   providers: {
     auth: String,
     messaging: String
