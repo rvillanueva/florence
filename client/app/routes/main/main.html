@@ -16,16 +16,16 @@
         </div>
       </div>
     </div>
-    <div class="command-centerbox">
-      <div ng-show="$ctrl.selected.patient" style="width:100%;">
-        <div class="command-centerbox-heading">
-          <div class="command-centerbox-heading-left"><strong>{{$ctrl.view.main | uppercase}}</strong></div>
-          <div class="command-centerbox-heading-right">
-            <a href="#" ng-click="$ctrl.view.main = 'instructions'"><i class="heading-icon fa fa-list"></i></a>
-            <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="heading-icon fa fa-comment"></i></a>
-            <a href="#" ng-click="$ctrl.view.main = 'patient'"><i class="heading-icon fa fa-user"></i></a>
-          </div>
+    <div class="command-centerbox" ng-show="$ctrl.selected.patient">
+      <div class="command-centerbox-heading">
+        <div class="command-centerbox-heading-left"><strong>{{$ctrl.view.main | uppercase}}</strong>&nbsp;&nbsp;|&nbsp;&nbsp;{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</div>
+        <div class="command-centerbox-heading-right">
+          <a href="#" ng-click="$ctrl.view.main = 'instructions'"><i class="heading-icon fa fa-list"></i></a>
+          <a href="#" ng-click="$ctrl.view.main = 'messages'"><i class="heading-icon fa fa-comment"></i></a>
+          <a href="#" ng-click="$ctrl.view.main = 'patient'"><i class="heading-icon fa fa-user"></i></a>
         </div>
+      </div>
+      <div class="command-centerbox-content">
         <div ng-show="$ctrl.view.main == 'messages'">
           <message-box messages="$ctrl.selected.messages"></message-box>
         </div>
@@ -35,36 +35,14 @@
           </div>
           <br>
         </div>
-        <div ng-show="$ctrl.view.main == 'patient'" style="padding: 20px">
-          <p class="user-name-text">{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</p>
-          <br>
-          <br> Programs
-          <br>
-          <span ng-repeat="program in $ctrl.selected.patient.programs">{{program.name}}</span>
-          <br>
-          <br> Upcoming Tasks&nbsp;<a href="#" class="btn btn-primary btn-sm" ng-click="$ctrl.notify($ctrl.selected.patient._id)">Notify</a>
-          <div class="list-group">
-            <div class="list-group-item" ng-repeat="todo in $ctrl.selected.patient.queue">
-              {{todo.task.name}}
-            </div>
-          </div>
-        </div>
-        <div class="command-inputbar">
-          <form ng-submit="$ctrl.addInstruction()">
-            <input class="form-control" placeholder="Enter patient instruction here..." ng-model="$ctrl.instructionInput.text">
-            <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
-            <br><br>
-          </form>
-        </div>
+        <div ng-show="$ctrl.view.main == 'patient'" style="padding: 20px" ng-include="'app/routes/main/components/profile.html'"></div>
+      </div>
+      <div class="command-inputbar">
+        <form ng-submit="$ctrl.addInstruction()">
+          <input class="form-control" placeholder="Enter patient instruction here..." ng-model="$ctrl.instructionInput.text">
+          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+        </form>
       </div>
     </div>
-    <!--<div class="command-sidebar-right navbar-spaced" ng-show="$ctrl.selected.instruction">
-      <div class="command-sidebar-right-content">
-        <div>
-          <a href="#" ng-click="$ctrl.selected.instruction = false">&times;</a>
-          <br><br>
-        </div>
-      </div>
-    </div>-->
   </div>
 </div>

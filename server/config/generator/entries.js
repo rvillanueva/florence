@@ -41,7 +41,7 @@ export function generate(params) {
         if (instruction.measurement.period == 'day') {
           promises.push(generateData(instruction, 'days', 30))
         } else {
-          promises.push(generateData(instruction, 'weeks', 4))
+          promises.push(generateData(instruction, 'weeks', 6))
         }
       })
       Promise.all(promises)

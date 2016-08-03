@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-md-8">
+    <h3>{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</h3> {{$ctrl.selected.patient.identity.email}}
+    <br> {{$ctrl.selected.patient.identity.mobile}}
+    <br>
+    <br>
+    <br>
+    <h4>Communication Consents</h4>
+    <div class="page-divider"></div>
+    <div class="row">
+      <div class="col-md-6">
+        <strong>PHI</strong>
+        <br> email, secure text, phone call
+      </div>
+      <div class="col-md-6">
+        <strong>Non-PHI</strong>
+        <br> email, sms, secure text, phone call
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    Next Contact: {{$ctrl.selected.patient.notifications.nextContact | date:'MMM dd HH:mm a'}}
+    <a href="#" class="btn btn-primary btn-md" style="width: 100%;" ng-click="$ctrl.notify($ctrl.selected.patient._id)">Run Now</a>
+    <br>
+    <br>
+    <strong>Queued Tasks</strong>
+    <br>
+    <i ng-show="$ctrl.selected.patient.queue.length == 0">Empty</i>
+    <div ng-show="$ctrl.selected.patient.queue.length > 0">
+      <div class="list-group">
+        <div class="list-group-item" ng-repeat="todo in $ctrl.selected.patient.queue">
+          {{todo.task.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
