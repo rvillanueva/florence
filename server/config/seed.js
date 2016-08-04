@@ -9,17 +9,18 @@ import Program from '../models/program/program.model';
 import Task from '../models/task/task.model';
 import Question from '../models/question/question.model';
 import Entry from '../models/entry/entry.model';
+import mongoose from 'mongoose';
 
 var InstructionService = require('../services/instruction');
 var Promise = require('bluebird');
 var moment = require('moment');
 var generator = require('./generator');
 
-import mongoose from 'mongoose';
+var setUsers = [];
 
 Entry.find({}).remove()
   .then(() => {
-    Entry.create({
+    Entry.create([{
         userId: '5786a2dc517d5513c018c9d0',
         meta: {
           taskId: '579d4ba1e724a92ab1a8646e',
@@ -91,9 +92,9 @@ Entry.find({}).remove()
             text: '1'
           }
         }
-      })
+      }])
       .then(() => User.find({}).remove())
-      .then(() => User.create({
+      .then(() => User.create([{
         _id: '5786a2dc517d5513c018c9d0',
         providers: {
           auth: 'local',
@@ -145,8 +146,7 @@ Entry.find({}).remove()
         identity: {
           firstName: 'John',
           lastName: 'Smith',
-          email: 'admin@example.com',
-          mobile: '+111111111'
+          email: 'admin@example.com'
         },
         active: true,
         role: 'admin',
@@ -172,14 +172,16 @@ Entry.find({}).remove()
           }
         }],
         lastActivity: new Date()
-      }))
-      .then(() => {
+      }]))
+      .then(returned => {
+        setUsers = returned;
         var users = generator.users({
           quantity: 10
         })
         return User.create(users)
       })
-      .then(users => {
+      .then(returned => {
+        var users = setUsers.concat(returned);
         console.log('Generating entries for ' + users.length + ' users')
         return generator.entries({
           users: users

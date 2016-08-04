@@ -12,10 +12,10 @@
         </div>
       </div>
       <div class="command-centerbox-content">
-        <div ng-show="$ctrl.view.main == 'messages'">
+        <div ng-if="$ctrl.view.main == 'messages'">
           <message-box messages="$ctrl.selected.messages"></message-box>
         </div>
-        <div ng-show="$ctrl.view.main == 'instructions'" style="width:100%;">
+        <div ng-if="$ctrl.view.main == 'instructions'" style="width:100%;">
           <div class="instruction-list" style="width: 100%;">
             <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions | orderBy:'adherence.score'" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
           </div>
@@ -24,7 +24,7 @@
           </div>
           <br>
         </div>
-        <div ng-show="$ctrl.view.main == 'patient'" style="padding: 20px" ng-include="'app/routes/main/components/profile.html'"></div>
+        <div ng-if="$ctrl.view.main == 'patient'" style="padding: 20px" ng-include="'app/routes/main/components/profile.html'"></div>
       </div>
       <div class="command-inputbar">
         <form ng-submit="$ctrl.addInstruction()">

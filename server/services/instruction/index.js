@@ -159,6 +159,9 @@ export function updateAdherenceScore(instructionId){
     }
   }
   return new Promise(function(resolve, reject){
+    if(!instructionId){
+      reject(new Error('Need instructionId to update adherence score.'))
+    }
     EntryInterface.get(entryQuery)
     .then(entries => calculateInstructionScore(entries))
     .then(score => {
@@ -188,7 +191,12 @@ export function updateAdherenceScore(instructionId){
           weightsTotal += weight;
         }
       })
-      instructionScore = weightedScoreTotal/weightsTotal;
+      if(weightsTotal > 0){
+        instructionScore = weightedScoreTotal/weightsTotal;
+      }
+      if(entries.length == 0){
+        instructionScore = 1;
+      }
       if(instructionScore > 1 || instructionScore < 0){
         reject(new Error('Instruction score for instruction _id: ' + instructionId + ' is invalid.'))
       } else {
@@ -241,14 +249,17 @@ export function updateAdherenceScore(instructionId){
   function calculateEntryWeight(entry){
     // TODO default use month, but need to parametrize
     var now = moment();
-    var limit = 24*30; // 24 hours x 30 days;
+    var fromDate = moment().subtract(30, 'days');
     var creation = moment(entry.meta.created);
-    var duration = moment.duration(creation.diff(now));
+    var duration = moment.duration(now.diff(creation));
     var hours = duration.asHours();
-    if(hours > limit || hours == 0){
-      return 0;
+    var maxHours = moment.duration(now.diff(fromDate)).asHours()
+    var weight = (maxHours + 100)/(hours + 100);
+    if(weight > 0){
+      return weight;
     } else {
-      return limit/hours - 1;
+      console.log('Error: weight was ' + weight + ', time at ' + moment(creation).format('MMM DD YYYY HH:mm a') + '. Hours: ' + hours + ', maxhours: ' + maxHours);
+      return 0;
     }
   }
 }

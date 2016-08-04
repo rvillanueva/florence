@@ -23,6 +23,7 @@ class LoginController {
         this.$state.go('main');
       })
       .catch(err => {
+        console.log(err)
         this.errors.other = err.message;
       });
     }

@@ -83,7 +83,7 @@ export function index(req, res) {
   function attachEngagementScores(patients){
     patients = patients || [];
     patients.forEach((patient, p) => {
-      var finalScore;
+      var finalScore = false;
       var totalScore = 0;
       var totalQuantity = 0;
       patient.instructions = patient.instructions || [];
@@ -95,6 +95,10 @@ export function index(req, res) {
       })
       if(totalQuantity){
         finalScore = totalScore/totalQuantity;
+      }
+
+      if(finalScore == false){
+        finalScore = 1;
       }
 
       patient.adherence = {
@@ -161,8 +165,6 @@ export function create(req, res, next) {
     }
   }
   var newUser = new User(newUserData);
-  newUser.provider = 'local';
-  newUser.role = 'user';
   UserService.queueOnboardingTask(newUser)
     .then(user => user.save())
     .then(user => res.json(user))
@@ -187,6 +189,7 @@ export function show(req, res, next) {
 
     function attachTasks(user) {
       return new Promise(function(resolve, reject) {
+        user.queue = user.queue || [];
         TaskService.attach(user.queue)
           .then(queue => {
             user.queue = queue;

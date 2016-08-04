@@ -1,7 +1,30 @@
 <div class="row">
   <div class="col-md-8">
-    <h3>{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</h3> {{$ctrl.selected.patient.identity.email}}
-    <br> {{$ctrl.selected.patient.identity.mobile}}
+    <div ng-controller="EditBlockController as editBlock" ng-if="$ctrl.selected.patient.identity" ng-init="editBlock.fields=$ctrl.selected.patient.identity" class="editable-block" style="padding: 20px 0px;">
+      <div ng-show="!editBlock.editing">
+        <h3>{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</h3> {{$ctrl.selected.patient.identity.email}}
+        <br> {{$ctrl.selected.patient.identity.mobile}}
+      </div>
+      <div ng-if="editBlock.editing">
+        First Name
+        <input class="form-control" ng-model="editBlock.fields.firstName">
+        <br>
+        Last Name
+        <input class="form-control" ng-model="editBlock.fields.lastName">
+        <br>
+        Email
+        <input class="form-control" ng-model="editBlock.fields.email">
+        <br>
+        Mobile
+        <input class="form-control" ng-model="editBlock.fields.mobile">
+      </div>
+      <br>
+      <a href="#" class="hover-revealed" ng-hide="editBlock.editing" ng-click="editBlock.editToggle(true)">Edit Profile</a>
+      <div class="pull-right" ng-if="editBlock.editing">
+        <a href="#" ng-click="editBlock.editing = false;editBlock.fields = $ctrl.selected.patient.identity">Cancel</a>&nbsp;&nbsp;
+        <button class="btn btn-primary btn-sm" ng-click="editBlock.editToggle(false);$ctrl.updateIdentity(editBlock.fields)">Done</button>
+      </div>
+    </div>
     <br>
     <br>
     <br>

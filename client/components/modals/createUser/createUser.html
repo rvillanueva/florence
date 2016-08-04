@@ -2,32 +2,57 @@
   <button type="button" ng-click="$dismiss()" class="close">&times;</button>
   <h4 class="modal-title">Add Patient</h4>
 </div>
+<form class="form" name="form" ng-submit="vm.submit(form)" novalidate>
 <div class="modal-body">
-  <form ng-submit="vm.done()">
-    <div class="form-group">
+    <div class="form-group" ng-class="{ 'has-success': form.name.$valid && vm.submitted,
+                                    'has-error': form.name.$invalid && vm.submitted }">
       First name
-      <input class="form-control" ng-model="vm.user.firstName" required>
+      <input class="form-control" name="firstName" ng-model="vm.user.firstName" required>
+      <p class="help-block" ng-show="form.firstName.$error.required && vm.submitted">
+        A first name is required
+      </p>
     </div>
     <div class="form-group">
       Last name
-      <input class="form-control" ng-model="vm.user.lastName" required>
+      <input class="form-control" name="lastName" ng-model="vm.user.lastName" required>
+      <p class="help-block" ng-show="form.lastName.$error.required && vm.submitted">
+        A last name is required
+      </p>
     </div>
     <div class="form-group">
       Email
-      <input class="form-control" ng-model="vm.user.email">
+      <input class="form-control" name="identity.email" ng-model="vm.user.email" mongoose-error>
+      <p class="help-block" ng-show="form['identity.email'].$error.email && vm.submitted">
+        Doesn't look like a valid email.
+      </p>
+      <p class="help-block" ng-show="form['identity.email'].$error.required && vm.submitted">
+        What's the email address?
+      </p>
+      <p class="help-block" ng-show="form['identity.email'].$error.mongoose">
+        {{ vm.errors['identity.email'] }}
+      </p>
     </div>
     <div class="form-group">
       Mobile phone number
-      <input class="form-control" ng-model="vm.user.mobile">
+      <input class="form-control" name="identity.mobile" ng-model="vm.user.mobile" mongoose-error>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.mobile && vm.submitted">
+        Doesn't look like a valid phone number.
+      </p>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.required && vm.submitted">
+        What's the phone number?
+      </p>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.mongoose">
+        {{ vm.errors['identity.mobile'] }}
+      </p>
     </div>
     <!--<div class="form-group">
       Identifier
       <input class="form-control" ng-model="vm.user.identifier">
     </div>-->
     <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
-  </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>
-  <button class="btn btn-primary btn-md" ng-click="vm.done()">Add</button>
+  <button class="btn btn-primary btn-md" ng-click="vm.submit(form)">Add</button>
 </div>
+</form>

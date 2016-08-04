@@ -8,6 +8,8 @@ import Instruction from '../instruction/instruction.model';
 
 const authTypes = ['mobile'];
 
+var phone = require('phone');
+
 var UserSchema = new Schema({
   identity: {
     pictureUrl: String,
@@ -114,42 +116,37 @@ UserSchema
  * Validations
  */
 
-// Validate empty email
-UserSchema
-  .path('identity.email')
-  .validate(function(email) {
-    if (authTypes.indexOf(this.providers.auth) !== -1) {
-      return true;
-    }
-    return email.length;
-  }, 'Email cannot be blank');
+ // Validate empty first name and last names
+ UserSchema
+   .path('identity.firstName')
+   .validate(function(firstName) {
+     firstName = firstName || '';
+     if (authTypes.indexOf(this.providers.auth) !== -1) {
+       return true;
+     }
+     return firstName.length;
+   }, 'First name cannot be blank');
 
-  // Validate empty email
-  UserSchema
-    .path('identity.mobile')
-    .validate(function(mobile) {
-      if (authTypes.indexOf(this.providers.auth) !== -1) {
-        return true;
-      }
-      return mobile.length;
-    }, 'Phone number cannot be blank');
+   UserSchema
+     .path('identity.lastName')
+     .validate(function(lastName) {
+       lastName = lastName || '';
+       if (authTypes.indexOf(this.providers.auth) !== -1) {
+         return true;
+       }
+       return lastName.length;
+     }, 'Last name cannot be blank');
 
-
-// Validate empty password
-UserSchema
-  .path('password')
-  .validate(function(password) {
-    if (authTypes.indexOf(this.providers.auth) !== -1) {
-      return true;
-    }
-    return password.length;
-  }, 'Password cannot be blank');
 
 // Validate email is not taken
 UserSchema
   .path('identity.email')
   .validate(function(value, respond) {
     var self = this;
+    if(!value || value.length == 0){
+      this.identity.email = null;
+      return respond(true);
+    }
     return this.constructor.findOne({ 'identity.email': value }).exec()
       .then(function(user) {
         if (user) {
@@ -168,9 +165,13 @@ UserSchema
 // Validate mobile phone number isn't taken
   UserSchema
     .path('identity.mobile')
-    .validate(function(value, respond) {
+    .validate(function(mobile, respond) {
       var self = this;
-      return this.constructor.findOne({ 'identity.mobile': value }).exec()
+      if(!mobile || mobile.length == 0){
+        this.identity.mobile = null;
+        return respond(true);
+      }
+      return this.constructor.findOne({ 'identity.mobile': mobile }).exec()
         .then(function(user) {
           if (user) {
             if (self.id === user.id) {
@@ -184,6 +185,23 @@ UserSchema
           throw err;
         });
     }, 'The specified phone number is already in use.');
+
+    // Validate phone number structure
+    UserSchema
+      .path('identity.mobile')
+      .validate(function(mobile) {
+        if(!mobile){
+          return true;
+        } else {
+          var formatted = phone(mobile);
+          if(formatted.length > 0){
+            this.identity.mobile = formatted[0];
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }, 'Please provide a valid phone format.');
 
 
 var validatePresenceOf = function(value) {

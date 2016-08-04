@@ -154,6 +154,22 @@ class MainController {
     }
     return instruction;
   }
+  updateIdentity(edits){
+    this.selected.patient.identity.firstName == edits.firstName || this.selected.patient.identity.firstName;
+    this.selected.patient.identity.lastName == edits.lastName || this.selected.patient.identity.lastName;
+    this.selected.patient.identity.email == edits.email || this.selected.patient.identity.email;
+    this.selected.patient.identity.mobile == edits.mobile || this.selected.patient.identity.mobile;
+    this.$http.put('/api/users/' + this.selected.patient._id + '/identity', this.selected.patient)
+    .success(user => {
+      console.log(user)
+      this.selected.patient = user;
+      deferred.resolve(user)
+    })
+    .error(err => {
+      window.alert(err);
+    })
+
+  }
 }
 
 angular.module('florenceApp')

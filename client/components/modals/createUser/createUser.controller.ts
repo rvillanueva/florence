@@ -13,17 +13,32 @@
         mobile: null,
       }
       this.$uibModalInstance = $uibModalInstance;
+
     }
-    done(){
+    submit(form){
       this.saving = true;
-      this.$http.post('/api/users', this.user).success(user => {
-        this.$uibModalInstance.close(user)
-      })
-      .error(err => {
-        this.saving = false;
-        window.alert(err);
-        console.log(err)
-      })
+      console.log(form)
+
+      this.submitted = true;
+      if (form.$valid) {
+        this.$http.post('/api/users', this.user).success(user => {
+          this.$uibModalInstance.close(user)
+        })
+        .error(err => {
+          console.log(err)
+          this.errors = {};
+
+          // Update validity of form fields that match the sequelize errors
+          if (err.name && err.errors) {
+            angular.forEach(err.errors, (error, field) => {
+              form[field].$setValidity('mongoose', false);
+              this.errors[field] = error.message;
+            });
+          }
+          console.log(this.errors)
+          console.log(form)
+        });
+      }
     }
   }
 

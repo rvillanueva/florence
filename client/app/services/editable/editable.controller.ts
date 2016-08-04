@@ -2,6 +2,7 @@ class EditBlockController {
   constructor() {
     console.log('ChoiceRow init')
     this.editing = false;
+    this.initialized = true;
   }
   editToggle(toggle){
     console.log('Toggling editing...')
