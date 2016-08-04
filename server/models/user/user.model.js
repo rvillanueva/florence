@@ -137,6 +137,25 @@ UserSchema
        return lastName.length;
      }, 'Last name cannot be blank');
 
+     // Validate phone number structure
+     UserSchema
+       .path('identity.mobile')
+       .validate(function(mobile) {
+         if(!mobile || mobile.length == 0){
+           return true;
+         } else {
+           var formatted = phone(mobile);
+           console.log(formatted)
+           if(formatted.length > 0){
+             this.identity.mobile = formatted[0];
+             return true;
+           } else {
+             return false;
+           }
+         }
+       }, 'Please provide a valid phone format.');
+
+
 
 // Validate email is not taken
 UserSchema
@@ -167,11 +186,11 @@ UserSchema
     .path('identity.mobile')
     .validate(function(mobile, respond) {
       var self = this;
-      if(!mobile || mobile.length == 0){
+      if(!mobile){
         this.identity.mobile = null;
         return respond(true);
       }
-      return this.constructor.findOne({ 'identity.mobile': mobile }).exec()
+      return this.constructor.findOne({ 'identity.mobile': this.identity.mobile }).exec()
         .then(function(user) {
           if (user) {
             if (self.id === user.id) {
@@ -185,24 +204,6 @@ UserSchema
           throw err;
         });
     }, 'The specified phone number is already in use.');
-
-    // Validate phone number structure
-    UserSchema
-      .path('identity.mobile')
-      .validate(function(mobile) {
-        if(!mobile){
-          return true;
-        } else {
-          var formatted = phone(mobile);
-          if(formatted.length > 0){
-            this.identity.mobile = formatted[0];
-            return true;
-          } else {
-            return false;
-          }
-        }
-      }, 'Please provide a valid phone format.');
-
 
 var validatePresenceOf = function(value) {
   return value && value.length;
