@@ -1,0 +1,46 @@
+    <div class="form-group" ng-class="{ 'has-success': form.name.$valid && submitted,
+                                    'has-error': form.name.$invalid && submitted }">
+      First name
+      <input class="form-control" name="firstName" ng-model="user.identity.firstName" required>
+      <p class="help-block" ng-show="form.firstName.$error.required && submitted">
+        A first name is required
+      </p>
+    </div>
+    <div class="form-group">
+      Last name
+      <input class="form-control" name="lastName" ng-model="user.identity.lastName" required>
+      <p class="help-block" ng-show="form.lastName.$error.required && submitted">
+        A last name is required
+      </p>
+    </div>
+    <div class="form-group">
+      Email
+      <input class="form-control" name="identity.email" ng-model="user.identity.email" mongoose-error>
+      <p class="help-block" ng-show="form['identity.email'].$error.email && submitted">
+        Doesn't look like a valid email.
+      </p>
+      <p class="help-block" ng-show="form['identity.email'].$error.required && submitted">
+        What's the email address?
+      </p>
+      <p class="help-block" ng-show="form['identity.email'].$error.mongoose">
+        {{ errors['identity.email'] }}
+      </p>
+    </div>
+    <div class="form-group">
+      Mobile phone number
+      <input class="form-control" name="identity.mobile" ng-model="user.identity.mobile" mongoose-error>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.mobile && submitted">
+        Doesn't look like a valid phone number.
+      </p>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.required && submitted">
+        What's the phone number?
+      </p>
+      <p class="help-block" ng-show="form['identity.mobile'].$error.mongoose">
+        {{ errors['identity.mobile'] }}
+      </p>
+    </div>
+    <!--<div class="form-group">
+      Identifier
+      <input class="form-control" ng-model="user.identifier">
+    </div>-->
+    <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />

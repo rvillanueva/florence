@@ -7,11 +7,14 @@
       this.$q = $q;
       this.saving = false;
       this.user = {
-        firstName: null,
-        lastName: null,
-        email: null,
-        mobile: null,
+        identity: {
+          firstName: null,
+          lastName: null,
+          email: null,
+          mobile: null,
+        }
       }
+
       this.$uibModalInstance = $uibModalInstance;
 
     }
@@ -25,7 +28,6 @@
           this.$uibModalInstance.close(user)
         })
         .error(err => {
-          console.log(err)
           this.errors = {};
 
           // Update validity of form fields that match the sequelize errors
@@ -35,8 +37,6 @@
               this.errors[field] = error.message;
             });
           }
-          console.log(this.errors)
-          console.log(form)
         });
       }
     }

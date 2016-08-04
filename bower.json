@@ -18,7 +18,8 @@
     "angular-ui-router": "~0.2.15",
     "angular-validation-match": "~1.5.2",
     "angular-xeditable": "^0.1.12",
-    "moment": "^2.14.1"
+    "moment": "^2.14.1",
+    "angular-date-dropdowns": "^0.1.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.0"

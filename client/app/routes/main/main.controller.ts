@@ -154,21 +154,26 @@ class MainController {
     }
     return instruction;
   }
-  updateIdentity(edits){
-    this.selected.patient.identity.firstName == edits.firstName || this.selected.patient.identity.firstName;
-    this.selected.patient.identity.lastName == edits.lastName || this.selected.patient.identity.lastName;
-    this.selected.patient.identity.email == edits.email || this.selected.patient.identity.email;
-    this.selected.patient.identity.mobile == edits.mobile || this.selected.patient.identity.mobile;
-    this.$http.put('/api/users/' + this.selected.patient._id + '/identity', this.selected.patient)
-    .success(user => {
-      console.log(user)
-      this.selected.patient = user;
-      deferred.resolve(user)
-    })
-    .error(err => {
-      window.alert(err);
-    })
+  updateIdentity(form, user, scope){
+    if (form.$valid && user.identity) {
+      this.$http.put('/api/users/' + this.selected.patient._id + '/identity', user.identity).success(updated => {
+        console.log(updated)
+        this.selected.patient = updated;
+        scope.editing = false;
+      })
+      .error(err => {
+        this.errors = {};
 
+        // Update validity of form fields that match the sequelize errors
+        if (err.name && err.errors) {
+          angular.forEach(err.errors, (error, field) => {
+            form[field].$setValidity('mongoose', false);
+            this.errors[field] = error.message;
+          });
+        }
+        console.log(this.errors);
+      });
+    }
   }
 }
 

@@ -48,6 +48,8 @@
         "client/components/auth/interceptor.service.ts",
         "client/components/auth/router.decorator.ts",
         "client/components/auth/user.service.ts",
+        "client/components/edit-identity/edit-identity.controller.ts",
+        "client/components/edit-identity/edit-identity.directive.ts",
         "client/components/footer/footer.directive.ts",
         "client/components/instruction-item/instruction-item.controller.ts",
         "client/components/instruction-item/instruction-item.directive.ts",

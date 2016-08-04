@@ -154,15 +154,11 @@ export function signup(req, res, next) {
  * Creates a new user
  */
 export function create(req, res, next) {
+  req.body = req.body || {};
   var newUserData = {
     provider: 'local',
     role: 'user',
-    identity: {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      mobile: req.body.mobile
-    }
+    identity: req.body.identity
   }
   var newUser = new User(newUserData);
   UserService.queueOnboardingTask(newUser)
@@ -306,4 +302,18 @@ export function entries(req, res){
   return EntryInterface.get(query)
   .then(respondWithResult(res))
   .catch(handleError(res));
+}
+
+export function updateIdentity(req, res){
+  var userId = req.params.id;
+  var updates = req.body;
+  return User.findOne({'_id': userId}, {
+  }).exec()
+  .then(handleEntityNotFound(res))
+  .then(user => {
+    user.identity = updates;
+    return user.save()
+  })
+  .then(respondWithResult(res))
+  .catch(validationError(res));
 }
