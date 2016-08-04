@@ -125,7 +125,6 @@ export function generate(params) {
     var user = generateOneUser();
     users.push(user);
   }
-  console.log(users);
   return users;
 }
 

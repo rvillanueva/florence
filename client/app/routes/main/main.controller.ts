@@ -32,26 +32,22 @@ class MainController {
   }
   searchPatients(){
     console.log('Searching patients...')
-    this.ModalService.open({
-      templateUrl: 'components/modals/searchPatients/searchPatients.html',
-      controller: 'SearchPatientsModalController as vm',
-      params: {
-        query: this.patientSearchQuery
-      }
-    })
-    .then(patient => {
-      this.patients.push(patient);
-    })
+    // Placeholder
   }
-  createPatient(){
+  addNewPatient(){
     this.ModalService.open({
       templateUrl: 'components/modals/createUser/createUser.html',
       controller: 'CreateUserModalController as vm',
+      size: 'sm',
       params: {
       }
     })
     .then(patient => {
-      this.patients.splice(0,0,patient);
+      patient.adherence = {
+        score: 0
+      }
+      this.patients.push(patient);
+      this.selectPatient(patient._id);
     })
   }
   removePatient(index){

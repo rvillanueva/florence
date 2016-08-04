@@ -1,12 +1,31 @@
 <div class="modal-header">
   <button type="button" ng-click="$dismiss()" class="close">&times;</button>
-  <h4 class="modal-title">New {{vm.protocol.type | capitalize}} Protocol</h4>
+  <h4 class="modal-title">Add Patient</h4>
 </div>
 <div class="modal-body">
-  First name: <input ng-model="vm.user.firstName">
-  Last name: <input ng-model="vm.user.lastName">
-  Email: <input ng-model="vm.user.email">
-  Mobile phone number: <input ng-model="vm.user.mobile">
+  <form ng-submit="vm.done()">
+    <div class="form-group">
+      First name
+      <input class="form-control" ng-model="vm.user.firstName" required>
+    </div>
+    <div class="form-group">
+      Last name
+      <input class="form-control" ng-model="vm.user.lastName" required>
+    </div>
+    <div class="form-group">
+      Email
+      <input class="form-control" ng-model="vm.user.email">
+    </div>
+    <div class="form-group">
+      Mobile phone number
+      <input class="form-control" ng-model="vm.user.mobile">
+    </div>
+    <!--<div class="form-group">
+      Identifier
+      <input class="form-control" ng-model="vm.user.identifier">
+    </div>-->
+    <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
+  </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-default btn-md" ng-click="$dismiss()">Cancel</button>

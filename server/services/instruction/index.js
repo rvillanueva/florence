@@ -24,12 +24,10 @@ export function runCheckIns(users){
   })
 
   function addTasksForEach(users){
-    console.log('Adding tasks...')
     var promises = [];
 
     return new Promise(function(resolve, reject){
       users = users || [];
-      console.log(users)
       users.forEach(function(user, u){
         promises.push(queueTasks(user));
       })
@@ -61,7 +59,6 @@ export function queueTasks(user) {
     .catch(err => reject(err))
 
     function lastEntryIsOutdated(instruction){
-      console.log('Checking if last entry outdated....')
       instruction.measurement = instruction.measurement || {};
       var lastEntryDate = moment(instruction.lastEntry);
       var measurementFreq = instruction.measurement.frequency || 'weekly';
@@ -79,7 +76,6 @@ export function queueTasks(user) {
 
     function addIfNotQueued(instruction) {
       return new Promise(function(resolve, reject){
-        console.log('Adding if not queued...')
         if (!isInstructionTaskQueued(instruction) && instruction.measurement) {
           console.log('Instruction isn\'t queued...');
           // find appropriate task, attach params and queue it;
@@ -157,7 +153,6 @@ export function buildTaskQuery(instruction){
 }
 
 export function updateAdherenceScore(instructionId){
-  console.log('Updating adherence score...')
   var entryQuery = {
     params: {
       instructionId: instructionId
@@ -173,6 +168,7 @@ export function updateAdherenceScore(instructionId){
           }
       }).exec()
     })
+    // TODO add user adeherence scoring here
     .then(() => resolve(true))
     .catch(err => reject(err))
   })

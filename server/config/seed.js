@@ -127,7 +127,43 @@ Entry.find({}).remove()
             frequency: 'daily'
           },
           action: {
-            phrase: 'Take your amoxicillin',
+            phrase: 'take your amoxicillin',
+            timing: {
+              type: 'repeating',
+              times: 3,
+              every: 'day'
+            }
+          }
+        }],
+        lastActivity: new Date()
+      },{
+        _id: '5786a2dc517d5513c018c9d1',
+        providers: {
+          auth: 'local',
+          messaging: 'sms'
+        },
+        identity: {
+          firstName: 'John',
+          lastName: 'Smith',
+          email: 'admin@example.com',
+          mobile: '+111111111'
+        },
+        active: true,
+        role: 'admin',
+        password: 'admin',
+        queue: [],
+        notifications: {
+          nextContact: moment().subtract(10, 'days').toDate()
+        },
+        instructions: [{
+          _id: '579d4ba1e724a92ab1a864a1',
+          text: 'Take your diabetes medication three times a day',
+          measurement: {
+            type: 'propensity',
+            frequency: 'daily'
+          },
+          action: {
+            phrase: 'take your diabetes medication',
             timing: {
               type: 'repeating',
               times: 3,

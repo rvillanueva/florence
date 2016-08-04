@@ -169,15 +169,25 @@ $inputbox-height: 44px;
 
 .user-searchbar{
   padding: 14px;
+  overflow: hidden;
+  & .user-searchbar-input-container {
+    overflow: hidden;
+  }
   & input, input:focus {
     background-color: rgb(237, 237, 237);
     box-shadow: none;
-    padding: 12px;
     font-size: 0.9em;
+    padding: 12px 12px;
     line-height: 0.9em;
     outline: none;
     border: none;
     border-radius: 8px;
+    width: 100%;
+    height: 30px;
+  }
+  & .user-searchbar-add {
+    float: right;
+    height: 30px;
   }
 }
 

@@ -1,25 +1,7 @@
 <navbar style="position:absolute; top: 0;left:0; right:0;"></navbar>
 <div class="main-page fill-height">
   <div class="command-center fill-height">
-    <div class="command-sidebar-left navbar-spaced">
-      <div class="user-searchbar">
-        <form ng-submit="$ctrl.createPatient()">
-          <input class="form-control" placeholder="Find patient..." ng-model="$ctrl.patientSearchQuery">
-          <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />
-        </form>
-      </div>
-      <div class="user-list">
-        <div class="user-list-item" ng-class="{'user-list-item-selected': patient._id == $ctrl.selected.patient._id}" ng-repeat="(p, patient) in $ctrl.patients | orderBy:'adherence.score'" ng-click="$ctrl.selectPatient(patient._id)">
-          <div class="user-list-item-content">
-            <span class="user-name-text">{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</span>
-            <br>
-            <span style="font-size:0.8em">{{patient.identity.mobile}}</span>
-            <span class="pull-right user-highlightable" style="font-size:1.4em">{{(patient.adherence.score || 0) * 100| number:1}}%</span>
-          </div>
-          <div class="user-progress-bar" ng-style="{'width': (patient.adherence.score || 0) * 100 + '%'}"></div>
-        </div>
-      </div>
-    </div>
+    <div class="command-sidebar-left navbar-spaced" ng-include="'app/routes/main/components/sidebar-left.html'"></div>
     <div class="command-centerbox" ng-show="$ctrl.selected.patient">
       <div class="command-centerbox-heading">
         <div class="command-centerbox-heading-left"><strong>{{$ctrl.view.main | uppercase}}</strong>&nbsp;&nbsp;|&nbsp;&nbsp;{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</div>
@@ -36,6 +18,9 @@
         <div ng-show="$ctrl.view.main == 'instructions'" style="width:100%;">
           <div class="instruction-list" style="width: 100%;">
             <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions | orderBy:'adherence.score'" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
+          </div>
+          <div style="padding: 20px" ng-show="$ctrl.selected.patient.instructions.length == 0">
+            <i>{{$ctrl.selected.patient.identity.firstName}} currently has no instructions. To add one, type in the box at the bottom of the page and then press Enter.</i>
           </div>
           <br>
         </div>

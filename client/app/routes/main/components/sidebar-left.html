@@ -1,0 +1,22 @@
+<div class="user-searchbar">
+  <form>
+    <div class="user-searchbar-add">
+      &nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-default" ng-click="$ctrl.addNewPatient()"><i class="fa fa-plus"></i></a>
+    </div>
+    <div class="user-searchbar-input-container">
+      <input style="user-searchbar-input form-control" placeholder="Find patient..." ng-model="$ctrl.patientSearch.$">
+    </div>
+    <!--<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" />-->
+  </form>
+</div>
+<div class="user-list">
+  <div class="user-list-item" ng-class="{'user-list-item-selected': patient._id == $ctrl.selected.patient._id}" ng-repeat="(p, patient) in $ctrl.patients | filter:$ctrl.patientSearch:false | orderBy:'adherence.score'" ng-click="$ctrl.selectPatient(patient._id)">
+    <div class="user-list-item-content">
+      <span class="user-name-text">{{patient.identity.firstName}}&nbsp;{{patient.identity.lastName}}</span>
+      <br>
+      <span style="font-size:0.8em">{{patient.identity.mobile}}</span>
+      <span class="pull-right user-highlightable" style="font-size:1.4em">{{(patient.adherence.score || 0) * 100| number:1}}%</span>
+    </div>
+    <div class="user-progress-bar" ng-style="{'width': (patient.adherence.score || 0) * 100 + '%'}"></div>
+  </div>
+</div>
