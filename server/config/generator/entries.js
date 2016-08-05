@@ -2,6 +2,7 @@
 
 import User from '../../models/user/user.model';
 var InstructionService = require('../../services/instruction');
+var TaskService = require('../../services/task');
 var moment = require('moment');
 
 export function generate(params) {
@@ -64,6 +65,7 @@ export function generate(params) {
       })
 
       function buildEntryFromInstruction(instruction, i) {
+        var params;
         return new Promise(function(resolve, reject) {
           var entry = {
             userId: String(user._id),
@@ -74,7 +76,14 @@ export function generate(params) {
           }
           InstructionService.buildTaskQuery(instruction)
             .then(query => {
-              entry.meta.params = query.params;
+              params = query.params;
+              return TaskService.query(query)
+            })
+            .then(task => {
+              if(task){
+                entry.meta.prompt = task.text;
+              }
+              entry.meta.params = params;
               resolve(entry);
             })
             .catch(err => reject(err))
