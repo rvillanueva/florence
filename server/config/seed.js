@@ -244,8 +244,30 @@ Task.find({}).remove()
           text: 'No problem. [ERROR: Haven\'t handled this path yet.]'
         }]
       }]
+    },{
+      name: 'Initiate',
+      objective: 'initiate',
+      description: 'The greeting to initiate a patient interaction.',
+      type: 'ask',
+      text: 'Hey! Quick question for you--is now a good time?',
+      choices: [{
+        match: {
+          type: 'expression',
+          expression: 'yes'
+        },
+        responses: [{
+          text: 'Great!'
+        }]
+      }, {
+        match: {
+          type: 'expression',
+          expression: 'no'
+        },
+        responses: [{
+          text: 'No problem. [ERROR: Haven\'t handled this path yet.]'
+        }]
+      }]
     }, {
-      _id: '5786a2dc517d5513c018c9f6',
       objective: 'systemOnboard',
       name: 'Onboard patient',
       description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',

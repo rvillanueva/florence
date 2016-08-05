@@ -19,9 +19,6 @@ export function query(query) {
     if (!query.objective) {
       reject(new Error('Need to define objective in query.'))
     }
-    console.log('\n\nQUERY IS:')
-    console.log(query);
-    console.log(query.objective)
     Task.find({
         'objective': query.objective
       }).lean().exec()
@@ -33,7 +30,6 @@ export function query(query) {
 
     function filterByParams(tasks) {
       return new Promise(function(resolve, reject) {
-        console.log('Filtering...')
         tasks = tasks || [];
         for (var i = 0; i < tasks.length; i++) {
           var task = tasks[i];
@@ -42,8 +38,6 @@ export function query(query) {
             i--;
           }
         }
-        console.log('Filtered:');
-        console.log(tasks);
         resolve(tasks)
       })
     }
@@ -74,29 +68,36 @@ export function query(query) {
 
     function selectMostSpecificTask(tasks){
       return new Promise(function(resolve, reject) {
-        var selected = false;
+        var selected = [];
+        var currentNumMatches = false;
         tasks.forEach(function(task, t){
           task.attributes = task.attributes || {};
           task.params = task.params || {};
-          if(!selected || isMoreSpecific(task, selected)){
-            selected = task;
+          var thisNumMatches = hasMoreMatchedParams(task, currentNumMatches);
+          if(selected.length == 0 || thisNumMatches == currentNumMatches){
+            selected.push(task);
+            currentNumMatches = thisNumMatches;
+          } else if(thisNumMatches !== false){
+            selected = [];
+            selected.push(task);
+            currentNumMatches = thisNumMatches;
           }
         })
-        if(selected){
-          console.log('Best task selected:')
-          console.log(selected);
+        if(selected.length > 0){
+          resolve(selected[Math.floor(Math.random() * selected.length)]);
         } else {
-          console.log('No task found.')
+          console.log('ERROR: No task found.')
+          resolve(false);
         }
-        resolve(selected);
       })
 
-      function isMoreSpecific(newTask, oldTask){
+      function hasMoreMatchedParams(task, comparisonNumber){
+        var numberMatched = Object.keys(task.attributes).length + Object.keys(task.params).length;
         if(
-          (Object.keys(newTask.attributes).length + Object.keys(newTask.params).length) >
-          (Object.keys(oldTask.attributes).length + Object.keys(oldTask.params).length)
+          comparisonNumber === false ||
+          numberMatched > comparisonNumber
         ){
-          return true;
+          return numberMatched;
         } else {
           return false;
         }
@@ -105,7 +106,6 @@ export function query(query) {
 
     function replaceParams(task){
       return new Promise(function(resolve, reject){
-        console.log('Replacing params...');
         task.raw = task.text;
         task.text = transformText(task.text, query.params)
         resolve(task)
@@ -114,7 +114,6 @@ export function query(query) {
 
     function transformText(text, params){
       var loops = 0;
-      console.log('Transforming text...')
       for(var param in params){
         if (params.hasOwnProperty(param) && typeof params[param] == 'string') {
           while(text.indexOf('<<' + param + '>>') > -1 && loops < 5){
