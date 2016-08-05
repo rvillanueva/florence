@@ -44,7 +44,7 @@ class MainController {
     })
     .then(patient => {
       patient.adherence = {
-        score: 0
+        score: 0.5
       }
       this.patients.push(patient);
       this.selectPatient(patient._id);

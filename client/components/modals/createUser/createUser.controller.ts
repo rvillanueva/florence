@@ -33,10 +33,13 @@
           // Update validity of form fields that match the sequelize errors
           if (err.name && err.errors) {
             angular.forEach(err.errors, (error, field) => {
-              form[field].$setValidity('mongoose', false);
-              this.errors[field] = error.message;
+              if(err.errors.hasOwnProperty(field)){
+                form[field].$setValidity('mongoose', false);
+                this.errors[field] = error.message;
+              }
             });
           }
+          console.log(this.errors)
         });
       }
     }

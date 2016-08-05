@@ -202,7 +202,7 @@ export function create(req, res){
   var userId = req.query.userId;
   var instruction = req.body;
   instruction.adherence = {
-    score: 1
+    score: 0.5
   }
   console.log(instruction)
   if(!userId){

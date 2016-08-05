@@ -3,8 +3,8 @@ var Promise = require('bluebird');
 var request = require('request');
 
 import User from '../../models/user/user.model';
-var QueueService = require('../../services/queue');
 var Message = require('../../services/message');
+var TaskService = require('../../services/task');
 
 export function getUserByPhoneNumber(phoneNumber) {
   return new Promise((resolve, reject) => {
@@ -101,12 +101,20 @@ function createInactiveUser(user){
 export function queueOnboardingTask(user){
   return new Promise(function(resolve, reject){
     user.queue = user.queue || [];
-    QueueService.addTodo(user.queue, {
-      taskId: '5786a2dc517d5513c018c9f6'
-    })
-    .then(queue => {
-      user.queue = queue;
-      console.log(user.queue)
+    var taskQuery = {
+      objective: 'systemOnboard',
+      params: {
+        providerName: 'Ryan' // FIXME to put in providers name
+      }
+    }
+    TaskService.query(taskQuery)
+    .then(task => {
+      if(task){
+        user.queue.splice(0,0,{
+          taskId: task._id,
+          params: taskQuery.params
+        })
+      }
       resolve(user)
     })
     .catch(err => reject(err))

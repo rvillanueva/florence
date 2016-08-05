@@ -145,7 +145,6 @@ UserSchema
            return true;
          } else {
            var formatted = phone(mobile);
-           console.log(formatted)
            if(formatted.length > 0){
              this.identity.mobile = formatted[0];
              return true;

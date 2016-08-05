@@ -98,7 +98,7 @@ export function index(req, res) {
       }
 
       if(finalScore == false){
-        finalScore = 1;
+        finalScore = 0.5;
       }
 
       patient.adherence = {

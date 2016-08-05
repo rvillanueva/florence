@@ -125,7 +125,8 @@ Entry.find({}).remove()
           text: 'Take your amoxicillin three times a day',
           measurement: {
             type: 'propensity',
-            frequency: 'daily'
+            frequency: 'daily',
+            period: 'day'
           },
           action: {
             phrase: 'take your amoxicillin',
@@ -160,7 +161,8 @@ Entry.find({}).remove()
           text: 'Take your diabetes medication three times a day',
           measurement: {
             type: 'propensity',
-            frequency: 'daily'
+            frequency: 'daily',
+            period: 'day'
           },
           action: {
             phrase: 'take your diabetes medication',
@@ -244,15 +246,44 @@ Task.find({}).remove()
       }]
     }, {
       _id: '5786a2dc517d5513c018c9f6',
+      objective: 'systemOnboard',
+      name: 'Onboard patient',
+      description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
+      type: 'ask',
+      text: 'Hey! My name is Florence, and I work with <<providerName>> to stay in touch with our patients. I\'m also a bot, which means I\'m always available, but be patient with me if I don\'t understand everything! Are you okay with me checking in with you from time to time?',
+      params: {
+        providerName: true
+      },
+      choices: [{
+        match: {
+          type: 'expression',
+          expression: 'yes'
+        },
+        responses: [{
+          text: 'Great!'
+        }]
+      }, {
+        match: {
+          type: 'expression',
+          expression: 'no'
+        },
+        responses: [{
+          text: 'No problem. [ERROR: Haven\'t handled this path yet.]'
+        }]
+      }]
+    }, {
+      _id: '5786a2dc517d5513c018c9f6',
+      objective: 'systemOnboard',
       name: 'Onboard patient',
       description: 'Initiate conversation to ensure patient understands the role, benefit, and risks of health messaging.',
       type: 'say',
-      text: 'Hey! My name is Florence, and I work with <<providerName>>. I\'m also a bot, which means I\'m always available, but be patient with me if I don\'t understand everything!',
+      text: 'Hey! My name is Florence, and I help our team stay in touch with our patients. I\'m also a bot, which means I\'m always available, but be patient with me if I don\'t understand everything!',
       params: {
         providerName: true
       }
     }, {
       _id: '5786a2dc517d5513c018c9f3',
+      objective: 'startCheckIn',
       name: 'Start check-in',
       description: 'Introduce check in.',
       type: 'say',
