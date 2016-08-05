@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 
 var Promise = require('bluebird');
 var Dialog = require('../../services/dialog');
-var TaskService = require('../../models/task');
+var TaskService = require('../../services/task');
 var UserService = require('./user.service');
 var EntryInterface = require('../../models/entry');
 var InstructionService = require('../../models/instruction');
@@ -185,6 +185,9 @@ export function show(req, res, next) {
 
     function attachTasks(user) {
       return new Promise(function(resolve, reject) {
+        if(!user){
+          resolve(false);
+        }
         user.queue = user.queue || [];
         TaskService.attach(user.queue)
           .then(queue => {

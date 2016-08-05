@@ -25,6 +25,7 @@ export function query(query) {
       .then(tasks => filterByParams(tasks))
       .then(tasks => selectMostSpecificTask(tasks))
       .then(task => replaceParams(task))
+      .then(task => attachRequest(task))
       .then(task => resolve(task))
       .catch(err => reject(err))
 
@@ -137,6 +138,38 @@ export function query(query) {
       return text;
     }
 
+    function attachRequest(task){
+      return new Promise(function(resolve, reject){
+        task.query = query;
+        resolve(task)
+      })
+    }
+
+
+  })
+}
+
+export function attach(entities){
+  return new Promise(function(resolve, reject){
+    var taskIds = [];
+    var taskIndex = {};
+    entities = entities || [];
+    entities.forEach((entity, e) => {
+      if(entity.taskId){
+        taskIds.push(entity.taskId)
+      }
+    })
+    Task.find({'_id': {'$in': taskIds}}).exec()
+    .then(tasks => {
+      tasks.forEach(function(task, t){
+        taskIndex[task._id] = task;
+      })
+      entities.forEach(function(entity, e){
+        entity.task = taskIndex[entity.taskId];
+      })
+      resolve(entities);
+    })
+    .catch(err => reject(err))
 
   })
 }

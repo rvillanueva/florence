@@ -76,48 +76,89 @@ export function queueTasks(user) {
 
     function addIfNotQueued(instruction) {
       return new Promise(function(resolve, reject){
-        if (!isInstructionTaskQueued(instruction) && instruction.measurement) {
+        if (!isInstructionTaskQueued(instruction, user.queue) && instruction.measurement) {
           console.log('Instruction isn\'t queued...');
           // find appropriate task, attach params and queue it;
-          var taskQuery;
           buildTaskQuery(instruction)
-          .then(query => {
-            taskQuery = query;
-            return TaskService.query(taskQuery)
-          })
-          .then(task => addToQueue(task, taskQuery, instruction))
+          .then(query => TaskService.query(query))
+          .then(task => addToQueue(task))
           .then(() => resolve())
           .catch(err => reject(err))
         }
       })
     }
 
-    function addToQueue(task, query, instruction){
+    function addToQueue(task){
       if(task && instruction){
         var todo = {
           taskId: task._id,
-          params: query.params
+          params: task.query.params
         }
         user.queue.push(todo);
-        console.log('Todo was added:')
-        console.log(todo);
       } else {
         console.log('No task added.')
       }
     }
 
-    function isInstructionTaskQueued(instruction) {
-      console.log('Checking if instruction is queued...')
-      var found = false;
-      user.queue.forEach(function(queued, q) {
-        queued.params = queued.params || {};
-        if (queued.params.instructionId === instruction._id) {
-          found = true;
-        }
-      })
-      return found;
+  })
+}
+
+function isInstructionTaskQueued(instruction, queue) {
+  console.log('Checking if instruction is queued...')
+  var found = false;
+  queue = queue || [];
+  queue.forEach(function(queued, q) {
+    queued.params = queued.params || {};
+    if (queued.params.instructionId === instruction._id) {
+      found = true;
     }
   })
+  return found;
+}
+
+export function queue(instructionId){
+  return new Promise(function(resolve, reject){
+    var instruction;
+    var user;
+    User.findOne({'instructions._id': instructionId})
+    .then(returned => {
+      if(!returned){
+        reject(new Error('No instruction found with _id ' + instructionId));
+      }
+      user = returned;
+      user.queue = user.queue  || [];
+      user.instructions = user.instructions || [];
+      user.instructions.forEach(function(item, i){
+        if(item._id == instructionId){
+          instruction = item;
+        }
+      })
+      if(!isInstructionTaskQueued(instruction, user.queue)){
+        return buildTaskQuery(instruction)
+      } else {
+        resolve(false)
+      }
+    })
+    .then(query => TaskService.query(query))
+    .then(task => {
+      if(!task){
+        reject(new Error('No task matches instruction with _id ' + instructionId))
+      }
+      var todo = {
+        taskId: task._id,
+        params: task.query.params
+      }
+      user.queue.push(todo);
+      return user.save()
+    })
+    .then(user => {
+      user = user.toObject();
+      return TaskService.attach(user.queue)
+    })
+    .then(queue => resolve(queue))
+    .catch(err => reject(err))
+  })
+
 }
 
 export function buildTaskQuery(instruction){

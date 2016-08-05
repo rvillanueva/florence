@@ -53,7 +53,6 @@ function createNewUser(user){
         stepId: null
       }
     }
-    console.log(newUser)
     newUser.active = true;
     newUser.save()
     .then(user => resolve(user))
@@ -76,7 +75,6 @@ function createInactiveUser(user){
       }
     }
     newUser.active = false;
-    console.log(newUser)
     newUser.save()
     .then(user => resolve(user))
     .catch(err => reject(err))

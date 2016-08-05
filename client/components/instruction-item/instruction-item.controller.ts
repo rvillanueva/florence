@@ -92,4 +92,18 @@ angular.module('florenceApp')
           window.alert(err);
         })
     }
+
+    $scope.queue = function(instructionId) {
+      $http.post('/api/instructions/' + instructionId + '/queue')
+        .success(queue => {
+          console.log('Queued.')
+          console.log(queue)
+          $scope.queued = true;
+          $scope.$parent.$ctrl.selected.patient.queue = queue;
+        })
+        .error(err => {
+          console.log(err)
+        })
+    }
+
   });

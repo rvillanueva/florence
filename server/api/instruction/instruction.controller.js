@@ -226,3 +226,17 @@ export function create(req, res){
   .then(respondWithResult(res))
   .catch(handleError(res));
 }
+
+export function queue(req, res){
+  console.log('Queueing.')
+  var instructionId = req.params.id;
+  InstructionService.queue(instructionId)
+    .then(queue => {
+      console.log('Done')
+      res.status(200).json(queue)
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    })
+}

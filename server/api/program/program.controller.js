@@ -13,7 +13,7 @@ import _ from 'lodash';
 var Promise = require('bluebird');
 
 import Program from '../../models/program/program.model';
-var TaskService = require('../../models/task');
+var TaskService = require('../../services/task');
 
 function attachTasks(program) {
   return new Promise(function(resolve, reject) {
