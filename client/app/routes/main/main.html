@@ -16,6 +16,41 @@
           <message-box messages="$ctrl.selected.messages"></message-box>
         </div>
         <div ng-if="$ctrl.view.main == 'instructions'" style="width:100%;">
+          <div class="row" style="padding: 20px">
+            <div class="col-md-8">
+              <h3>{{$ctrl.selected.patient.identity.firstName}}&nbsp;{{$ctrl.selected.patient.identity.lastName}}</h3>
+              <br>
+              <span class="label label-default">Last</span> {{$ctrl.selected.patient.notifications.lastContact | fromNow}}
+            </div>
+            <div class="col-md-4">
+              <div class="queue-container">
+                <div class="pull-right">
+                  <span class="label label-default" ng-show="$ctrl.selected.patient.notifications.nextContact > $ctrl.now">
+                    {{$ctrl.selected.patient.notifications.nextContact | fromNow}}
+                  </span>
+                  <span class="label label-default" ng-hide="$ctrl.selected.patient.notifications.nextContact > $ctrl.now">
+                    Next opportunity
+                  </span>
+                  &nbsp;&nbsp;
+                  <a href="#" class="btn btn-primary btn-sm pull-right" ng-click="$ctrl.notify($ctrl.selected.patient._id)">Start Now</a>
+                </div>
+                <div class="queue-container-heading">
+                  <strong>Upcoming</strong>
+                </div>
+                <div class="queue-container-content">
+                  <div class="queue-list">
+                    <div class="queue-list-item" ng-repeat="todo in $ctrl.selected.patient.queue">
+                      {{todo.task.name}}
+                    </div>
+                  </div>
+                  <div style="padding:10px" ng-show="$ctrl.selected.patient.queue.length == 0">
+                    <i>No tasks queued.</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="page-divider"></div>
           <div class="instruction-list" style="width: 100%;">
             <instruction-item instruction="instruction" ng-repeat="(i, instruction) in $ctrl.selected.patient.instructions | orderBy:'adherence.score'" ng-click="$ctrl.selected.instruction = instruction"></instruction-item>
           </div>

@@ -35,6 +35,28 @@ $inputbox-height: 44px;
   }
 }
 
+.queue-container {
+  border: 1px solid $divider-color;
+  & .queue-container-heading {
+    border-bottom: 1px solid $divider-color;
+    padding: 10px;
+  }
+  & .queue-container-content {
+    max-height: 100px;
+    overflow-y: scroll;
+  }
+}
+
+.queue-list {
+  & .queue-list-item {
+    padding: 10px;
+    border-bottom: 1px solid $divider-color;
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
 .command-sidebar-left, .command-sidebar-right {
   border-style: solid;
   background-color: white;

@@ -11,6 +11,7 @@ class MainController {
     this.view = {
       main: 'instructions'
     }
+    this.now = new Date();
     this.selected = {
       patient: false,
       messages: [{

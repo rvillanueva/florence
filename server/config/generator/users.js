@@ -17,7 +17,7 @@ var firstNames = [
   'Rueben',
   'Estella',
   'Pam',
-  'Dong',
+  'Dan',
   'Winfred',
   'Telma',
   'Constance',
@@ -27,7 +27,7 @@ var firstNames = [
 ]
 var lastNames = [
   'Roebuck',
-  'Thoma',
+  'Thomas',
   'Schoenberger',
   'Styer',
   'Samford',
@@ -38,7 +38,7 @@ var lastNames = [
   'Amado',
   'Brown',
   'Hegna',
-  'Frisbee',
+  'Smith',
   'Boltz',
   'Hellwig',
   'Bamburg',

@@ -89,7 +89,7 @@ export function queueTasks(user) {
     }
 
     function addToQueue(task){
-      if(task && instruction){
+      if(task){
         var todo = {
           taskId: task._id,
           params: task.query.params
