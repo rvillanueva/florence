@@ -109,7 +109,7 @@ function isInstructionTaskQueued(instruction, queue) {
   queue = queue || [];
   queue.forEach(function(queued, q) {
     queued.params = queued.params || {};
-    if (queued.params.instructionId === instruction._id) {
+    if (queued.params.instructionId == instruction._id) {
       found = true;
     }
   })

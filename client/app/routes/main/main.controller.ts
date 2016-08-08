@@ -58,7 +58,7 @@ class MainController {
     this.getPatientById(patientId)
     .then(patient => {
       console.log(patient);
-      this.view.main = 'instructions';
+      this.view.main = 'goals';
       this.selected = {
         patient: patient,
         messages: []
