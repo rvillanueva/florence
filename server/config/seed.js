@@ -22,7 +22,7 @@ User.find({}).remove()
       password: 'admin'
     })
     .then(() => {
-      console.log('finished populating users');
+      console.log('Finished populating users.');
     });
   });
 
@@ -30,10 +30,11 @@ Intent.find({}).remove()
   .then(() => {
     Intent.create({
       name: 'Check coverage',
+      key: 'checkCoverage',
       responses: [{
         description: 'Return coverage',
         conditions: {
-          insuranceLoaded: true
+          coverageKnown: true
         },
         say: ['Okay, let\'s see if you have coverage...'],
         actions: [{
@@ -42,6 +43,6 @@ Intent.find({}).remove()
       }]
     })
     .then(() => {
-      console.log('finished populating users');
+      console.log('Finished populating intents.');
     });
   });

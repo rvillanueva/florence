@@ -4,7 +4,7 @@ import crypto from 'crypto';
 mongoose.Promise = require('bluebird');
 import mongoose, {Schema} from 'mongoose';
 
-const authTypes = ['github', 'twitter', 'facebook', 'google'];
+const authTypes = ['github', 'twitter', 'facebook', 'google', 'mobile', 'fbmessenger'];
 
 var UserSchema = new Schema({
   name: String,
@@ -18,6 +18,9 @@ var UserSchema = new Schema({
         return false;
       }
     }
+  },
+  mobile: {
+    type: String
   },
   role: {
     type: String,
@@ -37,7 +40,15 @@ var UserSchema = new Schema({
   salt: String,
   facebook: {},
   google: {},
-  github: {}
+  github: {},
+  state: {
+    intentKey: String,
+    asked: String,
+    parameters: [{
+      name: String,
+      value: String
+    }]
+  }
 });
 
 /**
@@ -122,7 +133,7 @@ UserSchema
   .pre('save', function(next) {
     // Handle new/update passwords
     if(!this.isModified('password')) {
-      return next();
+      return next();f
     }
 
     if(!validatePresenceOf(this.password)) {
