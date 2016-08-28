@@ -44,10 +44,7 @@ var UserSchema = new Schema({
   state: {
     intentKey: String,
     asked: String,
-    parameters: [{
-      name: String,
-      value: String
-    }]
+    params: {}
   },
   stored: {}
 });

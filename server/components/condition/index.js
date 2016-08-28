@@ -122,7 +122,7 @@ export function fillSlot(query){
       return new Promise(function(resolve, reject){
         if(validationRes && validationRes.valid == true){
           res.filled = true;
-          res.value = data.value;
+          res.value = validationRes.value;
         } else {
           res.filled = false;
           res.error = res.error;

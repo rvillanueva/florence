@@ -27,10 +27,10 @@ export function classify(bot){
 export function handleSlotFilling(bot){
   return new Promise(function(resolve, reject){
     // if input matches valid response for last query, fill slot and get intent
-    if(bot.state.askedParam){
+    if(bot.state.asked){
       var query = {
         parsed: bot.parsed,
-        param: bot.state.askedParam
+        param: bot.state.asked
       }
       ConditionService.fillSlot(query)
       .then(slot => {
@@ -38,7 +38,6 @@ export function handleSlotFilling(bot){
           bot.state.params[slot.param] = {
             value: slot.value
           }
-          bot.intentKey = bot.state.intentKey
         }
         resolve(bot)
       })
@@ -55,7 +54,7 @@ export function handleGivenIntent(bot){
     // if no intent or no previous query, check for classified new intent
 
     if(!bot.intentKey && bot.parsed.entities && bot.parsed.entities.intent){
-      bot.intentKey = bot.parsed.entities.intent[0].value;    // This structure preserves the last intentKey in the saved state by design. May want to update state directly
+      bot.state.intentKey = bot.parsed.entities.intent[0].value;
     }
     resolve(bot)
 
@@ -66,7 +65,7 @@ export function handleGivenIntent(bot){
 
 export function handleIntent(bot){
   return new Promise(function(resolve, reject){
-    if(bot.intentKey){
+    if(bot.state.intentKey){
       getIntent(bot)
       .then(bot => filterResponses(bot))
       .then(bot => handleFollowups(bot))
@@ -80,10 +79,10 @@ export function handleIntent(bot){
 
   function getIntent(bot){
     return new Promise(function(resolve, reject){
-      IntentService.getByKey(bot.intentKey)
+      IntentService.getByKey(bot.state.intentKey)
       .then(intent => {
         if(!intent){
-          reject(new Error('No intent found with key ' + bot.intentKey))
+          reject(new Error('No intent found with key ' + bot.state.intentKey))
         }
         bot.intent = intent;
         resolve(bot);
@@ -176,6 +175,7 @@ export function handleIntent(bot){
             reject(new Error('No question found for param ' + bot.evaluatedResponses.incomplete[0].missingParams[0].param));
             return null;
           } else {
+            bot.state.asked = question.param;
             return ask(question)
           }
         })
@@ -184,7 +184,7 @@ export function handleIntent(bot){
       }
 
       function ask(question){
-        bot.state.askedParam = question.param;
+        bot.state.asked = question.param;
         return bot.send({
           text: question.text
         })
@@ -211,7 +211,7 @@ export function handleIntent(bot){
       }
 
       function executeResponse(response){
-        bot.state.askedParam = null;
+        bot.state.asked = null;
         bot.send({
           text: response.text
         })
@@ -246,6 +246,8 @@ export function updateState(bot){
     .then(user => {
       user.state = bot.state;
       user.stored = bot.stored;
+      console.log(user.state)
+      console.log(user.stored)
       return user.save()
     })
     .then(() => resolve(bot))

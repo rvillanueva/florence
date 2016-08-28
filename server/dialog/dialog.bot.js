@@ -8,6 +8,7 @@ function Bot(setup){
   this.message = setup.message;
   this.user = setup.user;
   this.state = setup.user.state || {};
+  this.state.params = this.state.params || {};
   this.send = function(data){
     return new Promise((resolve, reject) => {
       var message = {
