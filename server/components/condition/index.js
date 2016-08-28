@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var questions = require('./condition.questions');
+var ConditionQuestionService = require('./condition.questions');
 var ConditionService = require('./condition.service');
 
 export function evaluateResponse(query){
@@ -12,16 +12,28 @@ export function evaluateResponse(query){
     var responseEval = {
       status: 'valid',
       response: query.response || {},
-      conditions: [],
+      conditions: {},
+      specificity: 0,
       missingParams: []
     }
-    if(evaluated.response.conditions){
+    var conditions = responseEval.response.conditions;
+
+    if(conditions){
       // FIXME needs to be by property
-      evaluated.response.conditions.forEach(function(condition, c){
-        promises.push(evaluateOneCondition(condition))
-      })
+      for (var condition in conditions) {
+          if (conditions.hasOwnProperty(condition)) {
+            promises.push(evaluateOneCondition({
+              name: condition,
+              value: conditions[condition]
+            }))
+          }
+      }
     }
-    resolve(evaluated)
+
+    Promise.all(promises)
+    .then(() => calculateSpecificity())
+    .then(() => resolve(responseEval))
+    .catch(err => reject(err))
 
     function evaluateOneCondition(condition){
       return new Promise(function(resolve, reject){
@@ -50,14 +62,20 @@ export function evaluateResponse(query){
     }
 
     function pushCondition(condition, status){
-      responseEval.conditions.push({
-        name: condition.name,
-        status: status
-      })
+      responseEval.conditions[condition.name] = status;
     }
 
     function pushMissingParams(params){
       responseEval.missingParams = responseEval.missingParams.concat(params);
+    }
+
+    function calculateSpecificity(){
+      return new Promise(function(resolve, reject){
+        if(responseEval.status == 'valid'){
+          responseEval.specificity = Object.keys(responseEval.conditions).length
+        }
+        resolve()
+      })
     }
 
 
@@ -67,11 +85,13 @@ export function evaluateResponse(query){
 
 export function getQuestion(param){
   return new Promise(function(resolve, reject){
-    var question = questions[param];
-    if(question){
-      question.param = param;
-    }
-    resolve(question);
+    ConditionQuestionService.get(param)
+    .then(question => {
+      if(question){
+        question.param = param;
+      }
+      resolve(question);
+    })
   })
 }
 
@@ -80,28 +100,35 @@ export function fillSlot(query){
   // should return slot status, param, and value
   return new Promise(function(resolve, reject){
     var res = {
-      status: null,
+      filled: null,
       error: null,
       param: query.param,
       value: null
     }
     getQuestion(query.param)
-    .then(question => {
+    .then(question => handleValidation(question))
+    .then(validationRes => updateResponse(validationRes))
+    .then(() => resolve(res))
+    .catch(err => reject(err))
+
+    function handleValidation(question){
       if(!question){
         reject(new Error('No question found for param ' + query.param));
       }
       return question.validate(query.parsed);
-    })
-    .then(data => {
-      if(data && data.valid){
-        res.status = 200;
-        res.value = data.value;
-      } else {
-        res.status = 500;
-        res.error = res.error;
-      }
-      resolve(res)
-    })
-    .catch(err => reject(err))
+    }
+
+    function updateResponse(validationRes){
+      return new Promise(function(resolve, reject){
+        if(validationRes && validationRes.valid == true){
+          res.filled = true;
+          res.value = data.value;
+        } else {
+          res.filled = false;
+          res.error = res.error;
+        }
+        resolve()
+      })
+    }
   })
 }

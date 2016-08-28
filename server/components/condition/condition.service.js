@@ -47,9 +47,11 @@ var conditions = {
 export function evaluateOne(query){
   return new Promise(function(resolve, reject){
     query.condition = query.condition || {};
-    query.condition.name = query.condition.name || {};
-    if(typeof conditions[query.condition.name] === 'function'){
-      conditions[query.condition.name](query)
+    query.user = query.user.toObject();
+    query.user.stored = query.user.stored || {};
+    var name = query.condition.name || null;
+    if(typeof conditions[name] === 'function'){
+      conditions[name](query)
       .then(res => resolve(res))
       .catch(err => reject(err))
     } else {

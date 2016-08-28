@@ -48,7 +48,8 @@ var UserSchema = new Schema({
       name: String,
       value: String
     }]
-  }
+  },
+  stored: {}
 });
 
 /**

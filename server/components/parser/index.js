@@ -26,7 +26,7 @@ export function classify(query){
         }]
       }
     }*/
-    Wit.classify(query.text)
+    Wit.classify(query)
     .then(res => resolve(res))
     .catch(err => reject(err))
   })

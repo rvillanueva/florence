@@ -12,8 +12,8 @@
 import _ from 'lodash';
 
 var Promise = require('bluebird');
-var Message = require('../../components/message');
-var Dialog = require('../../dialog');
+var MessageService = require('../../components/message');
+var DialogService = require('../../dialog');
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -64,13 +64,14 @@ function handleError(res, statusCode) {
 
 export function receive(req, res) {
   return new Promise(function(resolve, reject){
-    Message.standardize(req.body, 'twilioSMS')
+    MessageService.standardize(req.body, 'twilioSMS')
     .then(message => DialogService.receive(message))
     .then(() => respondOk())
     .catch(err => reject(err))
 
     function respondOk(){
       resolve(res.status(200).end())
+      return null;
     }
   })
 }

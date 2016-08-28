@@ -1,10 +1,12 @@
 'use strict';
 
 var Promise = require('bluebird');
+import User from '../../models/user/user.model';
 
 export function get(ids){
   return new Promise(function(resolve, reject){
     var query;
+    console.log(ids)
     if(ids.mobile){
       query = {
         mobile: ids.mobile
@@ -15,7 +17,7 @@ export function get(ids){
     }
 
     function returnUser(){
-      User.find(query)
+      User.findOne(query)
       .then(user => resolve(user))
       .catch(err => reject(err))
     }
@@ -29,7 +31,7 @@ export function getOrCreate(ids){
     .then(user => handleNoUser(user))
     .then(user => resolve(user))
     .catch(err => reject(err))
-    
+
     function handleNoUser(user){
       return new Promise(function(resolve, reject){
         if(!user){

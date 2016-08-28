@@ -34,7 +34,7 @@ Intent.find({}).remove()
       responses: [{
         description: 'Return coverage',
         conditions: {
-          coverageKnown: true
+          hasInsurance: true
         },
         say: ['Okay, let\'s see if you have coverage...'],
         actions: [{

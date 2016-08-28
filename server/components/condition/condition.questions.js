@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 
 var questions = {
   firstName: {
-    question: 'What\'s your first name?',
+    text: 'What\'s your first name?',
     validate: function(parsed){
       return new Promise(function(resolve, reject){
         resolve({
@@ -15,7 +15,7 @@ var questions = {
     }
   },
   lastName: {
-    question: 'What\'s your last name?',
+    text: 'What\'s your last name?',
     validate: function(parsed){
       return new Promise(function(resolve, reject){
         resolve({
@@ -26,7 +26,7 @@ var questions = {
     }
   },
   birthdate: {
-    question: 'What\'s your birthdate?',
+    text: 'What\'s your birthdate?',
     validate: function(parsed){
       return new Promise(function(resolve, reject){
         var res = {
@@ -47,7 +47,7 @@ var questions = {
     }
   },
   policyNumber: {
-    question: 'What\'s policy number? (This is the long number on your health insurance card.)',
+    text: 'What\'s policy number? (This is the long number on your health insurance card.)',
     validate: function(parsed){
       return new Promise(function(resolve, reject){
         // need to have custom policy validation -- number of digits etc
@@ -59,7 +59,7 @@ var questions = {
     }
   },
   insuranceCarrier: {
-    question: 'Who is your health insurance carrier? (Examples: Aetna, Blue Cross Blue Shield, or Medicare. This should be the company on your health insurance card.)',
+    text: 'Who is your health insurance carrier? (Examples: Aetna, Blue Cross Blue Shield, or Medicare. This should be the company on your health insurance card.)',
     validate: function(parsed){
       return new Promise(function(resolve, reject){
         var res = {
@@ -79,10 +79,12 @@ var questions = {
   }
 };
 
-export default function(param){
-  if(questions[param]){
-    return questions[param]
-  } else {
-    return false;
-  }
+export function get(param){
+  return new Promise(function(resolve, reject){
+    if(typeof questions[param] == 'object'){
+      resolve(questions[param]);
+    } else {
+      resolve(false);
+    }
+  })
 }

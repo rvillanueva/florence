@@ -3,15 +3,15 @@
 var Promise = require("bluebird");
 var request = require("request");
 
-export function classify(text){
+export function classify(query){
  return new Promise(function(resolve, reject){
-  if(typeof text !== 'string'){
+  if(typeof query.text !== 'string'){
      reject('Input must be a string.')
    }
    var options = {
      url: "https://api.wit.ai/message",
      qs: {
-       q: text,
+       q: query.text,
        //context: context,
        v: '2014102'
      },

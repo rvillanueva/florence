@@ -4,16 +4,20 @@ var Promise = require('bluebird');
 var ParserService = require('../components/parser');
 var IntentService = require('../components/intent');
 var ConditionService = require('../components/condition');
-var User = require('../models/user/user.model');
+import User from '../models/user/user.model';
 
 export function classify(bot){
   return new Promise(function(resolve, reject){
 
-    ParserService.classify(bot.message.text)
-    .then(parsed => attachParsedtoBot(parsed))
+    var parserQuery = {
+      text: bot.message.content.text
+    }
+
+    ParserService.classify(parserQuery)
+    .then(parsed => attachParsedToBot(parsed))
     .catch(err => reject(err))
 
-    function attachParsedToBot(){
+    function attachParsedToBot(parsed){
       bot.parsed = parsed;
       resolve(bot);
     }
@@ -30,7 +34,7 @@ export function handleSlotFilling(bot){
       }
       ConditionService.fillSlot(query)
       .then(slot => {
-        if(slot.status == 'filled'){
+        if(slot.filled == true){
           bot.state.params[slot.param] = {
             value: slot.value
           }
@@ -39,6 +43,8 @@ export function handleSlotFilling(bot){
         resolve(bot)
       })
       .catch(err => reject(err))
+    } else {
+      resolve(bot)
     }
   })
 }
@@ -46,33 +52,23 @@ export function handleSlotFilling(bot){
 
 export function handleGivenIntent(bot){
   return new Promise(function(resolve, reject){
-
     // if no intent or no previous query, check for classified new intent
 
-    if(!bot.intentKey && parsed.entities && parsed.entities.intent){
-      bot.intentKey = parsed.entities.intent[0].value;    // This structure preserves the last intentKey in the saved state by design. May want to update state directly
+    if(!bot.intentKey && bot.parsed.entities && bot.parsed.entities.intent){
+      bot.intentKey = bot.parsed.entities.intent[0].value;    // This structure preserves the last intentKey in the saved state by design. May want to update state directly
     }
     resolve(bot)
 
   })
 }
 
-export function getIntent(bot){
-  return new Promise(function(resolve, reject){
-    IntentService.getByKey(bot.intentKey)
-    .then(intent => {
-      bot.intent = intent;
-      resolve(bot);
-    })
-    .catch(err => reject(err))
-  })
-}
 
 
 export function handleIntent(bot){
   return new Promise(function(resolve, reject){
-    if(bot.intent){
-      filterResponses(bot)
+    if(bot.intentKey){
+      getIntent(bot)
+      .then(bot => filterResponses(bot))
       .then(bot => handleFollowups(bot))
       .then(bot => handleResponseExecution(bot))
       .then(bot => resolve(bot))
@@ -81,6 +77,21 @@ export function handleIntent(bot){
       resolve(bot)
     }
   })
+
+  function getIntent(bot){
+    return new Promise(function(resolve, reject){
+      IntentService.getByKey(bot.intentKey)
+      .then(intent => {
+        if(!intent){
+          reject(new Error('No intent found with key ' + bot.intentKey))
+        }
+        bot.intent = intent;
+        resolve(bot);
+      })
+      .catch(err => reject(err))
+    })
+  }
+
 
 
   function filterResponses(bot){
@@ -93,7 +104,8 @@ export function handleIntent(bot){
         bot.intent.responses.forEach(function(response, r){
           var conditionQuery = {
             response: response,
-            params: bot.state.params
+            params: bot.state.params,
+            user: bot.user
           }
           promises.push(evaluateResponse(conditionQuery))
         })
@@ -105,7 +117,8 @@ export function handleIntent(bot){
         }
 
         Promise.all(promises)
-        .then(() => sortResponses())
+        .then(() => sortValidResponses())
+        .then(() => sortIncompleteResponses())
         .then(() => resolve(bot))
         .catch(err => reject(err))
 
@@ -134,8 +147,9 @@ export function handleIntent(bot){
         return new Promise(function(resolve, reject){
           // should sort valid responses by most specific
           bot.evaluatedResponses.valid.sort(function(a, b) {
-              return parseFloat(a.price) - parseFloat(b.price);
+              return parseFloat(a.specificity) - parseFloat(b.specificity);
           });
+          resolve()
         })
       }
 
@@ -143,8 +157,9 @@ export function handleIntent(bot){
         return new Promise(function(resolve, reject){
           // should sort incomplete responses by fewest missing params
           bot.evaluatedResponses.incomplete.sort(function(a, b) {
-              return parseFloat(a.price) - parseFloat(b.price);
+              return parseFloat(a.missingParams.length) - parseFloat(b.missingParams.length);
           });
+          resolve();
         })
       }
 
@@ -155,10 +170,10 @@ export function handleIntent(bot){
     return new Promise(function(resolve, reject){
       // should take the next "closest to match" response and ask for an outstanding parameter
       if(bot.evaluatedResponses.incomplete.length > 0){
-        ConditionService.getQuestion(bot.evaluatedResponses.incomplete.missingParams[0])
+        ConditionService.getQuestion(bot.evaluatedResponses.incomplete[0].missingParams[0].param)
         .then(question => {
           if(!question){
-            reject(new Error('No question found for param ' + bot.evaluatedResponses.incomplete.missingParams[0].param));
+            reject(new Error('No question found for param ' + bot.evaluatedResponses.incomplete[0].missingParams[0].param));
             return null;
           } else {
             return ask(question)
@@ -217,13 +232,6 @@ export function handleExceptions(bot){
       .then(() => resolve(bot))
       .catch(err => reject(err))
 
-    } else if(!bot.response){
-      bot.send({
-        text: 'Sorry, looks like something went wrong. I let my team know and we\'ll fix it shortly!'
-      })
-      .then(() => resolve(bot))
-      .catch(err => reject(err))
-
     } else {
       resolve(bot)
     }
@@ -237,6 +245,7 @@ export function updateState(bot){
     User.findById(bot.user._id)
     .then(user => {
       user.state = bot.state;
+      user.stored = bot.stored;
       return user.save()
     })
     .then(() => resolve(bot))

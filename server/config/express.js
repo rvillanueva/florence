@@ -46,7 +46,7 @@ export default function(app) {
   app.use(cookieParser());
   app.use(passport.initialize());
 
-  
+
   // Persist sessions with MongoStore / sequelizeStore
   // We need to enable sessions for passport-twitter because it's an
   // oauth 1.0 strategy, and Lusca depends on sessions
@@ -64,7 +64,7 @@ export default function(app) {
    * Lusca - express server security
    * https://github.com/krakenjs/lusca
    */
-  if (env !== 'test' && !process.env.SAUCE_USERNAME) {
+  if (env !== 'test' && env !== 'development' && !process.env.SAUCE_USERNAME) {
     app.use(lusca({
       csrf: {
         angular: true
@@ -81,12 +81,12 @@ export default function(app) {
 
   if ('development' === env) {
     const webpackDevMiddleware = require('webpack-dev-middleware');
-    const stripAnsi = require('strip-ansi'); 
+    const stripAnsi = require('strip-ansi');
     const webpack = require('webpack');
     const makeWebpackConfig = require('../../webpack.make');
     const webpackConfig = makeWebpackConfig({ DEV: true });
     const compiler = webpack(webpackConfig);
-    const browserSync = require('browser-sync').create(); 
+    const browserSync = require('browser-sync').create();
 
     /**
      * Run Browsersync and use middleware for Hot Module Replacement
@@ -102,7 +102,7 @@ export default function(app) {
           stats: {
             colors: true,
             timings: true,
-            chunks: false   
+            chunks: false
           }
         })
       ],
