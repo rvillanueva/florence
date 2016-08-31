@@ -95,40 +95,30 @@ export function getQuestion(param){
   })
 }
 
-export function fillSlot(query){
-  // expect parsed
-  // should return slot status, param, and value
+export function store(query){
+  // query: parsed, stored, state
+  /* response:
+    status: stored, error, confirm
+    error:
+    message:
+    state:
+    stored:
+
+  */
   return new Promise(function(resolve, reject){
-    var res = {
-      filled: null,
-      error: null,
-      param: query.param,
-      value: null
-    }
-    getQuestion(query.param)
-    .then(question => handleValidation(question))
-    .then(validationRes => updateResponse(validationRes))
+    query.state = query.state || {};
+    query.state.asked = query.state.asked || {};
+    getQuestion(query.state.asked.param)
+    .then(question => store(question))
     .then(() => resolve(res))
     .catch(err => reject(err))
 
-    function handleValidation(question){
+    function store(question){
       if(!question){
         reject(new Error('No question found for param ' + query.param));
       }
-      return question.validate(query.parsed);
-    }
-
-    function updateResponse(validationRes){
-      return new Promise(function(resolve, reject){
-        if(validationRes && validationRes.valid == true){
-          res.filled = true;
-          res.value = validationRes.value;
-        } else {
-          res.filled = false;
-          res.error = res.error;
-        }
-        resolve()
-      })
+      res.question = question;
+      return question.store(query);
     }
   })
 }

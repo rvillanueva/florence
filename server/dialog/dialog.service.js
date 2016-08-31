@@ -19,6 +19,7 @@ export function classify(bot){
 
     function attachParsedToBot(parsed){
       bot.parsed = parsed;
+      console.log(bot.user)
       resolve(bot);
     }
   })
@@ -27,34 +28,86 @@ export function classify(bot){
 export function handleSlotFilling(bot){
   return new Promise(function(resolve, reject){
     // if input matches valid response for last query, fill slot and get intent
-    if(bot.state.asked){
+    if(bot.state.asked && bot.state.asked.param){
       var query = {
         parsed: bot.parsed,
-        param: bot.state.asked
+        stored: bot.user.stored,
+        state: bot.state
       }
-      ConditionService.fillSlot(query)
-      .then(slot => {
-        if(slot.filled == true){
-          bot.state.params[slot.param] = {
-            value: slot.value
-          }
-        }
-        resolve(bot)
+      convertConfirmationData();
+      ConditionService.store(query)
+      .then(res => {
+        handleBotUpdate(res);
+        return handleFollowupAsk()
       })
+      .then(() => resolve(bot))
       .catch(err => reject(err))
     } else {
       resolve(bot)
     }
+
+    function convertConfirmationData(){
+        var text = bot.parsed._text.toLowerCase();
+        convertChoice();
+        convertYesNo();
+
+        function convertChoice(){
+          if(bot.state.asked.confirmation.type == 'choice' && bot.state.asked.choices.length > 0){
+            query.confirmation = {
+              type: 'choice'
+            }
+            if(text == 'a'){
+              query.confirmation.choice = query.state.asked.choice[0];
+            } else if (text == 'b'){
+              query.confirmation.choice = query.state.asked.choice[1];
+            } else if (text == 'c'){
+              query.confirmation.choice = query.state.asked.choice[2];
+            } else if (text == 'd'){
+              query.confirmation.choice = query.state.asked.choice[3];
+            }
+          }
+        }
+        function convertYesNo(){
+          if(bot.state.asked.confirmation.type == 'yesNo' && bot.parsed.entities && bot.parsed.entities.yesNo){
+            var response = bot.parsed.entities.yesNo[0].value;
+            query.confirmation.yesNo = response;
+          }
+        }
+    }
+
+    function handleBotUpdate(res){
+      if(res.success){
+        bot.state = res.state;
+        if(res.stored){
+          bot.user.stored = res.stored;
+        }
+      }
+    }
+
+    function handleFollowupAsk(){
+      return new Promise(function(resolve, reject){
+        // ask and set flag that confirmation was run
+        if(bot.state.asked && bot.state.asked.param){
+          ask(bot)
+          .then(bot => resolve(bot))
+          .catch(err => reject(err))
+        } else {
+          resolve(bot)
+        }
+      })
+    }
+
+
   })
 }
-
 
 export function handleGivenIntent(bot){
   return new Promise(function(resolve, reject){
     // if no intent or no previous query, check for classified new intent
 
-    if(!bot.intentKey && bot.parsed.entities && bot.parsed.entities.intent){
+    if(!bot.state.intentKey && bot.parsed.entities && bot.parsed.entities.intent){
       bot.state.intentKey = bot.parsed.entities.intent[0].value;
+      bot.state.type = 'intent';
     }
     resolve(bot)
 
@@ -65,7 +118,7 @@ export function handleGivenIntent(bot){
 
 export function handleIntent(bot){
   return new Promise(function(resolve, reject){
-    if(bot.state.intentKey){
+    if(bot.state.type === 'intent'){
       getIntent(bot)
       .then(bot => filterResponses(bot))
       .then(bot => handleFollowups(bot))
@@ -95,7 +148,7 @@ export function handleIntent(bot){
 
   function filterResponses(bot){
     return new Promise(function(resolve, reject){
-      if(bot.intent){
+      if(bot.state.type === 'intent'){
         // should evaluate each response by conditions and eliminate those that don't fit, leaving only those with missing params or matching
         bot.intent.responses = bot.intent.responses || [];
 
@@ -169,25 +222,13 @@ export function handleIntent(bot){
     return new Promise(function(resolve, reject){
       // should take the next "closest to match" response and ask for an outstanding parameter
       if(bot.evaluatedResponses.incomplete.length > 0){
-        ConditionService.getQuestion(bot.evaluatedResponses.incomplete[0].missingParams[0].param)
-        .then(question => {
-          if(!question){
-            reject(new Error('No question found for param ' + bot.evaluatedResponses.incomplete[0].missingParams[0].param));
-            return null;
-          } else {
-            bot.state.asked = question.param;
-            return ask(question)
-          }
-        })
+        bot.state.asked = bot.state.asked || {};
+        bot.state.asked.param = bot.evaluatedResponses.incomplete[0].missingParams[0].param;
+        ask(bot)
         .then(bot => resolve(bot))
         .catch(err => reject(err))
-      }
-
-      function ask(question){
-        bot.state.asked = question.param;
-        return bot.send({
-          text: question.text
-        })
+      } else {
+        resolve(bot)
       }
     })
   }
@@ -211,12 +252,11 @@ export function handleIntent(bot){
       }
 
       function executeResponse(response){
+        bot.state.type = 'intent';
         bot.state.asked = null;
-        bot.send({
+        return bot.send({
           text: response.text
         })
-        .then(bot => resolve(bot))
-        .catch(err => reject(err))
       }
 
     })
@@ -225,11 +265,11 @@ export function handleIntent(bot){
 
 export function handleExceptions(bot){
   return new Promise(function(resolve, reject){
-    if(!bot.intent){
+    if(!bot.state.type){
       bot.send({
         text: 'Uh oh, not sure I understood that. Can you try again?'
       })
-      .then(() => resolve(bot))
+      .then(bot => resolve(bot))
       .catch(err => reject(err))
 
     } else {
@@ -245,7 +285,7 @@ export function updateState(bot){
     User.findById(bot.user._id)
     .then(user => {
       user.state = bot.state;
-      user.stored = bot.stored;
+      user.stored = bot.user.stored;
       console.log(user.state)
       console.log(user.stored)
       return user.save()
@@ -253,4 +293,20 @@ export function updateState(bot){
     .then(() => resolve(bot))
     .catch(err => reject(err))
   })
+}
+
+function ask(bot){
+  ConditionService.getQuestion(bot.state.asked.param)
+  .then(question => {
+    if(!question){
+      reject(new Error('No question found for param ' + bot.state.asked.param));
+      bot.state.type = false;
+      return null;
+    } else {
+      bot.state.type = 'ask';
+      return bot.send(question.prompt)
+    }
+  })
+  .then(bot => resolve(bot))
+  .catch(err => reject(err))
 }

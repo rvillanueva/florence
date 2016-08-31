@@ -3,7 +3,7 @@ var Queue = require('./message.queue');
 var Router = require('./message.router');
 
 export function send(message){
-  console.log(message)
+  console.log('Bot says: ' + message.content.text);
   message.created = new Date();
   return Queue.add(message)
 }

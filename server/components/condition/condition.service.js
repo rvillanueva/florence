@@ -9,9 +9,15 @@ var conditions = {
         status: null,
         missingParams: []
       }
-      if(!query.user.stored.birthdate){
+      if(!query.user.stored.insuranceCarrier){
+        query.user.state.params = query.user.state.params || {};
         res.missingParams.push({
-          param: 'birthdate'
+          param: 'insuranceCarrier'
+        })
+      }
+      if(!query.user.stored.policyNumber){
+        res.missingParams.push({
+          param: 'policyNumber'
         })
       }
       if(!query.user.stored.firstName){
@@ -24,14 +30,9 @@ var conditions = {
           param: 'lastName'
         })
       }
-      if(!query.user.stored.policyNumber){
+      if(!query.user.stored.birthdate){
         res.missingParams.push({
-          param: 'policyNumber'
-        })
-      }
-      if(!query.user.stored.insuranceCarrier){
-        res.missingParams.push({
-          param: 'insuranceCarrier'
+          param: 'birthdate'
         })
       }
       if(res.missingParams.length > 0){

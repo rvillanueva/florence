@@ -42,8 +42,22 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   state: {
+    type: {
+      type: String
+    },
     intentKey: String,
-    asked: String,
+    asked: {
+      param: String,
+      confirmation: {
+        type: {
+          type: String //yes,no, choice
+        },
+        choices:[{
+          text: String,
+          value: String
+        }],
+      }
+    },
     params: {}
   },
   stored: {}
