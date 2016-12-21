@@ -104,7 +104,7 @@ Entry.find({}).remove()
           firstName: 'Ryan',
           lastName: 'Villanueva',
           email: 'ryan@florence.ai',
-          mobile: '+14154123689'
+          mobile: ''
         },
         active: true,
         role: 'admin',
