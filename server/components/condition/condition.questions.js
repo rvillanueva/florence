@@ -21,8 +21,8 @@ var questions = {
       return new Promise(function(resolve, reject){
         var res = {
           success: true,
-          value: query.parsed._text
-          stored: query.stored,
+          value: query.parsed._text,
+          stored: query.stored
         }
         res.stored.firstName = query.parsed._text;
         resolve(res);
@@ -38,8 +38,8 @@ var questions = {
       return new Promise(function(resolve, reject){
         var res = {
           success: true,
-          value: query.parsed._text
-          stored: query.stored,
+          value: query.parsed._text,
+          stored: query.stored
         }
         res.stored.lastName = query.parsed._text;
         resolve(res);
@@ -108,7 +108,7 @@ var questions = {
         function handleConfirmation(){
           if(query.confirmation.type == 'choice'){
             res.stored.insuranceCarrier = {
-              name: query.choice.text
+              name: query.choice.text,
               tradingPartnerId: query.choice.value
             }
             resolve(res);
